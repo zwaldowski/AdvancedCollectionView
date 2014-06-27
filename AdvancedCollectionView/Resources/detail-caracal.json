@@ -1,0 +1,19 @@
+{
+    "delayResults" : 1,
+    "results" : {
+        "name" : "Caracal",
+        "uniqueID" : "caracal",
+        "shortDescription" : "The caracal is also known as the desert lynx.",
+        "conservationStatus" : "Least Concern",
+        "kingdom" : "Animalia",
+        "phylum" : "Chordata",
+        "class" : "Mammalia",
+        "order" : "Carnivora",
+        "family" : "Felidae",
+        "genus" : "Caracal",
+        "species" : "C. caracal",
+        "description" : "Quisque tristique ornare massa. Proin lectus nibh, aliquam vitae eleifend eget, condimentum ac elit. Nunc nisi augue, faucibus a vestibulum in, viverra at orci. Pellentesque tempor tempor ipsum, non laoreet ipsum. Etiam in blandit metus, sed viverra nisi. Ut commodo at nisi nec dignissim. Vivamus luctus lacus at mi varius, id vehicula nisi convallis. Fusce lorem mauris, sodales quis tristique sit amet, bibendum in sem. Suspendisse scelerisque vehicula elit ac venenatis. Maecenas eu nisl enim. Maecenas eu blandit lorem.\n\nPraesent fermentum dolor dui, ut interdum ante dignissim eu. Donec placerat ultrices odio ut faucibus. Ut pulvinar pharetra iaculis. Morbi a vulputate metus, sed luctus lacus. Aliquam mollis tortor vel pellentesque pretium. Quisque a dignissim eros. In elit eros, volutpat at nulla vel, varius fringilla velit. Pellentesque leo metus, blandit nec luctus quis, aliquam et neque. Maecenas congue massa quis aliquet pulvinar. Vivamus consequat quis odio id convallis. Integer vulputate odio leo, quis tincidunt lacus euismod ut.\n\nDonec rutrum velit justo, eget scelerisque dolor commodo vitae. Fusce pretium vehicula mi, nec ornare felis bibendum vel. Curabitur quis erat ultricies, molestie metus vel, laoreet sapien. Nunc interdum felis ultrices tempus rutrum. Praesent non auctor turpis, nec rutrum nisi. Pellentesque dolor felis, congue in mauris vitae, luctus imperdiet massa. Nunc posuere ac tortor a fringilla. Etiam consequat, sem eget lobortis lacinia, nisi tortor laoreet neque, ut porta nulla mauris at lectus. Vivamus eu lacus tempus, placerat eros quis, adipiscing justo. Maecenas in egestas velit, non ultrices lectus. Aliquam porttitor velit nec adipiscing consequat. In ac ultrices metus. Vestibulum sit amet convallis nisl. Curabitur sed turpis vel enim semper varius nec malesuada elit. Nullam sit amet mauris a est bibendum scelerisque eu et diam. Nulla ut consectetur mi.",
+        "habitat" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        
+    }
+}

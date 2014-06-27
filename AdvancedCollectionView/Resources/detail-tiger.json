@@ -1,0 +1,18 @@
+{
+    "delayResults" : 1,
+    "results" : {
+        "name": "Tiger",
+        "uniqueID" : "tiger",
+        "shortDescription" : "The tiger is the largest of the cat species.",
+        "conservationStatus" : "Endangered",
+        "kingdom" : "Animalia",
+        "phylum" : "Chordata",
+        "class" : "Mammalia",
+        "order" : "Carnivora",
+        "family" : "Felidae",
+        "genus" : "Leptailurus",
+        "species" : "L. tigris",
+        "description" : "Fusce euismod bibendum iaculis. Donec id facilisis sapien. Quisque eget ornare diam. Nam sed rutrum felis, at hendrerit tellus. Maecenas eget gravida nisl, non viverra nisl. Phasellus egestas mauris non odio pulvinar, eu pharetra enim bibendum. Vivamus viverra porta varius. Ut tempus aliquet elementum. Fusce erat eros, facilisis eu malesuada eu, egestas vel diam. Fusce sit amet malesuada erat.\n\nMauris at vestibulum leo. Ut ac pharetra leo. Suspendisse quis luctus ante. Nam varius velit eget euismod vehicula. Aliquam sed leo at dolor ullamcorper rutrum. Curabitur vitae laoreet mauris. Nullam dapibus, urna ac egestas mollis, enim eros varius lectus, eu fringilla dolor dolor a diam. In fringilla, nisi a dapibus elementum, purus lectus vehicula tortor, rutrum dapibus lorem felis nec nisi. Fusce quis varius enim. Fusce tincidunt leo sed tellus interdum porttitor. Aliquam in risus imperdiet, mattis ligula ut, ullamcorper purus. Vestibulum placerat, mauris eu luctus tempus, est odio viverra lectus, ac accumsan dolor odio tempus erat. Sed id rutrum felis.\n\nNullam mattis sem tellus, ac iaculis mauris rhoncus sed. Ut molestie dictum pharetra. Curabitur convallis molestie augue, ut sagittis nisl. Nam euismod vehicula velit sed tristique. Sed at mi ac sem adipiscing convallis eu commodo urna. Vivamus non lobortis leo. Duis elementum vehicula nunc vitae luctus. Curabitur id ante a lectus gravida tempor sed id justo. Maecenas dignissim accumsan feugiat. Quisque at lobortis augue. In hac habitasse platea dictumst.",
+        "habitat" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    }
+}

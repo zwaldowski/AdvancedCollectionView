@@ -1,0 +1,19 @@
+{
+    "delayResults" : 1,
+    "results" : {
+        "name" : "Serval",
+        "uniqueID" : "serval",
+        "shortDescription" : "The Serval is a strong yet slender animal, with long legs and a fairly short tail.",
+        "conservationStatus" : "Least Concern",
+        "kingdom" : "Animalia",
+        "phylum" : "Chordata",
+        "class" : "Mammalia",
+        "order" : "Carnivora",
+        "family" : "Felidae",
+        "genus" : "Leptailurus",
+        "species" : "L. serval",
+        "description" : "Morbi volutpat, orci vitae tempus scelerisque, lacus sem euismod purus, ut suscipit erat turpis eget lectus. Aliquam erat volutpat. Vivamus id ipsum a eros ultricies facilisis sed vel nulla. Sed enim lectus, vulputate non euismod sed, bibendum et elit. Nullam porta orci eu odio ullamcorper, vel euismod dui consequat. Maecenas commodo laoreet semper. Cras imperdiet lorem et vestibulum sollicitudin. Nam sed leo at elit eleifend bibendum eu ut odio.\n\nDonec molestie vel enim nec porta. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque eleifend odio vel enim rutrum porta. In hac habitasse platea dictumst. Curabitur lorem sapien, commodo non augue eget, dapibus posuere purus. Aenean tincidunt congue massa. Donec id enim dignissim, tristique ipsum et, interdum metus. Nunc mattis imperdiet scelerisque. Morbi vel mi lobortis, gravida odio vehicula, facilisis ante.\n\nInterdum et malesuada fames ac ante ipsum primis in faucibus. Integer ut ornare purus. Pellentesque at sem et libero feugiat ultrices at id lorem. Nam vulputate ante leo, vitae ornare erat gravida at. Sed a semper tortor. Mauris placerat interdum lacus, at imperdiet mauris fringilla eu. Aliquam nibh tellus, consectetur ut condimentum a, faucibus et magna. Integer pretium, purus non ornare dignissim, magna nisi condimentum tortor, at facilisis tellus mi sit amet felis. Phasellus ut odio dolor. Sed at augue vitae nunc posuere pulvinar. Ut volutpat nibh eu magna varius, fermentum scelerisque magna rutrum. Donec massa augue, venenatis non consectetur porta, sodales a tellus.",
+        "habitat" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        
+    }
+}

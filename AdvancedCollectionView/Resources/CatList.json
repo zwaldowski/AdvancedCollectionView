@@ -1,0 +1,80 @@
+{
+    "delayResults" : 2,
+    "results" : [
+        {
+            "name" : "Ocelot",
+            "uniqueID" : "ocelot",
+            "shortDescription" : "The Ocelot is also known as the dwarf leopard.",
+        },
+        {
+            "name": "Tiger",
+            "uniqueID" : "tiger",
+            "shortDescription" : "The tiger is the largest of the cat species."
+        },
+        {
+            "name" : "Mountain Lion",
+            "uniqueID" : "mountain-lion",
+            "shortDescription" : "Like almost all cats, the mountain lion is a solitary animal.",
+        },
+        {
+            "name" : "Leopard",
+            "uniqueID" : "leopard",
+            "shortDescription" : "The leopard is the smallest of the four big cats.",
+        },
+        {
+            "name" : "Lion",
+            "uniqueID" : "lion",
+            "shortDescription" : "The male lion is easily recognised by its mane.",
+        },
+        {
+            "name" : "Cheetah",
+            "uniqueID" : "cheetah",
+            "shortDescription" : "The cheetah can run faster than any other land animal.",
+        },
+        {
+            "name" : "Jaguar",
+            "uniqueID" : "jaguar",
+            "shortDescription" : "Jaguars enjoy a nice swim from time to time.",
+        },
+        {
+            "name" : "Snow Leopard",
+            "uniqueID" : "snow-leopard",
+            "shortDescription" : "Snow Leopards are cute and cuddly. Really."
+        },
+        {
+            "name" : "Lynx",
+            "uniqueID" : "lynx",
+            "shortDescription" : "Lynx have a short tail and characteristic tufts of black hair on their ears.",
+        },
+        {
+            "name" : "Serval",
+            "uniqueID" : "serval",
+            "shortDescription" : "The Serval is a strong yet slender animal, with long legs and a fairly short tail.",
+        },
+        {
+            "name" : "Caracal",
+            "uniqueID" : "caracal",
+            "shortDescription" : "The caracal is also known as the desert lynx.",
+        },
+        {
+            "name" : "Geoffroy's Cat",
+            "uniqueID" : "geoffroys-cat",
+            "shortDescription" : "The Geoffroy's cat is a wild cat native to southern and central South America",
+        },
+        {
+            "name" : "Oncilla",
+            "uniqueID" : "oncilla",
+            "shortDescription" : "The Oncilla is also know as the tiger cat.",
+        },
+        {
+            "name" : "Margay",
+            "uniqueID" : "margay",
+            "shortDescription" : "Also known as the tree ocelot. They live in S. America.",
+        },
+        {
+            "name" : "Bobcat",
+            "uniqueID" : "bobcat",
+            "shortDescription" : "Bobcats live all over North America.",
+        }
+    ]
+}

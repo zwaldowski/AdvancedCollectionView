@@ -1,0 +1,19 @@
+{
+    "delayResults" : 1,
+    "results" : {
+        "name" : "Canadian Lynx",
+        "uniqueID" : "lynx",
+        "shortDescription" : "Lynx have a short tail and characteristic tufts of black hair on their ears.",
+        "conservationStatus" : "Least Concern",
+        "kingdom" : "Animalia",
+        "phylum" : "Chordata",
+        "class" : "Mammalia",
+        "order" : "Carnivora",
+        "family" : "Felidae",
+        "genus" : "Lynx",
+        "species" : "L. canadensis",
+        "description" : "Fusce sit amet congue mauris, vel egestas tortor. Donec eu arcu a tellus varius malesuada. Nunc massa leo, laoreet quis tincidunt at, tempus at lacus. Ut in ullamcorper enim, nec porta eros. Aliquam porttitor nulla in velit tempus, non scelerisque nisl egestas. Donec feugiat leo id mauris adipiscing, gravida facilisis arcu mattis. Nulla eget libero ac dolor convallis posuere. Cras laoreet nisl sed lacus aliquam porta. Donec eget nulla id massa accumsan pellentesque id vitae ipsum. Nullam ante quam, pulvinar sit amet tellus a, aliquet viverra lorem. Phasellus ac sagittis odio, eget imperdiet nunc. Suspendisse vel porttitor arcu. Sed in lobortis nunc, in malesuada ligula. Etiam euismod a lorem vel tristique. Curabitur commodo, velit non viverra interdum, nulla tellus commodo libero, porta cursus dui orci non quam.\n\nVestibulum tristique neque vel mauris tempor, sit amet placerat erat mollis. Curabitur bibendum nunc libero, nec faucibus dui eleifend ac. Praesent adipiscing, neque eu congue dictum, enim est pretium nisl, a elementum urna felis nec augue. Suspendisse ipsum ante, dapibus non lacus in, tempor tincidunt arcu. Nunc sodales congue quam sed dictum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas mollis, est a ullamcorper porta, mi metus consectetur nisi, nec porttitor magna augue quis sem. In vestibulum felis vitae libero scelerisque tincidunt. Ut lacus quam, iaculis eu dui vitae, pharetra posuere purus. Pellentesque luctus vehicula risus, sit amet elementum lectus vehicula id. Praesent tempor odio sit amet egestas porta. Duis porttitor magna ac sapien tincidunt, eget ultrices sem condimentum. Cras eget posuere felis. Suspendisse non commodo purus.\n\nMaecenas consectetur augue ut risus elementum, vitae porttitor erat tristique. Proin vestibulum posuere diam sit amet posuere. Maecenas tempus mauris et velit imperdiet, eget adipiscing magna eleifend. Proin tellus odio, euismod quis augue id, feugiat viverra sapien. Nulla id nunc et elit dapibus laoreet. Phasellus faucibus tellus et orci elementum, non congue lectus lacinia. Aenean metus ante, porttitor ac rhoncus blandit, blandit id sapien. Fusce sit amet nulla sit amet lacus gravida placerat molestie eget massa. Pellentesque eu enim egestas, varius justo nec, elementum metus. Proin vel scelerisque magna, nec consectetur orci. Fusce et sem nec risus rhoncus auctor. Morbi fermentum, eros et lobortis bibendum, mi dolor mollis erat, id posuere risus nibh ut neque. Pellentesque ac dui nisl. Praesent a fermentum nibh, ac sodales tortor. Mauris vulputate, sem nec aliquet aliquet, eros lorem viverra nisi, vel viverra neque turpis vel elit. Vivamus id dictum purus.",
+        "habitat" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        
+    }
+}

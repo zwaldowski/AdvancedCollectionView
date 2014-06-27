@@ -1,0 +1,18 @@
+{
+    "delayResults" : 1,
+    "results" : {
+        "name" : "Cheetah",
+        "uniqueID" : "cheetah",
+        "shortDescription" : "The cheetah can run faster than any other land animal.",
+        "conservationStatus" : "Vulnerable",
+        "kingdom" : "Animalia",
+        "phylum" : "Chordata",
+        "class" : "Mammalia",
+        "order" : "Carnivora",
+        "family" : "Felidae",
+        "genus" : "Acinonyx",
+        "species" : "A. jubatus",
+        "description" : "Phasellus pellentesque ante quis purus vulputate, vel lobortis lectus cursus. Pellentesque nec condimentum magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam ullamcorper tempus erat, sit amet scelerisque mauris vehicula vel. Vivamus iaculis ante a quam viverra ultrices. Etiam laoreet scelerisque lorem nec lobortis. Aliquam erat volutpat.\n\nSed ac dignissim odio. Integer dolor felis, tincidunt non erat ut, commodo dapibus lorem. Vivamus sit amet risus elit. Donec tincidunt vehicula massa. In hac habitasse platea dictumst. Phasellus felis urna, scelerisque vitae purus id, condimentum aliquam neque. Pellentesque a scelerisque nulla.\n\nAenean id est velit. Aliquam ullamcorper interdum magna. Suspendisse ultricies erat vel tristique condimentum. Cras egestas suscipit nunc interdum feugiat. Fusce tincidunt congue elit a vestibulum. Vivamus eu posuere enim. Vivamus dapibus nisi non ante tincidunt, sit amet euismod urna consectetur. Donec pharetra tempor leo eget ultricies. Vestibulum pellentesque odio nisi, a consectetur risus dapibus sed. Vestibulum vitae luctus nunc. Ut sed sodales ligula. Phasellus a mauris id quam porta fringilla. Duis enim nulla, mattis non tempor ac, viverra ultricies dui. Aliquam erat volutpat. Fusce vulputate neque lorem, pharetra accumsan quam aliquam vel. Vestibulum ultrices, ipsum eget auctor congue, nisi leo suscipit odio, sit amet placerat nisi magna a mi.",
+        "habitat" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    }
+}
