@@ -11,7 +11,7 @@
 #import "AAPLKeyValueDataSource.h"
 #import "AAPLBasicCell.h"
 
-#import "UICollectionView+Helpers.h"
+#import "UICollectionReusableView+AAPLGridLayout.h"
 
 
 static NSString * const AAPLKeyValueDataSourceKeyPathKey = @"keyPath";

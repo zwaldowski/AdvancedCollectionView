@@ -9,16 +9,11 @@
  */
 
 #import "AAPLCatDetailViewController.h"
-#import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailDataSource.h"
-#import "AAPLCatSightingsDataSource.h"
-
 #import "AAPLCatDetailHeader.h"
 
 @interface AAPLCatDetailViewController ()
-@property (nonatomic, strong) AAPLSegmentedDataSource *dataSource;
 @property (nonatomic, strong) AAPLCatDetailDataSource *detailDataSource;
-@property (nonatomic, strong) AAPLCatSightingsDataSource *sightingsDataSource;
 @property (nonatomic, strong) id selectedDataSourceObserver;
 @end
 
@@ -28,26 +23,20 @@
 {
     [super viewDidLoad];
 
-    self.dataSource = [[AAPLSegmentedDataSource alloc] init];
     self.detailDataSource = [self newDetailDataSource];
-    self.sightingsDataSource = [self newSightingsDataSource];
 
-    [self.dataSource addDataSource:self.detailDataSource];
-    [self.dataSource addDataSource:self.sightingsDataSource];
+	__weak typeof(&*self) weakself = self;
 
-    __weak typeof(&*self) weakself = self;
-
-    AAPLLayoutSupplementaryMetrics *globalHeader = [self.dataSource newHeaderForKey:@"globalHeader"];
+	AAPLLayoutSupplementaryMetrics *globalHeader = [self.detailDataSource newHeaderForKey:@"globalHeader"];
     globalHeader.visibleWhileShowingPlaceholder = YES;
     globalHeader.height = 110;
     globalHeader.supplementaryViewClass = [AAPLCatDetailHeader class];
-    globalHeader.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
-        AAPLCatDetailHeader *headerView = (AAPLCatDetailHeader *)view;
-        headerView.bottomBorderColor = nil;
-        [headerView configureWithCat:weakself.cat];
-    };
+	[globalHeader configureWithBlock:^(AAPLCatDetailHeader *headerView, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+		headerView.bottomBorderColor = nil;
+		[headerView configureWithCat:weakself.cat];
+	}];
 
-    self.collectionView.dataSource = self.dataSource;
+    self.collectionView.dataSource = self.detailDataSource;
 }
 
 - (AAPLCatDetailDataSource *)newDetailDataSource
@@ -65,25 +54,6 @@
 
 
     return dataSource;
-}
-
-- (AAPLCatSightingsDataSource *)newSightingsDataSource
-{
-    AAPLCatSightingsDataSource *dataSource = [[AAPLCatSightingsDataSource alloc] initWithCat:self.cat];
-    dataSource.title = NSLocalizedString(@"Sightings", @"Title of cat sightings section");
-    dataSource.noContentTitle = NSLocalizedString(@"No Sightings", @"Title of the no sightings placeholder message");
-    dataSource.noContentMessage = NSLocalizedString(@"This cat has not been sighted recently.", @"The message to show when the cat has not been sighted recently");
-
-    dataSource.defaultMetrics.separatorColor = [UIColor colorWithWhite:224/255.0 alpha:1];
-    dataSource.defaultMetrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0);
-    dataSource.defaultMetrics.rowHeight = AAPLRowHeightVariable;
-    
-    return dataSource;
-}
-
-- (void)toggleFavorite:(id)sender
-{
-    self.cat.favorite = !self.cat.favorite;
 }
 
 @end

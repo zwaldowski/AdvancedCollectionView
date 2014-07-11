@@ -102,15 +102,6 @@
     }];
 }
 
-- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
-{
-    if (handler) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            handler(@[], nil);
-        });
-    }
-}
-
 - (void)fetchDetailForCat:(AAPLCat *)cat completionHandler:(void (^)(AAPLCat *, NSError *))handler
 {
     NSParameterAssert(cat != nil);

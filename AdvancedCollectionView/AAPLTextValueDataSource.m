@@ -12,7 +12,7 @@
 #import "AAPLTextValueDataSource.h"
 #import "AAPLTextValueCell.h"
 #import "AAPLSectionHeaderView.h"
-#import "UICollectionView+Helpers.h"
+#import "UICollectionReusableView+AAPLGridLayout.h"
 
 static NSString * const AAPLTextValueDataSourceKeyPathKey = @"keyPath";
 static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
@@ -43,12 +43,10 @@ static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
     // Create a section header that will pull the text of the header from the label of the item.
     AAPLLayoutSupplementaryMetrics *header = [self.defaultMetrics newHeader];
     header.supplementaryViewClass = [AAPLSectionHeaderView class];
-    header.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
-        AAPLSectionHeaderView *header = (AAPLSectionHeaderView *)view;
-        AAPLTextValueDataSource *me = (AAPLTextValueDataSource *)dataSource;
-        NSDictionary *dictionary = me.items[indexPath.section];
-        header.leftText = dictionary[AAPLTextValueDataSourceLabelKey];
-    };
+	[header configureWithBlock:^(AAPLSectionHeaderView *header, AAPLTextValueDataSource *dataSource, NSIndexPath *indexPath) {
+		NSDictionary *dictionary = dataSource.items[indexPath.section];
+		header.leftLabel.text = dictionary[AAPLTextValueDataSourceLabelKey];
+	}];
 
     return self;
 }
@@ -66,7 +64,7 @@ static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
     return _items[indexPath.section];
 }
 
-- (NSInteger)numberOfSections
+- (NSUInteger)numberOfSections
 {
     return [_items count];
 }
@@ -111,9 +109,9 @@ static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
     if (refreshedSet)
         [self notifySectionsRefreshed:refreshedSet];
     if (insertedSet)
-        [self notifySectionsInserted:insertedSet];
+        [self notifySectionsInserted:insertedSet direction:AAPLDataSourceSectionOperationDirectionNone];
     if (removedSet)
-        [self notifySectionsRemoved:removedSet];
+        [self notifySectionsRemoved:removedSet direction:AAPLDataSourceSectionOperationDirectionNone];
 }
 
 - (void)registerReusableViewsWithCollectionView:(UICollectionView *)collectionView

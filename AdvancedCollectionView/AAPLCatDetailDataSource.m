@@ -11,10 +11,12 @@
 #import "AAPLCatDetailDataSource.h"
 #import "AAPLKeyValueDataSource.h"
 #import "AAPLTextValueDataSource.h"
-#import "AAPLDataSource+Headers.h"
+#import "AAPLSectionHeaderView.h"
 
 #import "AAPLCat.h"
 #import "AAPLDataAccessManager.h"
+
+static NSString *const AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
 
 @interface AAPLCatDetailDataSource ()
 @property (nonatomic, strong) AAPLCat *cat;
@@ -39,7 +41,14 @@
     _classificationDataSource = [[AAPLKeyValueDataSource alloc] initWithObject:cat];
     _classificationDataSource.defaultMetrics.rowHeight = 22;
     _classificationDataSource.title = NSLocalizedString(@"Classification", @"Title of the classification data section");
-    [_classificationDataSource dataSourceTitleHeader];
+	
+	if (![_classificationDataSource headerForKey:AAPLDataSourceTitleHeaderKey]) {
+		AAPLLayoutSupplementaryMetrics *header = [_classificationDataSource newHeaderForKey:AAPLDataSourceTitleHeaderKey];
+		header.supplementaryViewClass = AAPLSectionHeaderView.class;
+		[header configureWithBlock:^(AAPLSectionHeaderView *headerView, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+			headerView.leftLabel.text = dataSource.title;
+		}];
+	}
 
     [self addDataSource:_classificationDataSource];
 
@@ -80,7 +89,7 @@
             }
 
             if (error) {
-                [loading doneWithError:error];
+				[loading done:NO error:error];
                 return;
             }
 
