@@ -15,7 +15,7 @@ static inline BOOL collectionViewSupportsConstraints()
     return constraintsSupported;
 }
 
-@implementation UICollectionReusableView (GridLayout)
+@implementation UICollectionReusableView (AAPLGridLayout)
 
 /**
  *  This is kind of a hack because cells don't have an intrinsic content size or
@@ -53,7 +53,7 @@ static inline BOOL collectionViewSupportsConstraints()
 
 @end
 
-@implementation UICollectionViewCell (GridLayout)
+@implementation UICollectionViewCell (AAPLGridLayout)
 
 - (CGSize)aapl_preferredLayoutSizeFittingSize:(CGSize)fittingSize
 {

@@ -9,6 +9,7 @@
  */
 
 #import "AAPLCatDetailDataSource.h"
+#import "AAPLDataSource+Subclasses.h"
 #import "AAPLKeyValueDataSource.h"
 #import "AAPLTextValueDataSource.h"
 #import "AAPLSectionHeaderView.h"

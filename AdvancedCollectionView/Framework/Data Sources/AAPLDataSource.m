@@ -3,8 +3,8 @@
  See LICENSE.txt for this sample’s licensing information
  */
 
-#import "AAPLDataSource_Private.h"
-#import "AAPLLayoutMetrics_Private.h"
+#import "AAPLDataSource+Subclasses.h"
+#import "AAPLCollectionViewGridLayout.h"
 #import "AAPLPlaceholderView.h"
 #import <libkern/OSAtomic.h>
 
@@ -22,6 +22,7 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
 @property (nonatomic) BOOL loadingComplete;
 @property (nonatomic, weak) AAPLLoading *loadingInstance;
 @property (nonatomic, copy) dispatch_block_t loadingCompleteBlock;
+@property (nonatomic, readonly, getter = isRootDataSource) BOOL rootDataSource;
 @end
 
 @implementation AAPLDataSource {
@@ -60,12 +61,6 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
     return globalIndexPath;
 }
 
-- (NSArray *)indexPathsForItem:(id)object
-{
-    NSAssert(NO, @"Should be implemented by subclasses");
-    return nil;
-}
-
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSAssert(NO, @"Should be implemented by subclasses");
@@ -88,19 +83,20 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
     NSUInteger numberOfSections = self.numberOfSections;
 
     AAPLLayoutSectionMetrics *globalMetrics = [self snapshotMetricsForSectionAtIndex:AAPLGlobalSection];
-    for (AAPLLayoutSupplementaryMetrics* headerMetrics in globalMetrics.headers)
-        [collectionView registerClass:headerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerMetrics.reuseIdentifier];
+	for (AAPLLayoutSupplementaryMetrics *supplMetrics in globalMetrics.supplementaryViews) {
+		if (![supplMetrics.supplementaryViewKind isEqual:UICollectionElementKindSectionHeader]) continue;
+		[collectionView registerClass:supplMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:supplMetrics.reuseIdentifier];
+	}
 
     for (NSUInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
         AAPLLayoutSectionMetrics *metrics = [self snapshotMetricsForSectionAtIndex:sectionIndex];
 
-        for (AAPLLayoutSupplementaryMetrics* headerMetrics in metrics.headers)
-            [collectionView registerClass:headerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerMetrics.reuseIdentifier];
-        for (AAPLLayoutSupplementaryMetrics* footerMetrics in metrics.footers)
-            [collectionView registerClass:footerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:footerMetrics.reuseIdentifier];
+		for (AAPLLayoutSupplementaryMetrics *supplMetrics in metrics.supplementaryViews) {
+			[collectionView registerClass:supplMetrics.supplementaryViewClass forSupplementaryViewOfKind:supplMetrics.supplementaryViewKind withReuseIdentifier:supplMetrics.reuseIdentifier];
+		}
     }
 
-    [collectionView registerClass:[AAPLCollectionPlaceholderView class] forSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withReuseIdentifier:NSStringFromClass([AAPLCollectionPlaceholderView class])];
+	[collectionView registerClass:[AAPLCollectionPlaceholderView class] forSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withReuseIdentifier:NSStringFromClass([AAPLCollectionPlaceholderView class])];
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
@@ -305,7 +301,7 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
     // The root data source puts its headers into the special global section. Other data sources put theirs into their 0 section.
     BOOL rootDataSource = self.rootDataSource;
     if (rootDataSource && AAPLGlobalSection == sectionIndex) {
-        metrics.headers = [NSArray arrayWithArray:_headers];
+		metrics.supplementaryViews = [NSArray arrayWithArray:_headers];
     }
 
     // We need to handle global headers and the placeholder view for section 0
@@ -317,10 +313,10 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
 
         metrics.hasPlaceholder = self.shouldDisplayPlaceholder;
 
-        if (metrics.headers)
-            [headers addObjectsFromArray:metrics.headers];
+		if (metrics.supplementaryViews)
+			[headers addObjectsFromArray:metrics.supplementaryViews];
 
-        metrics.headers = headers;
+		metrics.supplementaryViews = headers;
     }
     
     return metrics;
@@ -363,7 +359,7 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
 
     NSAssert(!_headersByKey[key], @"Attempting to add a header for a key that already exists: %@", key);
 
-    AAPLLayoutSupplementaryMetrics *header = [[AAPLLayoutSupplementaryMetrics alloc] init];
+	AAPLLayoutSupplementaryMetrics *header = [[AAPLLayoutSupplementaryMetrics alloc] initWithSupplementaryViewKind:UICollectionElementKindSectionHeader];
     _headersByKey[key] = header;
     [_headers addObject:header];
     return header;
@@ -688,19 +684,13 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
     }
 
     AAPLLayoutSectionMetrics *sectionMetrics = [self snapshotMetricsForSectionAtIndex:section];
-    AAPLLayoutSupplementaryMetrics *metrics;
+	NSIndexSet *matching = [sectionMetrics.supplementaryViews indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLLayoutSupplementaryMetrics *metrics, NSUInteger idx, BOOL *stop) {
+		return [metrics.supplementaryViewKind isEqual:kind];
+	}];
 
-    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        NSArray *headers = sectionMetrics.headers;
-        metrics = (item < [headers count]) ? headers[item] : nil;
-    }
-    else if ([kind isEqualToString:UICollectionElementKindSectionFooter]) {
-        NSArray *footers = sectionMetrics.footers;
-        metrics = (item < [footers count]) ? footers[item] : nil;
-    }
+	if (item >= matching.count) { return nil; }
 
-    if (!metrics)
-        return nil;
+	AAPLLayoutSupplementaryMetrics *metrics = [sectionMetrics.supplementaryViews objectsAtIndexes:matching][item];
 
     // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
     NSIndexPath *localIndexPath = [self localIndexPathForGlobalIndexPath:indexPath];

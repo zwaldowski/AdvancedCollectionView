@@ -23,7 +23,6 @@
 		1FA42AB3192A7E1200F673A0 /* AAPLComposedDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */; };
 		1FA42AB6192A7E1200F673A0 /* AAPLDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */; };
 		1FA42AB7192A7E1200F673A0 /* AAPLDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */; };
-		1FA42AB8192A7E1200F673A0 /* AAPLDataSource_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */; };
 		1FA42ABD192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */; };
 		1FA42ABE192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */; };
 		1FA42ABF192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */; };
@@ -32,7 +31,6 @@
 		1FA42AC3192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */; };
 		1FA42AC5192A7E1200F673A0 /* AAPLLayoutMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */; };
 		1FA42AC6192A7E1200F673A0 /* AAPLLayoutMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */; };
-		1FA42AC7192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */; };
 		1FA42ACA192A7E1200F673A0 /* AAPLCollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */; };
 		1FA42ACB192A7E1200F673A0 /* AAPLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */; };
 		1FA42AD3192A7E1200F673A0 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */; };
@@ -114,7 +112,6 @@
 		1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLComposedDataSource.m; sourceTree = "<group>"; };
 		1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLDataSource.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLDataSource.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLDataSource_Private.h; sourceTree = "<group>"; };
 		1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewGridLayout.h; sourceTree = "<group>"; };
 		1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewGridLayout.m; sourceTree = "<group>"; };
 		1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewGridLayout_Internal.h; sourceTree = "<group>"; };
@@ -123,7 +120,6 @@
 		1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewGridLayoutAttributes.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLLayoutMetrics.h; sourceTree = "<group>"; };
 		1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLLayoutMetrics.m; sourceTree = "<group>"; };
-		1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLLayoutMetrics_Private.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLBasicCell.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -179,6 +175,8 @@
 		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB80BB781970EE5E001488D3 /* AAPLDataSourceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLDataSourceDelegate.h; sourceTree = "<group>"; };
+		DB80BB791970EEA4001488D3 /* AAPLDataSource+Subclasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AAPLDataSource+Subclasses.h"; sourceTree = "<group>"; };
 		DBCB909C196F427D00F83CDF /* UIView+AAPLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AAPLAdditions.h"; sourceTree = "<group>"; };
 		DBCB909D196F427D00F83CDF /* UIView+AAPLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AAPLAdditions.m"; sourceTree = "<group>"; };
 		DBCB90C0196F8C0100F83CDF /* AAPLComposedCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLComposedCollectionView.h; sourceTree = "<group>"; };
@@ -248,13 +246,14 @@
 		1FA42A57192A7E1200F673A0 /* DataSources */ = {
 			isa = PBXGroup;
 			children = (
+				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
+				DB80BB781970EE5E001488D3 /* AAPLDataSourceDelegate.h */,
+				DB80BB791970EEA4001488D3 /* AAPLDataSource+Subclasses.h */,
+				1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */,
 				1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */,
 				1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */,
 				1FA42A5C192A7E1200F673A0 /* AAPLComposedDataSource.h */,
 				1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */,
-				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
-				1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */,
-				1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */,
 			);
 			name = DataSources;
 			path = "Data Sources";
@@ -263,15 +262,14 @@
 		1FA42A67192A7E1200F673A0 /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */,
+				1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */,
 				1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */,
 				1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */,
 				1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */,
 				1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */,
-				1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */,
-				1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */,
 				1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */,
 				1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */,
-				1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */,
 			);
 			path = Layouts;
 			sourceTree = "<group>";
@@ -420,10 +418,8 @@
 				1FA42AEB192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch in Headers */,
 				1FA42AD3192A7E1200F673A0 /* AAPLBasicCell.h in Headers */,
 				1FE17BD4192E80D100620DC3 /* AAPLCatDetailViewController.h in Headers */,
-				1FA42AC7192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h in Headers */,
 				DBCB909E196F427D00F83CDF /* UIView+AAPLAdditions.h in Headers */,
 				1FE17BD8192E875900620DC3 /* AAPLCatDetailHeader.h in Headers */,
-				1FA42AB8192A7E1200F673A0 /* AAPLDataSource_Private.h in Headers */,
 				1FA42ADE192A7E1200F673A0 /* AAPLPlaceholderView.h in Headers */,
 				1FA42B02192A9D2200F673A0 /* AAPLCat.h in Headers */,
 				1FE17C0A192FEAEC00620DC3 /* AAPLTextValueCell.h in Headers */,

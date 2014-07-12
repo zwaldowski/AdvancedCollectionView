@@ -5,20 +5,13 @@
 
 #import "AAPLCollectionViewGridLayout.h"
 #import "AAPLCollectionViewGridLayoutAttributes.h"
-#import "AAPLDataSource_Private.h"
+#import "AAPLDataSourceDelegate.h"
 #import "AAPLLayoutMetrics.h"
 
 typedef CGSize (^AAPLLayoutMeasureBlock)(NSUInteger itemIndex, CGRect frame);
+typedef CGSize (^AAPLLayoutMeasureKindBlock)(NSString *kind, NSUInteger itemIndex, CGRect frame);
 
-@class AAPLGridLayoutSectionInfo;
-@class AAPLGridLayoutRowInfo;
 @class AAPLGridLayoutInfo;
-
-/// A subclass of UICollectionViewLayoutInvalidationContext that adds invalidation for metrics and origin
-@interface AAPLGridLayoutInvalidationContext : UICollectionViewLayoutInvalidationContext
-@property (nonatomic) BOOL invalidateLayoutMetrics;
-@property (nonatomic) BOOL invalidateLayoutOrigin;
-@end
 
 /// Layout information about a supplementary item (header, footer, or placeholder)
 @interface AAPLGridLayoutSupplementalItemInfo : NSObject
@@ -31,6 +24,7 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSUInteger itemIndex, CGRect frame);
 @property (nonatomic) BOOL hidden;
 /// passed along to attributes
 @property (nonatomic) UIEdgeInsets padding;
+@property (nonatomic) NSInteger zIndex;
 @end
 
 /// Layout information about an item (cell)
@@ -49,13 +43,13 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSUInteger itemIndex, CGRect frame);
 @interface AAPLGridLayoutSectionInfo : NSObject
 @property (nonatomic) CGRect frame;
 @property (nonatomic, weak) AAPLGridLayoutInfo *layoutInfo;
-@property (nonatomic, strong) NSMutableArray *rows;
-@property (nonatomic, strong) NSMutableArray *items;
-@property (nonatomic, strong) NSMutableArray *headers;
-@property (nonatomic, strong) NSMutableArray *footers;
-@property (nonatomic, strong) AAPLGridLayoutSupplementalItemInfo *placeholder;
-@property (nonatomic) UIEdgeInsets insets;
 
+@property (nonatomic, readonly) NSMutableArray *rows;
+@property (nonatomic, readonly) NSMutableArray *items;
+@property (nonatomic, readonly) NSMutableDictionary *supplementalItemArraysByKind;
+- (void)enumerateArraysOfOtherSupplementalItems:(void(^)(NSString *kind, NSArray *items, BOOL *stop))block;
+@property (nonatomic, readonly) AAPLGridLayoutSupplementalItemInfo *placeholder;
+@property (nonatomic) UIEdgeInsets insets;
 @property (nonatomic) UIEdgeInsets separatorInsets;
 @property (nonatomic) UIEdgeInsets sectionSeparatorInsets;
 @property (nonatomic, strong) UIColor *backgroundColor;
@@ -69,11 +63,11 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSUInteger itemIndex, CGRect frame);
 @property (nonatomic, strong) NSMutableArray *nonPinnableHeaderAttributes;
 @property (nonatomic, strong) AAPLCollectionViewGridLayoutAttributes *backgroundAttribute;
 
-- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsHeader:(BOOL)header;
+- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsPlaceholder;
 - (AAPLGridLayoutRowInfo *)addRow;
 - (AAPLGridLayoutItemInfo *)addItem;
-- (void)computeLayoutWithOrigin:(CGFloat)originY measureItemBlock:(AAPLLayoutMeasureBlock)itemBlock measureSupplementaryItemBlock:(AAPLLayoutMeasureBlock)supplementaryBlock;
+- (void)computeLayoutWithOrigin:(CGFloat)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock;
 @end
 
 /// The layout information

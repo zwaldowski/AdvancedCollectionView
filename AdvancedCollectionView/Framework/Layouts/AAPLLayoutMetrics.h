@@ -5,21 +5,23 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString * const AAPLCollectionElementKindPlaceholder;
-
 /// A variable height row. The row will be measured using the data source method -collectionView:sizeFittingSize:forItemAtIndexPath:
 extern CGFloat const AAPLRowHeightVariable;
 
 /// Rows with this height will have a height equal to the height of the collection view minus the initial vertical offset of the row. Really, only one cell should have this height set. Don't abuse this.
 extern CGFloat const AAPLRowHeightRemainder;
 
-extern NSUInteger const AAPLGlobalSection;
+extern CGFloat const AAPLRowHeightDefault;
 
 typedef UICollectionReusableView *(^AAPLLayoutSupplementaryItemCreationBlock)(UICollectionView *collectionView, NSString *kind, NSString *identifier, NSIndexPath *indexPath);
 typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSource, NSIndexPath *indexPath);
 
 /// Definition of how supplementary views should be created and presented in a collection view.
 @interface AAPLLayoutSupplementaryMetrics : NSObject <NSCopying>
+
+- (id)initWithSupplementaryViewKind:(NSString *)kind NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) NSString *supplementaryViewKind;
 
 /// Should this supplementary view be displayed while the placeholder is visible?
 @property (nonatomic) BOOL visibleWhileShowingPlaceholder;
@@ -33,8 +35,11 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSo
 /// Should the supplementary view be hidden?
 @property (nonatomic) BOOL hidden;
 
-/// Use top & bottom padding to adjust spacing of header & footer elements. Not all headers & footers adhere to padding. Default is UIEdgeInsetsZero which is interpretted by supplementary items to be their default values.
+/// Use top & bottom padding to adjust spacing of header & footer elements. Not all headers & footers adhere to padding. Default is UIEdgeInsetsZero which is interpreted by supplementary items to be their default values.
 @property (nonatomic) UIEdgeInsets padding;
+
+/// How is this affected by other coinciding views?
+@property (nonatomic) NSInteger zIndex;
 
 /// The class to use when dequeuing an instance of this supplementary view
 @property (nonatomic) Class supplementaryViewClass;
@@ -53,6 +58,9 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSo
 
 /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
 - (void)configureWithBlock:(AAPLLayoutSupplementaryItemConfigurationBlock)block;
+
+/// An block used to configure an instance of the supplementary view.
+@property (nonatomic, copy) AAPLLayoutSupplementaryItemConfigurationBlock configureView;
 
 @end
 
@@ -99,5 +107,9 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSo
 
 /// Create a default metrics instance
 + (instancetype)defaultMetrics;
+
+@property (nonatomic, copy) NSArray *supplementaryViews;
+@property (nonatomic) BOOL hasPlaceholder;
+
 
 @end

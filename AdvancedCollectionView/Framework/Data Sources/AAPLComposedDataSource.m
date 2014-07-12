@@ -3,7 +3,7 @@
  See LICENSE.txt for this sample’s licensing information
  */
 
-#import "AAPLDataSource_Private.h"
+#import "AAPLDataSource+Subclasses.h"
 #import "AAPLComposedDataSource.h"
 #import "AAPLComposedCollectionView.h"
 
@@ -84,25 +84,6 @@
     NSIndexPath *mappedIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
 
     return [mapping.dataSource itemAtIndexPath:mappedIndexPath];
-}
-
-- (NSArray*)indexPathsForItem:(id)object
-{
-    NSMutableArray *results = [NSMutableArray array];
-    NSArray *dataSources = self.dataSources;
-
-    for (AAPLDataSource *dataSource in dataSources) {
-        AAPLComposedMapping *mapping = [self mappingForDataSource:dataSource];
-        NSArray *indexPaths = [dataSource indexPathsForItem:object];
-
-        if (![indexPaths count])
-            continue;
-
-        for (NSIndexPath *localIndexPath in indexPaths)
-            [results addObject:[mapping globalIndexPathForLocalIndexPath:localIndexPath]];
-    }
-
-    return results;
 }
 
 - (void)removeItemAtIndexPath:(NSIndexPath *)indexPath

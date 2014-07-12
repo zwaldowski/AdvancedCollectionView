@@ -22,6 +22,7 @@
 	if (!oppositeTrailingItem) oppositeTrailingItem = self;
 	
 	UIView *stripe = [[UIView alloc] initWithFrame:CGRectZero];
+	stripe.backgroundColor = color;
 	stripe.translatesAutoresizingMaskIntoConstraints = NO;
 	[self addSubview:stripe];
 	

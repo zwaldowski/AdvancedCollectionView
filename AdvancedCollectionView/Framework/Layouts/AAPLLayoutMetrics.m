@@ -3,14 +3,42 @@
  See LICENSE.txt for this sample’s licensing information
  */
 
-#import "AAPLLayoutMetrics_Private.h"
+#import "AAPLLayoutMetrics.h"
 
-NSString * const AAPLCollectionElementKindPlaceholder = @"AAPLCollectionElementKindPlaceholder";
 CGFloat const AAPLRowHeightVariable = -1000;
 CGFloat const AAPLRowHeightRemainder = -1001;
-NSUInteger const AAPLGlobalSection = NSUIntegerMax;
+CGFloat const AAPLRowHeightDefault = 44;
 
 @implementation AAPLLayoutSupplementaryMetrics
+
+- (instancetype)initWithSupplementaryViewKind:(NSString *)kind
+{
+	self = [super init];
+	if (!self) return nil;
+	_supplementaryViewKind = [kind copy];
+	return self;
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+	AAPLLayoutSupplementaryMetrics *item = [[AAPLLayoutSupplementaryMetrics alloc] initWithSupplementaryViewKind:_supplementaryViewKind];
+	if (!item)
+		return nil;
+	
+	item->_reuseIdentifier = [_reuseIdentifier copy];
+	item->_height = _height;
+	item->_hidden = _hidden;
+	item->_shouldPin = _shouldPin;
+	item->_visibleWhileShowingPlaceholder = _visibleWhileShowingPlaceholder;
+	item->_supplementaryViewClass = _supplementaryViewClass;
+	item->_createView = _createView;
+	item->_configureView = _configureView;
+	item->_backgroundColor = _backgroundColor;
+	item->_selectedBackgroundColor = _selectedBackgroundColor;
+	item->_padding = _padding;
+	item->_zIndex = _zIndex;
+	return item;
+}
 
 - (NSString *)reuseIdentifier
 {
@@ -18,26 +46,6 @@ NSUInteger const AAPLGlobalSection = NSUIntegerMax;
         return _reuseIdentifier;
 
     return NSStringFromClass(_supplementaryViewClass);
-}
-
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    AAPLLayoutSupplementaryMetrics *item = [[AAPLLayoutSupplementaryMetrics alloc] init];
-    if (!item)
-        return nil;
-
-    item->_reuseIdentifier = [_reuseIdentifier copy];
-    item->_height = _height;
-    item->_hidden = _hidden;
-    item->_shouldPin = _shouldPin;
-    item->_visibleWhileShowingPlaceholder = _visibleWhileShowingPlaceholder;
-    item->_supplementaryViewClass = _supplementaryViewClass;
-    item->_createView = _createView;
-    item->_configureView = _configureView;
-    item->_backgroundColor = _backgroundColor;
-    item->_selectedBackgroundColor = _selectedBackgroundColor;
-    item->_padding = _padding;
-    return item;
 }
 
 - (void)configureWithBlock:(AAPLLayoutSupplementaryItemConfigurationBlock)block
@@ -60,6 +68,7 @@ NSUInteger const AAPLGlobalSection = NSUIntegerMax;
 @end
 
 @implementation AAPLLayoutSectionMetrics {
+	NSMutableArray *_supplementaryViews;
     struct {
         unsigned int showsSectionSeparatorWhenLastSection : 1;
         unsigned int backgroundColor : 1;
@@ -92,8 +101,7 @@ NSUInteger const AAPLGlobalSection = NSUIntegerMax;
     metrics->_sectionSeparatorInsets = _sectionSeparatorInsets;
     metrics->_hasPlaceholder = _hasPlaceholder;
     metrics->_showsSectionSeparatorWhenLastSection = _showsSectionSeparatorWhenLastSection;
-    metrics->_headers = [_headers copy];
-    metrics->_footers = [_footers copy];
+	metrics->_supplementaryViews = [_supplementaryViews mutableCopy];
     metrics->_flags = _flags;
     return metrics;
 }
@@ -128,24 +136,29 @@ NSUInteger const AAPLGlobalSection = NSUIntegerMax;
     _flags.showsSectionSeparatorWhenLastSection = YES;
 }
 
+- (void)setSupplementaryViews:(NSArray *)supplementaryViews {
+	_supplementaryViews = [NSMutableArray arrayWithArray:supplementaryViews];
+}
+
 - (AAPLLayoutSupplementaryMetrics *)newHeader
 {
-    AAPLLayoutSupplementaryMetrics *header = [[AAPLLayoutSupplementaryMetrics alloc] init];
-    if (!_headers)
-        _headers = @[header];
-    else
-        _headers = [_headers arrayByAddingObject:header];
-    return header;
+	return [self newSupplementaryMetricsOfKind:UICollectionElementKindSectionHeader];
 }
 
 - (AAPLLayoutSupplementaryMetrics *)newFooter
 {
-    AAPLLayoutSupplementaryMetrics *footer = [[AAPLLayoutSupplementaryMetrics alloc] init];
-    if (!_footers)
-        _footers = @[footer];
-    else
-        _footers = [_footers arrayByAddingObject:footer];
-    return footer;
+	return [self newSupplementaryMetricsOfKind:UICollectionElementKindSectionFooter];
+}
+
+- (AAPLLayoutSupplementaryMetrics *)newSupplementaryMetricsOfKind:(NSString *)kind
+{
+	AAPLLayoutSupplementaryMetrics *metrics = [[AAPLLayoutSupplementaryMetrics alloc] initWithSupplementaryViewKind:kind];
+	if (!_supplementaryViews) {
+		_supplementaryViews = [NSMutableArray arrayWithObject:metrics];
+	} else {
+		[_supplementaryViews addObject:metrics];
+	}
+	return metrics;
 }
 
 - (void)applyValuesFromMetrics:(AAPLLayoutSectionMetrics *)metrics
@@ -183,15 +196,9 @@ NSUInteger const AAPLGlobalSection = NSUIntegerMax;
     if (metrics.hasPlaceholder)
         self.hasPlaceholder = YES;
 
-    if (metrics.headers) {
-        NSArray *headers = [NSArray arrayWithArray:self.headers];
-        self.headers = [headers arrayByAddingObjectsFromArray:metrics.headers];
-    }
-
-    if (metrics.footers) {
-        NSArray *footers = self.footers;
-        self.footers = [metrics.footers arrayByAddingObjectsFromArray:footers];
-    }
+	if (metrics.supplementaryViews) {
+		self.supplementaryViews = [[NSArray arrayWithArray:self.supplementaryViews] arrayByAddingObjectsFromArray:metrics.supplementaryViews];
+	}
 }
 
 @end

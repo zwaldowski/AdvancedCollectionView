@@ -1,10 +1,12 @@
-/*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
- See LICENSE.txt for this sample’s licensing information
- */
+//
+//  AAPLDataSourceHeader.h
+//  AdvancedCollectionView
+//
+//  Created by Zachary Waldowski on 7/12/14.
+//  Copyright (c) 2014 Apple. All rights reserved.
+//
 
 #import "AAPLDataSource.h"
-#import "AAPLContentLoading.h"
 
 @class AAPLCollectionPlaceholderView;
 
@@ -32,22 +34,6 @@
 @end
 
 @interface AAPLDataSource ()
-- (AAPLCollectionPlaceholderView *)dequeuePlaceholderViewForCollectionView:(UICollectionView *)collectionView atIndexPath:(NSIndexPath *)indexPath;
-
-- (AAPLLayoutSectionMetrics *)snapshotMetricsForSectionAtIndex:(NSInteger)sectionIndex;
-
-- (void)updatePlaceholder:(AAPLCollectionPlaceholderView *)placeholderView notifyVisibility:(BOOL)notify;
-
-- (void)enqueuePendingUpdateBlock:(dispatch_block_t)block;
-- (void)executePendingUpdates;
-
-- (NSIndexPath *)localIndexPathForGlobalIndexPath:(NSIndexPath *)globalIndexPath;
-
-/// Is this data source the root data source? This depends on proper set up of the delegate property. Container data sources ALWAYS act as the delegate for their contained data sources.
-@property (nonatomic, readonly, getter = isRootDataSource) BOOL rootDataSource;
-
-/// Whether this data source should display the placeholder.
-@property (nonatomic, readonly) BOOL shouldDisplayPlaceholder;
 
 /// A delegate object that will receive change notifications from this data source.
 @property (nonatomic, weak) id<AAPLDataSourceDelegate> delegate;

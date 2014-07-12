@@ -4,7 +4,7 @@
  */
 
 #import "AAPLCollectionViewController.h"
-#import "AAPLDataSource_Private.h"
+#import "AAPLDataSourceDelegate.h"
 
 static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 

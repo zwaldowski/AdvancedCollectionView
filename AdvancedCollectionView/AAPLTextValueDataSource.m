@@ -10,6 +10,7 @@
  */
 
 #import "AAPLTextValueDataSource.h"
+#import "AAPLDataSource+Subclasses.h"
 #import "AAPLTextValueCell.h"
 #import "AAPLSectionHeaderView.h"
 #import "UICollectionReusableView+AAPLGridLayout.h"

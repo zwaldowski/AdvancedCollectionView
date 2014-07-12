@@ -9,6 +9,7 @@
  */
 
 #import "AAPLCatListViewController.h"
+#import "AAPLLayoutMetrics.h"
 #import "AAPLCatListDataSource.h"
 #import "AAPLCatDetailViewController.h"
 

@@ -9,6 +9,7 @@
  */
 
 #import "AAPLCatDetailViewController.h"
+#import "AAPLLayoutMetrics.h"
 #import "AAPLCatDetailDataSource.h"
 #import "AAPLCatDetailHeader.h"
 

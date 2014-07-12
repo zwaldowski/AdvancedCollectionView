@@ -4,23 +4,34 @@
  */
 
 #import "AAPLCollectionViewGridLayout_Internal.h"
-#import "AAPLLayoutMetrics_Private.h"
+#import "AAPLGridLayoutSeparatorView.h"
 #import "UICollectionReusableView+AAPLGridLayout.h"
 #import "UIView+AAPLAdditions.h"
-#import "AAPLGridLayoutSeparatorView.h"
 
-#define MEASURE_HEIGHT 100
+NSUInteger const AAPLGlobalSection = NSUIntegerMax;
 
-#define DEFAULT_ROW_HEIGHT 44
+NSString *const AAPLCollectionElementKindPlaceholder = @"AAPLCollectionElementKindPlaceholder";
+static NSString *const AAPLGridLayoutRowSeparatorKind = @"AAPLGridLayoutRowSeparatorKind";
+static NSString *const AAPLGridLayoutSectionSeparatorKind = @"AAPLGridLayoutSectionSeparatorKind";
+static NSString *const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLayoutGlobalHeaderBackgroundKind";
 
-#define DEFAULT_ZINDEX 1
-#define SEPARATOR_ZINDEX 100
-#define HEADER_ZINDEX 1000
-#define PINNED_HEADER_ZINDEX 10000
+static const CGFloat AAPLGridLayoutMeasuringHeight = 1000;
 
-static NSString * const AAPLGridLayoutRowSeparatorKind = @"AAPLGridLayoutRowSeparatorKind";
-static NSString * const AAPLGridLayoutSectionSeparatorKind = @"AAPLGridLayoutSectionSeparatorKind";
-static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLayoutGlobalHeaderBackgroundKind";
+static const NSInteger AAPLGridLayoutZIndexDefault = 1;
+static const NSInteger AAPLGridLayoutZIndexPlaceholder = 50;
+static const NSInteger AAPLGridLayoutZIndexSeparator = 100;
+static const NSInteger AAPLGridLayoutZIndexHeader = 1000;
+static const NSInteger AAPLGridLayoutZIndexPinned = 10000;
+static const NSInteger AAPLGridLayoutZIndexPinnedOverlap = 9000;
+
+static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInteger *outIndex, BOOL globalSection) {
+	if (indexPath.length == 1) {
+		if (outIndex) *outIndex = globalSection ? [indexPath indexAtPosition:0] : NSNotFound;
+		return globalSection ? AAPLGlobalSection : [indexPath indexAtPosition:0];
+	}
+	if (outIndex) *outIndex = [indexPath indexAtPosition:1];
+	return [indexPath indexAtPosition:0];
+}
 
 @interface AAPLCollectionViewGridLayout () <AAPLDataSourceDelegate>
 @property (nonatomic) CGSize layoutSize;
@@ -50,13 +61,13 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 @implementation AAPLCollectionViewGridLayout  {
     struct {
         /// the data source has the snapshot metrics method
-        unsigned int dataSourceHasSnapshotMetrics:1;
+		BOOL dataSourceHasSnapshotMetrics;
         /// layout data becomes invalid if the data source changes
-        unsigned int layoutDataIsValid:1;
+		BOOL layoutDataIsValid;
         /// layout metrics will only be valid if layout data is also valid
-        unsigned int layoutMetricsAreValid:1;
+		BOOL layoutMetricsAreValid;
         /// contentOffset of collection view is valid
-        unsigned int useCollectionViewContentOffset:1;
+		BOOL useCollectionViewContentOffset;
     } _flags;
 }
 
@@ -143,7 +154,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     if (!CGRectIsEmpty(self.collectionView.bounds)) {
         [self buildLayout];
     }
-    
+
     [super prepareLayout];
 }
 
@@ -163,26 +174,23 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger sectionIndex = indexPath.section;
-    NSInteger itemIndex = indexPath.item;
+	AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathToItemAttributes[indexPath];
+	if (attributes) {
+		return attributes;
+	}
 
-    if (sectionIndex < 0 || sectionIndex >= [_layoutInfo.sections count])
+	NSUInteger itemIndex;
+	NSUInteger sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, YES);
+
+	if (sectionIndex == AAPLGlobalSection || sectionIndex >= _layoutInfo.sections.count) {
         return nil;
-
-    AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathToItemAttributes[indexPath];
-    if (attributes) {
-        return attributes;
-    }
+	}
 
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
 
-    if (itemIndex < 0 || itemIndex >= [section.items count])
+	if (itemIndex >= section.items.count) {
         return nil;
-
-    UICollectionView *collectionView = self.collectionView;
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
-        dataSource = nil;
+	}
 
     AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
@@ -193,7 +201,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         attributes.hidden = YES;
     }
     attributes.frame = item.frame;
-    attributes.zIndex = DEFAULT_ZINDEX;
+	attributes.zIndex = AAPLGridLayoutZIndexDefault;
     attributes.backgroundColor = section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
 
@@ -204,8 +212,8 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger sectionIndex = (indexPath.length == 1 ? AAPLGlobalSection : indexPath.section);
-    NSInteger itemIndex = (indexPath.length == 1 ? [indexPath indexAtPosition:0] : indexPath.item);
+	NSUInteger itemIndex;
+	NSUInteger sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, YES);
 
     AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
     AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathKindToSupplementaryAttributes[indexPathKind];
@@ -213,23 +221,14 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         return attributes;
 
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-    CGRect frame = CGRectZero;
     AAPLGridLayoutSupplementalItemInfo *supplementalItem;
 
-    NSArray *supplementalItems;
-
-    if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder])
-        // supplementalItem might become nil if there's no placedholder, but that just means we return attributes that are empty
+	if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder]) {
+		// supplementalItem might become nil if there's no placeholder, but that just means we return attributes that are empty
         supplementalItem = section.placeholder;
-    else {
-        if ([kind isEqualToString:UICollectionElementKindSectionHeader])
-            supplementalItems = section.headers;
-        else if ([kind isEqualToString:UICollectionElementKindSectionFooter])
-            supplementalItems = section.footers;
-
-        if (itemIndex < 0 || itemIndex >= [supplementalItems count])
-            return nil;
-
+	} else {
+		NSArray *supplementalItems = section.supplementalItemArraysByKind[kind];
+		if (itemIndex >= supplementalItems.count) { return nil; };
         supplementalItem = supplementalItems[itemIndex];
     }
 
@@ -240,17 +239,16 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         attributes.hidden = YES;
     }
 
-    frame = supplementalItem.frame;
-
-    attributes.frame = frame;
-    attributes.zIndex = HEADER_ZINDEX;
-
+	attributes.frame = supplementalItem.frame;
+	attributes.zIndex = supplementalItem.zIndex;
     attributes.padding = supplementalItem.padding;
     attributes.backgroundColor = supplementalItem.backgroundColor ? : section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
 
-    if (!_preparingLayout)
+	if (!_preparingLayout) {
         _indexPathKindToSupplementaryAttributes[indexPathKind] = attributes;
+	}
+
     return attributes;
 }
 
@@ -298,7 +296,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     targetContentOffset.y = MIN(targetContentOffset.y, MAX(0, _layoutSize.height - availableHeight));
 
     NSInteger firstInsertedIndex = [self.insertedSections firstIndex];
-	if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] intValue]) {
+    if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] intValue]) {
         AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
         CGFloat globalNonPinnableHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
         CGFloat globalPinnableHeight = CGRectGetHeight(globalSection.frame) - globalNonPinnableHeight;
@@ -322,6 +320,8 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
 - (void)prepareForCollectionViewUpdates:(NSArray *)updateItems
 {
+	NSUInteger sectionIndex, itemIndex;
+
     self.insertedIndexPaths = [NSMutableSet set];
     self.removedIndexPaths = [NSMutableSet set];
     self.insertedSections = [NSMutableIndexSet indexSet];
@@ -331,22 +331,25 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     for (UICollectionViewUpdateItem *updateItem in updateItems) {
         if (UICollectionUpdateActionInsert == updateItem.updateAction) {
             NSIndexPath *indexPath = updateItem.indexPathAfterUpdate;
-            if (NSNotFound == indexPath.item)
-                [self.insertedSections addIndex:indexPath.section];
+	        sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, NO);
+            if (itemIndex == NSNotFound)
+                [self.insertedSections addIndex:sectionIndex];
             else
                 [self.insertedIndexPaths addObject:indexPath];
         }
         else if (UICollectionUpdateActionDelete == updateItem.updateAction) {
             NSIndexPath *indexPath = updateItem.indexPathBeforeUpdate;
-            if (NSNotFound == indexPath.item)
-                [self.removedSections addIndex:indexPath.section];
+	        sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, NO);
+            if (itemIndex == NSNotFound)
+                [self.removedSections addIndex:sectionIndex];
             else
                 [self.removedIndexPaths addObject:indexPath];
         }
         else if (UICollectionUpdateActionReload == updateItem.updateAction) {
             NSIndexPath *indexPath = updateItem.indexPathAfterUpdate;
-            if (NSNotFound == indexPath.item)
-                [self.reloadedSections addIndex:indexPath.section];
+	        sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, NO);
+            if (itemIndex == NSNotFound)
+                [self.reloadedSections addIndex:sectionIndex];
         }
     }
 
@@ -393,7 +396,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -422,7 +425,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -451,7 +454,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -487,7 +490,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -517,7 +520,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -544,7 +547,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 {
     AAPLCollectionViewGridLayoutAttributes *result = nil;
 
-    NSInteger section = (indexPath.length > 1 ? indexPath.section : AAPLGlobalSection);
+	NSUInteger section = AAPLGridLayoutGetIndices(indexPath, NULL, YES);
 
     AAPLDataSourceSectionOperationDirection direction = [_updateSectionDirections[@(section)] intValue];
 	if (AAPLDataSourceSectionOperationDirectionNone != direction) {
@@ -621,7 +624,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     id<UICollectionViewDataSource> dataSource = collectionView.dataSource;
 
     UICollectionReusableView *header = [dataSource collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
-    CGSize fittingSize = CGSizeMake(_layoutInfo.width, MEASURE_HEIGHT);
+	CGSize fittingSize = CGSizeMake(_layoutInfo.width, AAPLGridLayoutMeasuringHeight);
     CGSize size = [header aapl_preferredLayoutSizeFittingSize:fittingSize];
     [header removeFromSuperview];
     return size;
@@ -636,7 +639,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
     BOOL globalSection = AAPLGlobalSection == sectionIndex;
 
-    CGFloat rowHeight = metrics.rowHeight ?: DEFAULT_ROW_HEIGHT;
+	CGFloat rowHeight = metrics.rowHeight ?: AAPLRowHeightDefault;
     BOOL variableRowHeight = (rowHeight == AAPLRowHeightVariable);
     NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
 
@@ -644,7 +647,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     NSAssert(rowHeight != AAPLRowHeightRemainder || sectionIndex == [collectionView numberOfSections] - 1, @"Remainder row height may only be set for last section.");
 
     if (variableRowHeight)
-        rowHeight = MEASURE_HEIGHT;
+		rowHeight = AAPLGridLayoutMeasuringHeight;
 
     AAPLGridLayoutSectionInfo *section = [_layoutInfo addSectionWithIndex:sectionIndex];
 
@@ -662,36 +665,36 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     section.showsSectionSeparatorWhenLastSection = metrics.showsSectionSeparatorWhenLastSection;
     section.insets = metrics.padding;
 
-    [metrics.headers enumerateObjectsUsingBlock:^(AAPLLayoutSupplementaryMetrics *headerMetrics, NSUInteger headerIndex, BOOL *stop) {
-        AAPLGridLayoutSupplementalItemInfo *header = [section addSupplementalItemAsHeader:YES];
-        header.height = headerMetrics.height;
-        header.shouldPin = headerMetrics.shouldPin;
-        header.visibleWhileShowingPlaceholder = headerMetrics.visibleWhileShowingPlaceholder;
-        header.padding = headerMetrics.padding;
-        header.hidden = headerMetrics.hidden;
+	for (AAPLLayoutSupplementaryMetrics *suplMetrics in metrics.supplementaryViews) {
+		if ([suplMetrics.supplementaryViewKind isEqual:UICollectionElementKindSectionFooter] && !suplMetrics.height) {
+			continue;
+		}
 
-        UIColor *backgroundColor = headerMetrics.backgroundColor;
-        if (backgroundColor)
-            header.backgroundColor = [backgroundColor isEqual:clearColor] ? nil : backgroundColor;
-        else
-            header.backgroundColor = section.backgroundColor;
+		AAPLGridLayoutSupplementalItemInfo *info = [section addSupplementalItemOfKind:suplMetrics.supplementaryViewKind];
+		info.zIndex = suplMetrics.zIndex ?: AAPLGridLayoutZIndexHeader;
+		info.height = suplMetrics.height;
+		info.padding = suplMetrics.padding;
+		info.hidden = suplMetrics.hidden;
 
-        UIColor *selectedBackgroundColor = headerMetrics.selectedBackgroundColor;
-        if (selectedBackgroundColor)
-            header.selectedBackgroundColor = [selectedBackgroundColor isEqual:clearColor] ? nil : selectedBackgroundColor;
-        else
-            header.selectedBackgroundColor = section.selectedBackgroundColor;
-    }];
+		if ([suplMetrics.supplementaryViewKind isEqual:UICollectionElementKindSectionHeader]) {
+			info.shouldPin = suplMetrics.shouldPin;
+			info.visibleWhileShowingPlaceholder = suplMetrics.visibleWhileShowingPlaceholder;
 
-    for (AAPLLayoutSupplementaryMetrics *footerMetrics in metrics.footers) {
-        if (!footerMetrics.height)
-            continue;
-        AAPLGridLayoutSupplementalItemInfo *footer = [section addSupplementalItemAsHeader:NO];
-        footer.height = footerMetrics.height;
-        footer.backgroundColor = footerMetrics.backgroundColor;
-        footer.padding = footerMetrics.padding;
-        footer.hidden = footerMetrics.hidden;
-    }
+			backgroundColor = suplMetrics.backgroundColor;
+			if (backgroundColor)
+				info.backgroundColor = [backgroundColor isEqual:clearColor] ? nil : backgroundColor;
+			else
+				info.backgroundColor = section.backgroundColor;
+
+			selectedBackgroundColor = suplMetrics.selectedBackgroundColor;
+			if (selectedBackgroundColor)
+				info.selectedBackgroundColor = [selectedBackgroundColor isEqual:clearColor] ? nil : selectedBackgroundColor;
+			else
+				info.selectedBackgroundColor = section.selectedBackgroundColor;
+		} else {
+			info.backgroundColor = suplMetrics.backgroundColor;
+		}
+	};
 
 	CGFloat columnWidth = section.columnWidth;
 
@@ -716,16 +719,12 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
     UICollectionView *collectionView = self.collectionView;
     NSDictionary *layoutMetrics = [self snapshotMetrics];
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
 
     UIEdgeInsets contentInset = collectionView.contentInset;
     CGFloat width = CGRectGetWidth(collectionView.bounds) - contentInset.left - contentInset.right;
     CGFloat height = CGRectGetHeight(collectionView.bounds) - contentInset.bottom - contentInset.top;
 
     NSInteger numberOfSections = [collectionView numberOfSections];
-
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
-        dataSource = nil;
 
     _layoutInfo.width = width;
     _layoutInfo.height = height;
@@ -741,8 +740,8 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 }
 
 - (void)invalidateLayoutForItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger sectionIndex = indexPath.section;
-    NSInteger itemIndex = indexPath.item;
+	NSUInteger itemIndex;
+	NSUInteger sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, NO);
 
     AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForSectionAtIndex:sectionIndex];
     AAPLGridLayoutItemInfo *itemInfo = sectionInfo.items[itemIndex];
@@ -763,7 +762,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     [self invalidateLayoutWithContext:context];
 }
 
-- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex dataSource:(AAPLDataSource *)dataSource
+- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex
 {
     Class attributeClass = self.class.layoutAttributesClass;
 
@@ -787,7 +786,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         // This will be updated by -filterSpecialAttributes
         backgroundAttribute.frame = section.frame;
         backgroundAttribute.unpinnedY = section.frame.origin.y;
-        backgroundAttribute.zIndex = DEFAULT_ZINDEX;
+		backgroundAttribute.zIndex = AAPLGridLayoutZIndexDefault;
         backgroundAttribute.pinnedHeader = NO;
         backgroundAttribute.backgroundColor = section.backgroundColor;
         backgroundAttribute.hidden = NO;
@@ -798,7 +797,9 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         _indexPathKindToDecorationAttributes[indexPathKind] = backgroundAttribute;
     }
 
-    [section.headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *header, NSUInteger headerIndex, BOOL *stop) {
+	NSArray *headers = section.supplementalItemArraysByKind[UICollectionElementKindSectionHeader], *footers = section.supplementalItemArraysByKind[UICollectionElementKindSectionFooter];
+
+	[headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *header, NSUInteger headerIndex, BOOL *stop) {
         CGRect headerFrame = header.frame;
 
         // ignore headers if there are no items and the header isn't a global header
@@ -812,7 +813,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         AAPLCollectionViewGridLayoutAttributes *headerAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:indexPath];
         headerAttribute.frame = headerFrame;
         headerAttribute.unpinnedY = headerFrame.origin.y;
-        headerAttribute.zIndex = HEADER_ZINDEX;
+		headerAttribute.zIndex = header.zIndex;
         headerAttribute.pinnedHeader = NO;
         headerAttribute.backgroundColor = header.backgroundColor ? : section.backgroundColor;
         headerAttribute.selectedBackgroundColor = header.selectedBackgroundColor;
@@ -838,7 +839,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
         separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, section.frame.origin.y, CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
         separatorAttributes.backgroundColor = sectionSeparatorColor;
-        separatorAttributes.zIndex = SEPARATOR_ZINDEX;
+		separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
         [_layoutAttributes addObject:separatorAttributes];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
@@ -850,7 +851,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:sectionIndex];
         AAPLCollectionViewGridLayoutAttributes *placeholderAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withIndexPath:indexPath];
         placeholderAttribute.frame = placeholder.frame;
-        placeholderAttribute.zIndex = DEFAULT_ZINDEX + 1;
+		placeholderAttribute.zIndex = AAPLGridLayoutZIndexPlaceholder;
         [_layoutAttributes addObject:placeholderAttribute];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLCollectionElementKindPlaceholder];
@@ -859,7 +860,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
     __block NSUInteger itemIndex = 0;
 
-    [section.rows enumerateObjectsUsingBlock:^(AAPLGridLayoutRowInfo *row, NSUInteger rowIndex, BOOL *stop) {
+    [section.rows enumerateObjectsUsingBlock:^(AAPLGridLayoutRowInfo *row, NSUInteger rowIndex, BOOL *stopA) {
         if (![row.items count])
             return;
 
@@ -873,20 +874,18 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
             AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind withIndexPath:indexPath];
             separatorAttributes.frame = CGRectMake(section.separatorInsets.left, row.frame.origin.y, CGRectGetWidth(frame) - section.separatorInsets.left - section.separatorInsets.right, hairline);
             separatorAttributes.backgroundColor = separatorColor;
-            separatorAttributes.zIndex = SEPARATOR_ZINDEX;
+			separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
             [_layoutAttributes addObject:separatorAttributes];
 
             AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutRowSeparatorKind];
             _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
         }
 
-        [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stop) {
-            CGRect frame = item.frame;
-
+        [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stopB) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex++ inSection:sectionIndex];
             AAPLCollectionViewGridLayoutAttributes *newAttribute = [attributeClass layoutAttributesForCellWithIndexPath:indexPath];
-            newAttribute.frame = frame;
-            newAttribute.zIndex = DEFAULT_ZINDEX;
+			newAttribute.frame = item.frame;
+			newAttribute.zIndex = AAPLGridLayoutZIndexDefault;
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
             newAttribute.hidden = NO;
@@ -895,19 +894,42 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
             _indexPathToItemAttributes[indexPath] = newAttribute;
         }];
-    }];
+	}];
 
-    [section.footers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *footer, NSUInteger footerIndex, BOOL *stop) {
-        CGRect frame = footer.frame;
+	[section.supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *obj, BOOL *stopA) {
+		if ([kind isEqual:UICollectionElementKindSectionHeader] || [kind isEqual:UICollectionElementKindSectionFooter]) { return; }
 
+		NSUInteger index = 0;
+
+		for (AAPLGridLayoutSupplementalItemInfo *item in obj) {
+			// ignore headers if there are no items and the header isn't a global header
+			if (!numberOfItems || !item.height || item.hidden)
+				continue;
+
+			NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index++ inSection:sectionIndex];
+			AAPLCollectionViewGridLayoutAttributes *itemAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
+			itemAttribute.frame = item.frame;
+			itemAttribute.zIndex = item.zIndex;
+			itemAttribute.backgroundColor = item.backgroundColor ? : section.backgroundColor;
+			itemAttribute.selectedBackgroundColor = item.selectedBackgroundColor;
+			itemAttribute.padding = item.padding;
+			itemAttribute.hidden = NO;
+			[_layoutAttributes addObject:itemAttribute];
+
+			AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
+			_indexPathKindToSupplementaryAttributes[indexPathKind] = itemAttribute;
+		}
+	}];
+
+	[footers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *footer, NSUInteger footerIndex, BOOL *stop) {
         // ignore the footer if there are no items or the footer has no height
         if (!numberOfItems || !footer.height || footer.hidden)
             return;
 
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:footerIndex inSection:sectionIndex];
         AAPLCollectionViewGridLayoutAttributes *footerAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:indexPath];
-        footerAttribute.frame = frame;
-        footerAttribute.zIndex = HEADER_ZINDEX;
+		footerAttribute.frame = footer.frame;
+		footerAttribute.zIndex = footer.zIndex;
         footerAttribute.backgroundColor = footer.backgroundColor ? : section.backgroundColor;
         footerAttribute.selectedBackgroundColor = footer.selectedBackgroundColor;
         footerAttribute.padding = footer.padding;
@@ -917,7 +939,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionFooter];
         _indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
     }];
-    
+
     NSUInteger numberOfSections = [_layoutInfo.sections count];
 
     // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
@@ -926,12 +948,37 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
         separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, CGRectGetMaxY(section.frame), CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
         separatorAttributes.backgroundColor = sectionSeparatorColor;
-        separatorAttributes.zIndex = SEPARATOR_ZINDEX;
+		separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
         [_layoutAttributes addObject:separatorAttributes];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
         _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
-    }
+	}
+
+	[_layoutAttributes sortWithOptions:NSSortConcurrent|NSSortStable usingComparator:^NSComparisonResult(AAPLCollectionViewGridLayoutAttributes *obj1, AAPLCollectionViewGridLayoutAttributes *obj2) {
+		CGRect frame1 = obj1.frame;
+		CGRect frame2 = obj2.frame;
+
+		CGFloat max1 = CGRectGetMaxY(frame1);
+		CGFloat max2 = CGRectGetMaxY(frame2);
+
+		if (max1 > max2) {
+			return NSOrderedDescending;
+		} else if (max1 < max2) {
+			return NSOrderedAscending;
+		}
+
+		CGFloat min1 = CGRectGetMinY(frame1);
+		CGFloat min2 = CGRectGetMinY(frame2);
+
+		if (min1 > max2) {
+			return NSOrderedAscending;
+		} else if (min1 < min2)  {
+			return NSOrderedDescending;
+		}
+
+		return NSOrderedSame;
+	}];
 }
 
 - (CGFloat)heightOfAttributes:(NSArray *)attributes
@@ -996,12 +1043,12 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     CGFloat globalNonPinningHeight = 0;
     AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
     if (globalSection) {
-        [globalSection computeLayoutWithOrigin:start measureItemBlock:nil measureSupplementaryItemBlock:^(NSUInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:itemIndex];
-            shouldInvalidate |= YES;
-            return [self measureSupplementalItemOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
-        }];
-        [self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection dataSource:dataSource];
+		[globalSection computeLayoutWithOrigin:start measureItem:NULL measureSupplementaryItem:^(NSString *kind, NSUInteger itemIndex, CGRect frame) {
+			NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:itemIndex];
+			shouldInvalidate |= YES;
+			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
+		}];
+		[self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection];
         globalNonPinningHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
     }
 
@@ -1010,16 +1057,16 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         if (attributes)
             start = CGRectGetMaxY(attributes.frame);
         AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-        [section computeLayoutWithOrigin:start measureItemBlock:^(NSUInteger itemIndex, CGRect frame) {
+		[section computeLayoutWithOrigin:start measureItem:^(NSUInteger itemIndex, CGRect frame) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
             return [dataSource collectionView:collectionView sizeFittingSize:frame.size forItemAtIndexPath:indexPath];
-        } measureSupplementaryItemBlock:^(NSUInteger itemIndex, CGRect frame) {
+		} measureSupplementaryItem:^(NSString *kind, NSUInteger itemIndex, CGRect frame) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
             shouldInvalidate |= YES;
-            return [self measureSupplementalItemOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
+			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
         }];
-		
-        [self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
+
+		[self addLayoutAttributesForSection:section atIndex:sectionIndex];
     }
 
     AAPLCollectionViewGridLayoutAttributes *attributes = [_layoutAttributes lastObject];
@@ -1062,7 +1109,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
             frame.origin.y = maxY - CGRectGetHeight(frame);
             maxY = frame.origin.y;
         }
-        attr.zIndex = PINNED_HEADER_ZINDEX;
+		attr.zIndex = AAPLGridLayoutZIndexPinned;
         attr.frame = frame;
     }
 
@@ -1098,7 +1145,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     __block AAPLGridLayoutSectionInfo *result = nil;
 
     [_layoutInfo.sections enumerateKeysAndObjectsUsingBlock:^(NSNumber *sectionIndex, AAPLGridLayoutSectionInfo *sectionInfo, BOOL *stop) {
-        if (AAPLGlobalSection == [sectionIndex intValue])
+        if (AAPLGlobalSection == [sectionIndex unsignedIntegerValue])
             return;
 
         CGRect frame = sectionInfo.frame;
@@ -1135,13 +1182,13 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
     if (section.pinnableHeaderAttributes) {
         pinnableY = [self applyTopPinningToAttributes:section.pinnableHeaderAttributes minY:pinnableY];
-        [self finalizePinnedAttributes:section.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX];
+		[self finalizePinnedAttributes:section.pinnableHeaderAttributes zIndex:AAPLGridLayoutZIndexPinned];
     }
 
     if (section.nonPinnableHeaderAttributes && [section.nonPinnableHeaderAttributes count]) {
         [self resetPinnableAttributes:section.nonPinnableHeaderAttributes];
         nonPinnableY = [self applyBottomPinningToAttributes:section.nonPinnableHeaderAttributes maxY:nonPinnableY];
-        [self finalizePinnedAttributes:section.nonPinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX];
+		[self finalizePinnedAttributes:section.nonPinnableHeaderAttributes zIndex:AAPLGridLayoutZIndexPinned];
     }
 
     if (section.backgroundAttribute) {
@@ -1155,7 +1202,7 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     AAPLGridLayoutSectionInfo *overlappingSection = [self firstSectionOverlappingYOffset:pinnableY];
     if (overlappingSection) {
         [self applyTopPinningToAttributes:overlappingSection.pinnableHeaderAttributes minY:pinnableY];
-        [self finalizePinnedAttributes:overlappingSection.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX - 100];
+		[self finalizePinnedAttributes:overlappingSection.pinnableHeaderAttributes zIndex:AAPLGridLayoutZIndexPinnedOverlap];
     };
 }
 

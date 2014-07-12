@@ -21,16 +21,6 @@
 	return _items[itemIndex];
 }
 
-- (NSArray *)indexPathsForItem:(id)item
-{
-    NSMutableArray *indexPaths = [NSMutableArray array];
-    [_items enumerateObjectsUsingBlock:^(id obj, NSUInteger objectIndex, BOOL *stop) {
-        if ([obj isEqual:item])
-            [indexPaths addObject:[NSIndexPath indexPathForItem:objectIndex inSection:0]];
-    }];
-    return indexPaths;
-}
-
 - (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSIndexSet *removedIndexes = [NSIndexSet indexSetWithIndex:(NSUInteger)indexPath.item];
