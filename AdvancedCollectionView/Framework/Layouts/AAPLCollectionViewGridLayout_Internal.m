@@ -364,7 +364,7 @@
 	self = [super init];
 	if (!self) return nil;
 	
-	_indexPath = indexPath;
+	_indexPath = [indexPath copy];
 	_kind = [kind copy];
 	
 	return self;
@@ -372,7 +372,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-	return [[AAPLIndexPathKind alloc] initWithIndexPath:_indexPath kind:_kind];
+	return self;
 }
 
 - (NSUInteger)hash
