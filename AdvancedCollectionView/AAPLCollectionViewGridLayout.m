@@ -93,14 +93,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     self = [super init];
     if (!self)
         return nil;
-    _indexPath = indexPath;
+    _indexPath = [indexPath copy];
     _kind = [kind copy];
     return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] alloc] initWithIndexPath:_indexPath kind:_kind];
+    return self;
 }
 
 - (NSUInteger)hash

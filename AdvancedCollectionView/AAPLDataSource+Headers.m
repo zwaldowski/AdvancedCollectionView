@@ -31,7 +31,7 @@ static NSString *AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
     return header;
 }
 
-- (AAPLLayoutSupplementaryMetrics *)newSectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex;
+- (AAPLLayoutSupplementaryMetrics *)newSectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex
 {
     AAPLLayoutSupplementaryMetrics *newHeader = [self newHeaderForSectionAtIndex:sectionIndex];
     newHeader.supplementaryViewClass = [AAPLSectionHeaderView class];
