@@ -7,7 +7,6 @@
 #import <objc/message.h>
 #import <libkern/OSAtomic.h>
 
-static NSString *const AAPLStateNil = @"Nil";
 NSString *const AAPLInvalidStateTransitionException = @"InvalidStateTransitionException";
 
 @interface AAPLStateMachine () <AAPLStateMachineDelegate> {
@@ -104,10 +103,9 @@ NSString *const AAPLInvalidStateTransitionException = @"InvalidStateTransitionEx
 	
 	// ...send will-change message for downstream KVO support...
 	id <AAPLStateMachineDelegate> target = [self target];
-	NSString *fromStateNotNil = fromState ? fromState : AAPLStateNil;
 	
 	if (_flags.targetRespondsToWillChange) {
-		[target stateWillChangeFrom:fromStateNotNil to:appliedToState];
+		[target stateWillChangeFrom:fromState to:appliedToState];
 	}
 	
 	OSSpinLockLock(&_lock);
@@ -115,7 +113,7 @@ NSString *const AAPLInvalidStateTransitionException = @"InvalidStateTransitionEx
 	OSSpinLockUnlock(&_lock);
 	
 	if (_flags.targetRespondsToDidChange) {
-		[target stateDidChangeFrom:fromStateNotNil to:appliedToState];
+		[target stateDidChangeFrom:fromState to:appliedToState];
 	}
 }
 

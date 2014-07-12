@@ -9,6 +9,7 @@
  */
 
 #import "AAPLCatListDataSource.h"
+#import "AAPLDataSource+Subclasses.h"
 #import "AAPLCat.h"
 
 #import "AAPLDataAccessManager.h"

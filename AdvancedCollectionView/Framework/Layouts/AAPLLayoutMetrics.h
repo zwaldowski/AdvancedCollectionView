@@ -64,8 +64,6 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSo
 
 @end
 
-
-
 /// Definition of how a section within a collection view should be presented.
 @interface AAPLLayoutSectionMetrics : NSObject <NSCopying>
 

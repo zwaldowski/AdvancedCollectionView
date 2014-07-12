@@ -21,7 +21,7 @@ CGFloat const AAPLRowHeightDefault = 44;
 
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-	AAPLLayoutSupplementaryMetrics *item = [[AAPLLayoutSupplementaryMetrics alloc] initWithSupplementaryViewKind:_supplementaryViewKind];
+	AAPLLayoutSupplementaryMetrics *item = [[AAPLLayoutSupplementaryMetrics allocWithZone:zone] initWithSupplementaryViewKind:_supplementaryViewKind];
 	if (!item)
 		return nil;
 	
@@ -70,24 +70,24 @@ CGFloat const AAPLRowHeightDefault = 44;
 @implementation AAPLLayoutSectionMetrics {
 	NSMutableArray *_supplementaryViews;
     struct {
-        unsigned int showsSectionSeparatorWhenLastSection : 1;
-        unsigned int backgroundColor : 1;
-        unsigned int selectedBackgroundColor : 1;
-        unsigned int separatorColor : 1;
-        unsigned int sectionSeparatorColor : 1;
+        BOOL showsSectionSeparatorWhenLastSection;
+        BOOL backgroundColor;
+        BOOL selectedBackgroundColor;
+        BOOL separatorColor;
+        BOOL sectionSeparatorColor;
     } _flags;
 }
 
 + (instancetype)defaultMetrics
 {
     AAPLLayoutSectionMetrics *metrics = [[self alloc] init];
-    metrics.rowHeight = 44;
+    metrics.rowHeight = AAPLRowHeightDefault;
     return metrics;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    AAPLLayoutSectionMetrics *metrics = [[AAPLLayoutSectionMetrics alloc] init];
+    AAPLLayoutSectionMetrics *metrics = [[AAPLLayoutSectionMetrics allocWithZone:zone] init];
     if (!metrics)
         return nil;
 

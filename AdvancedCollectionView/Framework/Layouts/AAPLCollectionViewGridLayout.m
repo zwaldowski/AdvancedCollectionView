@@ -33,7 +33,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 	return [indexPath indexAtPosition:0];
 }
 
-@interface AAPLCollectionViewGridLayout () <AAPLDataSourceDelegate>
+@interface AAPLCollectionViewGridLayout ()
 @property (nonatomic) CGSize layoutSize;
 @property (nonatomic) BOOL preparingLayout;
 
@@ -774,7 +774,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
     UIColor *sectionSeparatorColor = section.sectionSeparatorColor;
     NSInteger numberOfItems = [section.items count];
 
-	CGFloat hairline = 1 / self.collectionView.aapl_scale;
+	const CGFloat hairline = collectionView.aapl_hairlineWidth;
 
     [section.pinnableHeaderAttributes removeAllObjects];
     [section.nonPinnableHeaderAttributes removeAllObjects];

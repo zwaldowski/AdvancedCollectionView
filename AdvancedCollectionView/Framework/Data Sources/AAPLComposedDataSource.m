@@ -3,8 +3,8 @@
  See LICENSE.txt for this sample’s licensing information
  */
 
-#import "AAPLDataSource+Subclasses.h"
 #import "AAPLComposedDataSource.h"
+#import "AAPLDataSource+Subclasses.h"
 #import "AAPLComposedCollectionView.h"
 
 @interface AAPLComposedDataSource () <AAPLDataSourceDelegate>

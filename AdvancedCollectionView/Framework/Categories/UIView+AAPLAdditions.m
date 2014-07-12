@@ -10,9 +10,10 @@
 
 @implementation UIView (AAPLAdditions)
 
-- (CGFloat)aapl_scale
+- (CGFloat)aapl_hairlineWidth
 {
-	return self.window ? self.window.screen.scale : UIScreen.mainScreen.scale;
+	CGFloat scale = self.window ? self.window.screen.scale : UIScreen.mainScreen.scale;
+	return 1 / scale;
 }
 
 - (UIView *)aapl_addSeparatorToEdge:(CGRectEdge)edge color:(UIColor *)color oppositeAxisParent:(UIView *)constraintTarget leading:(id)oppositeLeadingItem trailing:(id)oppositeTrailingItem
@@ -28,7 +29,7 @@
 	
 	NSMutableArray *constraints = [NSMutableArray array];
 	NSDictionary *views = NSDictionaryOfVariableBindings(stripe);
-	NSDictionary *metrics = @{ @"length": @(1 / self.aapl_scale) };
+	NSDictionary *metrics = @{ @"length": @(self.aapl_hairlineWidth) };
 	switch (edge) {
 		case CGRectMinXEdge:
 		case CGRectMaxXEdge: {

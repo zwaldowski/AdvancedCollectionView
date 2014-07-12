@@ -11,7 +11,8 @@
 
 @interface UIView (HBAdditions)
 
-@property (nonatomic, readonly) CGFloat aapl_scale;
+/// A screen-appropriate width for a hairline (i.e., screen pixel width)
+@property (nonatomic, readonly) CGFloat aapl_hairlineWidth;
 
 /** Adds a separator to a view with a given color.
 

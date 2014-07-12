@@ -4,6 +4,7 @@
  */
 
 #import "AAPLBasicDataSource.h"
+#import "AAPLDataSource+Subclasses.h"
 
 @implementation AAPLBasicDataSource
 

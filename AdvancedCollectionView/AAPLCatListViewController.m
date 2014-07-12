@@ -28,7 +28,6 @@
 	AAPLCatListDataSource *dataSource = [self newAllCatsDataSource];
 	
 	AAPLLayoutSectionMetrics *metrics = dataSource.defaultMetrics;
-	metrics.rowHeight = 44;
 	metrics.separatorColor = [UIColor colorWithWhite:224/255.0 alpha:1];
 	metrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0);
 	

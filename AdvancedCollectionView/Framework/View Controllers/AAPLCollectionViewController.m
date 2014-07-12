@@ -8,7 +8,7 @@
 
 static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
-@interface AAPLCollectionViewController () <UICollectionViewDelegate, AAPLDataSourceDelegate>
+@interface AAPLCollectionViewController () <AAPLDataSourceDelegate>
 
 @end
 
@@ -88,9 +88,6 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
 - (void)dataSource:(AAPLDataSource *)dataSource didInsertSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
-    if (!sections)  // bail if nil just to keep collection view safe and pure
-        return;
-
 	id <AAPLDataSourceDelegate> layout = (id <AAPLDataSourceDelegate>)self.collectionView.collectionViewLayout;
 	if ([layout conformsToProtocol:@protocol(AAPLDataSourceDelegate)] && [layout respondsToSelector:@selector(dataSource:didInsertSections:direction:)]) {
 		[layout dataSource:dataSource didInsertSections:sections direction:direction];
@@ -100,9 +97,6 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
 - (void)dataSource:(AAPLDataSource *)dataSource didRemoveSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
-    if (!sections)  // bail if nil just to keep collection view safe and pure
-        return;
-
 	id <AAPLDataSourceDelegate> layout = (id <AAPLDataSourceDelegate>)self.collectionView.collectionViewLayout;
 	if ([layout conformsToProtocol:@protocol(AAPLDataSourceDelegate)] && [layout respondsToSelector:@selector(dataSource:didRemoveSections:direction:)]) {
 		[layout dataSource:dataSource didRemoveSections:sections direction:direction];
@@ -126,9 +120,6 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
 - (void)dataSource:(AAPLDataSource *)dataSource didRefreshSections:(NSIndexSet *)sections
 {
-    if (!sections)  // bail if nil just to keep collection view safe and pure
-        return;
-
 	[self.collectionView reloadSections:sections];
 }
 
