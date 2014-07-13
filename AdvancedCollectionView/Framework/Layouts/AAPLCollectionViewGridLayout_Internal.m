@@ -11,21 +11,6 @@
 @implementation AAPLGridLayoutItemInfo
 @end
 
-@implementation AAPLGridLayoutRowInfo
-
-- (instancetype)init
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _items = [NSMutableArray array];
-    return self;
-}
-
-@end
-
-
 @implementation AAPLGridLayoutSectionInfo
 
 - (instancetype)init
@@ -34,7 +19,6 @@
     if (!self)
         return nil;
 
-    _rows = [NSMutableArray array];
     _items = [NSMutableArray array];
 	_supplementalItemArraysByKind = [NSMutableDictionary dictionary];
     _pinnableHeaderAttributes = [NSMutableArray array];
@@ -79,13 +63,6 @@
 	}];
 }
 
-- (AAPLGridLayoutRowInfo *)addRow
-{
-    AAPLGridLayoutRowInfo *rowInfo = [[AAPLGridLayoutRowInfo alloc] init];
-    [self.rows addObject:rowInfo];
-    return rowInfo;
-}
-
 - (AAPLGridLayoutItemInfo *)addItem
 {
     AAPLGridLayoutItemInfo *itemInfo = [[AAPLGridLayoutItemInfo alloc] init];
@@ -95,133 +72,103 @@
 
 - (CGFloat)columnWidth
 {
-    CGFloat width = self.layoutInfo.width;
+	CGFloat width = self.layoutInfo.size.width;
     UIEdgeInsets margins = self.insets;
     CGFloat columnWidth = (width - margins.left - margins.right);
     return columnWidth;
 }
 
 /// Layout all the items in this section and return the total height of the section
-- (void)computeLayoutWithOrigin:(CGFloat)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock
+- (void)computeLayoutWithOrigin:(CGPoint)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock
 {
-	CGFloat width = self.layoutInfo.width;
-	/// The height available to placeholder
-	CGFloat availableHeight = self.layoutInfo.height - start;
-
+	const CGSize size = self.layoutInfo.size;
+	CGFloat availableHeight = size.height - start.y;
+	CGSize sizeForMeasuring = { size.width, UILayoutFittingExpandedSize.height };
 	UIEdgeInsets margins = self.insets;
-	NSInteger numberOfItems = [self.items count];
-	CGFloat columnWidth = self.columnWidth;
-	__block CGFloat rowHeight = 0;
+	NSUInteger numberOfItems = self.items.count;
 
-	__block CGFloat originX = margins.left;
-	__block CGFloat originY = start;
+	__block CGPoint origin = start;
 
 	NSArray *headers = _supplementalItemArraysByKind[UICollectionElementKindSectionHeader], *footers = _supplementalItemArraysByKind[UICollectionElementKindSectionFooter];
 
 	// First lay out headers
 	[headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *headerInfo, NSUInteger headerIndex, BOOL *stop) {
 		// skip headers if there are no items and the header isn't a global header
-		if (!numberOfItems && !headerInfo.visibleWhileShowingPlaceholder)
-			return;
+		if (!numberOfItems && !headerInfo.visibleWhileShowingPlaceholder) { return; }
 
 		// skip headers that are hidden
-		if (headerInfo.hidden)
-			return;
+		if (headerInfo.hidden) { return; }
 
 		// This header needs to be measured!
 		if (!headerInfo.height && measureSupplementaryItemBlock) {
-			headerInfo.frame = CGRectMake(0, originY, width, UILayoutFittingExpandedSize.height);
+			headerInfo.frame = (CGRect){ origin, sizeForMeasuring };
 			headerInfo.height = measureSupplementaryItemBlock(UICollectionElementKindSectionHeader, headerIndex, headerInfo.frame).height;
 		}
 
-		headerInfo.frame = CGRectMake(0, originY, width, headerInfo.height);
-		originY += headerInfo.height;
+		headerInfo.frame = (CGRect){ origin, { size.width, headerInfo.height }};
+		origin.y += headerInfo.height;
 	}];
 
 	AAPLGridLayoutSupplementalItemInfo *placeholder = self.placeholder;
 	if (placeholder) {
 		// Height of the placeholder is equal to the height of the collection view minus the height of the headers
-		CGFloat height = availableHeight - (originY - start);
+		CGFloat height = availableHeight - (origin.y - start.y);
 		placeholder.height = height;
-		placeholder.frame = CGRectMake(0, originY, width, height);
-		originY += height;
+		placeholder.frame = (CGRect){ origin, { size.width, height }};
+		origin.y += height;
 	}
-
-	// Next lay out all the items in rows
-	[_rows removeAllObjects];
 
 	NSAssert(!placeholder || !numberOfItems, @"Can't have both a placeholder and items");
 
 	// Lay out items, footers, and misc. items only if there actually ARE items.
 	if (numberOfItems) {
-		CGFloat contentBeginY = originY + margins.top;
+		CGFloat contentBeginY = origin.y + margins.top;
 		__block CGFloat backgroundEndY = contentBeginY;
 
 		[_supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *obj, BOOL *stopA) {
 			if ([kind isEqual:UICollectionElementKindSectionHeader] || [kind isEqual:UICollectionElementKindSectionFooter]) { return; }
 
-			originY = contentBeginY;
-
 			[obj enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *item, NSUInteger itemIndex, BOOL *stopb) {
-
 				// skip hidden supplementary items
 				if (item.hidden)
 					return;
 
 				// This header needs to be measured!
 				if (!item.height && measureSupplementaryItemBlock) {
-					item.frame = CGRectMake(0, originY, width, UILayoutFittingExpandedSize.height);
+					item.frame = (CGRect){ origin, sizeForMeasuring };
 					item.height = measureSupplementaryItemBlock(kind, itemIndex, item.frame).height;
 				}
 
-				item.frame = CGRectMake(0, originY, width, item.height);
-				originY += item.height;
+				item.frame = (CGRect){ origin, { size.width, item.height }};
+				origin.y += item.height;
 
-				backgroundEndY = MAX(backgroundEndY, originY);
+				backgroundEndY = MAX(backgroundEndY, origin.y);
 			}];
 
+			origin.y = contentBeginY;
 		}];
 
-		originY = contentBeginY;
+		__block CGPoint itemOrigin = CGPointMake( start.x + margins.left, contentBeginY );
+		CGFloat itemWidth = size.width - margins.left - margins.right;
 
-		__block AAPLGridLayoutRowInfo *row = [self addRow];
 		[self.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger itemIndex, BOOL *stop) {
-			BOOL needSizeUpdate = item.needSizeUpdate && measureItemBlock;
-
-			CGFloat height = CGRectGetHeight(item.frame);
-			if (AAPLRowHeightRemainder == item.frame.size.height) {
-				height = self.layoutInfo.height - originY;
+			CGRect itemFrame = (CGRect){ itemOrigin, { itemWidth, CGRectGetHeight(item.frame) }};
+			if (itemFrame.size.height == AAPLRowHeightRemainder) {
+				itemFrame.size.height = size.height - itemFrame.origin.y;
 			}
 
-			originY += rowHeight;
-			rowHeight = 0;
+			item.frame = itemFrame;
 
-			// only create a new row if there were items in the previous row.
-			if (_rows.count)
-				row = [self addRow];
-			row.frame = CGRectMake(margins.left, originY, width, rowHeight);
-
-
-			if (needSizeUpdate) {
+			if (item.needSizeUpdate && measureItemBlock) {
+				itemFrame.size.height = measureItemBlock(itemIndex, itemFrame).height;
+				item.frame = itemFrame;
 				item.needSizeUpdate = NO;
-				item.frame = CGRectMake(originX, originY, columnWidth, height);
-				height = measureItemBlock(itemIndex, item.frame).height;
 			}
 
-			if (rowHeight < height)
-				rowHeight = height;
-
-			[row.items addObject:item];
-
-			item.frame = CGRectMake(originX, originY, columnWidth, rowHeight);
-
-			// keep row height up to date
-			CGRect rowFrame = row.frame;
-			rowFrame.size.height = rowHeight;
-			row.frame = rowFrame;
+			itemOrigin.y += itemFrame.size.height;
 		}];
 
-		originY = MAX(backgroundEndY, originY) + margins.bottom;
+		origin.y = MAX(backgroundEndY, itemOrigin.y) + margins.bottom;
 
 		// lay out all footers
 		for (AAPLGridLayoutSupplementalItemInfo *footerInfo in footers) {
@@ -230,13 +177,13 @@
 				continue;
 			// When showing the placeholder, we don't show footers
 			CGFloat height = footerInfo.height;
-			footerInfo.frame = CGRectMake(0, originY, width, height);
-			originY += height;
+			footerInfo.frame = (CGRect){ origin, { size.width, height }};
+			origin.y += height;
 		}
 
 	}
 
-	self.frame = CGRectMake(0, start, width, originY - start);
+	self.frame = (CGRect){ start, { size.width, origin.y - start.y }};
 }
 
 - (NSString *)description
@@ -261,18 +208,20 @@
             [result appendFormat:@"        %@\n", header];
         }
 
-        [result appendString:@"     ]"];
+		[result appendString:@"    ]"];
     }
 
     if (_placeholder) {
         [result appendFormat:@"\n    placeholder = %@", _placeholder];
     }
 
-	if (_rows.count) {
-        [result appendString:@"\n    rows = @[\n"];
+	if (_items.count) {
+		[result appendString:@"\n    items = @[\n"];
 
-		NSArray *descriptions = [_rows valueForKey:@"recursiveDescription"];
-        [result appendFormat:@"        %@\n", [descriptions componentsJoinedByString:@"\n        "]];
+		for (AAPLGridLayoutItemInfo *items in _items) {
+			[result appendFormat:@"        %@\n", items];
+		}
+
         [result appendString:@"    ]"];
 	}
 
@@ -334,7 +283,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p width=%g height=%g contentOffsetY=%g>", NSStringFromClass([self class]), (__bridge void *)self, _width, _height, _contentOffsetY];
+	return [NSString stringWithFormat:@"<%@: %p size=%@ contentOffsetY=%g>", NSStringFromClass([self class]), (__bridge void *)self, NSStringFromCGSize(_size), _contentOffsetY];
 }
 
 #if DEBUG

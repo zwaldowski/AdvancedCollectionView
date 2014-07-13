@@ -22,21 +22,17 @@ typedef CGSize (^AAPLLayoutMeasureKindBlock)(NSString *kind, NSUInteger itemInde
 @property (nonatomic) UIColor *backgroundColor;
 @property (nonatomic) UIColor *selectedBackgroundColor;
 @property (nonatomic) BOOL hidden;
-/// passed along to attributes
 @property (nonatomic) UIEdgeInsets padding;
 @property (nonatomic) NSInteger zIndex;
+
 @end
 
 /// Layout information about an item (cell)
 @interface AAPLGridLayoutItemInfo : NSObject
+
 @property (nonatomic) CGRect frame;
 @property (nonatomic) BOOL needSizeUpdate;
-@end
 
-/// Layout information about a row
-@interface AAPLGridLayoutRowInfo : NSObject
-@property (nonatomic) CGRect frame;
-@property (nonatomic, strong) NSMutableArray *items;
 @end
 
 /// Layout information for a section
@@ -44,7 +40,6 @@ typedef CGSize (^AAPLLayoutMeasureKindBlock)(NSString *kind, NSUInteger itemInde
 @property (nonatomic) CGRect frame;
 @property (nonatomic, weak) AAPLGridLayoutInfo *layoutInfo;
 
-@property (nonatomic, readonly) NSMutableArray *rows;
 @property (nonatomic, readonly) NSMutableArray *items;
 @property (nonatomic, readonly) NSMutableDictionary *supplementalItemArraysByKind;
 - (void)enumerateArraysOfOtherSupplementalItems:(void(^)(NSString *kind, NSArray *items, BOOL *stop))block;
@@ -65,15 +60,16 @@ typedef CGSize (^AAPLLayoutMeasureKindBlock)(NSString *kind, NSUInteger itemInde
 
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsPlaceholder;
-- (AAPLGridLayoutRowInfo *)addRow;
 - (AAPLGridLayoutItemInfo *)addItem;
-- (void)computeLayoutWithOrigin:(CGFloat)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock;
+
+- (void)computeLayoutWithOrigin:(CGPoint)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock;
+
 @end
 
 /// The layout information
 @interface AAPLGridLayoutInfo : NSObject
-@property (nonatomic) CGFloat width;
-@property (nonatomic) CGFloat height;
+
+@property (nonatomic) CGSize size;
 @property (nonatomic) CGFloat contentOffsetY;
 @property (nonatomic, strong) NSMutableDictionary *sections;
 
