@@ -25,7 +25,7 @@
 
     _bottomBorderColor = [UIColor colorWithWhite:0.8 alpha:1];
     _bottomBorderColorWhenPinned = [UIColor colorWithWhite:0.8 alpha:1];
-	_borderView = [self aapl_addSeparatorToEdge:CGRectMaxYEdge color:_bottomBorderColor oppositeAxisParent:nil leading:nil trailing:nil];
+	_borderView = [self aapl_addSeparatorToEdge:CGRectMaxYEdge color:_bottomBorderColor];
 
     return self;
 }

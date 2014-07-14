@@ -16,11 +16,11 @@
 	return 1 / scale;
 }
 
-- (UIView *)aapl_addSeparatorToEdge:(CGRectEdge)edge color:(UIColor *)color oppositeAxisParent:(UIView *)constraintTarget leading:(id)oppositeLeadingItem trailing:(id)oppositeTrailingItem
+- (UIView *)aapl_addSeparatorToEdge:(CGRectEdge)edge color:(UIColor *)color
 {
-	if (!constraintTarget) constraintTarget = self;
-	if (!oppositeLeadingItem) oppositeLeadingItem = self;
-	if (!oppositeTrailingItem) oppositeTrailingItem = self;
+	id constraintTarget = self;
+	id oppositeLeadingItem = self;
+	id oppositeTrailingItem = self;
 	
 	UIView *stripe = [[UIView alloc] initWithFrame:CGRectZero];
 	stripe.backgroundColor = color;
