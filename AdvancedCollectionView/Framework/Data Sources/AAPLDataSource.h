@@ -64,6 +64,8 @@ typedef enum {
 
 #pragma mark -
 
+- (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPathIsHidden:(NSIndexPath *)indexPath;
+
 /// Measure variable height cells. The goal here is to do the minimal necessary configuration to get the correct size information.
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath;
 

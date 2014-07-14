@@ -165,6 +165,16 @@
         [dataSource registerReusableViewsWithCollectionView:collectionView];
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPathIsHidden:(NSIndexPath *)indexPath
+{
+	AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
+	AAPLComposedCollectionView *wrapper = [[AAPLComposedCollectionView alloc] initWithView:collectionView mapping:mapping];
+	AAPLDataSource *dataSource = mapping.dataSource;
+	NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
+	
+	return [dataSource collectionView:(id)wrapper itemAtIndexPathIsHidden:localIndexPath];
+}
+
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];

@@ -192,18 +192,21 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         return nil;
 	}
 
+	UICollectionView *collectionView = self.collectionView;
+	AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
+	if (![dataSource isKindOfClass:[AAPLDataSource class]])
+		dataSource = nil;
+
     AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
     attributes = [[self.class layoutAttributesClass] layoutAttributesForCellWithIndexPath:indexPath];
 
     // Need to be clever if we're still preparing the layout…
-    if (_preparingLayout) {
-        attributes.hidden = YES;
-    }
     attributes.frame = item.frame;
 	attributes.zIndex = AAPLGridLayoutZIndexDefault;
     attributes.backgroundColor = section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
+	attributes.hidden = _preparingLayout ? YES : [dataSource collectionView:collectionView itemAtIndexPathIsHidden:indexPath];
 
     if (!_preparingLayout)
         _indexPathToItemAttributes[indexPath] = attributes;
@@ -757,8 +760,10 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
     [self invalidateLayoutWithContext:context];
 }
 
-- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex
+- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex dataSource:(AAPLDataSource *)dataSource
 {
+	UICollectionView *collectionView = self.collectionView;
+
     Class attributeClass = self.class.layoutAttributesClass;
 
     CGRect sectionFrame = section.frame;
@@ -877,16 +882,14 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 		newAttribute.zIndex = AAPLGridLayoutZIndexDefault;
 		newAttribute.backgroundColor = section.backgroundColor;
 		newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
-		newAttribute.hidden = NO;
+		newAttribute.hidden = [dataSource collectionView:collectionView itemAtIndexPathIsHidden:indexPath];
 
 		[_layoutAttributes addObject:newAttribute];
 
 		_indexPathToItemAttributes[indexPath] = newAttribute;
 	}];
 
-	[section.supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *obj, BOOL *stopA) {
-		if ([kind isEqual:UICollectionElementKindSectionHeader] || [kind isEqual:UICollectionElementKindSectionFooter]) { return; }
-
+	[section enumerateArraysOfOtherSupplementalItems:^(NSString *kind, NSArray *obj, BOOL *stop) {
 		NSUInteger index = 0;
 
 		for (AAPLGridLayoutSupplementalItemInfo *item in obj) {
@@ -1033,7 +1036,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 			shouldInvalidate |= YES;
 			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
 		}];
-		[self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection];
+		[self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection dataSource:dataSource];
         globalNonPinningHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
     }
 
@@ -1052,7 +1055,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
         }];
 
-		[self addLayoutAttributesForSection:section atIndex:sectionIndex];
+		[self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
     }
 
 	AAPLCollectionViewGridLayoutAttributes *attributes = [_layoutAttributes lastObject];

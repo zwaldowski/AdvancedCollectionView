@@ -99,6 +99,11 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
 	[collectionView registerClass:[AAPLCollectionPlaceholderView class] forSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withReuseIdentifier:NSStringFromClass([AAPLCollectionPlaceholderView class])];
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPathIsHidden:(NSIndexPath *)indexPath
+{
+	return NO;
+}
+
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSAssert(NO, @"Should be implemented by subclasses");
