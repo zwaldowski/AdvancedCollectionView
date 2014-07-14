@@ -33,16 +33,12 @@
 		1FA42AC6192A7E1200F673A0 /* AAPLLayoutMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */; };
 		1FA42ACA192A7E1200F673A0 /* AAPLCollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */; };
 		1FA42ACB192A7E1200F673A0 /* AAPLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */; };
-		1FA42AD3192A7E1200F673A0 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */; };
-		1FA42AD4192A7E1200F673A0 /* AAPLBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */; };
 		1FA42AD5192A7E1200F673A0 /* AAPLCollectionViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */; };
 		1FA42AD6192A7E1200F673A0 /* AAPLCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */; };
 		1FA42ADC192A7E1200F673A0 /* AAPLPinnableHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */; };
 		1FA42ADD192A7E1200F673A0 /* AAPLPinnableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */; };
 		1FA42ADE192A7E1200F673A0 /* AAPLPlaceholderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */; };
 		1FA42ADF192A7E1200F673A0 /* AAPLPlaceholderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */; };
-		1FA42AE2192A7E1200F673A0 /* AAPLSectionHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */; };
-		1FA42AE3192A7E1200F673A0 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */; };
 		1FA42AEB192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AEA192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch */; };
 		1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */; };
 		1FA42AF1192A873200F673A0 /* AAPLCatListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */; };
@@ -85,6 +81,10 @@
 		1FE17C0F1931885100620DC3 /* AAPLCatSighting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C0D1931885100620DC3 /* AAPLCatSighting.m */; };
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
+		DB64263019738FD800D73789 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = DB64262C19738FD800D73789 /* AAPLBasicCell.h */; };
+		DB64263119738FD800D73789 /* AAPLBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DB64262D19738FD800D73789 /* AAPLBasicCell.m */; };
+		DB64263219738FD800D73789 /* AAPLSectionHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB64262E19738FD800D73789 /* AAPLSectionHeaderView.h */; };
+		DB64263319738FD800D73789 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB64262F19738FD800D73789 /* AAPLSectionHeaderView.m */; };
 		DBCB909E196F427D00F83CDF /* UIView+AAPLAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = DBCB909C196F427D00F83CDF /* UIView+AAPLAdditions.h */; };
 		DBCB909F196F427D00F83CDF /* UIView+AAPLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DBCB909D196F427D00F83CDF /* UIView+AAPLAdditions.m */; };
 		DBCB90C2196F8C0100F83CDF /* AAPLComposedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DBCB90C0196F8C0100F83CDF /* AAPLComposedCollectionView.h */; };
@@ -122,16 +122,12 @@
 		1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLLayoutMetrics.m; sourceTree = "<group>"; };
 		1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLBasicCell.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLBasicCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewCell.h; sourceTree = "<group>"; };
 		1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewCell.m; sourceTree = "<group>"; };
 		1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPinnableHeaderView.h; sourceTree = "<group>"; };
 		1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLPinnableHeaderView.m; sourceTree = "<group>"; };
 		1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLPlaceholderView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLPlaceholderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLSectionHeaderView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLSectionHeaderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42AEA192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AdvancedCollectionView-Prefix.pch"; sourceTree = "<group>"; };
 		1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatListViewController.h; sourceTree = "<group>"; };
 		1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatListViewController.m; sourceTree = "<group>"; };
@@ -175,6 +171,10 @@
 		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB64262C19738FD800D73789 /* AAPLBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLBasicCell.h; sourceTree = "<group>"; };
+		DB64262D19738FD800D73789 /* AAPLBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLBasicCell.m; sourceTree = "<group>"; };
+		DB64262E19738FD800D73789 /* AAPLSectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLSectionHeaderView.h; sourceTree = "<group>"; };
+		DB64262F19738FD800D73789 /* AAPLSectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSectionHeaderView.m; sourceTree = "<group>"; };
 		DB80BB781970EE5E001488D3 /* AAPLDataSourceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLDataSourceDelegate.h; sourceTree = "<group>"; };
 		DB80BB791970EEA4001488D3 /* AAPLDataSource+Subclasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AAPLDataSource+Subclasses.h"; sourceTree = "<group>"; };
 		DBCB909C196F427D00F83CDF /* UIView+AAPLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AAPLAdditions.h"; sourceTree = "<group>"; };
@@ -287,16 +287,12 @@
 		1FA42A7D192A7E1200F673A0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */,
-				1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */,
 				1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */,
 				1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */,
 				1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */,
 				1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */,
 				1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */,
 				1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */,
-				1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */,
-				1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */,
 				DBCB90C4196F8DAE00F83CDF /* AAPLGridLayoutSeparatorView.h */,
 				DBCB90C5196F8DAE00F83CDF /* AAPLGridLayoutSeparatorView.m */,
 			);
@@ -306,6 +302,10 @@
 		1FA42AEC192A825800F673A0 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				DB64262C19738FD800D73789 /* AAPLBasicCell.h */,
+				DB64262D19738FD800D73789 /* AAPLBasicCell.m */,
+				DB64262E19738FD800D73789 /* AAPLSectionHeaderView.h */,
+				DB64262F19738FD800D73789 /* AAPLSectionHeaderView.m */,
 				1FA42B00192A9D2200F673A0 /* AAPLCat.h */,
 				1FA42B01192A9D2200F673A0 /* AAPLCat.m */,
 				1FE17BF8192E942600620DC3 /* AAPLCatDetailDataSource.h */,
@@ -401,6 +401,7 @@
 				1FA42A9C192A7E1200F673A0 /* AAPLStateMachine.h in Headers */,
 				1FA42AF4192A90C600F673A0 /* AAPLCatListDataSource.h in Headers */,
 				1FE17C06192FEA2800620DC3 /* AAPLTextValueDataSource.h in Headers */,
+				DB64263019738FD800D73789 /* AAPLBasicCell.h in Headers */,
 				1FE17C02192E991600620DC3 /* AAPLKeyValueDataSource.h in Headers */,
 				1FA42AB2192A7E1200F673A0 /* AAPLComposedDataSource.h in Headers */,
 				1FA42AB0192A7E1200F673A0 /* AAPLBasicDataSource.h in Headers */,
@@ -413,10 +414,9 @@
 				DBCB90C2196F8C0100F83CDF /* AAPLComposedCollectionView.h in Headers */,
 				1FA42ADC192A7E1200F673A0 /* AAPLPinnableHeaderView.h in Headers */,
 				1FA42A99192A7E1200F673A0 /* AAPLContentLoading.h in Headers */,
-				1FA42AE2192A7E1200F673A0 /* AAPLSectionHeaderView.h in Headers */,
 				1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */,
 				1FA42AEB192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch in Headers */,
-				1FA42AD3192A7E1200F673A0 /* AAPLBasicCell.h in Headers */,
+				DB64263219738FD800D73789 /* AAPLSectionHeaderView.h in Headers */,
 				1FE17BD4192E80D100620DC3 /* AAPLCatDetailViewController.h in Headers */,
 				DBCB909E196F427D00F83CDF /* UIView+AAPLAdditions.h in Headers */,
 				1FE17BD8192E875900620DC3 /* AAPLCatDetailHeader.h in Headers */,
@@ -513,7 +513,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FA42AD4192A7E1200F673A0 /* AAPLBasicCell.m in Sources */,
 				1FA42AF5192A90C600F673A0 /* AAPLCatListDataSource.m in Sources */,
 				1FA42AB7192A7E1200F673A0 /* AAPLDataSource.m in Sources */,
 				DBCB90C3196F8C0100F83CDF /* AAPLComposedCollectionView.m in Sources */,
@@ -524,9 +523,9 @@
 				1FE17C0B192FEAEC00620DC3 /* AAPLTextValueCell.m in Sources */,
 				1FA42AAB192A7E1200F673A0 /* UICollectionReusableView+AAPLGridLayout.m in Sources */,
 				1FA42AC6192A7E1200F673A0 /* AAPLLayoutMetrics.m in Sources */,
+				DB64263119738FD800D73789 /* AAPLBasicCell.m in Sources */,
 				1FA42AF9192A910C00F673A0 /* AAPLDataAccessManager.m in Sources */,
 				1FA42AC0192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m in Sources */,
-				1FA42AE3192A7E1200F673A0 /* AAPLSectionHeaderView.m in Sources */,
 				1FA4296F192A798300F673A0 /* main.m in Sources */,
 				1FA42AC3192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */,
 				1FA42A9A192A7E1200F673A0 /* AAPLContentLoading.m in Sources */,
@@ -546,6 +545,7 @@
 				DBCB90C7196F8DAE00F83CDF /* AAPLGridLayoutSeparatorView.m in Sources */,
 				1FE17C03192E991600620DC3 /* AAPLKeyValueDataSource.m in Sources */,
 				1FA42AB3192A7E1200F673A0 /* AAPLComposedDataSource.m in Sources */,
+				DB64263319738FD800D73789 /* AAPLSectionHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
