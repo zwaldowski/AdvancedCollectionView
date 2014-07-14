@@ -1031,8 +1031,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
     CGFloat globalNonPinningHeight = 0;
     AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
     if (globalSection) {
-		[globalSection computeLayoutWithOrigin:origin measureItem:NULL measureSupplementaryItem:^(NSString *kind, NSUInteger itemIndex, CGRect frame) {
-			NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:itemIndex];
+		[globalSection computeLayoutForSection:AAPLGlobalSection origin:origin measureItem:NULL measureSupplementaryItem:^(NSString *kind, NSIndexPath *indexPath, CGRect frame) {
 			shouldInvalidate |= YES;
 			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
 		}];
@@ -1046,14 +1045,12 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 			origin.y = CGRectGetMaxY(attributes.frame);
 		}
         AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-		[section computeLayoutWithOrigin:origin measureItem:^(NSUInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
-            return [dataSource collectionView:collectionView sizeFittingSize:frame.size forItemAtIndexPath:indexPath];
-		} measureSupplementaryItem:^(NSString *kind, NSUInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
-            shouldInvalidate |= YES;
+		[section computeLayoutForSection:sectionIndex origin:origin measureItem:^(NSIndexPath *indexPath, CGRect frame) {
+			return [dataSource collectionView:collectionView sizeFittingSize:frame.size forItemAtIndexPath:indexPath];
+		} measureSupplementaryItem:^(NSString *kind, NSIndexPath *indexPath, CGRect frame) {
+			shouldInvalidate |= YES;
 			return [self measureSupplementalItemOfKind:kind atIndexPath:indexPath];
-        }];
+		}];
 
 		[self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
     }

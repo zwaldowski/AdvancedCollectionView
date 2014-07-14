@@ -79,36 +79,44 @@
 }
 
 /// Layout all the items in this section and return the total height of the section
-- (void)computeLayoutWithOrigin:(CGPoint)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock
+- (void)computeLayoutForSection:(NSUInteger)sectionIndex origin:(CGPoint)start measureItem:(CGSize(^)(NSIndexPath *, CGRect))measureItemBlock measureSupplementaryItem:(CGSize(^)(NSString *, NSIndexPath *, CGRect))measureSupplementaryItemBlock
 {
+	NSIndexPath *(^indexPath)(NSUInteger) = ^(NSUInteger itemIndex){
+		if (sectionIndex == AAPLGlobalSection) {
+			return [NSIndexPath indexPathWithIndex:itemIndex];
+		}
+		return [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
+	};
+	
 	const CGSize size = self.layoutInfo.size;
-	CGFloat availableHeight = size.height - start.y;
-	CGSize sizeForMeasuring = { size.width, UILayoutFittingExpandedSize.height };
-	UIEdgeInsets margins = self.insets;
-	NSUInteger numberOfItems = self.items.count;
-
+	const CGFloat availableHeight = size.height - start.y;
+	const CGSize sizeForMeasuring = { size.width, UILayoutFittingExpandedSize.height };
+	const UIEdgeInsets margins = self.insets;
+	const NSUInteger numberOfItems = self.items.count;
+	
 	__block CGPoint origin = start;
-
-	NSArray *headers = _supplementalItemArraysByKind[UICollectionElementKindSectionHeader], *footers = _supplementalItemArraysByKind[UICollectionElementKindSectionFooter];
-
+	
+	NSArray *headers = _supplementalItemArraysByKind[UICollectionElementKindSectionHeader],
+			*footers = _supplementalItemArraysByKind[UICollectionElementKindSectionFooter];
+	
 	// First lay out headers
 	[headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *headerInfo, NSUInteger headerIndex, BOOL *stop) {
 		// skip headers if there are no items and the header isn't a global header
 		if (!numberOfItems && !headerInfo.visibleWhileShowingPlaceholder) { return; }
-
+		
 		// skip headers that are hidden
 		if (headerInfo.hidden) { return; }
-
+		
 		// This header needs to be measured!
 		if (!headerInfo.height && measureSupplementaryItemBlock) {
 			headerInfo.frame = (CGRect){ origin, sizeForMeasuring };
-			headerInfo.height = measureSupplementaryItemBlock(UICollectionElementKindSectionHeader, headerIndex, headerInfo.frame).height;
+			headerInfo.height = measureSupplementaryItemBlock(UICollectionElementKindSectionHeader, indexPath(headerIndex), headerInfo.frame).height;
 		}
-
+		
 		headerInfo.frame = (CGRect){ origin, { size.width, headerInfo.height }};
 		origin.y += headerInfo.height;
 	}];
-
+	
 	AAPLGridLayoutSupplementalItemInfo *placeholder = self.placeholder;
 	if (placeholder) {
 		// Height of the placeholder is equal to the height of the collection view minus the height of the headers
@@ -136,7 +144,7 @@
 				// This header needs to be measured!
 				if (!item.height && measureSupplementaryItemBlock) {
 					item.frame = (CGRect){ origin, sizeForMeasuring };
-					item.height = measureSupplementaryItemBlock(kind, itemIndex, item.frame).height;
+					item.height = measureSupplementaryItemBlock(kind, indexPath(itemIndex), item.frame).height;
 				}
 
 				item.frame = (CGRect){ origin, { size.width, item.height }};
@@ -149,7 +157,7 @@
 		}];
 
 		__block CGPoint itemOrigin = CGPointMake( start.x + margins.left, contentBeginY );
-		CGFloat itemWidth = size.width - margins.left - margins.right;
+		const CGFloat itemWidth = self.columnWidth;
 
 		[self.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger itemIndex, BOOL *stop) {
 			CGRect itemFrame = (CGRect){ itemOrigin, { itemWidth, CGRectGetHeight(item.frame) }};
@@ -160,7 +168,7 @@
 			item.frame = itemFrame;
 
 			if (item.needSizeUpdate && measureItemBlock) {
-				itemFrame.size.height = measureItemBlock(itemIndex, itemFrame).height;
+				itemFrame.size.height = measureItemBlock(indexPath(itemIndex), itemFrame).height;
 				item.frame = itemFrame;
 				item.needSizeUpdate = NO;
 			}

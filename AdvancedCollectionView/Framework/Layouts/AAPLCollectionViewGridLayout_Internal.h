@@ -62,7 +62,7 @@ typedef CGSize (^AAPLLayoutMeasureKindBlock)(NSString *kind, NSUInteger itemInde
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsPlaceholder;
 - (AAPLGridLayoutItemInfo *)addItem;
 
-- (void)computeLayoutWithOrigin:(CGPoint)start measureItem:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItem:(AAPLLayoutMeasureKindBlock)measureSupplementaryItemBlock;
+- (void)computeLayoutForSection:(NSUInteger)sectionIndex origin:(CGPoint)start measureItem:(CGSize(^)(NSIndexPath *, CGRect))measureItemBlock measureSupplementaryItem:(CGSize(^)(NSString *, NSIndexPath *, CGRect))measureSupplementaryItemBlock;
 
 @end
 
