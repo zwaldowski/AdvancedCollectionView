@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AAPLAdvancedCollectionView"
-  s.version      = "1.0"
+  s.version      = "1.0.1"
   s.summary      = "Advanced User Interfaces Using Collection View"
   s.description  = <<-DESC
                    This example demonstrates code factoring approaches to UICollectionViewDataSource
@@ -11,9 +11,8 @@ Pod::Spec.new do |s|
   s.homepage     = "https://developer.apple.com/wwdc/resources/sample-code/"
   s.license      = { :type => "Apple Sample Code", :file => "LICENSE.txt" }
   s.authors      = "Apple", "Zachary Waldowski"
-  s.platform     = :ios
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/zwaldowski/AAPLAdvancedCollectionView.git", :branch => "master" }
+  s.source       = { :git => "https://github.com/zwaldowski/AAPLAdvancedCollectionView.git", :tag => "v#{s.version}" }
   s.source_files = "AdvancedCollectionView/Framework/**/*.{h,m}"
   s.framework    = "UIKit"
   s.requires_arc = true
