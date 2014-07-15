@@ -38,6 +38,7 @@
     _bottomBorderColorWhenPinned = [UIColor colorWithWhite:0.8 alpha:1];
 	_borderView.backgroundColor = _bottomBorderColor;
     _backgroundColorWhenPinned = nil;
+	self.highlighted = NO;
 }
 
 - (UIEdgeInsets)defaultPadding
@@ -119,6 +120,21 @@
             _borderView.hidden = !showBorder;
         }];
 	}
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.highlighted = YES;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.highlighted = NO;
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.highlighted = NO;
 }
 
 @end

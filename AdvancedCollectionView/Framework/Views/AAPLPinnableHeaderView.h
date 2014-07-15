@@ -8,6 +8,9 @@
 /// A base class for headers that can respond to being pinned to the top of the collection view
 @interface AAPLPinnableHeaderView : UICollectionReusableView
 
+/// Set when tracking a touch in the header. This can be used to mimic a cell as a header. If you don't know WHY you might want to do this, you probably don't.
+@property (nonatomic) BOOL highlighted;
+
 /// Default padding values preferred by the header/footer view.
 @property (nonatomic, readonly) UIEdgeInsets defaultPadding;
 
