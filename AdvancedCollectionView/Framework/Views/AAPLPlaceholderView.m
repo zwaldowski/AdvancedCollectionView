@@ -12,9 +12,9 @@
 
 @interface AAPLPlaceholderView ()
 @property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UILabel *messageLabel;
+@property (nonatomic, strong, readwrite) UIImageView *imageView;
+@property (nonatomic, strong, readwrite) UILabel *titleLabel;
+@property (nonatomic, strong, readwrite) UILabel *messageLabel;
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) NSArray *constraints;
 @end
@@ -285,7 +285,7 @@
 
 @interface AAPLCollectionPlaceholderView ()
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
-@property (nonatomic, strong) AAPLPlaceholderView *placeholderView;
+@property (nonatomic, strong, readwrite) AAPLPlaceholderView *placeholderView;
 @end
 
 @implementation AAPLCollectionPlaceholderView
@@ -383,7 +383,7 @@
 
 
 @interface AAPLPlaceholderCell ()
-@property (nonatomic, strong) AAPLPlaceholderView *placeholderView;
+@property (nonatomic, strong, readwrite) AAPLPlaceholderView *placeholderView;
 @end
 
 @implementation AAPLPlaceholderCell

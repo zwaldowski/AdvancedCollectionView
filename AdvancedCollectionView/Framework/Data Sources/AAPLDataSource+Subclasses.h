@@ -6,6 +6,8 @@
 #import "AAPLDataSourceDelegate.h"
 #import "AAPLLayoutMetrics.h"
 
+@class AAPLCollectionPlaceholderView;
+
 @interface AAPLDataSource (ForSubclassEyesOnly)
 
 /// Find the data source for the given section. Default implementation returns self.
@@ -28,6 +30,8 @@
 
 - (void)notifyWillLoadContent;
 - (void)notifyContentLoadedWithError:(NSError *)error;
+
+- (void)updatePlaceholder:(AAPLCollectionPlaceholderView *)placeholderView notifyVisibility:(BOOL)notify;
 
 #pragma mark -
 

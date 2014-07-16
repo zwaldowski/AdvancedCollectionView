@@ -8,9 +8,14 @@
 /// A placeholder view that approximates the standard iOS no content view.
 @interface AAPLPlaceholderView : UIView
 
+@property (nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) UILabel *titleLabel;
+@property (nonatomic, strong, readonly) UILabel *messageLabel;
+
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *message;
+
 @property (nonatomic, copy) NSString *buttonTitle;
 @property (nonatomic, copy) void (^buttonAction)(void);
 
@@ -22,6 +27,8 @@
 /// A placeholder view for use in the collection view. This placeholder includes the loading indicator.
 @interface AAPLCollectionPlaceholderView : UICollectionReusableView
 
+@property (nonatomic, strong, readonly) AAPLPlaceholderView *placeholderView;
+
 - (void)showActivityIndicator:(BOOL)show;
 - (void)showPlaceholderWithTitle:(NSString *)title message:(NSString *)message image:(UIImage *)image animated:(BOOL)animated;
 - (void)hidePlaceholderAnimated:(BOOL)animated;
@@ -31,6 +38,8 @@
 
 /// A placeholder cell. Used when it's not appropriate to display the full size placeholder view in the collection view, but a smaller placeholder is desired.
 @interface AAPLPlaceholderCell : UICollectionViewCell
+
+@property (nonatomic, strong, readonly) AAPLPlaceholderView *placeholderView;
 
 - (void)showPlaceholderWithTitle:(NSString *)title message:(NSString *)message image:(UIImage *)image animated:(BOOL)animated;
 - (void)hidePlaceholderAnimated:(BOOL)animated;
