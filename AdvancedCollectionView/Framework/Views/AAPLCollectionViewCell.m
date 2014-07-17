@@ -13,14 +13,25 @@
 	return YES;
 }
 
+- (void)commonInit
+{
+	// We don't get background or selectedBackground views unless we create them!
+	self.backgroundView = [[UIView alloc] init];
+	self.selectedBackgroundView = [[UIView alloc] init];
+}
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	[self commonInit];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (!self) return nil;
-
-    // We don't get background or selectedBackground views unless we create them!
-	self.backgroundView = [[UIView alloc] init];
-	self.selectedBackgroundView = [[UIView alloc] init];
+	
+	[self commonInit];
 
     return self;
 }

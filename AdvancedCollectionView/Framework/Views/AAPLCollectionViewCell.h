@@ -7,4 +7,6 @@
 
 @interface AAPLCollectionViewCell : UICollectionViewCell
 
+- (void)commonInit;
+
 @end
