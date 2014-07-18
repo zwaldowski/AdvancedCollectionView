@@ -34,7 +34,9 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 }
 
 @interface AAPLCollectionViewGridLayout ()
+
 @property (nonatomic) CGSize layoutSize;
+@property (nonatomic) CGSize oldLayoutSize;
 @property (nonatomic) BOOL preparingLayout;
 
 @property (nonatomic) NSInteger totalNumberOfItems;
@@ -148,14 +150,15 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 - (void)prepareLayout
 {
-    if (!self.collectionView.window)
-        _flags.layoutMetricsAreValid = _flags.layoutDataIsValid = NO;
+	if (!self.collectionView.window) {
+		_flags.layoutMetricsAreValid = _flags.layoutDataIsValid = NO;
+	}
+	
+	[super prepareLayout];
 
     if (!CGRectIsEmpty(self.collectionView.bounds)) {
         [self buildLayout];
     }
-
-    [super prepareLayout];
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect;
@@ -174,11 +177,6 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathToItemAttributes[indexPath];
-	if (attributes) {
-		return attributes;
-	}
-
 	NSUInteger itemIndex;
 	NSUInteger sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, YES);
 
@@ -186,6 +184,11 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         return nil;
 	}
 
+	AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathToItemAttributes[indexPath];
+	if (attributes) {
+		return attributes;
+	}
+	
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
 
 	if (itemIndex >= section.items.count) {
@@ -194,8 +197,9 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 	UICollectionView *collectionView = self.collectionView;
 	AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-	if (![dataSource isKindOfClass:[AAPLDataSource class]])
+	if (![dataSource isKindOfClass:[AAPLDataSource class]]) {
 		dataSource = nil;
+	}
 
     AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
@@ -206,10 +210,12 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 	attributes.zIndex = AAPLGridLayoutZIndexDefault;
     attributes.backgroundColor = section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
-	attributes.hidden = _preparingLayout ? YES : [dataSource collectionView:collectionView itemAtIndexPathIsHidden:indexPath];
+	attributes.hidden = _preparingLayout || [dataSource collectionView:collectionView itemAtIndexPathIsHidden:indexPath];
 
-    if (!_preparingLayout)
+	if (!_preparingLayout) {
         _indexPathToItemAttributes[indexPath] = attributes;
+	}
+	
     return attributes;
 }
 
@@ -318,6 +324,9 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 - (CGSize)collectionViewContentSize
 {
+	if (_preparingLayout) {
+		return _oldLayoutSize;
+	}
     return _layoutSize;
 }
 
@@ -367,13 +376,13 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 - (void)finalizeCollectionViewUpdates
 {
-    [super finalizeCollectionViewUpdates];
     self.insertedIndexPaths = nil;
     self.removedIndexPaths = nil;
     self.insertedSections = nil;
     self.removedSections = nil;
     self.reloadedSections = nil;
     [self.updateSectionDirections removeAllObjects];
+	[super finalizeCollectionViewUpdates];
 }
 
 // FIXME: <rdar://problem/16520988>
@@ -778,6 +787,8 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
     [section.pinnableHeaderAttributes removeAllObjects];
     [section.nonPinnableHeaderAttributes removeAllObjects];
+	
+	NSMutableArray *newAttributes = [NSMutableArray array];
 
     if (AAPLGlobalSection == sectionIndex && section.backgroundColor) {
         // Add the background decoration attribute
@@ -790,7 +801,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         backgroundAttribute.pinnedHeader = NO;
         backgroundAttribute.backgroundColor = section.backgroundColor;
         backgroundAttribute.hidden = NO;
-        [_layoutAttributes addObject:backgroundAttribute];
+        [newAttributes addObject:backgroundAttribute];
 
         section.backgroundAttribute = backgroundAttribute;
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutGlobalHeaderBackgroundKind];
@@ -819,7 +830,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         headerAttribute.selectedBackgroundColor = header.selectedBackgroundColor;
         headerAttribute.padding = header.padding;
         headerAttribute.hidden = NO;
-        [_layoutAttributes addObject:headerAttribute];
+        [newAttributes addObject:headerAttribute];
 
         if (header.shouldPin) {
             [section.pinnableHeaderAttributes addObject:headerAttribute];
@@ -833,14 +844,14 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         _indexPathKindToSupplementaryAttributes[indexPathKind] = headerAttribute;
     }];
 
-    AAPLCollectionViewGridLayoutAttributes *lastAttribute = [_layoutAttributes lastObject];
+    AAPLCollectionViewGridLayoutAttributes *lastAttribute = [newAttributes lastObject];
     if (![lastAttribute.representedElementKind isEqualToString:AAPLGridLayoutSectionSeparatorKind] && sectionSeparatorColor && _totalNumberOfItems) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:sectionIndex];
         AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
         separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, section.frame.origin.y, CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
         separatorAttributes.backgroundColor = sectionSeparatorColor;
 		separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
-        [_layoutAttributes addObject:separatorAttributes];
+        [newAttributes addObject:separatorAttributes];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
         _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
@@ -852,7 +863,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         AAPLCollectionViewGridLayoutAttributes *placeholderAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withIndexPath:indexPath];
         placeholderAttribute.frame = placeholder.frame;
 		placeholderAttribute.zIndex = AAPLGridLayoutZIndexPlaceholder;
-        [_layoutAttributes addObject:placeholderAttribute];
+        [newAttributes addObject:placeholderAttribute];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLCollectionElementKindPlaceholder];
         _indexPathKindToSupplementaryAttributes[indexPathKind] = placeholderAttribute;
@@ -870,13 +881,13 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 			separatorAttributes.frame = CGRectMake(section.separatorInsets.left, CGRectGetMinY(frame), CGRectGetWidth(frame) - section.separatorInsets.left - section.separatorInsets.right, hairline);
 			separatorAttributes.backgroundColor = separatorColor;
 			separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
-			[_layoutAttributes addObject:separatorAttributes];
+			[newAttributes addObject:separatorAttributes];
 
 			AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutRowSeparatorKind];
 			_indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
 		}
 
-		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
+		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex++ inSection:sectionIndex];
 		AAPLCollectionViewGridLayoutAttributes *newAttribute = [attributeClass layoutAttributesForCellWithIndexPath:indexPath];
 		newAttribute.frame = frame;
 		newAttribute.zIndex = AAPLGridLayoutZIndexDefault;
@@ -884,7 +895,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 		newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
 		newAttribute.hidden = [dataSource collectionView:collectionView itemAtIndexPathIsHidden:indexPath];
 
-		[_layoutAttributes addObject:newAttribute];
+		[newAttributes addObject:newAttribute];
 
 		_indexPathToItemAttributes[indexPath] = newAttribute;
 	}];
@@ -905,7 +916,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 			itemAttribute.selectedBackgroundColor = item.selectedBackgroundColor;
 			itemAttribute.padding = item.padding;
 			itemAttribute.hidden = NO;
-			[_layoutAttributes addObject:itemAttribute];
+			[newAttributes addObject:itemAttribute];
 
 			AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
 			_indexPathKindToSupplementaryAttributes[indexPathKind] = itemAttribute;
@@ -925,7 +936,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         footerAttribute.selectedBackgroundColor = footer.selectedBackgroundColor;
         footerAttribute.padding = footer.padding;
         footerAttribute.hidden = NO;
-        [_layoutAttributes addObject:footerAttribute];
+        [newAttributes addObject:footerAttribute];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionFooter];
         _indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
@@ -940,36 +951,44 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
         separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, CGRectGetMaxY(section.frame), CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
         separatorAttributes.backgroundColor = sectionSeparatorColor;
 		separatorAttributes.zIndex = AAPLGridLayoutZIndexSeparator;
-        [_layoutAttributes addObject:separatorAttributes];
+        [newAttributes addObject:separatorAttributes];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
         _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
 	}
-
-	[_layoutAttributes sortWithOptions:NSSortConcurrent|NSSortStable usingComparator:^NSComparisonResult(AAPLCollectionViewGridLayoutAttributes *obj1, AAPLCollectionViewGridLayoutAttributes *obj2) {
-		CGRect frame1 = obj1.frame;
-		CGRect frame2 = obj2.frame;
-
-		CGFloat max1 = CGRectGetMaxY(frame1);
-		CGFloat max2 = CGRectGetMaxY(frame2);
-
+	
+	[newAttributes sortWithOptions:NSSortConcurrent|NSSortStable usingComparator:^(AAPLCollectionViewGridLayoutAttributes *obj1, AAPLCollectionViewGridLayoutAttributes *obj2) {
+		CGRect frame1 = obj1.frame, frame2 = obj2.frame;
+		
+		CGFloat max1 = CGRectGetMaxY(frame1), max2 = CGRectGetMaxY(frame2);
+		
 		if (max1 > max2) {
 			return NSOrderedDescending;
 		} else if (max1 < max2) {
 			return NSOrderedAscending;
 		}
-
-		CGFloat min1 = CGRectGetMinY(frame1);
-		CGFloat min2 = CGRectGetMinY(frame2);
-
+		
+		NSInteger z1 = obj1.zIndex;
+		NSInteger z2 = obj2.zIndex;
+		
+		if (z1 > z2) {
+			return NSOrderedAscending;
+		} else if (z1 < z2) {
+			return NSOrderedAscending;
+		}
+		
+		CGFloat min1 = CGRectGetMinY(frame1), min2 = CGRectGetMinY(frame2);
+		
 		if (min1 > max2) {
 			return NSOrderedAscending;
 		} else if (min1 < min2)  {
 			return NSOrderedDescending;
 		}
-
+		
 		return NSOrderedSame;
 	}];
+
+	[_layoutAttributes addObjectsFromArray:newAttributes];
 }
 
 - (CGFloat)heightOfAttributes:(NSArray *)attributes
@@ -1010,6 +1029,7 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 
 	CGSize size = UIEdgeInsetsInsetRect(collectionView.bounds, contentInset).size;
 
+	_oldLayoutSize = _layoutSize;
     _layoutSize = CGSizeZero;
 	_layoutInfo.size = size;
     _layoutInfo.contentOffsetY = collectionView.contentOffset.y + contentInset.top;

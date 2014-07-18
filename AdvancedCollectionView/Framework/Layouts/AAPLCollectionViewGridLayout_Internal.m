@@ -165,12 +165,13 @@
 				itemFrame.size.height = size.height - itemFrame.origin.y;
 			}
 
-			item.frame = itemFrame;
-
 			if (item.needSizeUpdate && measureItemBlock) {
+				item.needSizeUpdate = NO;
+				item.frame = itemFrame;
 				itemFrame.size.height = measureItemBlock(indexPath(itemIndex), itemFrame).height;
 				item.frame = itemFrame;
-				item.needSizeUpdate = NO;
+			} else {
+				item.frame = itemFrame;
 			}
 
 			itemOrigin.y += itemFrame.size.height;
