@@ -26,7 +26,7 @@
 
 - (void)notifyDidReloadData;
 
-- (void)notifyBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete;
+- (void)notifyBatchUpdate:(void(^)(void))update completion:(void(^)(BOOL finished))completion;
 
 - (void)notifyWillLoadContent;
 - (void)notifyContentLoadedWithError:(NSError *)error;

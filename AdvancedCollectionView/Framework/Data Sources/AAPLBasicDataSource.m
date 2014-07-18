@@ -167,7 +167,7 @@
     [self notifyBatchUpdate:^{
         batchUpdates();
         [self updateLoadingStateFromItems];
-    } complete:NULL];
+    } completion:NULL];
 }
 
 - (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray *)array __unused

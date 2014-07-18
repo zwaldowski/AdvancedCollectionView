@@ -182,9 +182,8 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
         [self notifyBatchUpdate:^{
             // Run pending updates
             [self executePendingUpdates];
-            if (update)
-                update();
-        } complete:NULL];
+			if (update) { update(); }
+        } completion:NULL];
     }
 
     self.loadingComplete = YES;
@@ -612,21 +611,16 @@ static void *AAPLDataSourceLoadingCompleteContext = &AAPLDataSourceLoadingComple
     }
 }
 
-- (void)notifyBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete
+- (void)notifyBatchUpdate:(void(^)(void))update completion:(void(^)(BOOL))completion
 {
     AAPL_ASSERT_MAIN_THREAD;
 
     id<AAPLDataSourceDelegate> delegate = self.delegate;
-    if ([delegate respondsToSelector:@selector(dataSource:performBatchUpdate:complete:)]) {
-        [delegate dataSource:self performBatchUpdate:update complete:complete];
-    }
-    else {
-        if (update) {
-            update();
-        }
-        if (complete) {
-            complete();
-        }
+    if ([delegate respondsToSelector:@selector(dataSource:performBatchUpdate:completion:)]) {
+        [delegate dataSource:self performBatchUpdate:update completion:completion];
+    } else {
+        if (update) { update(); }
+        if (completion) { completion(YES); }
     }
 }
 

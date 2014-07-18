@@ -386,9 +386,9 @@
     [self notifyDidReloadData];
 }
 
-- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete
+- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(void(^)(void))update completion:(void (^)(BOOL))completion
 {
-    [self notifyBatchUpdate:update complete:complete];
+    [self notifyBatchUpdate:update completion:completion];
 }
 
 /// If the content was loaded successfully, the error will be nil.
@@ -402,7 +402,7 @@
 	if (showingPlaceholder && !self.shouldDisplayPlaceholder) {
         [self notifyBatchUpdate:^{
             [self executePendingUpdates];
-        } complete:NULL];
+        } completion:NULL];
 	}
 
     [self notifyContentLoadedWithError:error];

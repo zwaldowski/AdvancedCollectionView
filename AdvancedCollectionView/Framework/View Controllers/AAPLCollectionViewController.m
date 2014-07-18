@@ -128,14 +128,9 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
     [self.collectionView reloadData];
 }
 
-- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete
+- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(void(^)(void))update completion:(void (^)(BOOL))completion
 {
-    [self.collectionView performBatchUpdates:update completion:^(BOOL finished){
-        if (complete) {
-            complete();
-        }
-        [self.collectionView reloadData];
-    }];
+    [self.collectionView performBatchUpdates:update completion:completion];
 }
 
 @end

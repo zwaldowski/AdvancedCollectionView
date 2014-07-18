@@ -24,7 +24,7 @@
 - (void)dataSource:(AAPLDataSource *)dataSource didRefreshSections:(NSIndexSet *)sections;
 
 - (void)dataSourceDidReloadData:(AAPLDataSource *)dataSource;
-- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete;
+- (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(void(^)(void))update completion:(void(^)(BOOL finished))completion;
 
 /// If the content was loaded successfully, the error will be nil.
 - (void)dataSource:(AAPLDataSource *)dataSource didLoadContentWithError:(NSError *)error;
