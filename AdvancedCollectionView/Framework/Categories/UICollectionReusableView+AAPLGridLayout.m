@@ -10,7 +10,7 @@ static inline BOOL collectionViewSupportsConstraints()
     static BOOL constraintsSupported;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-		constraintsSupported = (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1);
+		constraintsSupported = (floor(NSFoundationVersionNumber) > 1047.25);
     });
     return constraintsSupported;
 }

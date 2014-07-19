@@ -19,7 +19,7 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id view, id dataSo
 /// Definition of how supplementary views should be created and presented in a collection view.
 @interface AAPLLayoutSupplementaryMetrics : NSObject <NSCopying>
 
-- (id)initWithSupplementaryViewKind:(NSString *)kind NS_DESIGNATED_INITIALIZER;
+- (id)initWithSupplementaryViewKind:(NSString *)kind;
 
 @property (nonatomic, readonly) NSString *supplementaryViewKind;
 

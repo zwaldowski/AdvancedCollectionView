@@ -17,8 +17,6 @@ typedef enum {
 
 @interface AAPLDataSource : NSObject <UICollectionViewDataSource, AAPLContentLoading>
 
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
-
 /// The title of this data source. This value is used to populate section headers.
 @property (nonatomic, copy) NSString *title;
 

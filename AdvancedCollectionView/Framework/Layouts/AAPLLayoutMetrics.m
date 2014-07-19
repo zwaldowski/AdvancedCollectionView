@@ -11,6 +11,11 @@ CGFloat const AAPLRowHeightDefault = 44;
 
 @implementation AAPLLayoutSupplementaryMetrics
 
+- (instancetype)init
+{
+	return (self = [self initWithSupplementaryViewKind:nil]);
+}
+
 - (instancetype)initWithSupplementaryViewKind:(NSString *)kind
 {
 	self = [super init];
