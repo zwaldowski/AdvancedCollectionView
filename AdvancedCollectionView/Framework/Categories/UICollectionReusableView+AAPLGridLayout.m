@@ -32,7 +32,8 @@ static inline BOOL collectionViewSupportsConstraints()
     CGSize size;
 
 	if (collectionViewSupportsConstraints()) {
-        size = [self systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+		[self layoutSubviews];
+		size = [self systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 	} else {
         NSArray *constraints = @[
 			[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:fittingSize.width],
@@ -66,7 +67,6 @@ static inline BOOL collectionViewSupportsConstraints()
     if (collectionViewSupportsConstraints()) {
         [self layoutSubviews];
         size = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-		[self setNeedsUpdateConstraints];
     } else {
         NSArray *constraints = @[
 			[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:fittingSize.width],
