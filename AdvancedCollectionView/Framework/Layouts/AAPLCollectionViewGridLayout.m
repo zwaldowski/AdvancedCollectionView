@@ -264,12 +264,39 @@ static inline NSUInteger AAPLGridLayoutGetIndices(NSIndexPath *indexPath, NSUInt
 - (UICollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:(NSString*)kind atIndexPath:(NSIndexPath *)indexPath
 {
     AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
-    UICollectionViewLayoutAttributes *attributes = _indexPathKindToDecorationAttributes[indexPathKind];
+    AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathKindToDecorationAttributes[indexPathKind];
     if (attributes)
         return attributes;
 
-    // FIXME: don't know… but returning nil crashes.
-    return nil;
+	NSUInteger itemIndex;
+	NSUInteger sectionIndex = AAPLGridLayoutGetIndices(indexPath, &itemIndex, YES);
+
+	attributes = [[self.class layoutAttributesClass] layoutAttributesForDecorationViewOfKind:kind withIndexPath:indexPath];
+
+	if (_preparingLayout) {
+		attributes.hidden = YES;
+	}
+
+	if ([kind isEqual:AAPLGridLayoutSectionSeparatorKind]) {
+		AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
+
+		attributes.backgroundColor = section.sectionSeparatorColor;
+		attributes.zIndex = AAPLGridLayoutZIndexSeparator;
+
+		CGRect frame = CGRectMake(section.sectionSeparatorInsets.left, 0, CGRectGetWidth(section.frame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, self.collectionView.aapl_hairlineWidth);
+		if (itemIndex == 0) {
+			frame.origin.y = section.frame.origin.y;
+		} else if (itemIndex == 1) {
+			frame.origin.y = CGRectGetMaxY(section.frame);
+		}
+		attributes.frame = frame;
+	}
+
+	if (!_preparingLayout) {
+		_indexPathKindToDecorationAttributes[indexPathKind] = attributes;
+	}
+
+	return attributes;
 }
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
