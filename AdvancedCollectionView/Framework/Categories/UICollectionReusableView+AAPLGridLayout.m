@@ -42,6 +42,7 @@ static inline BOOL collectionViewSupportsConstraints()
 
         [self addConstraints:constraints];
         [self updateConstraints];
+        [self layoutSubviews];
         size = [self systemLayoutSizeFittingSize:fittingSize];
         [self removeConstraints:constraints];
     }
@@ -75,6 +76,7 @@ static inline BOOL collectionViewSupportsConstraints()
 
         [self addConstraints:constraints];
         [self updateConstraints];
+        [self layoutSubviews];
         size = [self systemLayoutSizeFittingSize:fittingSize];
         [self removeConstraints:constraints];
     }
