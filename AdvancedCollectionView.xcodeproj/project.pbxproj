@@ -85,6 +85,7 @@
 		DB01B48B19769BAE0077F5A2 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB01B48919769BAE0077F5A2 /* AAPLSectionHeaderView.m */; };
 		DB64263019738FD800D73789 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = DB64262C19738FD800D73789 /* AAPLBasicCell.h */; };
 		DB64263119738FD800D73789 /* AAPLBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DB64262D19738FD800D73789 /* AAPLBasicCell.m */; };
+		DBAF9A3919E587AA0076C4EE /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBAF9A3B19E587AA0076C4EE /* LaunchScreen.xib */; };
 		DBCB909E196F427D00F83CDF /* UIView+AAPLAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = DBCB909C196F427D00F83CDF /* UIView+AAPLAdditions.h */; };
 		DBCB909F196F427D00F83CDF /* UIView+AAPLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DBCB909D196F427D00F83CDF /* UIView+AAPLAdditions.m */; };
 		DBCB90C2196F8C0100F83CDF /* AAPLComposedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DBCB90C0196F8C0100F83CDF /* AAPLComposedCollectionView.h */; };
@@ -177,6 +178,7 @@
 		DB64262D19738FD800D73789 /* AAPLBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLBasicCell.m; sourceTree = "<group>"; };
 		DB80BB781970EE5E001488D3 /* AAPLDataSourceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLDataSourceDelegate.h; sourceTree = "<group>"; };
 		DB80BB791970EEA4001488D3 /* AAPLDataSource+Subclasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AAPLDataSource+Subclasses.h"; sourceTree = "<group>"; };
+		DBAF9A3A19E587AA0076C4EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		DBCB909C196F427D00F83CDF /* UIView+AAPLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AAPLAdditions.h"; sourceTree = "<group>"; };
 		DBCB909D196F427D00F83CDF /* UIView+AAPLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AAPLAdditions.m"; sourceTree = "<group>"; };
 		DBCB90C0196F8C0100F83CDF /* AAPLComposedCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLComposedCollectionView.h; sourceTree = "<group>"; };
@@ -332,8 +334,9 @@
 				1FE17C05192FEA2800620DC3 /* AAPLTextValueDataSource.m */,
 				1FA42970192A798300F673A0 /* AppDelegate.h */,
 				1FA42972192A798300F673A0 /* AppDelegate.m */,
-				1FA4297E192A798300F673A0 /* Images.xcassets */,
 				1FA42AFB192A937400F673A0 /* Main_iPhone.storyboard */,
+				DBAF9A3B19E587AA0076C4EE /* LaunchScreen.xib */,
+				1FA4297E192A798300F673A0 /* Images.xcassets */,
 				1FA42AFA192A91D800F673A0 /* Resources */,
 				1FA4296C192A798300F673A0 /* Supporting Files */,
 			);
@@ -498,6 +501,7 @@
 				1FE17BF7192E8BC900620DC3 /* detail-tiger.json in Resources */,
 				1FE17BF2192E8BC900620DC3 /* detail-mountain-lion.json in Resources */,
 				1FE17BED192E8BC900620DC3 /* detail-jaguar.json in Resources */,
+				DBAF9A3919E587AA0076C4EE /* LaunchScreen.xib in Resources */,
 				1FE17BEF192E8BC900620DC3 /* detail-lion.json in Resources */,
 				1FE17BEA192E8BC900620DC3 /* detail-caracal.json in Resources */,
 				1FA4297F192A798300F673A0 /* Images.xcassets in Resources */,
@@ -558,6 +562,14 @@
 				1FA42AFC192A937400F673A0 /* Base */,
 			);
 			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		DBAF9A3B19E587AA0076C4EE /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DBAF9A3A19E587AA0076C4EE /* Base */,
+			);
+			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -646,7 +658,6 @@
 		1FA4298F192A798300F673A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_ASSIGN_ENUM = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -662,7 +673,6 @@
 		1FA42990192A798300F673A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_ASSIGN_ENUM = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
