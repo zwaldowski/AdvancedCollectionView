@@ -3,6 +3,8 @@
  See LICENSE.txt for this sample’s licensing information  
  */
 
+#import <UIKit/UIKit.h>
+
 @interface AAPLCollectionViewController : UICollectionViewController
 
 @end
