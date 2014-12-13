@@ -41,11 +41,9 @@ static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
     // Create a section header that will pull the text of the header from the label of the item.
     AAPLLayoutSupplementaryMetrics *header = [self.defaultMetrics newHeader];
     header.supplementaryViewClass = [AAPLSectionHeaderView class];
-    header.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
-        AAPLSectionHeaderView *header = (AAPLSectionHeaderView *)view;
-        AAPLTextValueDataSource *me = (AAPLTextValueDataSource *)dataSource;
+    header.configureView = ^(AAPLSectionHeaderView *view, AAPLTextValueDataSource *me, NSIndexPath *indexPath) {
         NSDictionary *dictionary = me.items[indexPath.section];
-        header.leftText = dictionary[AAPLTextValueDataSourceLabelKey];
+        view.leftText = dictionary[AAPLTextValueDataSourceLabelKey];
     };
 
     return self;

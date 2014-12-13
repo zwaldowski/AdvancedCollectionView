@@ -31,7 +31,7 @@ typedef enum {
 @class AAPLDataSource;
 
 typedef UICollectionReusableView *(^AAPLLayoutSupplementaryItemCreationBlock)(UICollectionView *collectionView, NSString *kind, NSString *identifier, NSIndexPath *indexPath);
-typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath);
+typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionReusableView*/ view, id /*AAPLDataSource*/ dataSource, NSIndexPath *indexPath);
 
 /// Definition of how supplementary views should be created and presented in a collection view.
 @interface AAPLLayoutSupplementaryMetrics : NSObject <NSCopying>

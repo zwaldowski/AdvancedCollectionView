@@ -221,9 +221,9 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
             double threshhold = 100.0;
             if (velocityX < 0 && (-velocityX > threshhold || xPosition <= targetX)) {
-                CGFloat velocityX = (0.2*[recognizer velocityInView:_editingCell].x);
+                CGFloat adjVelocityX = (0.2*[recognizer velocityInView:_editingCell].x);
 
-                CGFloat finalX = translatedPoint.x + velocityX;
+                CGFloat finalX = translatedPoint.x + adjVelocityX;
 
                 if (UIDeviceOrientationIsPortrait([[UIDevice currentDevice] orientation])) {
                     if (finalX < 0) {

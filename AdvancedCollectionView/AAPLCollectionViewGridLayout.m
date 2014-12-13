@@ -1239,15 +1239,15 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         header.padding = headerMetrics.padding;
         header.hidden = headerMetrics.hidden;
 
-        UIColor *backgroundColor = headerMetrics.backgroundColor;
-        if (backgroundColor)
-            header.backgroundColor = [backgroundColor isEqual:clearColor] ? nil : backgroundColor;
+        UIColor *headerBackground = headerMetrics.backgroundColor;
+        if (headerBackground)
+            header.backgroundColor = [headerBackground isEqual:clearColor] ? nil : headerBackground;
         else
             header.backgroundColor = section.backgroundColor;
 
-        UIColor *selectedBackgroundColor = headerMetrics.selectedBackgroundColor;
-        if (selectedBackgroundColor)
-            header.selectedBackgroundColor = [selectedBackgroundColor isEqual:clearColor] ? nil : selectedBackgroundColor;
+        UIColor *selectedHeaderBackground = headerMetrics.selectedBackgroundColor;
+        if (selectedHeaderBackground)
+            header.selectedBackgroundColor = [selectedHeaderBackground isEqual:clearColor] ? nil : selectedHeaderBackground;
         else
             header.selectedBackgroundColor = section.selectedBackgroundColor;
     }];
@@ -1459,15 +1459,15 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
         }
 
-        [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stop) {
-            CGRect frame = item.frame;
+        [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stopB) {
+            CGRect itemFrame = item.frame;
             NSInteger columnIndex = item.columnIndex;
 
             if (columnIndex != NSNotFound && columnIndex < numberOfColumns - 1 && showsColumnSeparator) {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForItem:rowIndex * numberOfColumns + columnIndex inSection:sectionIndex];
                 AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind withIndexPath:indexPath];
-                CGRect separatorFrame = frame;
-                separatorFrame.origin.x = CGRectGetMaxX(frame);
+                CGRect separatorFrame = itemFrame;
+                separatorFrame.origin.x = CGRectGetMaxX(itemFrame);
                 separatorFrame.size.width = hairline;
                 separatorAttributes.frame = separatorFrame;
                 separatorAttributes.backgroundColor = separatorColor;
@@ -1480,7 +1480,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex++ inSection:sectionIndex];
             AAPLCollectionViewGridLayoutAttributes *newAttribute = [attributeClass layoutAttributesForCellWithIndexPath:indexPath];
-            newAttribute.frame = frame;
+            newAttribute.frame = itemFrame;
             newAttribute.zIndex = DEFAULT_ZINDEX;
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;

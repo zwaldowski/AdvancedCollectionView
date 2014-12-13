@@ -145,10 +145,9 @@
     if (!self.sightingsCache)
         self.sightingsCache = [[NSCache alloc] init];
 
-    NSArray *sightings = [self.sightingsCache objectForKey:cat.uniqueID];
-    if (sightings) {
-        if (handler)
-            handler(sightings, nil);
+    NSArray *existingSightings = [self.sightingsCache objectForKey:cat.uniqueID];
+    if (existingSightings) {
+        if (handler) { handler(existingSightings, nil); }
         return;
     }
 
