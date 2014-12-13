@@ -20,7 +20,7 @@
 #import "AAPLCollectionViewCell_Private.h"
 #import "AAPLCollectionViewGridLayout_Private.h"
 #import "AAPLDataSource.h"
-#import <libkern/OSAtomic.h>
+@import Darwin.libkern.OSAtomic;
 
 typedef int32_t aapl_debounce_t;
 

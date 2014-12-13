@@ -9,7 +9,7 @@
  */
 
 #import "AAPLStateMachine.h"
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 extern NSString * const AAPLSwipeStateNothing;
 extern NSString * const AAPLSwipeStateEditing;

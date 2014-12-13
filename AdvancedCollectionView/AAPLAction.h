@@ -8,7 +8,7 @@
   
  */
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /// A generic object that wraps a localized title and a selector.
 @interface AAPLAction : NSObject

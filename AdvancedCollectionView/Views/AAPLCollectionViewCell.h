@@ -8,7 +8,7 @@
   
 */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 /// A subclass of UICollectionViewCell that enables editing and swipe to delete
 @interface AAPLCollectionViewCell : UICollectionViewCell

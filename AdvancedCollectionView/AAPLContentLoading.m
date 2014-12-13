@@ -11,7 +11,7 @@
  */
 
 #import "AAPLContentLoading.h"
-#import <libkern/OSAtomic.h>
+@import Darwin.libkern.OSAtomic;
 
 #define DEBUG_ITCLOADING 0
 

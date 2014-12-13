@@ -12,7 +12,7 @@
 #import "AAPLLayoutMetrics_Private.h"
 #import "AAPLPlaceholderView.h"
 #import "NSObject+KVOBlock.h"
-#import <libkern/OSAtomic.h>
+@import Darwin.libkern.OSAtomic;
 
 #define AAPL_ASSERT_MAIN_THREAD NSAssert([NSThread isMainThread], @"This method must be called on the main thread")
 

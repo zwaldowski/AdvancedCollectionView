@@ -9,9 +9,9 @@
  */
 
 #import "NSObject+KVOBlock.h"
-#import <dispatch/dispatch.h>
-#import <objc/runtime.h>
-#import <libkern/OSAtomic.h>
+@import Dispatch;
+@import ObjectiveC.runtime;
+@import Darwin.libkern.OSAtomic;
 
 static void * const AAPLObserverMapKey = @"com.example.apple-samplecode.blockObserverMap";
 static dispatch_queue_t AAPLObserverMutationQueue = NULL;

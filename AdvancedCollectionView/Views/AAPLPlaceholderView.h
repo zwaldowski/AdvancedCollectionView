@@ -8,7 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 /// A placeholder view that approximates the standard iOS no content view.
 @interface AAPLPlaceholderView : UIView

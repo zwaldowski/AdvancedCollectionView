@@ -8,7 +8,7 @@
   
 */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 typedef NS_ENUM(NSUInteger, AAPLHairlineAlignment) {
     /// A hairline view that is horizontal

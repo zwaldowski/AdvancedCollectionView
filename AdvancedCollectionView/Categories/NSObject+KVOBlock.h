@@ -8,7 +8,7 @@
   
  */
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 typedef void (^AAPLBlockObserver)(id obj, NSDictionary *change, id observer);
 

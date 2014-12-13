@@ -8,6 +8,8 @@
   
  */
 
+@import UIKit;
+
 @interface AAPLCollectionViewController : UICollectionViewController <UICollectionViewDelegate>
 
 @property (nonatomic, getter = isEditing) BOOL editing;

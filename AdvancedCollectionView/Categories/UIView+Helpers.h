@@ -8,7 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface UIView (Helpers)
 - (BOOL)aapl_sendAction:(SEL)action from:(id)sender;

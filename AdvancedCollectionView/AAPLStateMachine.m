@@ -13,9 +13,8 @@
  */
 
 #import "AAPLStateMachine.h"
-
-#import <objc/message.h>
-#import <libkern/OSAtomic.h>
+@import ObjectiveC.message;
+@import Darwin.libkern.OSAtomic;
 
 static NSString * const AAPLStateNil = @"Nil";
 

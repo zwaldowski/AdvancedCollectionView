@@ -8,7 +8,7 @@
   
  */
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 @interface AAPLCatSighting : NSObject
 @property (nonatomic, strong) NSDate *date;

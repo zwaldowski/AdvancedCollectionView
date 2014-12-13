@@ -66,7 +66,6 @@
 		1FA42AE3192A7E1200F673A0 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */; };
 		1FA42AE4192A7E1200F673A0 /* AAPLSegmentedHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */; };
 		1FA42AE5192A7E1200F673A0 /* AAPLSegmentedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */; };
-		1FA42AEB192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AEA192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch */; };
 		1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */; };
 		1FA42AF1192A873200F673A0 /* AAPLCatListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */; };
 		1FA42AF4192A90C600F673A0 /* AAPLCatListDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AF2192A90C600F673A0 /* AAPLCatListDataSource.h */; };
@@ -175,7 +174,6 @@
 		1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLSectionHeaderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLSegmentedHeaderView.h; sourceTree = "<group>"; };
 		1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSegmentedHeaderView.m; sourceTree = "<group>"; };
-		1FA42AEA192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AdvancedCollectionView-Prefix.pch"; sourceTree = "<group>"; };
 		1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatListViewController.h; sourceTree = "<group>"; };
 		1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatListViewController.m; sourceTree = "<group>"; };
 		1FA42AF2192A90C600F673A0 /* AAPLCatListDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatListDataSource.h; sourceTree = "<group>"; };
@@ -265,7 +263,6 @@
 			children = (
 				1FA4296D192A798300F673A0 /* Info.plist */,
 				1FA4296E192A798300F673A0 /* main.m */,
-				1FA42AEA192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -463,7 +460,6 @@
 				1FA42A99192A7E1200F673A0 /* AAPLContentLoading.h in Headers */,
 				1FA42AE2192A7E1200F673A0 /* AAPLSectionHeaderView.h in Headers */,
 				1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */,
-				1FA42AEB192A7F6300F673A0 /* AdvancedCollectionView-Prefix.pch in Headers */,
 				1FA42AD3192A7E1200F673A0 /* AAPLBasicCell.h in Headers */,
 				1FE17BD4192E80D100620DC3 /* AAPLCatDetailViewController.h in Headers */,
 				1FA42AC7192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h in Headers */,
@@ -677,6 +673,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wauto-import";
 			};
 			name = Debug;
 		};
@@ -714,6 +711,7 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = "-Wauto-import";
 			};
 			name = Release;
 		};
@@ -723,8 +721,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_ASSIGN_ENUM = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AdvancedCollectionView/AdvancedCollectionView-Prefix.pch";
 				INFOPLIST_FILE = AdvancedCollectionView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -739,8 +735,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_ASSIGN_ENUM = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AdvancedCollectionView/AdvancedCollectionView-Prefix.pch";
 				INFOPLIST_FILE = AdvancedCollectionView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

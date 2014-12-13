@@ -11,7 +11,7 @@
  */
 
 #import "AAPLComposedDataSource_Private.h"
-#import <objc/runtime.h>
+@import ObjectiveC.runtime;
 
 @interface AAPLComposedMapping ()
 

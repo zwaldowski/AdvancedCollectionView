@@ -8,7 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 /// A base class for headers that can respond to being pinned to the top of the collection view
 @interface AAPLPinnableHeaderView : UICollectionReusableView

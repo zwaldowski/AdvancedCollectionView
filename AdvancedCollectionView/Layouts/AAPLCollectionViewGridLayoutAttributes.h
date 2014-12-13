@@ -8,7 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface AAPLCollectionViewGridLayoutAttributes : UICollectionViewLayoutAttributes
 /// If this is a header, is it pinned to the top of the collection view?

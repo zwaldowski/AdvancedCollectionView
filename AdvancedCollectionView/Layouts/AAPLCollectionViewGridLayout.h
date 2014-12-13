@@ -8,8 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
-
+@import UIKit;
 #import "AAPLCollectionViewGridLayoutAttributes.h"
 
 @interface AAPLCollectionViewGridLayout : UICollectionViewLayout

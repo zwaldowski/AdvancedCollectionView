@@ -8,7 +8,7 @@
   
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface UICollectionReusableView (GridLayout)
 - (CGSize)aapl_preferredLayoutSizeFittingSize:(CGSize)targetSize;
