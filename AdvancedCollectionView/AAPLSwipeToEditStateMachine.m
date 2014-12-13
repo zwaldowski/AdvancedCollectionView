@@ -149,11 +149,11 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
     if (animate) {
         // the segmented datasource might have changed in the same event loop, so delay this one loop cycle later
         dispatch_async(dispatch_get_main_queue(), ^{
-            aapl_debounce(&_debounce, ^{
+            aapl_debounce(&self->_debounce, ^{
                 // somebody might have already shut us by the time we're called, so only shut if we're not already
                 if (![self.currentState isEqualToString:AAPLSwipeStateNothing]) {
                     self.currentState = AAPLSwipeStateAnimatingShut;
-                    [_editingCell closeActionPaneAnimated:YES completionHandler:^(BOOL finished) {
+                    [self.editingCell closeActionPaneAnimated:YES completionHandler:^(BOOL finished) {
                         if (finished) {
                             self.currentState = AAPLSwipeStateNothing;
                         }
@@ -164,7 +164,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
     }
     else {
         aapl_debounce(&_debounce, ^{
-            [_editingCell closeActionPaneAnimated:NO completionHandler:nil];
+            [self.editingCell closeActionPaneAnimated:NO completionHandler:nil];
             self.currentState = AAPLSwipeStateNothing;
         });
     }
@@ -245,7 +245,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
                 self.currentState = AAPLSwipeStateAnimatingOpen;
                 [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-                    _editingCell.swipeTrackingPosition = finalX;
+                    self.editingCell.swipeTrackingPosition = finalX;
                 } completion:^(BOOL finished) {
                     // Only set it to editing if we're still in the same state as we previously set. It can change if that devilish user keeps fiddling with things.
                     if ([AAPLSwipeStateAnimatingOpen isEqualToString:self.currentState])

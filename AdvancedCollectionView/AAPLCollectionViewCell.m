@@ -109,10 +109,10 @@
             [button addTarget:self action:@selector(didTouchEditAction:) forControlEvents:UIControlEventTouchUpInside];
             [actionButtons addObject:button];
 
-            *stop = [_cell.editActions count] > 2 && actionIndex == 0;
+            *stop = self.cell.editActions.count > 2 && actionIndex == 0;
         }];
 
-        if ([_cell.editActions count] > 2) {
+        if (self.cell.editActions.count > 2) {
             UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
             [moreButton setTitle:NSLocalizedString(@"More", @"Text for More actions button") forState:UIControlStateNormal];
             moreButton.titleLabel.numberOfLines = 0;
@@ -156,10 +156,10 @@
         }
 
         if (buttonIndex > 0) {
-            [editActionConstraints addObject:[NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_actionButtons[buttonIndex-1] attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+            [editActionConstraints addObject:[NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.actionButtons[buttonIndex-1] attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
         }
 
-        if (buttonIndex == [_actionButtons count] - 1) {
+        if (buttonIndex == self.actionButtons.count - 1) {
             [editActionConstraints addObject:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:button attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
         }
 
@@ -523,13 +523,13 @@
     [self applyGradientMaskIfNeeded];
 
     [UIView animateWithDuration:0.5 animations:^{
-        self.topHairline.alpha = _shouldDisplaySwipeToEditAccessories ? 1 : 0;
-        self.bottomHairline.alpha = _shouldDisplaySwipeToEditAccessories ? 1 : 0;
+        self.topHairline.alpha = self.shouldDisplaySwipeToEditAccessories ? 1 : 0;
+        self.bottomHairline.alpha = self.shouldDisplaySwipeToEditAccessories ? 1 : 0;
     } completion:^(BOOL finished) {
-        if (!_shouldDisplaySwipeToEditAccessories && showsSeparators) {
-            [self removeConstraints:_hairlineConstraints];
-            [_topHairline removeFromSuperview];
-            [_bottomHairline removeFromSuperview];
+        if (!self.shouldDisplaySwipeToEditAccessories && showsSeparators) {
+            [self removeConstraints:self.hairlineConstraints];
+            [self.topHairline removeFromSuperview];
+            [self.bottomHairline removeFromSuperview];
         }
     }];
 }
@@ -599,29 +599,30 @@
 
 - (void)closeActionPaneAnimated:(BOOL)animate completionHandler:(void(^)(BOOL finished))handler
 {
-    dispatch_block_t shut = ^{
+    void(^shut)(void) = ^{
         self.swipeTrackingPosition = 0;
-        if (_editing)
+        if (self.editing) {
             [self rotateRemoveControl];
+        }
         [self layoutIfNeeded];
+    };
+    
+    void(^completion)(BOOL) = ^(BOOL finished){
+        if (!self.editing) {
+            [self addConstraint:self.contentLeftConstraint];
+        }
+        
+        if (handler) {
+            handler(finished);
+        }
     };
 
     if (animate) {
-        [UIView animateWithDuration:ANIMATION_DURATION animations:shut completion:^(BOOL finished) {
-            if (!_editing)
-                [self addConstraint:_contentLeftConstraint];
-            if (handler) {
-                handler(finished);
-            }
-        }];
+        [UIView animateWithDuration:ANIMATION_DURATION animations:shut completion:completion];
     }
     else {
         shut();
-        if (!_editing)
-            [self addConstraint:_contentLeftConstraint];
-        if (handler) {
-            handler(YES);
-        }
+        completion(YES);
     }
 }
 
@@ -699,14 +700,14 @@
         return;
 
     [UIView animateWithDuration:ANIMATION_DURATION animations:^{
-        _contentWidthConstraint.constant = 0;
-        _contentLeftConstraint.constant = 0;
+        self.contentWidthConstraint.constant = 0;
+        self.contentLeftConstraint.constant = 0;
         [self layoutIfNeeded];
     } completion:^(BOOL finished) {
-        [superContentView removeConstraints:_editingConstraints];
-        _editingConstraints = nil;
-        [_removeImageView removeFromSuperview];
-        [_reorderImageView removeFromSuperview];
+        [superContentView removeConstraints:self.editingConstraints];
+        self.editingConstraints = nil;
+        [self.removeImageView removeFromSuperview];
+        [self.reorderImageView removeFromSuperview];
         [self hideEditActions];
     }];
 }

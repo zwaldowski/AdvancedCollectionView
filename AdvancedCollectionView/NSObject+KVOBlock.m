@@ -86,19 +86,21 @@ static void * const AAPLObserverTrampolineContext = @"AAPLObserverTrampolineCont
 
 - (void)cancelObservation
 {
-    if (OSAtomicCompareAndSwap32(0, 1, &_cancellationPredicate)) {
+    if (!OSAtomicCompareAndSwap32(0, 1, &_cancellationPredicate)) {
+        return;
+    }
+    
+    void(^remove)(void) = ^{
+        [self->_observee removeObserver:self forKeyPath:self->_keyPath];
+        self->_observee = nil;
+    };
 
-        // Make sure we don't remove ourself before addObserver: completes
-        if (_options & NSKeyValueObservingOptionInitial) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_observee removeObserver:self forKeyPath:_keyPath];
-                _observee = nil;
-            });
-        }
-        else {
-            [_observee removeObserver:self forKeyPath:_keyPath];
-            _observee = nil;
-        }
+    // Make sure we don't remove ourself before addObserver: completes
+    if (_options & NSKeyValueObservingOptionInitial) {
+        dispatch_async(dispatch_get_main_queue(), remove);
+    }
+    else {
+        remove();
     }
 }
 

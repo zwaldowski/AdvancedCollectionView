@@ -924,7 +924,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         if (![indexPathKind.kind isEqualToString:kind])
             return;
         // If we have a similar decoration view in the new attributes, skip it.
-        if (_indexPathKindToDecorationAttributes[indexPathKind])
+        if (self.indexPathKindToDecorationAttributes[indexPathKind])
             return;
         [result addObject:indexPathKind.indexPath];
     }];
@@ -1393,9 +1393,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         headerAttribute.backgroundColor = header.backgroundColor ? : section.backgroundColor;
         headerAttribute.selectedBackgroundColor = header.selectedBackgroundColor;
         headerAttribute.padding = header.padding;
-        headerAttribute.editing = _editing;
+        headerAttribute.editing = self.editing;
         headerAttribute.hidden = NO;
-        [_layoutAttributes addObject:headerAttribute];
+        [self.layoutAttributes addObject:headerAttribute];
 
         if (header.shouldPin) {
             [section.pinnableHeaderAttributes addObject:headerAttribute];
@@ -1406,20 +1406,20 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         }
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionHeader];
-        _indexPathKindToSupplementaryAttributes[indexPathKind] = headerAttribute;
+        self.indexPathKindToSupplementaryAttributes[indexPathKind] = headerAttribute;
     }];
 
-    AAPLCollectionViewGridLayoutAttributes *lastAttribute = [_layoutAttributes lastObject];
+    AAPLCollectionViewGridLayoutAttributes *lastAttribute = self.layoutAttributes.lastObject;
     if (![lastAttribute.representedElementKind isEqualToString:AAPLGridLayoutSectionSeparatorKind] && sectionSeparatorColor && _totalNumberOfItems) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:sectionIndex];
         AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
         separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, section.frame.origin.y, CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
         separatorAttributes.backgroundColor = sectionSeparatorColor;
         separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-        [_layoutAttributes addObject:separatorAttributes];
+        [self.layoutAttributes addObject:separatorAttributes];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
-        _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+        self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
     }
 
     AAPLGridLayoutSupplementalItemInfo *placeholder = section.placeholder;
@@ -1428,10 +1428,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         AAPLCollectionViewGridLayoutAttributes *placeholderAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withIndexPath:indexPath];
         placeholderAttribute.frame = placeholder.frame;
         placeholderAttribute.zIndex = DEFAULT_ZINDEX + 1;
-        [_layoutAttributes addObject:placeholderAttribute];
+        [self.layoutAttributes addObject:placeholderAttribute];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLCollectionElementKindPlaceholder];
-        _indexPathKindToSupplementaryAttributes[indexPathKind] = placeholderAttribute;
+        self.indexPathKindToSupplementaryAttributes[indexPathKind] = placeholderAttribute;
     }
 
     NSInteger numberOfColumns = section.numberOfColumns;
@@ -1444,7 +1444,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
         CGRect frame = row.frame;
 
-        _totalNumberOfItems++;
+        self.totalNumberOfItems++;
 
         // If there's a separator, add it above the current row…
         if (rowIndex && separatorColor) {
@@ -1453,10 +1453,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             separatorAttributes.frame = CGRectMake(section.separatorInsets.left, row.frame.origin.y, CGRectGetWidth(frame) - section.separatorInsets.left - section.separatorInsets.right, hairline);
             separatorAttributes.backgroundColor = separatorColor;
             separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-            [_layoutAttributes addObject:separatorAttributes];
+            [self.layoutAttributes addObject:separatorAttributes];
 
             AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutRowSeparatorKind];
-            _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+            self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
         }
 
         [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stop) {
@@ -1472,10 +1472,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
                 separatorAttributes.frame = separatorFrame;
                 separatorAttributes.backgroundColor = separatorColor;
                 separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-                [_layoutAttributes addObject:separatorAttributes];
+                [self.layoutAttributes addObject:separatorAttributes];
 
                 AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutColumnSeparatorKind];
-                _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+                self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
             }
 
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex++ inSection:sectionIndex];
@@ -1484,17 +1484,17 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             newAttribute.zIndex = DEFAULT_ZINDEX;
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
-            newAttribute.editing = _editing ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : NO;
-            newAttribute.movable = _editing ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
+            newAttribute.editing = self.editing ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : NO;
+            newAttribute.movable = self.editing ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
             newAttribute.columnIndex = columnIndex;
             newAttribute.hidden = NO;
 
             // Drag & Drop
             newAttribute.hidden = item.dragging;
 
-            [_layoutAttributes addObject:newAttribute];
+            [self.layoutAttributes addObject:newAttribute];
 
-            _indexPathToItemAttributes[indexPath] = newAttribute;
+            self.indexPathToItemAttributes[indexPath] = newAttribute;
         }];
     }];
 
@@ -1512,12 +1512,12 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         footerAttribute.backgroundColor = footer.backgroundColor ? : section.backgroundColor;
         footerAttribute.selectedBackgroundColor = footer.selectedBackgroundColor;
         footerAttribute.padding = footer.padding;
-        footerAttribute.editing = _editing;
+        footerAttribute.editing = self.editing;
         footerAttribute.hidden = NO;
-        [_layoutAttributes addObject:footerAttribute];
+        [self.layoutAttributes addObject:footerAttribute];
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionFooter];
-        _indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
+        self.indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
     }];
     
     NSUInteger numberOfSections = [_layoutInfo.sections count];
@@ -1838,14 +1838,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)dataSource:(AAPLDataSource *)dataSource didInsertSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
     [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
-        _updateSectionDirections[@(sectionIndex)] = @(direction);
+        self.updateSectionDirections[@(sectionIndex)] = @(direction);
     }];
 }
 
 - (void)dataSource:(AAPLDataSource *)dataSource didRemoveSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
     [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
-        _updateSectionDirections[@(sectionIndex)] = @(direction);
+        self.updateSectionDirections[@(sectionIndex)] = @(direction);
     }];
 }
 

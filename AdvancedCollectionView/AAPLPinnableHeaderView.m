@@ -110,12 +110,12 @@
     if (isPinned != _pinned)
         [UIView animateWithDuration:0.25 animations:^{
             if (isPinned) {
-                _backgroundColorBeforePinning = self.backgroundColor;
+                self.backgroundColorBeforePinning = self.backgroundColor;
                 if (self.backgroundColorWhenPinned)
                     self.backgroundColor = self.backgroundColorWhenPinned;
             }
             else {
-                self.backgroundColor = _backgroundColorBeforePinning;
+                self.backgroundColor = self.backgroundColorBeforePinning;
             }
 
             self.pinned = isPinned;
@@ -129,8 +129,8 @@
             if (!borderColor)
                 showBorder = NO;
             
-            _borderView.backgroundColor = borderColor;
-            _borderView.hidden = !showBorder;
+            self.borderView.backgroundColor = borderColor;
+            self.borderView.hidden = !showBorder;
         }];
 }
 

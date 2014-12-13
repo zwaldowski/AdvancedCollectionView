@@ -239,7 +239,7 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     if (trackedIndexPath) {
         [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
             if (trackedIndexPath.section  == sectionIndex) {
-                [_swipeStateMachine shutActionPaneForEditingCellAnimated:NO];
+                [self.swipeStateMachine shutActionPaneForEditingCellAnimated:NO];
                 *stop = YES;
             }
         }];

@@ -309,7 +309,7 @@
 {
     NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[_mapping globalSectionForLocalSection:localSection]];
+        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
     }];
     [(UITableView *)_wrappedView insertSections:globalSections withRowAnimation:animation];
 }
@@ -318,7 +318,7 @@
 {
     NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[_mapping globalSectionForLocalSection:localSection]];
+        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
     }];
     [(UITableView *)_wrappedView deleteSections:globalSections withRowAnimation:animation];
 }
@@ -327,7 +327,7 @@
 {
     NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[_mapping globalSectionForLocalSection:localSection]];
+        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
     }];
     [(UITableView *)_wrappedView reloadSections:globalSections withRowAnimation:animation];
 }
@@ -481,7 +481,7 @@
     NSMutableIndexSet *globalSections = [[NSMutableIndexSet alloc] init];
 
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        NSUInteger globalSection = [_mapping globalSectionForLocalSection:localSection];
+        NSUInteger globalSection = [self.mapping globalSectionForLocalSection:localSection];
         [globalSections addIndex:globalSection];
     }];
 
@@ -493,7 +493,7 @@
     NSMutableIndexSet *globalSections = [[NSMutableIndexSet alloc] init];
 
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        NSUInteger globalSection = [_mapping globalSectionForLocalSection:localSection];
+        NSUInteger globalSection = [self.mapping globalSectionForLocalSection:localSection];
         [globalSections addIndex:globalSection];
     }];
 
@@ -505,7 +505,7 @@
     NSMutableIndexSet *globalSections = [[NSMutableIndexSet alloc] init];
 
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        NSUInteger globalSection = [_mapping globalSectionForLocalSection:localSection];
+        NSUInteger globalSection = [self.mapping globalSectionForLocalSection:localSection];
         [globalSections addIndex:globalSection];
     }];
 
