@@ -30,7 +30,7 @@
     _dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _dateLabel.font = [UIFont systemFontOfSize:12];
-    _dateLabel.textColor = [UIColor colorWithWhite:0.6 alpha:1];
+    _dateLabel.textColor = [UIColor colorWithWhite:0.6f alpha:1];
     [_dateLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
 
     [contentView addSubview:_dateLabel];
@@ -44,7 +44,7 @@
     _shortDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _shortDescriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _shortDescriptionLabel.font = [UIFont systemFontOfSize:10];
-    _shortDescriptionLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
+    _shortDescriptionLabel.textColor = [UIColor colorWithWhite:0.4f alpha:1];
 
     [contentView addSubview:_shortDescriptionLabel];
 

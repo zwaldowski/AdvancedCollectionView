@@ -28,8 +28,8 @@
 
     self.backgroundColor = [UIColor whiteColor];
 
-    _bottomBorderColor = [UIColor colorWithWhite:204/255.0 alpha:1];
-    _bottomBorderColorWhenPinned = [UIColor colorWithWhite:204/255.0 alpha:1];
+    _bottomBorderColor = [UIColor colorWithWhite:0.8f alpha:1];
+    _bottomBorderColorWhenPinned = [UIColor colorWithWhite:0.8f alpha:1];
 
     _borderView = [[AAPLHairlineView alloc] initWithFrame:CGRectZero];
     _borderView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -50,8 +50,8 @@
 {
     [super prepareForReuse];
     _pinned = NO;
-    _bottomBorderColor = [UIColor colorWithWhite:204/255.0 alpha:1];
-    _bottomBorderColorWhenPinned = [UIColor colorWithWhite:204/255.0 alpha:1];
+    _bottomBorderColor = [UIColor colorWithWhite:0.8f alpha:1];
+    _bottomBorderColorWhenPinned = [UIColor colorWithWhite:0.8f alpha:1];
     _backgroundColorWhenPinned = nil;
 }
 

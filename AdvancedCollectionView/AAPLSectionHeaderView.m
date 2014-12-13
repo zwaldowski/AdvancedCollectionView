@@ -131,7 +131,7 @@
     _actionButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
     _actionButton.titleLabel.font = [UIFont systemFontOfSize:14];
-    [_actionButton setTitleColor:[UIColor colorWithWhite:116/255.0 alpha:1] forState:UIControlStateDisabled];
+    [_actionButton setTitleColor:[UIColor colorWithWhite:0.46f alpha:1] forState:UIControlStateDisabled];
     [self addSubview:_actionButton];
     [self setNeedsUpdateConstraints];
 

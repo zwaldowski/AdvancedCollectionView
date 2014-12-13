@@ -15,7 +15,14 @@
 #import "UIView+Helpers.h"
 #import "AAPLAction.h"
 
-#define DESTRUCTIVE_COLOR [UIColor colorWithRed:220/255.0 green:55/255.0 blue:50/255.0 alpha:1.0]
+NS_INLINE UIColor *destructiveColor(void) {
+    return [UIColor colorWithRed:0.86f green:0.22f blue:0.2f alpha:1];
+}
+
+NS_INLINE UIColor *actionColor(void) {
+    return [UIColor colorWithWhite:0.8f alpha:1.0];
+}
+
 #define ANIMATION_DURATION 0.25
 
 @interface AAPLActionsView : UIView <UIActionSheetDelegate>
@@ -99,9 +106,9 @@
             button.titleLabel.font = [UIFont systemFontOfSize:16];
 
             if (editAction.destructive)
-                button.backgroundColor = DESTRUCTIVE_COLOR;
+                button.backgroundColor = destructiveColor();
             else
-                button.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1.0];
+                button.backgroundColor = actionColor();
 
             button.translatesAutoresizingMaskIntoConstraints = NO;
             button.contentEdgeInsets = UIEdgeInsetsMake(0, 9, 0, 9);
@@ -117,7 +124,7 @@
             [moreButton setTitle:NSLocalizedString(@"More", @"Text for More actions button") forState:UIControlStateNormal];
             moreButton.titleLabel.numberOfLines = 0;
             moreButton.titleLabel.font = [UIFont systemFontOfSize:18];
-            moreButton.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1.0];;
+            moreButton.backgroundColor = actionColor();
             moreButton.translatesAutoresizingMaskIntoConstraints = NO;
             moreButton.contentEdgeInsets = UIEdgeInsetsMake(0, 9, 0, 9);
 
@@ -267,7 +274,7 @@
 
     _removeImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"AAPLRemoveControl"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
     _removeImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    _removeImageView.tintColor = DESTRUCTIVE_COLOR;
+    _removeImageView.tintColor = destructiveColor();
 
     [_removeImageView setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 
@@ -478,7 +485,7 @@
                                 (id)[[UIColor blackColor] CGColor]];
         leftGradient.locations = @[@0, @0.25, @1];
         leftGradient.startPoint = CGPointMake(0, 0.5);
-        leftGradient.endPoint = CGPointMake(0.025, 0.5);
+        leftGradient.endPoint = CGPointMake(0.025f, 0.5);
         self.leftGradientMask = leftGradient;
     }
 
@@ -592,7 +599,7 @@
 
 - (void)rotateRemoveControl
 {
-    CGAffineTransform tform = CGAffineTransformMakeRotation(_removeControlRotated ? 0.0 : -M_PI_2);
+    CGAffineTransform tform = CGAffineTransformMakeRotation(_removeControlRotated ? 0.0 : (CGFloat)-M_PI_2);
     _removeControlRotated = !_removeControlRotated;
     [_removeImageView setTransform:tform];
 }

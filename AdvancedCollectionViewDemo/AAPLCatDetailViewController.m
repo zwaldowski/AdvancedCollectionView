@@ -74,7 +74,7 @@
     dataSource.noContentTitle = NSLocalizedString(@"No Sightings", @"Title of the no sightings placeholder message");
     dataSource.noContentMessage = NSLocalizedString(@"This cat has not been sighted recently.", @"The message to show when the cat has not been sighted recently");
 
-    dataSource.defaultMetrics.separatorColor = [UIColor colorWithWhite:224/255.0 alpha:1];
+    dataSource.defaultMetrics.separatorColor = [UIColor colorWithWhite:0.88f alpha:1];
     dataSource.defaultMetrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0);
     dataSource.defaultMetrics.rowHeight = AAPLRowHeightVariable;
     

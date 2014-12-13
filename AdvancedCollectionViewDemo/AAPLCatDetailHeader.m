@@ -42,21 +42,21 @@
     _shortDescription.translatesAutoresizingMaskIntoConstraints = NO;
     _shortDescription.font = [UIFont systemFontOfSize:14];
     _shortDescription.numberOfLines = 2;
-    _shortDescription.textColor = [UIColor colorWithWhite:0.4 alpha:1];
+    _shortDescription.textColor = [UIColor colorWithWhite:0.4f alpha:1];
     [self addSubview:_shortDescription];
 
     _conservationStatusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _conservationStatusLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _conservationStatusLabel.font = [UIFont systemFontOfSize:12];
     _conservationStatusLabel.numberOfLines = 1;
-    _conservationStatusLabel.textColor = [UIColor colorWithWhite:0.6 alpha:1];
+    _conservationStatusLabel.textColor = [UIColor colorWithWhite:0.6f alpha:1];
     [self addSubview:_conservationStatusLabel];
 
     _conservationStatusValue = [[UILabel alloc] initWithFrame:CGRectZero];
     _conservationStatusValue.translatesAutoresizingMaskIntoConstraints = NO;
     _conservationStatusValue.font = [UIFont systemFontOfSize:12];
     _conservationStatusValue.numberOfLines = 1;
-    _conservationStatusLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
+    _conservationStatusLabel.textColor = [UIColor colorWithWhite:0.4f alpha:1];
     [self addSubview:_conservationStatusValue];
 
     _favoriteButton = [UIButton buttonWithType:UIButtonTypeSystem];

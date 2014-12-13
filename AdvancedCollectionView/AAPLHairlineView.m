@@ -10,7 +10,9 @@
 
 #import "AAPLHairlineView.h"
 
-#define HAIRLINE_COLOR 204.0/255.0
+NS_INLINE UIColor *hairlineColor(void) {
+    return [UIColor colorWithWhite:0.8f alpha:1];
+}
 
 @interface AAPLHairlineView ()
 @property (nonatomic) AAPLHairlineAlignment alignment;
@@ -35,7 +37,7 @@
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
-    self.backgroundColor = [UIColor colorWithWhite:HAIRLINE_COLOR alpha:1];
+    self.backgroundColor = hairlineColor();
     self.alignment = AAPLHairlineAlignmentHorizontal;
     return self;
 }
@@ -45,7 +47,7 @@
     self = [super initWithCoder:coder];
     if (!self)
         return nil;
-    self.backgroundColor = [UIColor colorWithWhite:HAIRLINE_COLOR alpha:1];
+    self.backgroundColor = hairlineColor();
     self.alignment = AAPLHairlineAlignmentHorizontal;
     return self;
 }

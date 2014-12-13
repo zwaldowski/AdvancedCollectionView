@@ -27,7 +27,7 @@
     _label = [[UILabel alloc] initWithFrame:CGRectZero];
     _label.translatesAutoresizingMaskIntoConstraints = NO;
     _label.font = [UIFont systemFontOfSize:12];
-    _label.textColor = [UIColor colorWithWhite:77/255.0 alpha:1];
+    _label.textColor = [UIColor colorWithWhite:0.3f alpha:1];
     _label.lineBreakMode = NSLineBreakByWordWrapping;
     _label.numberOfLines = 0;
     [contentView addSubview:_label];

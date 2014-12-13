@@ -221,7 +221,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
             double threshhold = 100.0;
             if (velocityX < 0 && (-velocityX > threshhold || xPosition <= targetX)) {
-                CGFloat adjVelocityX = (0.2*[recognizer velocityInView:_editingCell].x);
+                CGFloat adjVelocityX = (0.2f * [recognizer velocityInView:_editingCell].x);
 
                 CGFloat finalX = translatedPoint.x + adjVelocityX;
 
@@ -241,7 +241,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
                 }
 
                 finalX = MAX(targetX, finalX);
-                CGFloat animationDuration = (ABS(velocityX)*.0002)+.2;
+                CGFloat animationDuration = (fabsf(velocityX)*.0002f)+.2f;
 
                 self.currentState = AAPLSwipeStateAnimatingOpen;
                 [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
