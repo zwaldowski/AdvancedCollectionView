@@ -9,10 +9,6 @@
  */
 
 #import "AAPLKeyValueDataSource.h"
-#import "AAPLBasicCell.h"
-
-#import "UICollectionView+Helpers.h"
-
 
 static NSString * const AAPLKeyValueDataSourceKeyPathKey = @"keyPath";
 static NSString * const AAPLKeyValueDataSourceLabelKey = @"label";

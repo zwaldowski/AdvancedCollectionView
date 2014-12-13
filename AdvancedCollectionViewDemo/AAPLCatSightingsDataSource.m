@@ -16,8 +16,6 @@
 
 #import "AAPLCatSightingCell.h"
 
-#import "UICollectionView+Helpers.h"
-
 @interface AAPLCatSightingsDataSource ()
 @property (nonatomic, strong) AAPLCat *cat;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;

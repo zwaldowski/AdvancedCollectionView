@@ -8,12 +8,18 @@
   
  */
 
-#import "AAPLPinnableHeaderView.h"
+@import AdvancedCollectionView;
 
 @class AAPLCat;
 
 @interface AAPLCatDetailHeader : AAPLPinnableHeaderView
 
 - (void)configureWithCat:(AAPLCat *)cat;
+
+@end
+
+@interface NSObject (AAPLCatDetailHeaderActions)
+
+- (void)toggleFavorite:(AAPLCatDetailHeader *)sender;
 
 @end

@@ -9,11 +9,11 @@
  */
 
 #import "AAPLCatDetailViewController.h"
-#import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailDataSource.h"
 #import "AAPLCatSightingsDataSource.h"
 
 #import "AAPLCatDetailHeader.h"
+#import "AAPLCat.h"
 
 @interface AAPLCatDetailViewController ()
 @property (nonatomic, strong) AAPLSegmentedDataSource *dataSource;

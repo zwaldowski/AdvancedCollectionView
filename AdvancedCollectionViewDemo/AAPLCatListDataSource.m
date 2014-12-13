@@ -13,13 +13,6 @@
 
 #import "AAPLDataAccessManager.h"
 
-#import "AAPLBasicCell.h"
-
-#import "UICollectionView+Helpers.h"
-
-#import "AAPLAction.h"
-#import "AAPLCollectionViewController.h"
-
 @interface AAPLCatListDataSource ()
 @end
 

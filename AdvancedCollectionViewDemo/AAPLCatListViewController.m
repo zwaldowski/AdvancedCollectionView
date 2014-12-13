@@ -10,10 +10,7 @@
 
 #import "AAPLCatListViewController.h"
 #import "AAPLCatListDataSource.h"
-#import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailViewController.h"
-
-#import "NSObject+KVOBlock.h"
 
 @interface APPLCatListViewController ()
 @property (nonatomic, strong) AAPLSegmentedDataSource *segmentedDataSource;

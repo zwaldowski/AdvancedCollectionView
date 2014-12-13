@@ -8,7 +8,7 @@
   
  */
 
-#import "AAPLBasicDataSource.h"
+@import AdvancedCollectionView;
 
 @class AAPLCat;
 

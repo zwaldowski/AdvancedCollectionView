@@ -11,8 +11,6 @@
 #import "AAPLCatDetailHeader.h"
 #import "AAPLCat.h"
 
-#import "UIView+Helpers.h"
-
 @interface NSObject ()
 - (void)toggleFavorite:(id)sender;
 @end
@@ -114,6 +112,6 @@
 {
     self.favorite = !self.favorite;
 
-    [self.superview aapl_sendAction:@selector(toggleFavorite:) from:self];
+    [self aapl_sendAction:@selector(toggleFavorite:) from:self];
 }
 @end

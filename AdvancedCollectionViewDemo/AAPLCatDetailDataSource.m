@@ -11,8 +11,6 @@
 #import "AAPLCatDetailDataSource.h"
 #import "AAPLKeyValueDataSource.h"
 #import "AAPLTextValueDataSource.h"
-#import "AAPLDataSource+Headers.h"
-
 #import "AAPLCat.h"
 #import "AAPLDataAccessManager.h"
 

@@ -11,8 +11,6 @@
 
 #import "AAPLTextValueDataSource.h"
 #import "AAPLTextValueCell.h"
-#import "AAPLSectionHeaderView.h"
-#import "UICollectionView+Helpers.h"
 
 static NSString * const AAPLTextValueDataSourceKeyPathKey = @"keyPath";
 static NSString * const AAPLTextValueDataSourceLabelKey = @"label";

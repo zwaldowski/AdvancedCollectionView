@@ -8,7 +8,7 @@
   
  */
 
-#import "AAPLBasicDataSource.h"
+@import AdvancedCollectionView;
 
 @interface AAPLCatListDataSource : AAPLBasicDataSource
 /// Is this list showing the favorites or all available cats?

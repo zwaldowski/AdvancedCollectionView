@@ -8,8 +8,9 @@
   
 */
 
-#import "AAPLCollectionViewController.h"
-#import "AAPLCat.h"
+@import AdvancedCollectionView;
+
+@class  AAPLCat;
 
 @interface AAPLCatDetailViewController : AAPLCollectionViewController
 @property (nonatomic, strong) AAPLCat *cat;

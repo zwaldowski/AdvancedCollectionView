@@ -8,7 +8,7 @@
   
  */
 
-#import "AAPLCollectionViewCell.h"
+@import AdvancedCollectionView;
 
 @interface AAPLTextValueCell : AAPLCollectionViewCell
 

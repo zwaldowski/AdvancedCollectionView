@@ -8,7 +8,7 @@
   
  */
 
-#import "AAPLCollectionViewController.h"
+@import AdvancedCollectionView;
 
 @interface APPLCatListViewController : AAPLCollectionViewController
 
