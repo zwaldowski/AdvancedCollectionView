@@ -14,19 +14,19 @@ extern NSString * const AAPLCatFavoriteToggledNotificationName;
 
 @interface AAPLCat : NSObject
 
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *uniqueID;
-@property (nonatomic, strong) NSString *shortDescription;
-@property (nonatomic, strong) NSString *conservationStatus;
-@property (nonatomic, strong) NSString *classificationKingdom;
-@property (nonatomic, strong) NSString *classificationPhylum;
-@property (nonatomic, strong) NSString *classificationClass;
-@property (nonatomic, strong) NSString *classificationOrder;
-@property (nonatomic, strong) NSString *classificationFamily;
-@property (nonatomic, strong) NSString *classificationGenus;
-@property (nonatomic, strong) NSString *classificationSpecies;
-@property (nonatomic, strong) NSString *habitat;
-@property (nonatomic, strong) NSString *longDescription;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *uniqueID;
+@property (nonatomic, copy) NSString *shortDescription;
+@property (nonatomic, copy) NSString *conservationStatus;
+@property (nonatomic, copy) NSString *classificationKingdom;
+@property (nonatomic, copy) NSString *classificationPhylum;
+@property (nonatomic, copy) NSString *classificationClass;
+@property (nonatomic, copy) NSString *classificationOrder;
+@property (nonatomic, copy) NSString *classificationFamily;
+@property (nonatomic, copy) NSString *classificationGenus;
+@property (nonatomic, copy) NSString *classificationSpecies;
+@property (nonatomic, copy) NSString *habitat;
+@property (nonatomic, copy) NSString *longDescription;
 
 @property (nonatomic, getter=isFavorite) BOOL favorite;
 
