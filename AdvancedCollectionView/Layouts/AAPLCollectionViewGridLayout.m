@@ -14,12 +14,12 @@
 #import "AAPLCollectionViewGridLayoutAttributes_Private.h"
 #import "UICollectionView+Helpers.h"
 
-static inline NSString *AAPLStringFromBOOL(BOOL value)
+static inline NSString *__unused AAPLStringFromBOOL(BOOL value)
 {
     return value ? @"YES" : @"NO";
 }
 
-static inline NSString *AAPLStringFromNSIndexPath(NSIndexPath *indexPath)
+static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPath)
 {
     NSMutableArray *indexes = [NSMutableArray array];
     NSUInteger numberOfIndexes = indexPath.length;
