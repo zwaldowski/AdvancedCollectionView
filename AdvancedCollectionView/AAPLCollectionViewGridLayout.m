@@ -639,7 +639,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [super prepareLayout];
 }
 
-- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect;
+- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
 {
     LAYOUT_TRACE();
 

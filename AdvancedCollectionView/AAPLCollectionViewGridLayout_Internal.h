@@ -75,7 +75,7 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @property (nonatomic) BOOL showsColumnSeparator;
 @property (nonatomic) BOOL showsSectionSeparatorWhenLastSection;
 @property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
-@property (nonatomic) CGFloat columnWidth;
+@property (nonatomic, readonly) CGFloat columnWidth;
 @property (nonatomic) NSUInteger phantomCellIndex;
 @property (nonatomic) CGSize phantomCellSize;
 
