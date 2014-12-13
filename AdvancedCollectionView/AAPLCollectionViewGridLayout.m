@@ -48,8 +48,8 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 
 #define DRAG_SHADOW_HEIGHT 19
 
-#define SCROLL_SPEED_MAX_MULTIPLIER 4.0
-#define FRAMES_PER_SECOND 60.0
+#define SCROLL_SPEED_MAX_MULTIPLIER 4.0f
+#define FRAMES_PER_SECOND 60.0f
 //#define MEASURE_HEIGHT UILayoutFittingExpandedSize.height
 #define MEASURE_HEIGHT 100
 
@@ -405,7 +405,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGPoint contentOffset = collectionView.contentOffset;
 
     // Need to keep the distance as an integer, because the contentOffset property is automatically rounded. This would cause the view center to begin to diverge from the scrolling and appear to slip away from under the user's finger.
-    CGFloat distance = rint(self.scrollingSpeed / FRAMES_PER_SECOND);
+    CGFloat distance = rintf(self.scrollingSpeed / FRAMES_PER_SECOND);
     CGPoint translation = CGPointZero;
 
     switch (direction) {

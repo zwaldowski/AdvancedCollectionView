@@ -22,10 +22,10 @@
     result = prime * result + _columnIndex;
     result = prime * result + [_backgroundColor hash];
     result = prime * result + [_selectedBackgroundColor hash];
-    result = prime * result + _padding.top;
-    result = prime * result + _padding.left;
-    result = prime * result + _padding.bottom;
-    result = prime * result + _padding.right;
+    result = (NSUInteger)(prime * result + _padding.top);
+    result = (NSUInteger)(prime * result + _padding.left);
+    result = (NSUInteger)(prime * result + _padding.bottom);
+    result = (NSUInteger)(prime * result + _padding.right);
     result = prime * result + _editing;
     result = prime * result + _movable;
     return result;
