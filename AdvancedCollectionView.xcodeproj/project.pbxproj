@@ -110,7 +110,6 @@
 		1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */; };
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
-		3E4EC382193D3D990070862B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EC381193D3D990070862B /* README.md */; };
 		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 /* End PBXBuildFile section */
 
@@ -612,7 +611,6 @@
 				1FE17BD5192E80D100620DC3 /* AAPLCatDetailViewController.m in Sources */,
 				1FA42A98192A7E1200F673A0 /* AAPLAction.m in Sources */,
 				1FE17C03192E991600620DC3 /* AAPLKeyValueDataSource.m in Sources */,
-				3E4EC382193D3D990070862B /* README.md in Sources */,
 				1FA42AB3192A7E1200F673A0 /* AAPLComposedDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
