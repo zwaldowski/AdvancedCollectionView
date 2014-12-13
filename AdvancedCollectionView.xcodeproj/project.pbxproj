@@ -73,7 +73,7 @@
 		1FA42AF5192A90C600F673A0 /* AAPLCatListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AF3192A90C600F673A0 /* AAPLCatListDataSource.m */; };
 		1FA42AF8192A910C00F673A0 /* AAPLDataAccessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AF6192A910C00F673A0 /* AAPLDataAccessManager.h */; };
 		1FA42AF9192A910C00F673A0 /* AAPLDataAccessManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AF7192A910C00F673A0 /* AAPLDataAccessManager.m */; };
-		1FA42AFD192A937400F673A0 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA42AFB192A937400F673A0 /* Main_iPhone.storyboard */; };
+		1FA42AFD192A937400F673A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA42AFB192A937400F673A0 /* Main.storyboard */; };
 		1FA42AFF192A93C800F673A0 /* CatList.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FA42AFE192A93C800F673A0 /* CatList.json */; };
 		1FA42B02192A9D2200F673A0 /* AAPLCat.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42B00192A9D2200F673A0 /* AAPLCat.h */; };
 		1FA42B03192A9D2200F673A0 /* AAPLCat.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42B01192A9D2200F673A0 /* AAPLCat.m */; };
@@ -111,6 +111,7 @@
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
 		3E4EC382193D3D990070862B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EC381193D3D990070862B /* README.md */; };
+		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -182,7 +183,7 @@
 		1FA42AF3192A90C600F673A0 /* AAPLCatListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatListDataSource.m; sourceTree = "<group>"; };
 		1FA42AF6192A910C00F673A0 /* AAPLDataAccessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLDataAccessManager.h; sourceTree = "<group>"; };
 		1FA42AF7192A910C00F673A0 /* AAPLDataAccessManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLDataAccessManager.m; sourceTree = "<group>"; };
-		1FA42AFC192A937400F673A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		1FA42AFC192A937400F673A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1FA42AFE192A93C800F673A0 /* CatList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CatList.json; sourceTree = "<group>"; };
 		1FA42B00192A9D2200F673A0 /* AAPLCat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCat.h; sourceTree = "<group>"; };
 		1FA42B01192A9D2200F673A0 /* AAPLCat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCat.m; sourceTree = "<group>"; };
@@ -220,6 +221,7 @@
 		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB81005C1A3CD0E600E758F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -384,8 +386,9 @@
 				1FE17C05192FEA2800620DC3 /* AAPLTextValueDataSource.m */,
 				1FA42970192A798300F673A0 /* AppDelegate.h */,
 				1FA42972192A798300F673A0 /* AppDelegate.m */,
+				1FA42AFB192A937400F673A0 /* Main.storyboard */,
 				1FA4297E192A798300F673A0 /* Images.xcassets */,
-				1FA42AFB192A937400F673A0 /* Main_iPhone.storyboard */,
+				DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */,
 				1FA42AFA192A91D800F673A0 /* Resources */,
 				1FA4296C192A798300F673A0 /* Supporting Files */,
 			);
@@ -545,7 +548,7 @@
 				1FE17BEC192E8BC900620DC3 /* detail-geoffroys-cat.json in Resources */,
 				1FE17BF6192E8BC900620DC3 /* detail-snow-leopard.json in Resources */,
 				1FE17BF3192E8BC900620DC3 /* detail-ocelot.json in Resources */,
-				1FA42AFD192A937400F673A0 /* Main_iPhone.storyboard in Resources */,
+				1FA42AFD192A937400F673A0 /* Main.storyboard in Resources */,
 				1FE17BF4192E8BC900620DC3 /* detail-oncilla.json in Resources */,
 				1FE17BE9192E8BC900620DC3 /* detail-bobcat.json in Resources */,
 				1FE17BEE192E8BC900620DC3 /* detail-leopard.json in Resources */,
@@ -554,6 +557,7 @@
 				1FE17BF7192E8BC900620DC3 /* detail-tiger.json in Resources */,
 				1FE17BF2192E8BC900620DC3 /* detail-mountain-lion.json in Resources */,
 				1FE17BED192E8BC900620DC3 /* detail-jaguar.json in Resources */,
+				DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */,
 				1FE17BEF192E8BC900620DC3 /* detail-lion.json in Resources */,
 				1FE17BEA192E8BC900620DC3 /* detail-caracal.json in Resources */,
 				1FA4297F192A798300F673A0 /* Images.xcassets in Resources */,
@@ -616,12 +620,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		1FA42AFB192A937400F673A0 /* Main_iPhone.storyboard */ = {
+		1FA42AFB192A937400F673A0 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				1FA42AFC192A937400F673A0 /* Base */,
 			);
-			name = Main_iPhone.storyboard;
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB81005C1A3CD0E600E758F6 /* Base */,
+			);
+			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -719,7 +731,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -735,7 +747,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
