@@ -278,6 +278,12 @@
         _sectionMetrics = [NSMutableDictionary dictionary];
 
     _sectionMetrics[@(sectionIndex)] = metrics;
+
+    if (sectionIndex == NSNotFound) {
+        [self notifyDidReloadGlobalSection];
+    } else {
+        [self notifySectionsRefreshed:[NSIndexSet indexSetWithIndex:sectionIndex]];
+    }
 }
 
 - (AAPLLayoutSectionMetrics *)snapshotMetricsForSectionAtIndex:(NSInteger)sectionIndex
@@ -619,6 +625,16 @@
     id<AAPLDataSourceDelegate> delegate = self.delegate;
     if ([delegate respondsToSelector:@selector(dataSourceDidReloadData:)]) {
         [delegate dataSourceDidReloadData:self];
+    }
+}
+
+- (void)notifyDidReloadGlobalSection
+{
+    AAPL_ASSERT_MAIN_THREAD;
+
+    id<AAPLDataSourceDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(dataSourceDidReloadGlobalSection:)]) {
+        [delegate dataSourceDidReloadGlobalSection:self];
     }
 }
 

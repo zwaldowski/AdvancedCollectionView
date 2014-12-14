@@ -17,6 +17,9 @@
 /// Recompute the layout for a specific item. This will remeasure the cell and then update the layout.
 - (void)invalidateLayoutForItemAtIndexPath:(NSIndexPath *)indexPath;
 
+/// Recompute the layout for a global header.
+- (void)invalidateLayoutForGlobalSection;
+
 /// Is the layout in editing mode? Default is NO.
 @property (nonatomic, getter = isEditing) BOOL editing;
 

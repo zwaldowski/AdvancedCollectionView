@@ -291,6 +291,19 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     [self.collectionView reloadData];
 }
 
+- (void)dataSourceDidReloadGlobalSection:(AAPLDataSource *)dataSource
+{
+#if UPDATE_DEBUGGING
+    NSLog(@"RELOAD GLOBAL SECTION");
+#endif
+    AAPLCollectionViewGridLayout *layout = (id)self.collectionViewLayout;
+    if (![layout isKindOfClass:AAPLCollectionViewGridLayout.class]) {
+        [self.collectionView reloadData];
+        return;
+    }
+    [layout invalidateLayoutForGlobalSection];
+}
+
 - (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete
 {
     [self.collectionView performBatchUpdates:^{

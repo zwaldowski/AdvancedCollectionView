@@ -1262,6 +1262,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [self invalidateLayoutWithContext:context];
 }
 
+- (void)invalidateLayoutForGlobalSection {
+    _globalSection = nil;
+
+    AAPLGridLayoutInvalidationContext *context = AAPLGridLayoutInvalidationContext.new;
+    context.invalidateLayoutMetrics = YES;
+    [self invalidateLayoutWithContext:context];
+}
+
 - (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex dataSource:(id <AAPLCollectionViewDataSourceGridLayout>)dataSource
 {
     UICollectionView *collectionView = self.collectionView;

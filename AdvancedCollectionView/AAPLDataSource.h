@@ -49,6 +49,7 @@
 - (void)notifySectionsRefreshed:(NSIndexSet *)sections;
 
 - (void)notifyDidReloadData;
+- (void)notifyDidReloadGlobalSection;
 
 - (void)notifyBatchUpdate:(dispatch_block_t)update;
 - (void)notifyBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete;

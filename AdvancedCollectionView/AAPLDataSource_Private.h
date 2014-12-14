@@ -67,6 +67,7 @@ typedef enum {
 - (void)dataSource:(AAPLDataSource *)dataSource didRefreshSections:(NSIndexSet *)sections;
 
 - (void)dataSourceDidReloadData:(AAPLDataSource *)dataSource;
+- (void)dataSourceDidReloadGlobalSection:(AAPLDataSource *)dataSource;
 - (void)dataSource:(AAPLDataSource *)dataSource performBatchUpdate:(dispatch_block_t)update complete:(dispatch_block_t)complete;
 
 /// If the content was loaded successfully, the error will be nil.
