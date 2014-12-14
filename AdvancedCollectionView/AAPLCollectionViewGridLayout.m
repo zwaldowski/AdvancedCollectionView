@@ -15,6 +15,7 @@
 #import "UICollectionView+Helpers.h"
 #import "AAPLMath.h"
 #import "UIView+Helpers.h"
+#import "AAPLGridLayoutColorView.h"
 
 /// Supporting "global" index paths
 NS_INLINE NSUInteger globalIndexPathSection(NSIndexPath *indexPath) {
@@ -94,18 +95,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     AAPLAutoScrollDirectionRight
 };
 
-
-@interface AAPLGridLayoutSeparatorView : UICollectionReusableView
-@end
-
-@implementation AAPLGridLayoutSeparatorView
-- (void)applyLayoutAttributes:(AAPLCollectionViewGridLayoutAttributes *)layoutAttributes
-{
-    NSAssert([layoutAttributes isKindOfClass:[AAPLCollectionViewGridLayoutAttributes class]], @"layout attributes not an instance of AAPLCollectionViewGridLayoutAttributes");
-    self.backgroundColor = layoutAttributes.backgroundColor;
-}
-@end
-
 @interface AAPLCollectionViewGridLayout ()
 @property (nonatomic) CGSize layoutSize;
 @property (nonatomic) CGSize oldLayoutSize;
@@ -183,9 +172,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
 - (void)aapl_commonInitCollectionViewGridLayout
 {
-    [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind];
-    [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind];
-    [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutGlobalHeaderBackgroundKind];
+    [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind];
+    [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind];
+    [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutGlobalHeaderBackgroundKind];
 
     _indexPathKindToDecorationAttributes = [NSMutableDictionary dictionary];
     _oldIndexPathKindToDecorationAttributes = [NSMutableDictionary dictionary];

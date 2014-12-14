@@ -38,6 +38,7 @@ FOUNDATION_EXPORT const unsigned char AdvancedCollectionViewVersionString[];
 #import <AdvancedCollectionView/AAPLPlaceholderView.h>
 #import <AdvancedCollectionView/AAPLSectionHeaderView.h>
 #import <AdvancedCollectionView/AAPLSegmentedHeaderView.h>
+#import <AdvancedCollectionView/AAPLGridLayoutColorView.h>
 
 #import <AdvancedCollectionView/AAPLDataSource+Headers.h>
 #import <AdvancedCollectionView/NSObject+KVOBlock.h>
