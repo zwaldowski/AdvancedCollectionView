@@ -12,6 +12,8 @@
 #import "AAPLCatListDataSource.h"
 #import "AAPLCatDetailViewController.h"
 
+static void *AAPLCatListSelectedContext = &AAPLCatListSelectedContext;
+
 @interface APPLCatListViewController ()
 @property (nonatomic, strong) AAPLSegmentedDataSource *segmentedDataSource;
 @property (nonatomic, strong) AAPLCatListDataSource *catsDataSource;
@@ -24,7 +26,7 @@
 
 - (void)dealloc
 {
-    [self.segmentedDataSource aapl_removeObserver:self.selectedDataSourceObserver];
+    [self.segmentedDataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(selectedDataSource)) context:AAPLCatListSelectedContext];
 }
 
 - (void)viewDidLoad
@@ -54,22 +56,27 @@
     segmentedDataSource.shouldDisplayDefaultHeader = NO;
     [segmentedDataSource configureSegmentedControl:segmentedControl];
 
-    __weak typeof(&*self) weakself = self;
+    [self.segmentedDataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(selectedDataSource)) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:AAPLCatListSelectedContext];
+}
 
-    // The title of the selected data source should appear in the back button; so update the title of this view controller when the selected data source changes.
-    self.selectedDataSourceObserver = [self.segmentedDataSource aapl_addObserverForKeyPath:@"selectedDataSource" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew withBlock:^(AAPLSegmentedDataSource *me, NSDictionary *change, id observer) {
-        AAPLDataSource *dataSource = me.selectedDataSource;
-        weakself.title = dataSource.title;
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == AAPLCatListSelectedContext) {
+        // The title of the selected data source should appear in the back button; so update the title of this view controller when the selected data source changes.
+        AAPLDataSource *dataSource = [object selectedDataSource];
+        self.title = dataSource.title;
 
-        if (dataSource == weakself.catsDataSource) {
-            weakself.editing = NO;
-            weakself.navigationItem.rightBarButtonItem = nil;
+        if ([dataSource isEqual:self.catsDataSource]) {
+            [self setEditing:NO animated:YES];
+            [self.navigationItem setRightBarButtonItems:nil animated:YES];
+        } else {
+            [self.navigationItem setRightBarButtonItems:@[
+                [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(beginEditing)]
+            ] animated:YES];
         }
-        else {
-            weakself.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(beginEditing)];
-        }
-
-    }];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (AAPLCatListDataSource *)newAllCatsDataSource
