@@ -12,7 +12,6 @@
 
 NSString * const AAPLCollectionElementKindPlaceholder = @"placeholder";
 CGFloat const AAPLRowHeightVariable = -1000;
-CGFloat const AAPLRowHeightRemainder = -1001;
 NSInteger const AAPLGlobalSection = NSIntegerMax;
 
 @implementation AAPLLayoutSupplementaryMetrics

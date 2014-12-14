@@ -217,9 +217,6 @@
             BOOL needSizeUpdate = item.needSizeUpdate && measureItemBlock;
 
             CGFloat height = CGRectGetHeight(item.frame);
-            if (_approxeq(CGRectGetHeight(item.frame), AAPLRowHeightRemainder)) {
-                height = self.layoutInfo.height - originY;
-            }
             
             if (hiddenCell) {
                 [row.items addObject:item];

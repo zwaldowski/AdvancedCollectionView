@@ -1204,9 +1204,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     BOOL variableRowHeight = _approxeq(rowHeight, AAPLRowHeightVariable);
     NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
 
-    NSAssert(!_approxeq(rowHeight, AAPLRowHeightRemainder) || numberOfItemsInSection == 1, @"Only one item is permitted in a section with remainder row height.");
-    NSAssert(!_approxeq(rowHeight, AAPLRowHeightRemainder) || sectionIndex == [collectionView numberOfSections] - 1, @"Remainder row height may only be set for last section.");
-
     if (variableRowHeight)
         rowHeight = MEASURE_HEIGHT;
 

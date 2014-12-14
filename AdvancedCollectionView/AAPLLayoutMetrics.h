@@ -15,9 +15,6 @@ extern NSString * const AAPLCollectionElementKindPlaceholder;
 /// A variable height row. The row will be measured using the datasource method -collectionView:sizeFittingSize:forItemAtIndexPath:
 extern CGFloat const AAPLRowHeightVariable;
 
-/// Rows with this height will have a height equal to the height of the collection view minus the initial vertical offset of the row. Really, only one cell should have this height set. Don't abuse this.
-extern CGFloat const AAPLRowHeightRemainder;
-
 extern NSInteger const AAPLGlobalSection;
 
 typedef NS_ENUM(NSInteger, AAPLCellLayoutOrder) {
