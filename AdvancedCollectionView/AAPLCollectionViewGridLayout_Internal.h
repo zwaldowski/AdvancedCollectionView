@@ -82,3 +82,10 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 - (AAPLGridLayoutItemInfo *)addItem;
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
 @end
+
+/// Used to look up supplementary & decoration attributes
+@interface AAPLIndexPathKind : NSObject <NSCopying>
+- (instancetype)initWithIndexPath:(NSIndexPath *)indexPath kind:(NSString *)kind NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, readonly) NSIndexPath *indexPath;
+@property (nonatomic, readonly) NSString *kind;
+@end

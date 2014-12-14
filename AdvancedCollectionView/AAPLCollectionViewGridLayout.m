@@ -95,61 +95,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 };
 
 
-/// Used to look up supplementary & decoration attributes
-@interface AAPLIndexPathKind : NSObject<NSCopying>
-@property (nonatomic, strong) NSIndexPath *indexPath;
-@property (nonatomic, copy) NSString *kind;
-@end
-
-@implementation AAPLIndexPathKind
-- (instancetype)initWithIndexPath:(NSIndexPath *)indexPath kind:(NSString *)kind
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _indexPath = [indexPath copy];
-    _kind = [kind copy];
-    return self;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-
-- (NSUInteger)hash
-{
-    NSUInteger prime = 31;
-    NSUInteger result = 1;
-
-    result = prime * result + [_indexPath hash];
-    result = prime * result + [_kind hash];
-    return result;
-}
-
-- (BOOL)isEqual:(id)object
-{
-    if (self == object)
-        return YES;
-    if (![object isKindOfClass:[AAPLIndexPathKind class]])
-        return NO;
-
-    AAPLIndexPathKind *other = object;
-
-    if (_indexPath == other->_indexPath && _kind == other->_kind)
-        return YES;
-
-    if (!_indexPath || ![_indexPath isEqual:other->_indexPath])
-        return NO;
-    if (!_kind || ![_kind isEqualToString:other->_kind])
-        return NO;
-
-    return YES;
-}
-
-@end
-
-
 @interface AAPLGridLayoutSeparatorView : UICollectionReusableView
 @end
 
