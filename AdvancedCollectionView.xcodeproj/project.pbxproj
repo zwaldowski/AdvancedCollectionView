@@ -65,7 +65,6 @@
 		DB81007B1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */; };
 		DB8100891A3CD40100E758F6 /* AAPLDataSource+Headers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */; };
-		DB81008A1A3CD40100E758F6 /* NSObject+KVOBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A50192A7E1200F673A0 /* NSObject+KVOBlock.m */; };
 		DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */; };
 		DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A56192A7E1200F673A0 /* UIView+Helpers.m */; };
 		DB81008D1A3CD40100E758F6 /* AAPLBasicDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */; };
@@ -92,7 +91,6 @@
 		DB8100A21A3CD45200E758F6 /* AAPLContentLoading.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A31A3CD45200E758F6 /* AAPLStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A41A3CD45A00E758F6 /* AAPLDataSource+Headers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A51A3CD45A00E758F6 /* NSObject+KVOBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A4F192A7E1200F673A0 /* NSObject+KVOBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A61A3CD45A00E758F6 /* UICollectionView+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A71A3CD45A00E758F6 /* UIView+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A81A3CD46200E758F6 /* AAPLBasicDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -173,8 +171,6 @@
 		1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLStateMachine.m; sourceTree = "<group>"; };
 		1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "AAPLDataSource+Headers.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "AAPLDataSource+Headers.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A4F192A7E1200F673A0 /* NSObject+KVOBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KVOBlock.h"; sourceTree = "<group>"; };
-		1FA42A50192A7E1200F673A0 /* NSObject+KVOBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KVOBlock.m"; sourceTree = "<group>"; };
 		1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionView+Helpers.h"; sourceTree = "<group>"; };
 		1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionView+Helpers.m"; sourceTree = "<group>"; };
 		1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Helpers.h"; sourceTree = "<group>"; };
@@ -448,8 +444,6 @@
 			children = (
 				1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */,
 				1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */,
-				1FA42A4F192A7E1200F673A0 /* NSObject+KVOBlock.h */,
-				1FA42A50192A7E1200F673A0 /* NSObject+KVOBlock.m */,
 				1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */,
 				1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */,
 				1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */,
@@ -581,7 +575,6 @@
 				DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */,
 				DB8100B01A3CD48E00E758F6 /* AAPLLayoutMetrics.h in Headers */,
 				DB8100BA1A3CD4A500E758F6 /* AAPLPinnableHeaderView.h in Headers */,
-				DB8100A51A3CD45A00E758F6 /* NSObject+KVOBlock.h in Headers */,
 				DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */,
 				DB8100BE1A3CD4A900E758F6 /* AAPLCollectionViewCell_Private.h in Headers */,
 				DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */,
@@ -787,7 +780,6 @@
 				DB8100971A3CD40100E758F6 /* AAPLSwipeToEditStateMachine.m in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
-				DB81008A1A3CD40100E758F6 /* NSObject+KVOBlock.m in Sources */,
 				DB81009D1A3CD40100E758F6 /* AAPLSectionHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
