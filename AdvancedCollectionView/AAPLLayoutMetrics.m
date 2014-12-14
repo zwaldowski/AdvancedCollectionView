@@ -67,11 +67,10 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
 
 @implementation AAPLLayoutSectionMetrics {
     struct {
-        unsigned int showsSectionSeparatorWhenLastSection : 1;
         unsigned int backgroundColor : 1;
         unsigned int selectedBackgroundColor : 1;
         unsigned int separatorColor : 1;
-        unsigned int sectionSeparatorColor : 1;
+        unsigned int separators : 1;
     } _flags;
     NSMutableArray *_supplementaryViews;
 }
@@ -94,13 +93,11 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
 - (instancetype)init
 {
     self = [super init];
-    if (!self)
-        return nil;
+    if (!self) { return nil; }
 
-    _rowHeight = 0;
-    _numberOfColumns = 0;
     // If there's more than one column AND there's a separator color specified, we want to show a column separator by default.
-    _showsColumnSeparator = YES;
+    _separators = AAPLSeparatorOptionSupplements | AAPLSeparatorOptionRows | AAPLSeparatorOptionColumns | AAPLSeparatorOptionAfterSection;
+
     return self;
 }
 
@@ -113,16 +110,13 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     metrics->_rowHeight = _rowHeight;
     metrics->_numberOfColumns = _numberOfColumns;
     metrics->_padding = _padding;
-    metrics->_showsColumnSeparator = _showsColumnSeparator;
     metrics->_separatorInsets = _separatorInsets;
     metrics->_backgroundColor = _backgroundColor;
     metrics->_selectedBackgroundColor = _selectedBackgroundColor;
     metrics->_separatorColor = _separatorColor;
-    metrics->_sectionSeparatorColor = _sectionSeparatorColor;
-    metrics->_sectionSeparatorInsets = _sectionSeparatorInsets;
     metrics->_hasPlaceholder = _hasPlaceholder;
-    metrics->_showsSectionSeparatorWhenLastSection = _showsSectionSeparatorWhenLastSection;
     metrics->_cellLayoutOrder = _cellLayoutOrder;
+    metrics->_separators = _separators;
     metrics->_supplementaryViews = [_supplementaryViews mutableCopy];
     metrics->_flags = _flags;
     return metrics;
@@ -146,16 +140,10 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     _flags.separatorColor = YES;
 }
 
-- (void)setSectionSeparatorColor:(UIColor *)sectionSeparatorColor
+- (void)setSeparators:(AAPLSeparatorOption)separators
 {
-    _sectionSeparatorColor = sectionSeparatorColor;
-    _flags.sectionSeparatorColor = YES;
-}
-
-- (void)setShowsSectionSeparatorWhenLastSection:(BOOL)showsSectionSeparatorWhenLastSection
-{
-    _showsSectionSeparatorWhenLastSection = showsSectionSeparatorWhenLastSection;
-    _flags.showsSectionSeparatorWhenLastSection = YES;
+    _separators = separators;
+    _flags.separators = YES;
 }
 
 - (void)setSupplementaryViews:(NSArray *)supplementaryViews {
@@ -187,9 +175,6 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     if (!UIEdgeInsetsEqualToEdgeInsets(metrics.separatorInsets, UIEdgeInsetsZero))
         self.separatorInsets = metrics.separatorInsets;
 
-    if (!UIEdgeInsetsEqualToEdgeInsets(metrics.sectionSeparatorInsets, UIEdgeInsetsZero))
-        self.sectionSeparatorInsets = metrics.sectionSeparatorInsets;
-
     if (metrics.rowHeight)
         self.rowHeight = metrics.rowHeight;
 
@@ -202,17 +187,14 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     if (metrics->_flags.selectedBackgroundColor)
         self.selectedBackgroundColor = metrics.selectedBackgroundColor;
 
-    if (metrics->_flags.sectionSeparatorColor)
-        self.sectionSeparatorColor = metrics.sectionSeparatorColor;
-
     if (metrics->_flags.separatorColor)
         self.separatorColor = metrics.separatorColor;
-
-    if (metrics->_flags.showsSectionSeparatorWhenLastSection)
-        self.showsSectionSeparatorWhenLastSection = metrics.showsSectionSeparatorWhenLastSection;
-
-    if (metrics.hasPlaceholder)
-        self.hasPlaceholder = YES;
+    
+    if (metrics->_flags.separators) {
+        self.separators = metrics.separators;
+    }
+    
+    self.hasPlaceholder |= metrics.hasPlaceholder;
     
     if (metrics.supplementaryViews) {
         [_supplementaryViews addObjectsFromArray:metrics.supplementaryViews];

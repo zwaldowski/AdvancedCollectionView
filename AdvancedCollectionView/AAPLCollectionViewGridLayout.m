@@ -64,7 +64,6 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 
 static NSString * const AAPLGridLayoutRowSeparatorKind = @"AAPLGridLayoutRowSeparatorKind";
 static NSString * const AAPLGridLayoutColumnSeparatorKind = @"AAPLGridLayoutColumnSeparatorKind";
-static NSString * const AAPLGridLayoutSectionSeparatorKind = @"AAPLGridLayoutSectionSeparatorKind";
 static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLayoutGlobalHeaderBackgroundKind";
 
 static inline CGPoint AAPLPointAddPoint(CGPoint point1, CGPoint point2)
@@ -167,7 +166,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 @property (nonatomic) CGRect dragBounds;
 @property (nonatomic) CGSize dragCellSize;
 
-@property (nonatomic) NSInteger totalNumberOfItems;
 @property (nonatomic, strong) NSMutableArray *layoutAttributes;
 @property (nonatomic, strong) NSMutableArray *pinnableAttributes;
 @property (nonatomic, strong) AAPLGridLayoutInfo *layoutInfo;
@@ -225,7 +223,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind];
     [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind];
-    [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind];
     [self registerClass:[AAPLGridLayoutSeparatorView class] forDecorationViewOfKind:AAPLGridLayoutGlobalHeaderBackgroundKind];
 
     _indexPathKindToDecorationAttributes = [NSMutableDictionary dictionary];
@@ -1223,11 +1220,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     section.backgroundColor = fromMetrics(metrics.backgroundColor);
     section.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor);
     section.separatorColor = fromMetrics(metrics.separatorColor);
-    section.sectionSeparatorColor = fromMetrics(metrics.sectionSeparatorColor);
-    section.sectionSeparatorInsets = metrics.sectionSeparatorInsets;
     section.separatorInsets = metrics.separatorInsets;
-    section.showsColumnSeparator = metrics.showsColumnSeparator;
-    section.showsSectionSeparatorWhenLastSection = metrics.showsSectionSeparatorWhenLastSection;
+    section.separators = metrics.separators;
     section.numberOfColumns = metrics.numberOfColumns ?: 1;
     section.cellLayoutOrder = metrics.cellLayoutOrder;
     section.insets = metrics.padding;
@@ -1335,22 +1329,50 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     UICollectionView *collectionView = self.collectionView;
     Class attributeClass = self.class.layoutAttributesClass;
 
-    CGRect sectionFrame = section.frame;
-
     BOOL globalSection = (AAPLGlobalSection == sectionIndex);
 
-    UIColor *separatorColor = section.separatorColor;
-    UIColor *sectionSeparatorColor = section.sectionSeparatorColor;
-    NSInteger numberOfItems = [section.items count];
+    NSIndexPath *(^itemIndexPath)(NSUInteger) = ^(NSUInteger idx){
+        NSUInteger indexes[] = { sectionIndex, idx };
+        return [NSIndexPath indexPathWithIndexes:indexes length:2];
+    };
+    
+    NSIndexPath *(^supplementIndexPath)(NSUInteger) = ^(NSUInteger idx){
+        if (globalSection) {
+            return [NSIndexPath indexPathWithIndex:idx];
+        }
+        return itemIndexPath(idx);
+    };
 
-    CGFloat hairline = [[UIScreen mainScreen] scale] > 1 ? 0.5 : 1;
+    AAPLSeparatorOption separators = section.separators;
+    NSInteger numberOfItems = section.items.count;
+    NSUInteger numberOfHeaders = section.headers.count;
+    CGFloat hair = self.collectionView.aapl_hairline;
+    NSInteger numberOfColumns = section.numberOfColumns;
+    NSUInteger numberOfSections = _layoutInfo.sections.count;
+    
+    AAPLCollectionViewGridLayoutAttributes *(^addSeparator)(NSIndexPath *, CGRect, CGRectEdge, NSString *, AAPLSeparatorOption) = ^AAPLCollectionViewGridLayoutAttributes *(NSIndexPath *indexPath, CGRect rect, CGRectEdge edge, NSString *kind, AAPLSeparatorOption bit){
+        UIColor *color = section.separatorColor;
+        if (!color || !(separators & bit)) { return nil; }
+        
+        CGRect frame = AAPLSeparatorRect(rect, edge, hair);
+        AAPLCollectionViewGridLayoutAttributes *separatorAttributes = (AAPLCollectionViewGridLayoutAttributes *)[attributeClass layoutAttributesForDecorationViewOfKind:kind withIndexPath:indexPath];
+        separatorAttributes.frame = frame;
+        separatorAttributes.backgroundColor = color;
+        separatorAttributes.zIndex = SEPARATOR_ZINDEX;
+        [self.layoutAttributes addObject:separatorAttributes];
+        
+        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
+        self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+        
+        return separatorAttributes;
+    };
 
     [section.pinnableHeaderAttributes removeAllObjects];
     [section.nonPinnableHeaderAttributes removeAllObjects];
 
-    if (AAPLGlobalSection == sectionIndex && section.backgroundColor) {
+    if (globalSection && section.backgroundColor) {
         // Add the background decoration attribute
-        NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:0];
+        NSIndexPath *indexPath = supplementIndexPath(0);
         AAPLCollectionViewGridLayoutAttributes *backgroundAttribute = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutGlobalHeaderBackgroundKind withIndexPath:indexPath];
         // This will be updated by -filterSpecialAttributes
         backgroundAttribute.frame = section.frame;
@@ -1400,18 +1422,23 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionHeader];
         self.indexPathKindToSupplementaryAttributes[indexPathKind] = headerAttribute;
     }];
-
-    AAPLCollectionViewGridLayoutAttributes *lastAttribute = self.layoutAttributes.lastObject;
-    if (![lastAttribute.representedElementKind isEqualToString:AAPLGridLayoutSectionSeparatorKind] && sectionSeparatorColor && _totalNumberOfItems) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:sectionIndex];
-        AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
-        separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, section.frame.origin.y, CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
-        separatorAttributes.backgroundColor = sectionSeparatorColor;
-        separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-        [self.layoutAttributes addObject:separatorAttributes];
-
-        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
-        self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+    
+    // Separator after non-global header
+    if (numberOfHeaders || numberOfItems) {
+        NSIndexPath *indexPath = supplementIndexPath(numberOfHeaders);
+        
+        AAPLSeparatorOption bit;
+        CGRect frame = section.headersRect;
+        if (!numberOfHeaders) {
+            bit = AAPLSeparatorOptionBeforeSection;
+        } else if (!numberOfItems) {
+            bit = AAPLSeparatorOptionAfterSection;
+        } else {
+            bit = AAPLSeparatorOptionSupplements;
+            frame = UIEdgeInsetsInsetRect(frame, section.groupPadding);
+        }
+        
+        addSeparator(indexPath, frame, CGRectMaxYEdge, AAPLGridLayoutRowSeparatorKind, bit);
     }
 
     AAPLGridLayoutSupplementalItemInfo *placeholder = section.placeholder;
@@ -1426,51 +1453,29 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         self.indexPathKindToSupplementaryAttributes[indexPathKind] = placeholderAttribute;
     }
 
-    NSInteger numberOfColumns = section.numberOfColumns;
-    BOOL showsColumnSeparator = (numberOfColumns > 1) && separatorColor && section.showsColumnSeparator;
+    
     __block NSUInteger itemIndex = 0;
-
     [section.rows enumerateObjectsUsingBlock:^(AAPLGridLayoutRowInfo *row, NSUInteger rowIndex, BOOL *stop) {
-        if (![row.items count])
+        if (!row.items.count)
             return;
 
-        CGRect frame = row.frame;
-
-        self.totalNumberOfItems++;
-
         // If there's a separator, add it above the current row…
-        if (rowIndex && separatorColor) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:rowIndex inSection:sectionIndex];
-            AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind withIndexPath:indexPath];
-            separatorAttributes.frame = CGRectMake(section.separatorInsets.left, row.frame.origin.y, CGRectGetWidth(frame) - section.separatorInsets.left - section.separatorInsets.right, hairline);
-            separatorAttributes.backgroundColor = separatorColor;
-            separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-            [self.layoutAttributes addObject:separatorAttributes];
-
-            AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutRowSeparatorKind];
-            self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+        if (rowIndex) {
+            CGRect rect = UIEdgeInsetsInsetRect(row.frame, section.separatorInsets);
+            addSeparator(itemIndexPath(rowIndex), rect, CGRectMinYEdge, AAPLGridLayoutRowSeparatorKind, AAPLSeparatorOptionRows);
         }
 
         [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stopB) {
+
             CGRect itemFrame = item.frame;
             NSInteger columnIndex = item.columnIndex;
 
-            if (columnIndex != NSNotFound && columnIndex < numberOfColumns - 1 && showsColumnSeparator) {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:rowIndex * numberOfColumns + columnIndex inSection:sectionIndex];
-                AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind withIndexPath:indexPath];
-                CGRect separatorFrame = itemFrame;
-                separatorFrame.origin.x = CGRectGetMaxX(itemFrame);
-                separatorFrame.size.width = hairline;
-                separatorAttributes.frame = separatorFrame;
-                separatorAttributes.backgroundColor = separatorColor;
-                separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-                [self.layoutAttributes addObject:separatorAttributes];
-
-                AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutColumnSeparatorKind];
-                self.indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+            if (columnIndex != NSNotFound && numberOfColumns > 1 && columnIndex > 0) {
+                NSIndexPath *indexPath = itemIndexPath(rowIndex * numberOfColumns + columnIndex);
+                addSeparator(indexPath, itemFrame, CGRectMinXEdge, AAPLGridLayoutColumnSeparatorKind, AAPLSeparatorOptionColumns);
             }
 
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex++ inSection:sectionIndex];
+            NSIndexPath *indexPath = itemIndexPath(itemIndex++);
             AAPLCollectionViewGridLayoutAttributes *newAttribute = [attributeClass layoutAttributesForCellWithIndexPath:indexPath];
             newAttribute.frame = itemFrame;
             newAttribute.zIndex = DEFAULT_ZINDEX;
@@ -1497,7 +1502,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         if (!numberOfItems || !footer.height || footer.hidden)
             return;
 
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:footerIndex inSection:sectionIndex];
+        NSIndexPath *indexPath = itemIndexPath(footerIndex);
         AAPLCollectionViewGridLayoutAttributes *footerAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:indexPath];
         footerAttribute.frame = frame;
         footerAttribute.zIndex = HEADER_ZINDEX;
@@ -1512,19 +1517,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         self.indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
     }];
     
-    NSUInteger numberOfSections = [_layoutInfo.sections count];
-
     // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
-    if (sectionSeparatorColor && _totalNumberOfItems && (sectionIndex +1 < numberOfSections || section.showsSectionSeparatorWhenLastSection)) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:sectionIndex];
-        AAPLCollectionViewGridLayoutAttributes *separatorAttributes = [attributeClass layoutAttributesForDecorationViewOfKind:AAPLGridLayoutSectionSeparatorKind withIndexPath:indexPath];
-        separatorAttributes.frame = CGRectMake(section.sectionSeparatorInsets.left, CGRectGetMaxY(section.frame), CGRectGetWidth(sectionFrame) - section.sectionSeparatorInsets.left - section.sectionSeparatorInsets.right, hairline);
-        separatorAttributes.backgroundColor = sectionSeparatorColor;
-        separatorAttributes.zIndex = SEPARATOR_ZINDEX;
-        [_layoutAttributes addObject:separatorAttributes];
-
-        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutSectionSeparatorKind];
-        _indexPathKindToDecorationAttributes[indexPathKind] = separatorAttributes;
+    if (!globalSection && numberOfItems) {
+        NSIndexPath *indexPath = itemIndexPath(numberOfItems);
+        AAPLSeparatorOption bit = (sectionIndex + 1 < numberOfSections) ? AAPLSeparatorOptionAfterLastSection : AAPLSeparatorOptionAfterSection;
+        addSeparator(indexPath, section.frame, CGRectMaxYEdge, AAPLGridLayoutRowSeparatorKind, bit);
     }
 }
 
@@ -1580,7 +1577,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     [self.layoutAttributes removeAllObjects];
     [self.pinnableAttributes removeAllObjects];
-    self.totalNumberOfItems = 0;
 
     AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
     if (![dataSource isKindOfClass:[AAPLDataSource class]])
@@ -1589,7 +1585,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     NSUInteger numberOfSections = [collectionView numberOfSections];
 
     __block CGPoint max = CGPointZero;
-
+    
     __block BOOL shouldInvalidate = NO;
 
     CGFloat globalNonPinningHeight = 0;

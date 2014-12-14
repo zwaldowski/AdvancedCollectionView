@@ -49,4 +49,13 @@ NS_INLINE UIEdgeInsets AAPLInsetsWithout(UIEdgeInsets insets, UIRectEdge edge) {
     return ret;
 }
 
+NS_INLINE CGRect AAPLSeparatorRect(CGRect frame, CGRectEdge edge, CGFloat width) {
+    switch (edge) {
+        case CGRectMinXEdge: return CGRectMake(CGRectGetMinX(frame), CGRectGetMinY(frame), width, CGRectGetHeight(frame));
+        case CGRectMinYEdge: return CGRectMake(CGRectGetMinX(frame), CGRectGetMinY(frame), CGRectGetWidth(frame), width);
+        case CGRectMaxXEdge: return CGRectMake(CGRectGetMaxX(frame) - width, CGRectGetMinY(frame), width, CGRectGetHeight(frame));
+        case CGRectMaxYEdge: return CGRectMake(CGRectGetMinX(frame), CGRectGetMaxY(frame) - width, CGRectGetWidth(frame), width);
+    }
+}
+
 #endif /* !AdvancedCollectionView_Math_h */

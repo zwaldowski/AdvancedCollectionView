@@ -123,6 +123,14 @@
     return columnWidth;
 }
 
+- (UIEdgeInsets)groupPadding {
+    return AAPLInsetsWithout(self.insets, UIRectEdgeLeft | UIRectEdgeRight);
+}
+
+- (UIEdgeInsets)itemPadding {
+    return AAPLInsetsWithout(self.insets, UIRectEdgeTop | UIRectEdgeBottom);
+}
+
 /// Layout all the items in this section and return the total height of the section
 - (CGPoint)computeLayoutWithOrigin:(CGFloat)start measureItemBlock:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItemBlock:(AAPLLayoutMeasureBlock)measureSupplementaryItemBlock
 {
@@ -140,6 +148,7 @@
     __block CGFloat originY = start;
 
     // First lay out headers
+    const CGFloat headerBeginY = originY;
     [self.headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *headerInfo, NSUInteger headerIndex, BOOL *stop) {
         // skip headers if there are no items and the header isn't a global header
         if (!numberOfItems && !headerInfo.visibleWhileShowingPlaceholder)
@@ -158,6 +167,8 @@
         headerInfo.frame = CGRectMake(0, originY, width, headerInfo.height);
         originY += headerInfo.height;
     }];
+    
+    _headersRect = CGRectMake(0, headerBeginY, width, originY - headerBeginY);
 
     AAPLGridLayoutSupplementalItemInfo *placeholder = self.placeholder;
     if (placeholder) {
@@ -290,9 +301,9 @@
     }
 
     self.frame = CGRectMake(0, start, width, originY - start);
-
+    
     CGPoint ret = CGPointMake(width, originY);
-
+    
     return ret;
 }
 

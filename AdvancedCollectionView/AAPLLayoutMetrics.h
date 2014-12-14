@@ -20,12 +20,23 @@ extern CGFloat const AAPLRowHeightRemainder;
 
 extern NSInteger const AAPLGlobalSection;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, AAPLCellLayoutOrder) {
     AAPLCellLayoutOrderLeadingToTrailing,
     AAPLCellLayoutOrderTrailingToLeading,
     AAPLCellLayoutOrderLeftToRight,
     AAPLCellLayoutOrderRightToLeft,
-} AAPLCellLayoutOrder;
+};
+
+typedef NS_OPTIONS(NSInteger, AAPLSeparatorOption) {
+    AAPLSeparatorOptionNone             = 0,
+    AAPLSeparatorOptionBeforeSection    = (1 << 0),
+    AAPLSeparatorOptionSupplements      = (1 << 1),
+    AAPLSeparatorOptionRows             = (1 << 2),
+    AAPLSeparatorOptionColumns          = (1 << 3),
+    AAPLSeparatorOptionAfterSection     = (1 << 4),
+    AAPLSeparatorOptionAfterLastSection = (1 << 5),
+    AAPLSeparatorOptionAll              = (AAPLSeparatorOptionBeforeSection | AAPLSeparatorOptionSupplements | AAPLSeparatorOptionRows | AAPLSeparatorOptionColumns | AAPLSeparatorOptionAfterSection | AAPLSeparatorOptionAfterLastSection)
+};
 
 @class AAPLDataSource;
 
@@ -90,14 +101,8 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionR
 /// Padding around the cells for this section. The top & bottom padding will be applied between the headers & footers and the cells. The left & right padding will be applied between the view edges and the cells.
 @property (nonatomic) UIEdgeInsets padding;
 
-/// Should a column separator be drawn. Default is YES.
-@property (nonatomic) BOOL showsColumnSeparator;
-
 /// Insets for the separators drawn between rows (left & right) and columns (top & bottom).
 @property (nonatomic) UIEdgeInsets separatorInsets;
-
-/// Insets for the section separator drawn below this section
-@property (nonatomic) UIEdgeInsets sectionSeparatorInsets;
 
 /// The color to use for the background of a cell in this section
 @property (nonatomic, strong) UIColor *backgroundColor;
@@ -108,11 +113,8 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionR
 /// The color to use when drawing the row separators (and column separators when numberOfColumns > 1 && showsColumnSeparator == YES).
 @property (nonatomic, strong) UIColor *separatorColor;
 
-/// The color to use when drawing the section separator below this section
-@property (nonatomic, strong) UIColor *sectionSeparatorColor;
-
-/// Should the section separator be shown at the bottom of the last section. Default is NO.
-@property (nonatomic) BOOL showsSectionSeparatorWhenLastSection;
+/// Determines where, if any, separators are drawn.
+@property (nonatomic) AAPLSeparatorOption separators;
 
 /// How the cells should be laid out when there are multiple columns. The current default is AAPLCellLayoutOrderLeftToRight, but it SHOULD be AAPLCellLayoutLeadingToTrailing.
 @property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;

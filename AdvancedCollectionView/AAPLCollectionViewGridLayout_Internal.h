@@ -60,14 +60,15 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @property (nonatomic) NSInteger numberOfColumns;
 @property (nonatomic) UIEdgeInsets insets;
 
+@property (nonatomic, readonly) CGRect headersRect;
+@property (nonatomic, readonly) UIEdgeInsets groupPadding;
+@property (nonatomic, readonly) UIEdgeInsets itemPadding;
+
 @property (nonatomic) UIEdgeInsets separatorInsets;
-@property (nonatomic) UIEdgeInsets sectionSeparatorInsets;
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, strong) UIColor *selectedBackgroundColor;
 @property (nonatomic, strong) UIColor *separatorColor;
-@property (nonatomic, strong) UIColor *sectionSeparatorColor;
-@property (nonatomic) BOOL showsColumnSeparator;
-@property (nonatomic) BOOL showsSectionSeparatorWhenLastSection;
+@property (nonatomic) AAPLSeparatorOption separators;
 @property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
 @property (nonatomic, readonly) CGFloat columnWidth;
 @property (nonatomic) NSUInteger phantomCellIndex;
