@@ -34,15 +34,17 @@ static inline BOOL AAPLCollectionViewSupportsConstraintsProperly()
 
     CGSize size;
 
-    if (AAPLCollectionViewSupportsConstraintsProperly())
+    if (AAPLCollectionViewSupportsConstraintsProperly()) {
+        [self layoutIfNeeded];
         size = [self systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-    else {
+    } else {
         NSArray *constraints = @[
                                  [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:fittingSize.width],
                                  [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:UILayoutFittingExpandedSize.height]];
 
         [self addConstraints:constraints];
-        [self updateConstraints];
+        [self updateConstraintsIfNeeded];
+        [self layoutIfNeeded];
         size = [self systemLayoutSizeFittingSize:fittingSize];
         [self removeConstraints:constraints];
     }
@@ -66,7 +68,7 @@ static inline BOOL AAPLCollectionViewSupportsConstraintsProperly()
     CGSize size;
 
     if (AAPLCollectionViewSupportsConstraintsProperly()) {
-        [self layoutSubviews];
+        [self layoutIfNeeded];
         size = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
     }
     else {
@@ -75,7 +77,8 @@ static inline BOOL AAPLCollectionViewSupportsConstraintsProperly()
                                  [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:UILayoutFittingExpandedSize.height]];
 
         [self addConstraints:constraints];
-        [self updateConstraints];
+        [self updateConstraintsIfNeeded];
+        [self layoutIfNeeded];
         size = [self systemLayoutSizeFittingSize:fittingSize];
         [self removeConstraints:constraints];
     }
