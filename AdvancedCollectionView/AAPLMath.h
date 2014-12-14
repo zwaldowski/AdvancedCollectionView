@@ -40,4 +40,13 @@ NS_INLINE BOOL _approxeqf(float a, float b) { return fabs(a - b) < FLT_EPSILON; 
 NS_INLINE BOOL _approxeq(double a, double b) { return fabs(a - b) < DBL_EPSILON; }
 #define _approxeq(x, y) __tg_fn(x, y, _approxeq)(x, y)
 
+NS_INLINE UIEdgeInsets AAPLInsetsWithout(UIEdgeInsets insets, UIRectEdge edge) {
+    UIEdgeInsets ret = insets;
+    if (edge & UIRectEdgeTop) { ret.top = 0; }
+    if (edge & UIRectEdgeLeft) { ret.left = 0; }
+    if (edge & UIRectEdgeBottom) { ret.bottom = 0; }
+    if (edge & UIRectEdgeRight) { ret.right = 0; }
+    return ret;
+}
+
 #endif /* !AdvancedCollectionView_Math_h */
