@@ -21,9 +21,8 @@ extern CGFloat const AAPLRowHeightRemainder;
 extern NSInteger const AAPLGlobalSection;
 
 typedef enum {
-// TODO: Need to implement leading & trailing layouts
-//    AAPLCellLayoutOrderLeadingToTrailing,
-//    AAPLCellLayoutOrderTrailingToLeading,
+    AAPLCellLayoutOrderLeadingToTrailing,
+    AAPLCellLayoutOrderTrailingToLeading,
     AAPLCellLayoutOrderLeftToRight,
     AAPLCellLayoutOrderRightToLeft,
 } AAPLCellLayoutOrder;

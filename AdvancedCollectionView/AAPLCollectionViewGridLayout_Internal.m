@@ -159,6 +159,22 @@
     [self.rows removeAllObjects];
 
     NSAssert(!placeholder || !numberOfItems, @"Can't have both a placeholder and items");
+    
+    BOOL leftToRight;
+    switch (_cellLayoutOrder) {
+        case AAPLCellLayoutOrderLeadingToTrailing:
+            leftToRight = UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight;
+            break;
+        case AAPLCellLayoutOrderTrailingToLeading:
+            leftToRight = UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
+            break;
+        case AAPLCellLayoutOrderLeftToRight:
+            leftToRight = YES;
+            break;
+        case AAPLCellLayoutOrderRightToLeft:
+            leftToRight = NO;
+            break;
+    }
 
     // Lay out items and footers only if there actually ARE items.
     if (numberOfItems) {
@@ -195,13 +211,10 @@
                 rowHeight = 0;
                 columnIndex = 0;
                 
-                switch (_cellLayoutOrder) {
-                    case AAPLCellLayoutOrderLeftToRight:
-                        originX = margins.left;
-                        break;
-                    case AAPLCellLayoutOrderRightToLeft:
-                        originX = width - margins.right - columnWidth;
-                        break;
+                if (leftToRight) {
+                    originX = margins.left;
+                } else {
+                    originX = width - margins.right - columnWidth;
                 }
 
                 // only create a new row if there were items in the previous row.
@@ -238,13 +251,10 @@
             rowFrame.size.height = rowHeight;
             row.frame = rowFrame;
 
-            switch (_cellLayoutOrder) {
-                case AAPLCellLayoutOrderLeftToRight:
-                    originX += columnWidth;
-                    break;
-                case AAPLCellLayoutOrderRightToLeft:
-                    originX -= columnWidth;
-                    break;
+            if (leftToRight) {
+                originX += columnWidth;
+            } else {
+                originX -= columnWidth;
             }
 
             ++columnIndex;
