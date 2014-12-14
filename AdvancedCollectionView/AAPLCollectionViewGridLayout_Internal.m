@@ -100,18 +100,22 @@
     return supplementalInfo;
 }
 
+- (void)addItems:(NSInteger)count height:(CGFloat)height {
+    BOOL variableRowHeight = _approxeq(height, AAPLRowHeightVariable);
+    for (NSInteger i = 0; i < count; i++) {
+        AAPLGridLayoutItemInfo *itemInfo = [[AAPLGridLayoutItemInfo alloc] init];
+        itemInfo.frame = CGRectMake(0, 0, 0, height);
+        if (variableRowHeight)
+            itemInfo.needSizeUpdate = YES;
+        [_items addObject:itemInfo];
+    }
+}
+
 - (AAPLGridLayoutRowInfo *)addRow
 {
     AAPLGridLayoutRowInfo *rowInfo = [[AAPLGridLayoutRowInfo alloc] init];
     [self.rows addObject:rowInfo];
     return rowInfo;
-}
-
-- (AAPLGridLayoutItemInfo *)addItem
-{
-    AAPLGridLayoutItemInfo *itemInfo = [[AAPLGridLayoutItemInfo alloc] init];
-    [self.items addObject:itemInfo];
-    return itemInfo;
 }
 
 - (UIEdgeInsets)groupPadding {
@@ -236,7 +240,7 @@
                 height = _phantomCellSize.height;
             else if (needSizeUpdate) {
                 item.needSizeUpdate = NO;
-                item.frame = (CGRect){ origin, { columnWidth, height }};
+                item.frame = (CGRect){ origin, { columnWidth, UILayoutFittingExpandedSize.height }};
                 height = measureItem(itemIndex, item.frame.size).height;
             }
 

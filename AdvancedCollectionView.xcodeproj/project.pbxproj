@@ -56,6 +56,7 @@
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
 		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
+		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 		DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB81006E1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; };
@@ -265,6 +266,7 @@
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
 		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
+		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
 		DB81005C1A3CD0E600E758F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AdvancedCollectionView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8100661A3CD2AE00E758F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 			isa = PBXGroup;
 			children = (
 				1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */,
+				DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */,
 				1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */,
 				1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */,
 				1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */,
@@ -581,6 +584,7 @@
 				DB8100A51A3CD45A00E758F6 /* NSObject+KVOBlock.h in Headers */,
 				DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */,
 				DB8100BE1A3CD4A900E758F6 /* AAPLCollectionViewCell_Private.h in Headers */,
+				DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */,
 				DB8100B31A3CD49600E758F6 /* AAPLCollectionViewGridLayoutAttributes_Private.h in Headers */,
 				DB8100AF1A3CD48E00E758F6 /* AAPLCollectionViewGridLayoutAttributes.h in Headers */,
 				DB8100B11A3CD49200E758F6 /* AAPLCollectionViewGridLayout_Internal.h in Headers */,

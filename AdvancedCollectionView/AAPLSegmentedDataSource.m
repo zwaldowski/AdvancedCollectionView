@@ -237,32 +237,6 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
         [dataSource registerReusableViewsWithCollectionView:collectionView];
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [_selectedDataSource collectionView:collectionView sizeFittingSize:size forItemAtIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [_selectedDataSource collectionView:collectionView canEditItemAtIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
-}
-
-- (void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    [_selectedDataSource collectionView:collectionView moveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
-}
-
-
 #pragma mark - AAPLContentLoading
 
 - (void)loadContent
@@ -356,6 +330,38 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     [self setSelectedDataSource:dataSource animated:YES completionHandler:^{
         segmentedControl.userInteractionEnabled = YES;
     }];
+}
+
+#pragma mark - AAPLCollectionViewDataSourceGridLayout
+
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [_selectedDataSource collectionView:collectionView sizeFittingSize:size forItemAtIndexPath:indexPath];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    return [_selectedDataSource collectionView:collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [_selectedDataSource collectionView:collectionView canEditItemAtIndexPath:indexPath];
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath];
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+{
+    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+{
+    [_selectedDataSource collectionView:collectionView moveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
 }
 
 #pragma mark - UICollectionViewDataSource methods

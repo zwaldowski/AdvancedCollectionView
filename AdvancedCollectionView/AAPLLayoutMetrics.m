@@ -10,6 +10,7 @@
 
 #import "AAPLLayoutMetrics_Private.h"
 
+CGFloat const AAPLRowHeightDefault = 44;
 NSString * const AAPLCollectionElementKindPlaceholder = @"placeholder";
 CGFloat const AAPLRowHeightVariable = -1000;
 NSInteger const AAPLGlobalSection = NSIntegerMax;

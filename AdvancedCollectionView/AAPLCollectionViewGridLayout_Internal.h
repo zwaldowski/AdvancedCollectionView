@@ -78,8 +78,7 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @property (nonatomic, strong) AAPLCollectionViewGridLayoutAttributes *backgroundAttribute;
 
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
-- (AAPLGridLayoutRowInfo *)addRow;
-- (AAPLGridLayoutItemInfo *)addItem;
+- (void)addItems:(NSInteger)count height:(CGFloat)height;
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
 @end
 

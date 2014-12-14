@@ -10,6 +10,7 @@
 
 @import UIKit;
 #import "AAPLCollectionViewGridLayoutAttributes.h"
+#import "AAPLCollectionViewDataSourceGridLayout.h"
 
 @interface AAPLCollectionViewGridLayout : UICollectionViewLayout
 

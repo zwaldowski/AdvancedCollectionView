@@ -12,6 +12,8 @@
 #import "AAPLLayoutMetrics_Private.h"
 #import "AAPLPlaceholderView.h"
 #import "NSObject+KVOBlock.h"
+#import "AAPLCollectionViewGridLayout.h"
+#import "UICollectionView+Helpers.h"
 @import Darwin.libkern.OSAtomic;
 
 #define AAPL_ASSERT_MAIN_THREAD NSAssert([NSThread isMainThread], @"This method must be called on the main thread")
@@ -98,32 +100,6 @@
     }
 
     [collectionView registerClass:[AAPLCollectionPlaceholderView class] forSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withReuseIdentifier:NSStringFromClass([AAPLCollectionPlaceholderView class])];
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSAssert(NO, @"Should be implemented by subclasses");
-    return size;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return NO;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    return NO;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    NSAssert(NO, @"Should be implemented by subclasses");
 }
 
 #pragma mark - AAPLContentLoading methods
@@ -330,29 +306,6 @@
         metrics.hasPlaceholder = self.shouldDisplayPlaceholder;
     }
     
-    return metrics;
-}
-
-- (NSDictionary *)snapshotMetrics
-{
-    NSInteger numberOfSections = self.numberOfSections;
-    NSMutableDictionary *metrics = [NSMutableDictionary dictionary];
-
-    UIColor *defaultBackground = [UIColor whiteColor];
-
-    AAPLLayoutSectionMetrics *globalMetrics = [self snapshotMetricsForSectionAtIndex:AAPLGlobalSection];
-    if (!globalMetrics.backgroundColor)
-        globalMetrics.backgroundColor = defaultBackground;
-    metrics[@(AAPLGlobalSection)] = globalMetrics;
-
-    for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
-        AAPLLayoutSectionMetrics *sectionMetrics = [self snapshotMetricsForSectionAtIndex:sectionIndex];
-        // assign default colors
-        if (!sectionMetrics.backgroundColor)
-            sectionMetrics.backgroundColor = defaultBackground;
-        metrics[@(sectionIndex)] = sectionMetrics;
-    }
-
     return metrics;
 }
 
@@ -708,6 +661,47 @@
     if ([delegate respondsToSelector:@selector(dataSourceWillLoadContent:)]) {
         [delegate dataSourceWillLoadContent:self];
     }
+}
+
+#pragma mark - AAPLCollectionViewDataSourceGridLayout
+
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionViewCell *cell = [self collectionView:collectionView cellForItemAtIndexPath:indexPath];
+    CGSize fittingSize = [cell aapl_preferredLayoutSizeFittingSize:size];
+    [cell removeFromSuperview]; // force it to get put in the reuse pool now
+    return fittingSize;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionReusableView *view = [self collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
+    CGSize fittingSize = [view aapl_preferredLayoutSizeFittingSize:size];
+    [view removeFromSuperview];
+    return fittingSize;
+}
+
+- (NSDictionary *)snapshotMetrics
+{
+    NSInteger numberOfSections = self.numberOfSections;
+    NSMutableDictionary *metrics = [NSMutableDictionary dictionary];
+    
+    UIColor *defaultBackground = [UIColor whiteColor];
+    
+    AAPLLayoutSectionMetrics *globalMetrics = [self snapshotMetricsForSectionAtIndex:AAPLGlobalSection];
+    if (!globalMetrics.backgroundColor)
+        globalMetrics.backgroundColor = defaultBackground;
+    metrics[@(AAPLGlobalSection)] = globalMetrics;
+    
+    for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
+        AAPLLayoutSectionMetrics *sectionMetrics = [self snapshotMetricsForSectionAtIndex:sectionIndex];
+        // assign default colors
+        if (!sectionMetrics.backgroundColor)
+            sectionMetrics.backgroundColor = defaultBackground;
+        metrics[@(sectionIndex)] = sectionMetrics;
+    }
+    
+    return metrics;
 }
 
 #pragma mark - UICollectionViewDataSource methods

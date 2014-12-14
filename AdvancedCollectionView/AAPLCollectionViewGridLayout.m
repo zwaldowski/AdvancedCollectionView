@@ -68,10 +68,6 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 
 #define SCROLL_SPEED_MAX_MULTIPLIER 4.0
 #define FRAMES_PER_SECOND 60.0
-//#define MEASURE_HEIGHT UILayoutFittingExpandedSize.height
-#define MEASURE_HEIGHT 100
-
-#define DEFAULT_ROW_HEIGHT 44
 
 #define DEFAULT_ZINDEX 1
 #define SEPARATOR_ZINDEX 100
@@ -139,6 +135,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
 @implementation AAPLCollectionViewGridLayout  {
     struct {
+        /// the data source has the can edit method
+        unsigned int dataSourceHasCanEdit:1;
+        /// the data source has the can move method
+        unsigned int dataSourceHasCanMoveItem:1;
+        /// the data source has the can move item to index path method
+        unsigned int dataSourceHasCanMoveItemToIndex:1;
+        /// the data source has the move item to index path method
+        unsigned int dataSourceHasMoveItemToIndex:1;
         /// the data source has the snapshot metrics method
         unsigned int dataSourceHasSnapshotMetrics:1;
         /// layout data becomes invalid if the data source changes
@@ -300,13 +304,15 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         [sourceSection.items removeObjectAtIndex:fromIndex];
         [destinationSection.items insertObject:item atIndex:toIndex];
 
-        // Tell the data source, but don't animate because we've already updated everything in place.
-        [UIView performWithoutAnimation:^{
+        if (_flags.dataSourceHasMoveItemToIndex) {
             UICollectionView *collectionView = self.collectionView;
-            AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-            if ([dataSource isKindOfClass:[AAPLDataSource class]])
+            id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
+
+            // Tell the data source, but don't animate because we've already updated everything in place.
+            [UIView performWithoutAnimation:^{
                 [dataSource collectionView:collectionView moveItemAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
-        }];
+            }];
+        }
     }
 
     AAPLGridLayoutInvalidationContext *context = [[AAPLGridLayoutInvalidationContext alloc] init];
@@ -433,12 +439,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         return;
 
     UICollectionView *collectionView = self.collectionView;
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
-        return;
+    id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
 
-    if (![dataSource collectionView:collectionView canMoveItemAtIndexPath:_sourceItemIndexPath toIndexPath:newIndexPath]) {
-        NSLog(@"Can't MOVE");
+    if (!_flags.dataSourceHasCanMoveItemToIndex || ![dataSource collectionView:collectionView canMoveItemAtIndexPath:_sourceItemIndexPath toIndexPath:newIndexPath]) {
         return;
     }
 
@@ -651,10 +654,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
     UICollectionView *collectionView = self.collectionView;
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
+    id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
+    if (![dataSource conformsToProtocol:@protocol(AAPLCollectionViewDataSourceGridLayout)]) {
         dataSource = nil;
-
+    }
+    
     attributes = [[self.class layoutAttributesClass] layoutAttributesForCellWithIndexPath:indexPath];
 
     // Drag & Drop
@@ -1113,14 +1117,17 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)updateFlagsFromCollectionView
 {
     id dataSource = self.collectionView.dataSource;
+    _flags.dataSourceHasCanEdit = [dataSource respondsToSelector:@selector(collectionView:canEditItemAtIndexPath:)];
+    _flags.dataSourceHasCanMoveItem = [dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)];
+    _flags.dataSourceHasCanMoveItemToIndex = [dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:toIndexPath:)];
+    _flags.dataSourceHasMoveItemToIndex = [dataSource respondsToSelector:@selector(collectionView:moveItemAtIndexPath:toIndexPath:)];
     _flags.dataSourceHasSnapshotMetrics = [dataSource respondsToSelector:@selector(snapshotMetrics)];
 }
 
 - (NSDictionary *)snapshotMetrics
 {
-    if (!_flags.dataSourceHasSnapshotMetrics)
-        return nil;
-    AAPLDataSource *dataSource = (AAPLDataSource *)self.collectionView.dataSource;
+    if (!_flags.dataSourceHasSnapshotMetrics) { return nil; }
+    id <AAPLCollectionViewDataSourceGridLayout> dataSource = (id <AAPLCollectionViewDataSourceGridLayout>)self.collectionView.dataSource;
     return [dataSource snapshotMetrics];
 }
 
@@ -1155,15 +1162,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     UICollectionView *collectionView = self.collectionView;
     NSDictionary *layoutMetrics = [self snapshotMetrics];
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
 
     UIEdgeInsets contentInset = collectionView.contentInset;
     CGFloat height = CGRectGetHeight(collectionView.bounds) - contentInset.bottom - contentInset.top;
 
     NSInteger numberOfSections = [collectionView numberOfSections];
-
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
-        dataSource = nil;
     
     static UIColor *(^const fromMetrics)(UIColor *) = ^UIColor *(UIColor *color){
         if ([color isEqual:UIColor.clearColor]) { return nil; }
@@ -1171,15 +1174,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     };
     
     void(^buildSection)(AAPLGridLayoutSectionInfo *, AAPLLayoutSectionMetrics *, NSInteger) = ^(AAPLGridLayoutSectionInfo *section, AAPLLayoutSectionMetrics *metrics, NSInteger sectionIndex){
-        BOOL globalSection = AAPLGlobalSection == sectionIndex;
-        
-        CGFloat rowHeight = metrics.rowHeight ?: DEFAULT_ROW_HEIGHT;
-        BOOL variableRowHeight = _approxeq(rowHeight, AAPLRowHeightVariable);
-        NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
-        
-        if (variableRowHeight)
-            rowHeight = MEASURE_HEIGHT;
-        
         section.backgroundColor = fromMetrics(metrics.backgroundColor);
         section.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor);
         section.separatorColor = fromMetrics(metrics.separatorColor);
@@ -1215,15 +1209,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         if (metrics.hasPlaceholder) {
             AAPLGridLayoutSupplementalItemInfo *placeholder = [section addSupplementalItemOfKind:AAPLCollectionElementKindPlaceholder];
             placeholder.height = height;
+            return;
         }
-        else {
-            for (NSInteger itemIndex = 0; itemIndex < numberOfItemsInSection; ++itemIndex) {
-                AAPLGridLayoutItemInfo *itemInfo = [section addItem];
-                itemInfo.frame = CGRectMake(0, 0, 0, rowHeight);
-                if (variableRowHeight)
-                    itemInfo.needSizeUpdate = YES;
-            }
-        }
+        
+        if (sectionIndex > collectionView.numberOfSections) { return; }
+        
+        NSInteger count = [collectionView numberOfItemsInSection:sectionIndex];
+        CGFloat rowHeight = metrics.rowHeight ?: AAPLRowHeightDefault;
+        [section addItems:count height:rowHeight];
     };
 
     LAYOUT_LOG(@"numberOfSections = %ld", (long)numberOfSections);
@@ -1269,7 +1262,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [self invalidateLayoutWithContext:context];
 }
 
-- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex dataSource:(AAPLDataSource *)dataSource
+- (void)addLayoutAttributesForSection:(AAPLGridLayoutSectionInfo *)section atIndex:(NSInteger)sectionIndex dataSource:(id <AAPLCollectionViewDataSourceGridLayout>)dataSource
 {
     UICollectionView *collectionView = self.collectionView;
     Class attributeClass = self.class.layoutAttributesClass;
@@ -1426,8 +1419,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             newAttribute.zIndex = DEFAULT_ZINDEX;
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
-            newAttribute.editing = self.editing ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : NO;
-            newAttribute.movable = self.editing ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
+            newAttribute.editing = self.editing ? (self->_flags.dataSourceHasCanEdit ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : YES) : NO;
+            newAttribute.movable = self.editing && self->_flags.dataSourceHasCanMoveItem ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
             newAttribute.columnIndex = columnIndex;
             newAttribute.hidden = NO;
 
@@ -1514,10 +1507,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     [self.layoutAttributes removeAllObjects];
     [self.pinnableAttributes removeAllObjects];
-
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
+    
+    id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
+    if (![dataSource conformsToProtocol:@protocol(AAPLCollectionViewDataSourceGridLayout)]) {
         dataSource = nil;
+    }
     
     const CGRect viewport = (CGRect){ CGPointZero, UIEdgeInsetsInsetRect(collectionView.bounds, contentInset).size };
     __block CGRect layoutRect = viewport;
@@ -1526,13 +1520,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     __block BOOL shouldInvalidate = NO;
     CGSize(^measureSupplementary)(NSString *, NSIndexPath *, CGSize) = ^(NSString *kind, NSIndexPath *indexPath, CGSize size){
         shouldInvalidate |= YES;
-//        return [dataSource collectionViewLayout:self sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
-        
-        UICollectionReusableView *header = [dataSource collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
-        CGSize fittingSize = CGSizeMake(CGRectGetWidth(layoutRect), MEASURE_HEIGHT);
-        CGSize preferredSize = [header aapl_preferredLayoutSizeFittingSize:fittingSize];
-        [header removeFromSuperview];
-        return preferredSize;
+        return [dataSource collectionView:self.collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
     };
 
     CGFloat globalNonPinningHeight = 0;

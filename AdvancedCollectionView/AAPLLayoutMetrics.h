@@ -10,6 +10,8 @@
 
 @import UIKit;
 
+extern CGFloat const AAPLRowHeightDefault;
+
 extern NSString * const AAPLCollectionElementKindPlaceholder;
 
 /// A variable height row. The row will be measured using the datasource method -collectionView:sizeFittingSize:forItemAtIndexPath:

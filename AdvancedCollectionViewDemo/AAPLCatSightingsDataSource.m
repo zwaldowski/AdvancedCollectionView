@@ -68,14 +68,6 @@
     [collectionView registerClass:[AAPLCatSightingCell class] forCellWithReuseIdentifier:NSStringFromClass([AAPLCatSightingCell class])];
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    AAPLCatSightingCell *cell = (AAPLCatSightingCell *)[self collectionView:collectionView cellForItemAtIndexPath:indexPath];
-    CGSize fittingSize = [cell aapl_preferredLayoutSizeFittingSize:size];
-    [cell removeFromSuperview];
-    return fittingSize;
-}
-
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     AAPLCatSightingCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([AAPLCatSightingCell class]) forIndexPath:indexPath];
