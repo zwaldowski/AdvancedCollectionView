@@ -124,7 +124,7 @@
 }
 
 /// Layout all the items in this section and return the total height of the section
-- (void)computeLayoutWithOrigin:(CGFloat)start measureItemBlock:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItemBlock:(AAPLLayoutMeasureBlock)measureSupplementaryItemBlock
+- (CGPoint)computeLayoutWithOrigin:(CGFloat)start measureItemBlock:(AAPLLayoutMeasureBlock)measureItemBlock measureSupplementaryItemBlock:(AAPLLayoutMeasureBlock)measureSupplementaryItemBlock
 {
     CGFloat width = self.layoutInfo.width;
     /// The height available to placeholder
@@ -290,6 +290,10 @@
     }
 
     self.frame = CGRectMake(0, start, width, originY - start);
+
+    CGPoint ret = CGPointMake(width, originY);
+
+    return ret;
 }
 
 - (NSString *)description

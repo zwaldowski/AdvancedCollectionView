@@ -1588,12 +1588,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     NSUInteger numberOfSections = [collectionView numberOfSections];
 
+    __block CGPoint max = CGPointZero;
+
     __block BOOL shouldInvalidate = NO;
 
     CGFloat globalNonPinningHeight = 0;
     AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
     if (globalSection) {
-        [globalSection computeLayoutWithOrigin:start measureItemBlock:nil measureSupplementaryItemBlock:^(NSInteger itemIndex, CGRect frame) {
+        max = [globalSection computeLayoutWithOrigin:start measureItemBlock:nil measureSupplementaryItemBlock:^(NSInteger itemIndex, CGRect frame) {
             NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:itemIndex];
             shouldInvalidate |= YES;
             return [self measureSupplementalItemOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
@@ -1603,11 +1605,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     }
 
     for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
-        AAPLCollectionViewGridLayoutAttributes *attributes = [_layoutAttributes lastObject];
-        if (attributes)
-            start = CGRectGetMaxY(attributes.frame);
+        start = max.y;
         AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-        [section computeLayoutWithOrigin:start measureItemBlock:^(NSInteger itemIndex, CGRect frame) {
+        max = [section computeLayoutWithOrigin:start measureItemBlock:^(NSInteger itemIndex, CGRect frame) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
             return [dataSource collectionView:collectionView sizeFittingSize:frame.size forItemAtIndexPath:indexPath];
         } measureSupplementaryItemBlock:^(NSInteger itemIndex, CGRect frame) {
@@ -1618,11 +1618,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         [self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
     }
 
-    AAPLCollectionViewGridLayoutAttributes *attributes = [_layoutAttributes lastObject];
-    if (attributes)
-        start = CGRectGetMaxY(attributes.frame);
-
-    CGFloat layoutHeight = start;
+    CGFloat layoutHeight = max.y;
 
     if (_layoutInfo.contentOffsetY >= globalNonPinningHeight && layoutHeight - globalNonPinningHeight < height) {
         layoutHeight = height + globalNonPinningHeight;
