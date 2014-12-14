@@ -21,3 +21,8 @@
 @property (nonatomic) UIEdgeInsets padding;
 @end
 
+/// A subclass of UICollectionViewLayoutInvalidationContext that adds invalidation for metrics and origin
+@interface AAPLGridLayoutInvalidationContext : UICollectionViewLayoutInvalidationContext
+@property (nonatomic) BOOL invalidateLayoutMetrics;
+@property (nonatomic) BOOL invalidateLayoutOrigin;
+@end

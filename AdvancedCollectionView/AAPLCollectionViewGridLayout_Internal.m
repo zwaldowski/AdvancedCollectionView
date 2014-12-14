@@ -13,19 +13,6 @@
 #import "AAPLCollectionViewGridLayout_Internal.h"
 #import "AAPLMath.h"
 
-@implementation AAPLGridLayoutInvalidationContext
-
-- (instancetype)init
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _invalidateLayoutMetrics = YES;
-    return self;
-}
-
-@end
-
 @implementation AAPLGridLayoutSupplementalItemInfo
 @end
 

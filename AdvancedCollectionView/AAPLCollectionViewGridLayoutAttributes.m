@@ -74,3 +74,16 @@
 }
 
 @end
+
+@implementation AAPLGridLayoutInvalidationContext
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _invalidateLayoutMetrics = YES;
+    return self;
+}
+
+@end

@@ -19,12 +19,6 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @class AAPLGridLayoutRowInfo;
 @class AAPLGridLayoutInfo;
 
-/// A subclass of UICollectionViewLayoutInvalidationContext that adds invalidation for metrics and origin
-@interface AAPLGridLayoutInvalidationContext : UICollectionViewLayoutInvalidationContext
-@property (nonatomic) BOOL invalidateLayoutMetrics;
-@property (nonatomic) BOOL invalidateLayoutOrigin;
-@end
-
 /// Layout information about a supplementary item (header, footer, or placeholder)
 @interface AAPLGridLayoutSupplementalItemInfo : NSObject
 @property (nonatomic) CGRect frame;
