@@ -32,8 +32,8 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
     return [NSString stringWithFormat:@"(%@)", [indexes componentsJoinedByString:@", "]];
 }
 
-#define LAYOUT_DEBUGGING 0
-#define LAYOUT_LOGGING 0
+#define LAYOUT_DEBUGGING 1
+#define LAYOUT_LOGGING 1
 
 #if LAYOUT_DEBUGGING
 #define LAYOUT_LOGGING 1
@@ -691,8 +691,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
 
-    if (itemIndex < 0 || itemIndex >= [section.items count])
+    if (itemIndex < 0 || itemIndex >= [section.items count]) {
         return nil;
+    }
 
     UICollectionView *collectionView = self.collectionView;
     AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
@@ -1180,88 +1181,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [_indexPathKindToDecorationAttributes removeAllObjects];
 }
 
-- (CGSize)measureSupplementalItemOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionView *collectionView = self.collectionView;
-    id<UICollectionViewDataSource> dataSource = collectionView.dataSource;
-
-    UICollectionReusableView *header = [dataSource collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
-    CGSize fittingSize = CGSizeMake(_layoutInfo.width, MEASURE_HEIGHT);
-    CGSize size = [header aapl_preferredLayoutSizeFittingSize:fittingSize];
-    [header removeFromSuperview];
-    return size;
-}
-
-/// Create a new section from the metrics.
-- (void)createSectionFromMetrics:(AAPLLayoutSectionMetrics *)metrics forSectionAtIndex:(NSInteger)sectionIndex
-{
-    UICollectionView *collectionView = self.collectionView;
-    CGFloat height = _layoutInfo.height;
-
-    BOOL globalSection = AAPLGlobalSection == sectionIndex;
-
-    CGFloat rowHeight = metrics.rowHeight ?: DEFAULT_ROW_HEIGHT;
-    BOOL variableRowHeight = _approxeq(rowHeight, AAPLRowHeightVariable);
-    NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
-
-    if (variableRowHeight)
-        rowHeight = MEASURE_HEIGHT;
-
-    AAPLGridLayoutSectionInfo *section = [_layoutInfo addSectionWithIndex:sectionIndex];
-    
-    static UIColor *(^const fromMetrics)(UIColor *) = ^UIColor *(UIColor *color){
-        if ([color isEqual:UIColor.clearColor]) { return nil; }
-        return color;
-    };
-
-    section.backgroundColor = fromMetrics(metrics.backgroundColor);
-    section.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor);
-    section.separatorColor = fromMetrics(metrics.separatorColor);
-    section.separatorInsets = metrics.separatorInsets;
-    section.separators = metrics.separators;
-    section.numberOfColumns = metrics.numberOfColumns ?: 1;
-    section.cellLayoutOrder = metrics.cellLayoutOrder;
-    section.insets = metrics.padding;
-    
-    for (AAPLLayoutSupplementaryMetrics *suplMetrics in metrics.supplementaryViews) {
-        CGFloat itemHeight = suplMetrics.height;
-        if (!itemHeight) {
-            if ([suplMetrics.kind isEqual:UICollectionElementKindSectionFooter]) { continue; }
-        }
-        
-        AAPLGridLayoutSupplementalItemInfo *supl = [section addSupplementalItemOfKind:suplMetrics.kind];
-        supl.height = itemHeight;
-        supl.hidden = suplMetrics.hidden;
-        supl.padding = suplMetrics.padding;
-        
-        if ([suplMetrics.kind isEqual:UICollectionElementKindSectionHeader]) {
-            supl.visibleWhileShowingPlaceholder = suplMetrics.visibleWhileShowingPlaceholder;
-            supl.shouldPin = suplMetrics.shouldPin;
-            supl.backgroundColor = suplMetrics.backgroundColor ? fromMetrics(suplMetrics.backgroundColor) : section.backgroundColor;
-            supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor ? fromMetrics(suplMetrics.selectedBackgroundColor) : section.selectedBackgroundColor;
-        } else {
-            supl.backgroundColor = suplMetrics.backgroundColor;
-            supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor;
-        }
-    }
-
-    // A section can either have a placeholder or items. Arbitrarily deciding the placeholder takes precedence.
-    if (metrics.hasPlaceholder) {
-        AAPLGridLayoutSupplementalItemInfo *placeholder = [section addSupplementalItemOfKind:AAPLCollectionElementKindPlaceholder];
-        placeholder.height = height;
-    }
-    else {
-        CGFloat columnWidth = section.columnWidth;
-
-        for (NSInteger itemIndex = 0; itemIndex < numberOfItemsInSection; ++itemIndex) {
-            AAPLGridLayoutItemInfo *itemInfo = [section addItem];
-            itemInfo.frame = CGRectMake(0, 0, columnWidth, rowHeight);
-            if (variableRowHeight)
-                itemInfo.needSizeUpdate = YES;
-        }
-    }
-}
-
 - (void)createLayoutInfoFromDataSource
 {
     LAYOUT_TRACE();
@@ -1273,26 +1192,86 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
 
     UIEdgeInsets contentInset = collectionView.contentInset;
-    CGFloat width = CGRectGetWidth(collectionView.bounds) - contentInset.left - contentInset.right;
     CGFloat height = CGRectGetHeight(collectionView.bounds) - contentInset.bottom - contentInset.top;
 
     NSInteger numberOfSections = [collectionView numberOfSections];
 
     if (![dataSource isKindOfClass:[AAPLDataSource class]])
         dataSource = nil;
-
-    _layoutInfo.width = width;
-    _layoutInfo.height = height;
+    
+    static UIColor *(^const fromMetrics)(UIColor *) = ^UIColor *(UIColor *color){
+        if ([color isEqual:UIColor.clearColor]) { return nil; }
+        return color;
+    };
+    
+    void(^buildSection)(AAPLGridLayoutSectionInfo *, AAPLLayoutSectionMetrics *, NSInteger) = ^(AAPLGridLayoutSectionInfo *section, AAPLLayoutSectionMetrics *metrics, NSInteger sectionIndex){
+        BOOL globalSection = AAPLGlobalSection == sectionIndex;
+        
+        CGFloat rowHeight = metrics.rowHeight ?: DEFAULT_ROW_HEIGHT;
+        BOOL variableRowHeight = _approxeq(rowHeight, AAPLRowHeightVariable);
+        NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
+        
+        if (variableRowHeight)
+            rowHeight = MEASURE_HEIGHT;
+        
+        section.backgroundColor = fromMetrics(metrics.backgroundColor);
+        section.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor);
+        section.separatorColor = fromMetrics(metrics.separatorColor);
+        section.separatorInsets = metrics.separatorInsets;
+        section.separators = metrics.separators;
+        section.numberOfColumns = metrics.numberOfColumns ?: 1;
+        section.cellLayoutOrder = metrics.cellLayoutOrder;
+        section.insets = metrics.padding;
+        
+        for (AAPLLayoutSupplementaryMetrics *suplMetrics in metrics.supplementaryViews) {
+            CGFloat itemHeight = suplMetrics.height;
+            if (!itemHeight) {
+                if ([suplMetrics.kind isEqual:UICollectionElementKindSectionFooter]) { continue; }
+            }
+            
+            AAPLGridLayoutSupplementalItemInfo *supl = [section addSupplementalItemOfKind:suplMetrics.kind];
+            supl.height = itemHeight;
+            supl.hidden = suplMetrics.hidden;
+            supl.padding = suplMetrics.padding;
+            
+            if ([suplMetrics.kind isEqual:UICollectionElementKindSectionHeader]) {
+                supl.visibleWhileShowingPlaceholder = suplMetrics.visibleWhileShowingPlaceholder;
+                supl.shouldPin = suplMetrics.shouldPin;
+                supl.backgroundColor = suplMetrics.backgroundColor ? fromMetrics(suplMetrics.backgroundColor) : section.backgroundColor;
+                supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor ? fromMetrics(suplMetrics.selectedBackgroundColor) : section.selectedBackgroundColor;
+            } else {
+                supl.backgroundColor = suplMetrics.backgroundColor;
+                supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor;
+            }
+        }
+        
+        // A section can either have a placeholder or items. Arbitrarily deciding the placeholder takes precedence.
+        if (metrics.hasPlaceholder) {
+            AAPLGridLayoutSupplementalItemInfo *placeholder = [section addSupplementalItemOfKind:AAPLCollectionElementKindPlaceholder];
+            placeholder.height = height;
+        }
+        else {
+            for (NSInteger itemIndex = 0; itemIndex < numberOfItemsInSection; ++itemIndex) {
+                AAPLGridLayoutItemInfo *itemInfo = [section addItem];
+                itemInfo.frame = CGRectMake(0, 0, 0, rowHeight);
+                if (variableRowHeight)
+                    itemInfo.needSizeUpdate = YES;
+            }
+        }
+    };
 
     LAYOUT_LOG(@"numberOfSections = %ld", (long)numberOfSections);
 
     AAPLLayoutSectionMetrics *globalMetrics = layoutMetrics[@(AAPLGlobalSection)];
-    if (globalMetrics)
-        [self createSectionFromMetrics:globalMetrics forSectionAtIndex:AAPLGlobalSection];
+    if (globalMetrics) {
+        AAPLGridLayoutSectionInfo *section = [self.layoutInfo addSectionWithIndex:AAPLGlobalSection];
+        buildSection(section, globalMetrics, AAPLGlobalSection);
+    }
 
     for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
+        AAPLGridLayoutSectionInfo *section = [self.layoutInfo addSectionWithIndex:sectionIndex];
         AAPLLayoutSectionMetrics *metrics = layoutMetrics[@(sectionIndex)];
-        [self createSectionFromMetrics:metrics forSectionAtIndex:sectionIndex];
+        buildSection(section, metrics, sectionIndex);
     }
 }
 
@@ -1308,8 +1287,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     // This call really only makes sense if the section has variable height rows…
     CGRect rect = itemInfo.frame;
-    CGFloat columnWidth = sectionInfo.columnWidth;
-    CGSize fittingSize = CGSizeMake(columnWidth, UILayoutFittingExpandedSize.height);
+    CGSize fittingSize = CGSizeMake(CGRectGetWidth(rect), UILayoutFittingExpandedSize.height);
 
     // This is really only going to work if it's an AAPLCollectionViewCell, but we'll pretend
     UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
@@ -1395,7 +1373,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         if (!header.height || header.hidden)
             return;
 
-        NSIndexPath *indexPath = globalSection ? [NSIndexPath indexPathWithIndex:headerIndex] : [NSIndexPath indexPathForItem:headerIndex inSection:sectionIndex];
+        NSIndexPath *indexPath = supplementIndexPath(headerIndex);
         AAPLCollectionViewGridLayoutAttributes *headerAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:indexPath];
         headerAttribute.frame = headerFrame;
         headerAttribute.unpinnedY = headerFrame.origin.y;
@@ -1440,7 +1418,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     AAPLGridLayoutSupplementalItemInfo *placeholder = section.placeholder;
     if (placeholder) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:sectionIndex];
+        NSIndexPath *indexPath = supplementIndexPath(0);
         AAPLCollectionViewGridLayoutAttributes *placeholderAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withIndexPath:indexPath];
         placeholderAttribute.frame = placeholder.frame;
         placeholderAttribute.zIndex = DEFAULT_ZINDEX + 1;
@@ -1559,18 +1537,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     UICollectionView *collectionView = self.collectionView;
     UIEdgeInsets contentInset = collectionView.contentInset;
-
-    CGFloat width = CGRectGetWidth(collectionView.bounds) - contentInset.left - contentInset.right;
-    CGFloat height = CGRectGetHeight(collectionView.bounds) - contentInset.bottom - contentInset.top;
+    CGFloat contentOffsetY = collectionView.contentOffset.y + contentInset.top;;
 
     _oldLayoutSize = _layoutSize;
     _layoutSize = CGSizeZero;
-
-    _layoutInfo.width = width;
-    _layoutInfo.height = height;
-    _layoutInfo.contentOffsetY = collectionView.contentOffset.y + contentInset.top;
-
-    CGFloat start = 0;
 
     [self.layoutAttributes removeAllObjects];
     [self.pinnableAttributes removeAllObjects];
@@ -1580,44 +1550,58 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         dataSource = nil;
 
     NSUInteger numberOfSections = [collectionView numberOfSections];
-
-    __block CGPoint max = CGPointZero;
+    
+    const CGRect viewport = (CGRect){ CGPointZero, UIEdgeInsetsInsetRect(collectionView.bounds, contentInset).size };
+    __block CGRect layoutRect = viewport;
+    __block CGPoint max = CGPointMake(CGRectGetMaxX(layoutRect), 0);
     
     __block BOOL shouldInvalidate = NO;
+    CGSize(^measureSupplementary)(NSString *, NSIndexPath *, CGSize) = ^(NSString *kind, NSIndexPath *indexPath, CGSize size){
+        shouldInvalidate |= YES;
+//        return [dataSource collectionViewLayout:self sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
+        
+        UICollectionReusableView *header = [dataSource collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
+        CGSize fittingSize = CGSizeMake(CGRectGetWidth(layoutRect), MEASURE_HEIGHT);
+        CGSize preferredSize = [header aapl_preferredLayoutSizeFittingSize:fittingSize];
+        [header removeFromSuperview];
+        return preferredSize;
+    };
 
     CGFloat globalNonPinningHeight = 0;
     AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
     if (globalSection) {
-        max = [globalSection computeLayoutWithOrigin:start measureItemBlock:nil measureSupplementaryItemBlock:^(NSInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:itemIndex];
-            shouldInvalidate |= YES;
-            return [self measureSupplementalItemOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
-        }];
+        max = [globalSection layoutSectionWithRect:layoutRect measureSupplement:^CGSize(NSString *kind, NSUInteger idx, CGSize size) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:idx];
+            return measureSupplementary(kind, indexPath, size);
+        } measureItem:NULL];
+        
         [self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection dataSource:dataSource];
         globalNonPinningHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
     }
-
+    
     for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
-        start = max.y;
+        layoutRect.size.height = fmax(0, layoutRect.size.height - max.y + layoutRect.origin.y);
+        layoutRect.origin.y = max.y;
+
         AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-        max = [section computeLayoutWithOrigin:start measureItemBlock:^(NSInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
-            return [dataSource collectionView:collectionView sizeFittingSize:frame.size forItemAtIndexPath:indexPath];
-        } measureSupplementaryItemBlock:^(NSInteger itemIndex, CGRect frame) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
-            shouldInvalidate |= YES;
-            return [self measureSupplementalItemOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
+        max = [section layoutSectionWithRect:layoutRect measureSupplement:^(NSString *kind, NSUInteger idx, CGSize size) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:idx inSection:sectionIndex];
+            return measureSupplementary(kind, indexPath, size);
+        } measureItem:^(NSUInteger idx, CGSize size) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:idx inSection:sectionIndex];
+            return [dataSource collectionView:collectionView sizeFittingSize:size forItemAtIndexPath:indexPath];
         }];
+
         [self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
     }
 
     CGFloat layoutHeight = max.y;
 
-    if (_layoutInfo.contentOffsetY >= globalNonPinningHeight && layoutHeight - globalNonPinningHeight < height) {
-        layoutHeight = height + globalNonPinningHeight;
+    if (contentOffsetY >= globalNonPinningHeight && layoutHeight - globalNonPinningHeight < CGRectGetHeight(viewport)) {
+        layoutHeight = CGRectGetHeight(viewport) + globalNonPinningHeight;
     }
 
-    _layoutSize = CGSizeMake(width, layoutHeight);
+    _layoutSize = CGSizeMake(CGRectGetWidth(layoutRect), layoutHeight);
 
     [self filterSpecialAttributes];
 

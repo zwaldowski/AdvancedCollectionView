@@ -52,8 +52,8 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @interface AAPLGridLayoutSectionInfo : NSObject
 @property (nonatomic) CGRect frame;
 @property (nonatomic, weak) AAPLGridLayoutInfo *layoutInfo;
-@property (nonatomic, strong) NSMutableArray *rows;
-@property (nonatomic, strong) NSMutableArray *items;
+@property (nonatomic, readonly) NSMutableArray *rows;
+@property (nonatomic, readonly) NSMutableArray *items;
 @property (nonatomic, readonly) NSArray *headers;
 @property (nonatomic, readonly) NSArray *footers;
 @property (nonatomic, readonly) AAPLGridLayoutSupplementalItemInfo *placeholder;
@@ -70,7 +70,6 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @property (nonatomic, strong) UIColor *separatorColor;
 @property (nonatomic) AAPLSeparatorOption separators;
 @property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
-@property (nonatomic, readonly) CGFloat columnWidth;
 @property (nonatomic) NSUInteger phantomCellIndex;
 @property (nonatomic) CGSize phantomCellSize;
 
@@ -81,14 +80,11 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
 - (AAPLGridLayoutRowInfo *)addRow;
 - (AAPLGridLayoutItemInfo *)addItem;
-- (CGPoint)computeLayoutWithOrigin:(CGFloat)originY measureItemBlock:(AAPLLayoutMeasureBlock)itemBlock measureSupplementaryItemBlock:(AAPLLayoutMeasureBlock)supplementaryBlock;
+- (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
 @end
 
 /// The layout information
 @interface AAPLGridLayoutInfo : NSObject
-@property (nonatomic) CGFloat width;
-@property (nonatomic) CGFloat height;
-@property (nonatomic) CGFloat contentOffsetY;
 @property (nonatomic, strong) NSMutableDictionary *sections;
 
 - (AAPLGridLayoutSectionInfo *)addSectionWithIndex:(NSInteger)sectionIndex;
