@@ -14,6 +14,7 @@
 #import "AAPLCollectionViewController.h"
 #import "UIView+Helpers.h"
 #import "AAPLAction.h"
+#import "AAPLMath.h"
 
 NS_INLINE UIColor *destructiveColor(void) {
     return [UIColor colorWithRed:0.86f green:0.22f blue:0.2f alpha:1];
@@ -84,12 +85,13 @@ NS_INLINE UIColor *actionColor(void) {
 
 - (void)setVisibleWidth:(CGFloat)visibleWidth
 {
-    if (_visibleWidth == visibleWidth)
+    if (_approxeq(_visibleWidth, visibleWidth)) {
         return;
+    }
 
     _visibleWidth = visibleWidth;
     CGRect bounds = self.bounds;
-    visibleWidth = MIN(visibleWidth, CGRectGetWidth(bounds));
+    visibleWidth = fmin(visibleWidth, CGRectGetWidth(bounds));
     _maskLayer.frame = CGRectMake(CGRectGetWidth(bounds) - visibleWidth, 0.0, visibleWidth, CGRectGetHeight(bounds));
 }
 
@@ -376,7 +378,7 @@ NS_INLINE UIColor *actionColor(void) {
         frame.origin.x = swipeTrackingPosition;
         _privateContentView.frame = frame;
     }
-    _editActionsView.visibleWidth = MAX(0, -swipeTrackingPosition);
+    _editActionsView.visibleWidth = fmax(0, -swipeTrackingPosition);
 }
 
 - (CGFloat)editActionsVisibleWidth
@@ -670,7 +672,7 @@ NS_INLINE UIColor *actionColor(void) {
     CGFloat removeHeight = CGRectGetHeight(_removeImageView.frame);
 
     // setup initial position
-    CGRect removeFrame = CGRectMake(-removeWidth, ceilf((contentHeight-removeHeight)/2), removeWidth, removeHeight);
+    CGRect removeFrame = CGRectMake(-removeWidth, ceil((contentHeight-removeHeight)/2), removeWidth, removeHeight);
     _removeImageView.frame = removeFrame;
 
     editingWidth += removeWidth + 15;
@@ -682,7 +684,7 @@ NS_INLINE UIColor *actionColor(void) {
         [constraints addObject:[NSLayoutConstraint constraintWithItem:_reorderImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:_privateContentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
 
         CGRect reorderFrame = _reorderImageView.frame;
-        reorderFrame.origin = CGPointMake(contentWidth, ceilf((contentHeight - CGRectGetHeight(reorderFrame))/2));
+        reorderFrame.origin = CGPointMake(contentWidth, ceil((contentHeight - CGRectGetHeight(reorderFrame))/2));
         _reorderImageView.frame = reorderFrame;
 
         editingWidth += CGRectGetWidth(_reorderImageView.frame) + 15;

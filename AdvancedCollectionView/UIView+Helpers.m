@@ -27,4 +27,16 @@
     return [[UIApplication sharedApplication] sendAction:action to:target from:sender forEvent:nil];
 }
 
+// This is a dupe of -[UIView _currentScreenScale].
+- (CGFloat)aapl_scale
+{
+    UIScreen *screen = self.window.screen ?: UIScreen.mainScreen;
+    return screen.scale;
+}
+
+- (CGFloat)aapl_hairline
+{
+    return 1 / self.aapl_scale;
+}
+
 @end

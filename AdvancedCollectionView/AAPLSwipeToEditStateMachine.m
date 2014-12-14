@@ -66,7 +66,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 @implementation AAPLSwipeToEditStateMachine
 
-- (instancetype)initWithCollectionView:(UICollectionView *)collectionView;
+- (instancetype)initWithCollectionView:(UICollectionView *)collectionView
 {
     self = [super init];
     if (!self)
@@ -140,7 +140,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 - (CGFloat)xPositionForTranslation:(CGPoint)translation
 {
-    return MIN(0, _startTrackingX + translation.x);
+    return fmin(0, _startTrackingX + translation.x);
 }
 
 - (void)shutActionPaneForEditingCellAnimated:(BOOL)animate
@@ -240,8 +240,8 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
                 }
 
-                finalX = MAX(targetX, finalX);
-                CGFloat animationDuration = (fabsf(velocityX)*.0002f)+.2f;
+                finalX = fmax(targetX, finalX);
+                CGFloat animationDuration = (fabs(velocityX)*.0002)+.2;
 
                 self.currentState = AAPLSwipeStateAnimatingOpen;
                 [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -452,7 +452,7 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
                 return NO;
 
             // only if there's enough x velocity
-            if (abs(velocity.y) >= abs(velocity.x))
+            if (fabs(velocity.y) >= fabs(velocity.x))
                 return NO;
 
             _startTrackingX = cell.swipeTrackingPosition;

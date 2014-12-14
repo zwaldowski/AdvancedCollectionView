@@ -9,12 +9,13 @@
  */
 
 #import "AAPLPlaceholderView.h"
+#import "AAPLMath.h"
 
 #define CORNER_RADIUS 3.0
 #define VERTICAL_ELEMENT_SPACING 35.0
 #define CONTINUOUS_CURVES_SIZE_FACTOR (1.528665)
-#define BUTTON_WIDTH 124
-#define BUTTON_HEIGHT 29
+#define BUTTON_WIDTH 124.0
+#define BUTTON_HEIGHT 29.0
 
 @interface AAPLPlaceholderView ()
 @property (nonatomic, strong) UIView *containerView;
@@ -117,7 +118,7 @@
 
         CGFloat cornerRadius = CORNER_RADIUS;
 
-        CGFloat capSize = ceilf(cornerRadius * CONTINUOUS_CURVES_SIZE_FACTOR);
+        CGFloat capSize = ceil(cornerRadius * CONTINUOUS_CURVES_SIZE_FACTOR);
         CGFloat rectSize = 2.0 * capSize + 1.0;
         CGRect rect = CGRectMake(0.0, 0.0, rectSize, rectSize);
         UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0.0);

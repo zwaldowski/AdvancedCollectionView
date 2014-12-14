@@ -12,4 +12,8 @@
 
 @interface UIView (Helpers)
 - (BOOL)aapl_sendAction:(SEL)action from:(id)sender;
+
+@property (nonatomic, readonly) CGFloat aapl_scale;
+@property (nonatomic, readonly) CGFloat aapl_hairline;
+
 @end

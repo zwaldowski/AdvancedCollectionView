@@ -69,7 +69,7 @@
     CGFloat labelHeight;
 
     if (AAPLBasicCellStyleDefault == _style)
-        labelHeight = MAX(_primaryLabel.font.lineHeight, _secondaryLabel.font.lineHeight);
+        labelHeight = fmax(_primaryLabel.font.lineHeight, _secondaryLabel.font.lineHeight);
     else
         labelHeight = _primaryLabel.font.lineHeight + _secondaryLabel.font.lineHeight;
 

@@ -11,6 +11,7 @@
  */
 
 #import "AAPLCollectionViewGridLayout_Internal.h"
+#import "AAPLMath.h"
 
 @implementation AAPLGridLayoutInvalidationContext
 
@@ -189,10 +190,10 @@
             BOOL needSizeUpdate = item.needSizeUpdate && measureItemBlock;
 
             CGFloat height = CGRectGetHeight(item.frame);
-            if (AAPLRowHeightRemainder == item.frame.size.height) {
+            if (_approxeq(CGRectGetHeight(item.frame), AAPLRowHeightRemainder)) {
                 height = self.layoutInfo.height - originY;
             }
-
+            
             if (hiddenCell) {
                 [row.items addObject:item];
                 item.frame = CGRectMake(originX, originY, columnWidth, height);

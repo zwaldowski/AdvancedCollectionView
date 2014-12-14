@@ -13,6 +13,8 @@
 #import "AAPLDataSource.h"
 #import "AAPLCollectionViewGridLayoutAttributes_Private.h"
 #import "UICollectionView+Helpers.h"
+#import "AAPLMath.h"
+#import "UIView+Helpers.h"
 
 static inline NSString *__unused AAPLStringFromBOOL(BOOL value)
 {
@@ -48,8 +50,8 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 
 #define DRAG_SHADOW_HEIGHT 19
 
-#define SCROLL_SPEED_MAX_MULTIPLIER 4.0f
-#define FRAMES_PER_SECOND 60.0f
+#define SCROLL_SPEED_MAX_MULTIPLIER 4.0
+#define FRAMES_PER_SECOND 60.0
 //#define MEASURE_HEIGHT UILayoutFittingExpandedSize.height
 #define MEASURE_HEIGHT 100
 
@@ -405,7 +407,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGPoint contentOffset = collectionView.contentOffset;
 
     // Need to keep the distance as an integer, because the contentOffset property is automatically rounded. This would cause the view center to begin to diverge from the scrolling and appear to slip away from under the user's finger.
-    CGFloat distance = rintf(self.scrollingSpeed / FRAMES_PER_SECOND);
+    CGFloat distance = AAPLRound(self.scrollingSpeed / FRAMES_PER_SECOND, collectionView.aapl_scale, NSRoundBankers);
     CGPoint translation = CGPointZero;
 
     switch (direction) {
@@ -422,7 +424,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         }
 
         case AAPLAutoScrollDirectionDown: {
-            CGFloat maxY = MAX(contentSize.height, frameSize.height) - frameSize.height;
+            CGFloat maxY = fmax(contentSize.height, frameSize.height) - frameSize.height;
 
             if ((contentOffset.y + distance) >= maxY) {
                 distance = maxY - contentOffset.y;
@@ -445,7 +447,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         }
 
         case AAPLAutoScrollDirectionRight: {
-            CGFloat maxX = MAX(contentSize.width, frameSize.width) - frameSize.width;
+            CGFloat maxX = fmax(contentSize.width, frameSize.width) - frameSize.width;
 
             if ((contentOffset.x + distance) >= maxX) {
                 distance = maxX - contentOffset.x;
@@ -807,10 +809,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGRect bounds = self.collectionView.bounds;
     AAPLGridLayoutInvalidationContext *context = (AAPLGridLayoutInvalidationContext *)[super invalidationContextForBoundsChange:newBounds];
 
-    context.invalidateLayoutOrigin = newBounds.origin.x != bounds.origin.x || newBounds.origin.y != bounds.origin.y;
+    context.invalidateLayoutOrigin = !CGPointEqualToPoint(newBounds.origin, bounds.origin);
 
     // Only recompute the layout if the actual width has changed.
-    context.invalidateLayoutMetrics = ((newBounds.size.width != bounds.size.width) || (newBounds.origin.x != bounds.origin.x));
+    context.invalidateLayoutMetrics = (!_approxeq(CGRectGetWidth(newBounds), CGRectGetWidth(bounds)) || !_approxeq(CGRectGetMinX(newBounds), CGRectGetMinX(bounds)));
     return context;
 }
 
@@ -827,7 +829,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     targetContentOffset.y += insets.top;
 
     CGFloat availableHeight = CGRectGetHeight(UIEdgeInsetsInsetRect(collectionView.bounds, insets));
-    targetContentOffset.y = MIN(targetContentOffset.y, MAX(0, _layoutSize.height - availableHeight));
+    targetContentOffset.y = fmin(targetContentOffset.y, fmax(0, _layoutSize.height - availableHeight));
 
     NSInteger firstInsertedIndex = [self.insertedSections firstIndex];
     if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] integerValue]) {
@@ -839,7 +841,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         CGFloat minY = CGRectGetMinY(sectionInfo.frame);
         if (targetContentOffset.y + globalPinnableHeight > minY) {
             // need to make the section visable
-            targetContentOffset.y = MAX(globalNonPinnableHeight, minY - globalPinnableHeight);
+            targetContentOffset.y = fmax(globalNonPinnableHeight, minY - globalPinnableHeight);
         }
     }
 
@@ -1203,11 +1205,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     BOOL globalSection = AAPLGlobalSection == sectionIndex;
 
     CGFloat rowHeight = metrics.rowHeight ?: DEFAULT_ROW_HEIGHT;
-    BOOL variableRowHeight = (rowHeight == AAPLRowHeightVariable);
+    BOOL variableRowHeight = _approxeq(rowHeight, AAPLRowHeightVariable);
     NSInteger numberOfItemsInSection = (globalSection ? 0 : [collectionView numberOfItemsInSection:sectionIndex]);
 
-    NSAssert(rowHeight != AAPLRowHeightRemainder || numberOfItemsInSection == 1, @"Only one item is permitted in a section with remainder row height.");
-    NSAssert(rowHeight != AAPLRowHeightRemainder || sectionIndex == [collectionView numberOfSections] - 1, @"Remainder row height may only be set for last section.");
+    NSAssert(!_approxeq(rowHeight, AAPLRowHeightRemainder) || numberOfItemsInSection == 1, @"Only one item is permitted in a section with remainder row height.");
+    NSAssert(!_approxeq(rowHeight, AAPLRowHeightRemainder) || sectionIndex == [collectionView numberOfSections] - 1, @"Remainder row height may only be set for last section.");
 
     if (variableRowHeight)
         rowHeight = MEASURE_HEIGHT;
@@ -1545,8 +1547,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGFloat maxY = CGFLOAT_MIN;
 
     for (AAPLCollectionViewGridLayoutAttributes *attr in attributes) {
-        minY = MIN(minY, CGRectGetMinY(attr.frame));
-        maxY = MAX(maxY, CGRectGetMaxY(attr.frame));
+        minY = fmin(minY, CGRectGetMinY(attr.frame));
+        maxY = fmax(maxY, CGRectGetMaxY(attr.frame));
     }
 
     return maxY - minY;
@@ -1709,10 +1711,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)finalizePinnedAttributes:(NSArray *)attributes zIndex:(NSInteger)zIndex
 {
     [attributes enumerateObjectsUsingBlock:^(AAPLCollectionViewGridLayoutAttributes *attr, NSUInteger attrIndex, BOOL *stop) {
-        CGRect frame = attr.frame;
-        attr.pinnedHeader = frame.origin.y != attr.unpinnedY;
-        NSInteger depth = 1 + attrIndex;
-        attr.zIndex = zIndex - depth;
+        attr.pinnedHeader = !_approxeq(CGRectGetMinY(attr.frame), attr.unpinnedY);
+        attr.zIndex = zIndex - attrIndex - 1;
     }];
 }
 
@@ -1769,8 +1769,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     if (section.backgroundAttribute) {
         CGRect frame = section.backgroundAttribute.frame;
-        frame.origin.y = MIN(nonPinnableY, collectionView.bounds.origin.y);
-        CGFloat bottomY = MAX(CGRectGetMaxY([[section.pinnableHeaderAttributes lastObject] frame]), CGRectGetMaxY([[section.nonPinnableHeaderAttributes lastObject] frame]));
+        frame.origin.y = fmin(nonPinnableY, collectionView.bounds.origin.y);
+        CGFloat bottomY = fmax(CGRectGetMaxY([[section.pinnableHeaderAttributes lastObject] frame]), CGRectGetMaxY([[section.nonPinnableHeaderAttributes lastObject] frame]));
         frame.size.height =  bottomY - frame.origin.y;
         section.backgroundAttribute.frame = frame;
     }
@@ -1794,7 +1794,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGFloat deltaY = + self.contentOffsetDelta.y;
     CGRect frame = attributes.frame;
     if (attributes.pinnedHeader) {
-        CGFloat newY = MAX(attributes.unpinnedY, CGRectGetMinY(frame) + deltaY);
+        CGFloat newY = fmax(attributes.unpinnedY, CGRectGetMinY(frame) + deltaY);
         frame.origin.y = newY;
         frame.origin.x += deltaX;
     }
