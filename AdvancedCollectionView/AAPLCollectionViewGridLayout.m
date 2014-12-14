@@ -854,7 +854,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (CGSize)collectionViewContentSize
 {
     LAYOUT_TRACE();
-    return _layoutSize;
+    return _preparingLayout ? _oldLayoutSize : _layoutSize;
 }
 
 - (void)prepareForCollectionViewUpdates:(NSArray *)updateItems
@@ -900,13 +900,13 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)finalizeCollectionViewUpdates
 {
     LAYOUT_TRACE();
-    [super finalizeCollectionViewUpdates];
     self.insertedIndexPaths = nil;
     self.removedIndexPaths = nil;
     self.insertedSections = nil;
     self.removedSections = nil;
     self.reloadedSections = nil;
     [self.updateSectionDirections removeAllObjects];
+    [super finalizeCollectionViewUpdates];
 }
 
 // These methods are called by collection view during an update block.
