@@ -721,7 +721,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     attributes.movable = _editing ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
     attributes.columnIndex = item.columnIndex;
 
-    LAYOUT_LOG(@"Created attributes for %@: %@ hidden = %@ preparingLayout", AAPLStringFromNSIndexPath(indexPath), NSStringFromCGRect(attributes.frame), AAPLStringFromBOOL(attributes.hidden), AAPLStringFromBOOL(_preparingLayout));
+    LAYOUT_LOG(@"Created attributes for %@: %@ hidden = %@ preparingLayout %@", AAPLStringFromNSIndexPath(indexPath), NSStringFromCGRect(attributes.frame), AAPLStringFromBOOL(attributes.hidden), AAPLStringFromBOOL(_preparingLayout));
 
     if (!_preparingLayout)
         _indexPathToItemAttributes[indexPath] = attributes;
