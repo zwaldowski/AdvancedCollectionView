@@ -11,7 +11,6 @@
 #import "AAPLDataSource_Private.h"
 #import "AAPLLayoutMetrics_Private.h"
 #import "AAPLPlaceholderView.h"
-#import "NSObject+KVOBlock.h"
 #import "AAPLCollectionViewGridLayout.h"
 #import "UICollectionView+Helpers.h"
 @import Darwin.libkern.OSAtomic;
@@ -25,8 +24,10 @@
 @property (nonatomic, strong) AAPLLoadableContentStateMachine *stateMachine;
 @property (nonatomic, strong) AAPLCollectionPlaceholderView *placeholderView;
 @property (nonatomic, copy) dispatch_block_t pendingUpdateBlock;
-@property (nonatomic) BOOL loadingComplete;
 @property (nonatomic, weak) AAPLLoading *loadingInstance;
+
+@property (nonatomic, copy) dispatch_block_t whenLoadedBlock;
+@property (nonatomic) dispatch_semaphore_t whenLoadedBlockLock;
 @end
 
 @implementation AAPLDataSource
@@ -39,6 +40,8 @@
         return nil;
 
     _defaultMetrics = [[AAPLLayoutSectionMetrics alloc] init];
+    self.whenLoadedBlockLock = dispatch_semaphore_create(1);
+
     return self;
 }
 
@@ -131,7 +134,6 @@
 
 - (void)beginLoading
 {
-    self.loadingComplete = NO;
     self.loadingState = (([self.loadingState isEqualToString:AAPLLoadStateInitial] || [self.loadingState isEqualToString:AAPLLoadStateLoadingContent]) ? AAPLLoadStateLoadingContent : AAPLLoadStateRefreshingContent);
 
     [self notifyWillLoadContent];
@@ -155,7 +157,15 @@
         }];
     }
 
-    self.loadingComplete = YES;
+    void(^block)(void) = NULL;
+    {
+        dispatch_semaphore_wait(self.whenLoadedBlockLock,  DISPATCH_TIME_FOREVER);
+        block = self.whenLoadedBlock;
+        self.whenLoadedBlock = NULL;
+        dispatch_semaphore_signal(self.whenLoadedBlockLock);
+    }
+    if (block) { block(); }
+
     [self notifyContentLoadedWithError:error];
 }
 
@@ -204,22 +214,19 @@
 
 - (void)whenLoaded:(dispatch_block_t)block
 {
-    __block int32_t complete = 0;
+    NSParameterAssert(block != NULL);
 
-    [self aapl_addObserverForKeyPath:@"loadingComplete" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew withBlock:^(id obj, NSDictionary *change, id observer) {
-
-        BOOL loadingComplete = [change[NSKeyValueChangeNewKey] boolValue];
-        if (!loadingComplete)
-            return;
-
-        [self aapl_removeObserver:observer];
-
-        // Already called the completion handler
-        if (!OSAtomicCompareAndSwap32(0, 1, &complete))
-            return;
-
-        block();
-    }];
+    dispatch_semaphore_wait(self.whenLoadedBlockLock,  DISPATCH_TIME_FOREVER);
+    void(^oldBlock)(void) = self.whenLoadedBlock;
+    if (oldBlock) {
+        self.whenLoadedBlock = ^{
+            oldBlock();
+            block();
+        };
+    } else {
+        self.whenLoadedBlock = block;
+    }
+    dispatch_semaphore_signal(self.whenLoadedBlockLock);
 }
 
 - (void)stateWillChange
