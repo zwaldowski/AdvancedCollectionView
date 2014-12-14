@@ -12,16 +12,10 @@
 
 @interface AAPLDataSource (Headers)
 
-/// A header that represents the title of this data source. This uses AAPLSectionHeaderView.
-- (AAPLLayoutSupplementaryMetrics *)dataSourceTitleHeader;
-
 /// A header for the data source with a specific title. Uses AAPLSectionHeaderView.
-- (AAPLLayoutSupplementaryMetrics *)dataSourceHeaderWithTitle:(NSString *)title;
-
-/// Create a standard AAPLSectionHeaderView header for the section, but without any configuration.
-- (AAPLLayoutSupplementaryMetrics *)sectionHeaderForSectionAtIndex:(NSInteger)sectionIndex;
+- (AAPLLayoutSupplementaryMetrics *)addDataSourceHeaderWithTitle:(NSString *)title;
 
 /// Create a header with a specific title for a single section. This uses AAPLSectionHeaderView.
-- (AAPLLayoutSupplementaryMetrics *)sectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex;
+- (AAPLLayoutSupplementaryMetrics *)newSectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex;
 
 @end

@@ -17,6 +17,4 @@
 
 @interface AAPLLayoutSectionMetrics ()
 @property (nonatomic) BOOL hasPlaceholder;
-@property (nonatomic, strong) NSArray *headers;
-@property (nonatomic, strong) NSArray *footers;
 @end

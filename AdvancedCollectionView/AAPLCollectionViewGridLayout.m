@@ -1199,7 +1199,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)createSectionFromMetrics:(AAPLLayoutSectionMetrics *)metrics forSectionAtIndex:(NSInteger)sectionIndex
 {
     UICollectionView *collectionView = self.collectionView;
-    UIColor *clearColor = [UIColor clearColor];
     CGFloat height = _layoutInfo.height;
 
     BOOL globalSection = AAPLGlobalSection == sectionIndex;
@@ -1215,16 +1214,16 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         rowHeight = MEASURE_HEIGHT;
 
     AAPLGridLayoutSectionInfo *section = [_layoutInfo addSectionWithIndex:sectionIndex];
+    
+    static UIColor *(^const fromMetrics)(UIColor *) = ^UIColor *(UIColor *color){
+        if ([color isEqual:UIColor.clearColor]) { return nil; }
+        return color;
+    };
 
-    UIColor *separatorColor = metrics.separatorColor;
-    UIColor *sectionSeparatorColor = metrics.sectionSeparatorColor;
-    UIColor *backgroundColor = metrics.backgroundColor;
-    UIColor *selectedBackgroundColor = metrics.selectedBackgroundColor;
-
-    section.backgroundColor = ([backgroundColor isEqual:clearColor] ? nil : backgroundColor);
-    section.selectedBackgroundColor = ([selectedBackgroundColor isEqual:clearColor] ? nil : selectedBackgroundColor);
-    section.separatorColor = ([separatorColor isEqual:clearColor] ? nil : separatorColor);
-    section.sectionSeparatorColor = ([sectionSeparatorColor isEqual:clearColor] ? nil : sectionSeparatorColor);
+    section.backgroundColor = fromMetrics(metrics.backgroundColor);
+    section.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor);
+    section.separatorColor = fromMetrics(metrics.separatorColor);
+    section.sectionSeparatorColor = fromMetrics(metrics.sectionSeparatorColor);
     section.sectionSeparatorInsets = metrics.sectionSeparatorInsets;
     section.separatorInsets = metrics.separatorInsets;
     section.showsColumnSeparator = metrics.showsColumnSeparator;
@@ -1232,41 +1231,32 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     section.numberOfColumns = metrics.numberOfColumns ?: 1;
     section.cellLayoutOrder = metrics.cellLayoutOrder;
     section.insets = metrics.padding;
-
-    [metrics.headers enumerateObjectsUsingBlock:^(AAPLLayoutSupplementaryMetrics *headerMetrics, NSUInteger headerIndex, BOOL *stop) {
-        AAPLGridLayoutSupplementalItemInfo *header = [section addSupplementalItemAsHeader:YES];
-        header.height = headerMetrics.height;
-        header.shouldPin = headerMetrics.shouldPin;
-        header.visibleWhileShowingPlaceholder = headerMetrics.visibleWhileShowingPlaceholder;
-        header.padding = headerMetrics.padding;
-        header.hidden = headerMetrics.hidden;
-
-        UIColor *headerBackground = headerMetrics.backgroundColor;
-        if (headerBackground)
-            header.backgroundColor = [headerBackground isEqual:clearColor] ? nil : headerBackground;
-        else
-            header.backgroundColor = section.backgroundColor;
-
-        UIColor *selectedHeaderBackground = headerMetrics.selectedBackgroundColor;
-        if (selectedHeaderBackground)
-            header.selectedBackgroundColor = [selectedHeaderBackground isEqual:clearColor] ? nil : selectedHeaderBackground;
-        else
-            header.selectedBackgroundColor = section.selectedBackgroundColor;
-    }];
-
-    for (AAPLLayoutSupplementaryMetrics *footerMetrics in metrics.footers) {
-        if (!footerMetrics.height)
-            continue;
-        AAPLGridLayoutSupplementalItemInfo *footer = [section addSupplementalItemAsHeader:NO];
-        footer.height = footerMetrics.height;
-        footer.backgroundColor = footerMetrics.backgroundColor;
-        footer.padding = footerMetrics.padding;
-        footer.hidden = footerMetrics.hidden;
+    
+    for (AAPLLayoutSupplementaryMetrics *suplMetrics in metrics.supplementaryViews) {
+        CGFloat itemHeight = suplMetrics.height;
+        if (!itemHeight) {
+            if ([suplMetrics.kind isEqual:UICollectionElementKindSectionFooter]) { continue; }
+        }
+        
+        AAPLGridLayoutSupplementalItemInfo *supl = [section addSupplementalItemOfKind:suplMetrics.kind];
+        supl.height = itemHeight;
+        supl.hidden = suplMetrics.hidden;
+        supl.padding = suplMetrics.padding;
+        
+        if ([suplMetrics.kind isEqual:UICollectionElementKindSectionHeader]) {
+            supl.visibleWhileShowingPlaceholder = suplMetrics.visibleWhileShowingPlaceholder;
+            supl.shouldPin = suplMetrics.shouldPin;
+            supl.backgroundColor = suplMetrics.backgroundColor ? fromMetrics(suplMetrics.backgroundColor) : section.backgroundColor;
+            supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor ? fromMetrics(suplMetrics.selectedBackgroundColor) : section.selectedBackgroundColor;
+        } else {
+            supl.backgroundColor = suplMetrics.backgroundColor;
+            supl.selectedBackgroundColor = suplMetrics.selectedBackgroundColor;
+        }
     }
 
     // A section can either have a placeholder or items. Arbitrarily deciding the placeholder takes precedence.
     if (metrics.hasPlaceholder) {
-        AAPLGridLayoutSupplementalItemInfo *placeholder = [section addSupplementalItemAsPlaceholder];
+        AAPLGridLayoutSupplementalItemInfo *placeholder = [section addSupplementalItemOfKind:AAPLCollectionElementKindPlaceholder];
         placeholder.height = height;
     }
     else {

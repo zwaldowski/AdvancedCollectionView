@@ -35,7 +35,9 @@
 @end
 
 
-@implementation AAPLGridLayoutSectionInfo
+@implementation AAPLGridLayoutSectionInfo {
+    NSMutableDictionary *_supplementalItemArraysByKind;
+}
 
 - (instancetype)init
 {
@@ -49,8 +51,24 @@
     _phantomCellIndex = NSNotFound;
     _phantomCellSize = CGSizeZero;
     _pinnableHeaderAttributes = [NSMutableArray array];
+    _supplementalItemArraysByKind = NSMutableDictionary.new;
 
     return self;
+}
+
+- (AAPLGridLayoutSupplementalItemInfo *)placeholder
+{
+    return [_supplementalItemArraysByKind[AAPLCollectionElementKindPlaceholder] firstObject];
+}
+
+- (NSArray *)headers
+{
+    return [NSArray arrayWithArray:_supplementalItemArraysByKind[UICollectionElementKindSectionHeader]];
+}
+
+- (NSArray *)footers
+{
+    return [NSArray arrayWithArray:_supplementalItemArraysByKind[UICollectionElementKindSectionFooter]];
 }
 
 - (NSMutableArray *)nonPinnableHeaderAttributes
@@ -62,27 +80,22 @@
     return _nonPinnableHeaderAttributes;
 }
 
-- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsPlaceholder
+- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind
 {
     AAPLGridLayoutSupplementalItemInfo *supplementalInfo = [[AAPLGridLayoutSupplementalItemInfo alloc] init];
-    _placeholder = supplementalInfo;
-    supplementalInfo.isPlaceholder = YES;
-    return supplementalInfo;
-}
+    if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder]) {
+        supplementalInfo.isPlaceholder = YES;
+        _supplementalItemArraysByKind[kind] = @[ supplementalInfo ];
+    } else {
+        supplementalInfo.header = [kind isEqual:UICollectionElementKindSectionHeader];
 
-- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemAsHeader:(BOOL)header
-{
-    AAPLGridLayoutSupplementalItemInfo *supplementalInfo = [[AAPLGridLayoutSupplementalItemInfo alloc] init];
-    supplementalInfo.header = header;
-    if (header) {
-        if (!_headers)
-            _headers = [NSMutableArray array];
-        [_headers addObject:supplementalInfo];
-    }
-    else {
-        if (!_footers)
-            _footers = [NSMutableArray array];
-        [_footers addObject:supplementalInfo];
+        NSMutableArray *items = _supplementalItemArraysByKind[kind];
+        if (!items) {
+            items = [NSMutableArray array];
+            _supplementalItemArraysByKind[kind] = items;
+        }
+        
+        [items addObject:supplementalInfo];
     }
     return supplementalInfo;
 }
@@ -289,20 +302,6 @@
     NSMutableString *result = [NSMutableString string];
     [result appendString:[self description]];
 
-    if ([_headers count]) {
-        [result appendString:@"\n    headers = @[\n"];
-
-        for (AAPLGridLayoutSupplementalItemInfo *header in _headers) {
-            [result appendFormat:@"        %@\n", header];
-        }
-
-        [result appendString:@"     ]"];
-    }
-
-    if (_placeholder) {
-        [result appendFormat:@"\n    placeholder = %@", _placeholder];
-    }
-
     if ([_rows count]) {
         [result appendString:@"\n    rows = @[\n"];
 
@@ -310,6 +309,20 @@
         [result appendFormat:@"        %@\n", [descriptions componentsJoinedByString:@"\n        "]];
         [result appendString:@"    ]"];
     }
+
+    [result appendString:@"\n    supplements = @[\n"];
+
+    [_supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *items, BOOL *__unused stop) {
+        [result appendFormat:@"        %@ = @[\n", kind];
+
+        for (AAPLGridLayoutSupplementalItemInfo *item in items) {
+            [result appendFormat:@"            %@\n", item];
+        }
+
+        [result appendString:@"         ]\n"];
+    }];
+
+    [result appendString:@"     ]"];
 
     return result;
 }

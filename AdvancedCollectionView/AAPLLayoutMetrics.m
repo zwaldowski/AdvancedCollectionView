@@ -10,7 +10,7 @@
 
 #import "AAPLLayoutMetrics_Private.h"
 
-NSString * const AAPLCollectionElementKindPlaceholder = @"AAPLCollectionElementKindPlaceholder";
+NSString * const AAPLCollectionElementKindPlaceholder = @"placeholder";
 CGFloat const AAPLRowHeightVariable = -1000;
 CGFloat const AAPLRowHeightRemainder = -1001;
 NSInteger const AAPLGlobalSection = NSIntegerMax;
@@ -31,6 +31,7 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     if (!item)
         return nil;
 
+    item->_kind = [_kind copy];
     item->_reuseIdentifier = [_reuseIdentifier copy];
     item->_height = _height;
     item->_hidden = _hidden;
@@ -72,7 +73,10 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
         unsigned int separatorColor : 1;
         unsigned int sectionSeparatorColor : 1;
     } _flags;
+    NSMutableArray *_supplementaryViews;
 }
+
+@synthesize supplementaryViews = _supplementaryViews;
 
 + (instancetype)metrics
 {
@@ -119,8 +123,7 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     metrics->_hasPlaceholder = _hasPlaceholder;
     metrics->_showsSectionSeparatorWhenLastSection = _showsSectionSeparatorWhenLastSection;
     metrics->_cellLayoutOrder = _cellLayoutOrder;
-    metrics->_headers = [_headers copy];
-    metrics->_footers = [_footers copy];
+    metrics->_supplementaryViews = [_supplementaryViews mutableCopy];
     metrics->_flags = _flags;
     return metrics;
 }
@@ -155,24 +158,22 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     _flags.showsSectionSeparatorWhenLastSection = YES;
 }
 
-- (AAPLLayoutSupplementaryMetrics *)newHeader
-{
-    AAPLLayoutSupplementaryMetrics *header = [[AAPLLayoutSupplementaryMetrics alloc] init];
-    if (!_headers)
-        _headers = @[header];
-    else
-        _headers = [_headers arrayByAddingObject:header];
-    return header;
+- (void)setSupplementaryViews:(NSArray *)supplementaryViews {
+    _supplementaryViews = [NSMutableArray arrayWithArray:supplementaryViews];
 }
 
-- (AAPLLayoutSupplementaryMetrics *)newFooter
+- (AAPLLayoutSupplementaryMetrics *)newSupplementaryMetricsOfKind:(NSString *)kind
 {
-    AAPLLayoutSupplementaryMetrics *footer = [[AAPLLayoutSupplementaryMetrics alloc] init];
-    if (!_footers)
-        _footers = @[footer];
-    else
-        _footers = [_footers arrayByAddingObject:footer];
-    return footer;
+    AAPLLayoutSupplementaryMetrics *info = [[AAPLLayoutSupplementaryMetrics alloc] init];
+    info.kind = kind;
+    
+    if (!_supplementaryViews) {
+        _supplementaryViews = NSMutableArray.new;
+    }
+    
+    [_supplementaryViews addObject:info];
+    
+    return info;
 }
 
 - (void)applyValuesFromMetrics:(AAPLLayoutSectionMetrics *)metrics
@@ -212,15 +213,9 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
 
     if (metrics.hasPlaceholder)
         self.hasPlaceholder = YES;
-
-    if (metrics.headers) {
-        NSArray *headers = [NSArray arrayWithArray:self.headers];
-        self.headers = [headers arrayByAddingObjectsFromArray:metrics.headers];
-    }
-
-    if (metrics.footers) {
-        NSArray *footers = self.footers;
-        self.footers = [metrics.footers arrayByAddingObjectsFromArray:footers];
+    
+    if (metrics.supplementaryViews) {
+        [_supplementaryViews addObjectsFromArray:metrics.supplementaryViews];
     }
 }
 

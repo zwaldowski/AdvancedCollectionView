@@ -84,16 +84,17 @@
     NSInteger numberOfSections = self.numberOfSections;
 
     AAPLLayoutSectionMetrics *globalMetrics = [self snapshotMetricsForSectionAtIndex:AAPLGlobalSection];
-    for (AAPLLayoutSupplementaryMetrics* headerMetrics in globalMetrics.headers)
-        [collectionView registerClass:headerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerMetrics.reuseIdentifier];
+    for (AAPLLayoutSupplementaryMetrics *supplMetrics in globalMetrics.supplementaryViews) {
+        if (![supplMetrics.kind isEqual:UICollectionElementKindSectionHeader]) continue;
+        [collectionView registerClass:supplMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:supplMetrics.reuseIdentifier];
+    }
 
     for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
         AAPLLayoutSectionMetrics *metrics = [self snapshotMetricsForSectionAtIndex:sectionIndex];
-
-        for (AAPLLayoutSupplementaryMetrics* headerMetrics in metrics.headers)
-            [collectionView registerClass:headerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerMetrics.reuseIdentifier];
-        for (AAPLLayoutSupplementaryMetrics* footerMetrics in metrics.footers)
-            [collectionView registerClass:footerMetrics.supplementaryViewClass forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:footerMetrics.reuseIdentifier];
+        
+        for (AAPLLayoutSupplementaryMetrics *supplMetrics in metrics.supplementaryViews) {
+            [collectionView registerClass:supplMetrics.supplementaryViewClass forSupplementaryViewOfKind:supplMetrics.kind withReuseIdentifier:supplMetrics.reuseIdentifier];
+        }
     }
 
     [collectionView registerClass:[AAPLCollectionPlaceholderView class] forSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withReuseIdentifier:NSStringFromClass([AAPLCollectionPlaceholderView class])];
@@ -314,22 +315,19 @@
     // The root data source puts its headers into the special global section. Other data sources put theirs into their 0 section.
     BOOL rootDataSource = self.rootDataSource;
     if (rootDataSource && AAPLGlobalSection == sectionIndex) {
-        metrics.headers = [NSArray arrayWithArray:_headers];
-    }
+        metrics.supplementaryViews = _headers;
+    } else if (!sectionIndex) {
+        // We need to handle global headers and the placeholder view for section 0
+        NSMutableArray *supplements = [NSMutableArray new];
 
-    // We need to handle global headers and the placeholder view for section 0
-    if (!sectionIndex) {
-        NSMutableArray *headers = [NSMutableArray array];
-
-        if (_headers && !rootDataSource)
-            [headers addObjectsFromArray:_headers];
+        if (_headers && !rootDataSource) {
+            [supplements addObjectsFromArray:_headers];
+        }
+        
+        [supplements addObjectsFromArray:metrics.supplementaryViews];
+        metrics.supplementaryViews = supplements;
 
         metrics.hasPlaceholder = self.shouldDisplayPlaceholder;
-
-        if (metrics.headers)
-            [headers addObjectsFromArray:metrics.headers];
-
-        metrics.headers = headers;
     }
     
     return metrics;
@@ -373,6 +371,7 @@
     NSAssert(!_headersByKey[key], @"Attempting to add a header for a key that already exists: %@", key);
 
     AAPLLayoutSupplementaryMetrics *header = [[AAPLLayoutSupplementaryMetrics alloc] init];
+    header.kind = UICollectionElementKindSectionHeader;
     _headersByKey[key] = header;
     [_headers addObject:header];
     return header;
@@ -418,7 +417,7 @@
         _sectionMetrics[@(sectionIndex)] = metrics;
     }
 
-    return [metrics newHeader];
+    return [metrics newSupplementaryMetricsOfKind:UICollectionElementKindSectionHeader];
 }
 
 - (AAPLLayoutSupplementaryMetrics *)newFooterForSectionAtIndex:(NSInteger)sectionIndex
@@ -432,7 +431,7 @@
         _sectionMetrics[@(sectionIndex)] = metrics;
     }
 
-    return [metrics newFooter];
+    return [metrics newSupplementaryMetricsOfKind:UICollectionElementKindSectionFooter];
 }
 
 #pragma mark - Placeholder
@@ -732,8 +731,9 @@
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder])
+    if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder]) {
         return [self dequeuePlaceholderViewForCollectionView:collectionView atIndexPath:indexPath];
+    }
 
     NSInteger section;
     NSInteger item;
@@ -751,20 +751,23 @@
     }
 
     AAPLLayoutSectionMetrics *sectionMetrics = [self snapshotMetricsForSectionAtIndex:section];
-    AAPLLayoutSupplementaryMetrics *metrics;
-
-    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        NSArray *headers = sectionMetrics.headers;
-        metrics = (item < [headers count]) ? headers[item] : nil;
-    }
-    else if ([kind isEqualToString:UICollectionElementKindSectionFooter]) {
-        NSArray *footers = sectionMetrics.footers;
-        metrics = (item < [footers count]) ? footers[item] : nil;
-    }
-
-    if (!metrics)
-        return nil;
-
+    NSIndexSet *matching = [sectionMetrics.supplementaryViews indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^(AAPLLayoutSupplementaryMetrics *metrics, __unused NSUInteger idx, BOOL *__unused stop) {
+        return [metrics.kind isEqual:kind];
+    }];
+    
+    if (item >= matching.count) { return nil; }
+    
+    __block NSUInteger foundPos = 0;
+    NSUInteger foundIdx = [sectionMetrics.supplementaryViews indexOfObjectAtIndexes:matching options:0 passingTest:^BOOL(__unused id obj, NSUInteger idx, BOOL *stop) {
+        if (foundPos == item) { return YES; }
+        foundPos++;
+        return NO;
+    }];
+    
+    if (foundIdx == NSNotFound) { return nil; }
+    
+    AAPLLayoutSupplementaryMetrics *metrics = sectionMetrics.supplementaryViews[foundIdx];
+    
     // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
     NSIndexPath *localIndexPath = [self localIndexPathForGlobalIndexPath:indexPath];
     UICollectionReusableView *view;
@@ -777,8 +780,9 @@
     if (!view)
         return nil;
 
-    if (metrics.configureView)
+    if (metrics.configureView) {
         metrics.configureView(view, dataSource, localIndexPath);
+    }
 
     return view;
 }

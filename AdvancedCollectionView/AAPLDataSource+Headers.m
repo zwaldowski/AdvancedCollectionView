@@ -15,7 +15,7 @@ static NSString *AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
 
 @implementation AAPLDataSource (Headers)
 
-- (AAPLLayoutSupplementaryMetrics *)dataSourceTitleHeader
+- (AAPLLayoutSupplementaryMetrics *)addDataSourceHeaderWithTitle:(NSString *)title
 {
     AAPLLayoutSupplementaryMetrics *header = [self headerForKey:AAPLDataSourceTitleHeaderKey];
     if (header)
@@ -25,43 +25,20 @@ static NSString *AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
     header.supplementaryViewClass = [AAPLSectionHeaderView class];
     header.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLSectionHeaderView *headerView = (AAPLSectionHeaderView *)view;
-        headerView.leftText = dataSource.title;
+        headerView.leftText = title ?: dataSource.title;
     };
-
+    
     return header;
 }
 
-- (AAPLLayoutSupplementaryMetrics *)dataSourceHeaderWithTitle:(NSString *)title
-{
-    AAPLLayoutSupplementaryMetrics *header = [self headerForKey:AAPLDataSourceTitleHeaderKey];
-    if (header)
-        return header;
-
-    header = [self newHeaderForKey:AAPLDataSourceTitleHeaderKey];
-    header.supplementaryViewClass = [AAPLSectionHeaderView class];
-    header.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
-        AAPLSectionHeaderView *headerView = (AAPLSectionHeaderView *)view;
-        headerView.leftText = title;
-    };
-
-    return header;
-}
-
-- (AAPLLayoutSupplementaryMetrics *)sectionHeaderForSectionAtIndex:(NSInteger)sectionIndex
+- (AAPLLayoutSupplementaryMetrics *)newSectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex;
 {
     AAPLLayoutSupplementaryMetrics *newHeader = [self newHeaderForSectionAtIndex:sectionIndex];
     newHeader.supplementaryViewClass = [AAPLSectionHeaderView class];
-    return newHeader;
-}
-
-- (AAPLLayoutSupplementaryMetrics *)sectionHeaderWithTitle:(NSString *)title forSectionAtIndex:(NSInteger)sectionIndex
-{
-    AAPLLayoutSupplementaryMetrics *newHeader = [self sectionHeaderForSectionAtIndex:sectionIndex];
     newHeader.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLSectionHeaderView *headerView = (AAPLSectionHeaderView *)view;
         headerView.leftText = title;
     };
-
     return newHeader;
 }
 

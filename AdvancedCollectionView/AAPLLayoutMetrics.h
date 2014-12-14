@@ -35,6 +35,9 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionR
 /// Definition of how supplementary views should be created and presented in a collection view.
 @interface AAPLLayoutSupplementaryMetrics : NSObject <NSCopying>
 
+/// The kind of supplementary view these metrics describe
+@property (nonatomic, copy) NSString *kind;
+
 /// Should this supplementary view be displayed while the placeholder is visible?
 @property (nonatomic) BOOL visibleWhileShowingPlaceholder;
 
@@ -114,11 +117,11 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionR
 /// How the cells should be laid out when there are multiple columns. The current default is AAPLCellLayoutOrderLeftToRight, but it SHOULD be AAPLCellLayoutLeadingToTrailing.
 @property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
 
-/// Create a new header associated with a specific data source
-- (AAPLLayoutSupplementaryMetrics *)newHeader;
+/// Supplementary view metrics for this section
+@property (nonatomic, copy) NSArray *supplementaryViews;
 
-/// Create a new footer associated with a specific data source.
-- (AAPLLayoutSupplementaryMetrics *)newFooter;
+/// Create a new supplement associated with a specific data source
+- (AAPLLayoutSupplementaryMetrics *)newSupplementaryMetricsOfKind:(NSString *)kind;
 
 /// Update these metrics with the values from another metrics.
 - (void)applyValuesFromMetrics:(AAPLLayoutSectionMetrics *)metrics;

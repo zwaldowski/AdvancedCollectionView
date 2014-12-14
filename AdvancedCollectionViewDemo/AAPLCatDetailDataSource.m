@@ -37,7 +37,7 @@
     _classificationDataSource = [[AAPLKeyValueDataSource alloc] initWithObject:cat];
     _classificationDataSource.defaultMetrics.rowHeight = 22;
     _classificationDataSource.title = NSLocalizedString(@"Classification", @"Title of the classification data section");
-    [_classificationDataSource dataSourceTitleHeader];
+    [_classificationDataSource addDataSourceHeaderWithTitle:nil];
 
     [self addDataSource:_classificationDataSource];
 

@@ -39,7 +39,7 @@ static NSString * const AAPLTextValueDataSourceLabelKey = @"label";
     self.defaultMetrics.selectedBackgroundColor = nil;
 
     // Create a section header that will pull the text of the header from the label of the item.
-    AAPLLayoutSupplementaryMetrics *header = [self.defaultMetrics newHeader];
+    AAPLLayoutSupplementaryMetrics *header = [self.defaultMetrics newSupplementaryMetricsOfKind:UICollectionElementKindSectionHeader];
     header.supplementaryViewClass = [AAPLSectionHeaderView class];
     header.configureView = ^(AAPLSectionHeaderView *view, AAPLTextValueDataSource *me, NSIndexPath *indexPath) {
         NSDictionary *dictionary = me.items[indexPath.section];
