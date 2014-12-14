@@ -82,13 +82,3 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 - (AAPLGridLayoutItemInfo *)addItem;
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
 @end
-
-/// The layout information
-@interface AAPLGridLayoutInfo : NSObject
-@property (nonatomic, strong) NSMutableDictionary *sections;
-
-- (AAPLGridLayoutSectionInfo *)addSectionWithIndex:(NSInteger)sectionIndex;
-
-- (void)invalidate;
-
-@end

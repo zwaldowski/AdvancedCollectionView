@@ -16,6 +16,21 @@
 #import "AAPLMath.h"
 #import "UIView+Helpers.h"
 
+/// Supporting "global" index paths
+NS_INLINE NSUInteger globalIndexPathSection(NSIndexPath *indexPath) {
+    if (indexPath.length == 1) {
+        return NSNotFound;
+    }
+    return [indexPath indexAtPosition:0];
+}
+
+NS_INLINE NSUInteger globalIndexPathItem(NSIndexPath *indexPath) {
+    if (indexPath.length == 1) {
+        return [indexPath indexAtPosition:0];
+    }
+    return [indexPath indexAtPosition:1];
+}
+
 static inline NSString *__unused AAPLStringFromBOOL(BOOL value)
 {
     return value ? @"YES" : @"NO";
@@ -167,8 +182,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 @property (nonatomic) CGSize dragCellSize;
 
 @property (nonatomic, strong) NSMutableArray *layoutAttributes;
+@property (nonatomic, copy) NSArray *sections;
+@property (nonatomic) AAPLGridLayoutSectionInfo *globalSection;
+
 @property (nonatomic, strong) NSMutableArray *pinnableAttributes;
-@property (nonatomic, strong) AAPLGridLayoutInfo *layoutInfo;
 @property (nonatomic, strong) NSMutableDictionary *indexPathKindToSupplementaryAttributes;
 @property (nonatomic, strong) NSMutableDictionary *oldIndexPathKindToSupplementaryAttributes;
 @property (nonatomic, strong) NSMutableDictionary *indexPathKindToDecorationAttributes;
@@ -279,7 +296,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     _selectedItemIndexPath = indexPath;
     _sourceItemIndexPath = indexPath;
 
-    AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForSectionAtIndex:indexPath.section];
+    AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForIndexPath:indexPath];
     AAPLGridLayoutItemInfo *itemInfo = sectionInfo.items[indexPath.item];
     itemInfo.dragging = YES;
 
@@ -298,8 +315,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     [_currentView removeFromSuperview];
 
-    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForSectionAtIndex:_sourceItemIndexPath.section];
-    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForSectionAtIndex:_selectedItemIndexPath.section];
+    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForIndexPath:_sourceItemIndexPath];
+    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForIndexPath:_selectedItemIndexPath];
 
     destinationSection.phantomCellIndex = NSNotFound;
     destinationSection.phantomCellSize = CGSizeZero;
@@ -318,8 +335,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     [_currentView removeFromSuperview];
 
-    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForSectionAtIndex:_sourceItemIndexPath.section];
-    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForSectionAtIndex:_selectedItemIndexPath.section];
+    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForIndexPath:_sourceItemIndexPath];
+    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForIndexPath:_selectedItemIndexPath];
 
     destinationSection.phantomCellIndex = NSNotFound;
     destinationSection.phantomCellSize = CGSizeZero;
@@ -468,8 +485,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentView.center];
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
 
-    AAPLGridLayoutSectionInfo *oldSection = [self sectionInfoForSectionAtIndex:previousIndexPath.section];
-    AAPLGridLayoutSectionInfo *newSection = [self sectionInfoForSectionAtIndex:newIndexPath.section];
+    AAPLGridLayoutSectionInfo *oldSection = [self sectionInfoForIndexPath:previousIndexPath];
+    AAPLGridLayoutSectionInfo *newSection = [self sectionInfoForIndexPath:newIndexPath];
 
     if (!newIndexPath)
         return;
@@ -673,34 +690,36 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     return result;
 }
 
+- (AAPLGridLayoutSectionInfo *)sectionInfoForIndexPath:(NSIndexPath *)indexPath
+{
+    NSUInteger section = globalIndexPathSection(indexPath);
+    if (section == NSNotFound) {
+        return self.globalSection;
+    }
+    return self.sections[section];
+}
+
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     LAYOUT_TRACE();
 
-    NSInteger sectionIndex = indexPath.section;
-    NSInteger itemIndex = indexPath.item;
-
-    if (sectionIndex < 0 || sectionIndex >= [_layoutInfo.sections count])
-        return nil;
-
     AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathToItemAttributes[indexPath];
     if (attributes) {
-        LAYOUT_LOG(@"Found attributes for row %ld,%ld: %@", (long)sectionIndex, (long)itemIndex, NSStringFromCGRect(attributes.frame));
+        LAYOUT_LOG(@"Found attributes for %@: %@", indexPath, NSStringFromCGRect(attributes.frame));
         return attributes;
     }
-
-    AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-
-    if (itemIndex < 0 || itemIndex >= [section.items count]) {
-        return nil;
-    }
+    
+    AAPLGridLayoutSectionInfo *section = [self sectionInfoForIndexPath:indexPath];
+    if (!section) { return nil; }
+    
+    NSUInteger itemIndex = globalIndexPathItem(indexPath);
+    if (itemIndex >= section.items.count) { return nil; }
+    AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
     UICollectionView *collectionView = self.collectionView;
     AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
     if (![dataSource isKindOfClass:[AAPLDataSource class]])
         dataSource = nil;
-
-    AAPLGridLayoutItemInfo *item = section.items[itemIndex];
 
     attributes = [[self.class layoutAttributesClass] layoutAttributesForCellWithIndexPath:indexPath];
 
@@ -729,18 +748,16 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     LAYOUT_TRACE();
-
-    NSInteger sectionIndex = (indexPath.length == 1 ? AAPLGlobalSection : indexPath.section);
-    NSInteger itemIndex = (indexPath.length == 1 ? [indexPath indexAtPosition:0] : indexPath.item);
-
+    
     AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
-    AAPLCollectionViewGridLayoutAttributes *attributes = _indexPathKindToSupplementaryAttributes[indexPathKind];
-    if (attributes)
-        return attributes;
-
-    AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
-    CGRect frame = CGRectZero;
+    AAPLCollectionViewGridLayoutAttributes *existingAttributes = _indexPathKindToSupplementaryAttributes[indexPathKind];
+    if (existingAttributes) { return existingAttributes; }
+    
+    AAPLGridLayoutSectionInfo *section = [self sectionInfoForIndexPath:indexPath];
+    NSUInteger itemIndex = globalIndexPathItem(indexPath);
     AAPLGridLayoutSupplementalItemInfo *supplementalItem;
+
+    CGRect frame = CGRectZero;
 
     NSArray *supplementalItems;
 
@@ -753,13 +770,13 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         else if ([kind isEqualToString:UICollectionElementKindSectionFooter])
             supplementalItems = section.footers;
 
-        if (itemIndex < 0 || itemIndex >= [supplementalItems count])
+        if (itemIndex >= [supplementalItems count])
             return nil;
 
         supplementalItem = supplementalItems[itemIndex];
     }
 
-    attributes = [[self.class layoutAttributesClass] layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
+    AAPLCollectionViewGridLayoutAttributes *attributes = [[self.class layoutAttributesClass] layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
 
     // Need to be clever if we're still preparing the layout…
     if (_preparingLayout) {
@@ -831,11 +848,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     NSInteger firstInsertedIndex = [self.insertedSections firstIndex];
     if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] integerValue]) {
-        AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
+        AAPLGridLayoutSectionInfo *globalSection = self.globalSection;
         CGFloat globalNonPinnableHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
         CGFloat globalPinnableHeight = CGRectGetHeight(globalSection.frame) - globalNonPinnableHeight;
 
-        AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForSectionAtIndex:firstInsertedIndex];
+        AAPLGridLayoutSectionInfo *sectionInfo = self.sections[firstInsertedIndex];
         CGFloat minY = CGRectGetMinY(sectionInfo.frame);
         if (targetContentOffset.y + globalPinnableHeight > minY) {
             // need to make the section visable
@@ -1137,15 +1154,32 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
 #pragma mark - helpers
 
+- (NSString *)recursiveDescription
+{
+    NSMutableString *result = [NSMutableString string];
+    [result appendString:[self description]];
+    
+    if (self.globalSection) {
+        [result appendString:@"\n    global = @[\n"];
+        [result appendFormat:@"        %@\n", [self.globalSection valueForKey:@"recursiveDescription"]];
+        [result appendString:@"    ]"];
+    }
+    
+    if ([_sections count]) {
+        [result appendString:@"\n    sections = @[\n"];
+        
+        NSArray *descriptions = [_sections valueForKey:@"recursiveDescription"];
+        [result appendFormat:@"        %@\n", [descriptions componentsJoinedByString:@"\n        "]];
+        [result appendString:@"    ]"];
+    }
+    
+    return result;
+}
+
 - (void)updateFlagsFromCollectionView
 {
     id dataSource = self.collectionView.dataSource;
     _flags.dataSourceHasSnapshotMetrics = [dataSource respondsToSelector:@selector(snapshotMetrics)];
-}
-
-- (AAPLGridLayoutSectionInfo *)sectionInfoForSectionAtIndex:(NSInteger)sectionIndex
-{
-    return _layoutInfo.sections[@(sectionIndex)];
 }
 
 - (NSDictionary *)snapshotMetrics
@@ -1158,10 +1192,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
 - (void)resetLayoutInfo
 {
-    if (!_layoutInfo)
-        _layoutInfo = [[AAPLGridLayoutInfo alloc] init];
-    else
-        [_layoutInfo invalidate];
+    self.sections = nil;
+    self.globalSection = nil;
 
     NSMutableDictionary *tmp;
 
@@ -1264,23 +1296,27 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     AAPLLayoutSectionMetrics *globalMetrics = layoutMetrics[@(AAPLGlobalSection)];
     if (globalMetrics) {
-        AAPLGridLayoutSectionInfo *section = [self.layoutInfo addSectionWithIndex:AAPLGlobalSection];
+        AAPLGridLayoutSectionInfo *section = [[AAPLGridLayoutSectionInfo alloc] init];
+        self.globalSection = section;
         buildSection(section, globalMetrics, AAPLGlobalSection);
     }
-
+    
+    NSMutableArray *sections = NSMutableArray.new;
     for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
-        AAPLGridLayoutSectionInfo *section = [self.layoutInfo addSectionWithIndex:sectionIndex];
+        AAPLGridLayoutSectionInfo *section = [[AAPLGridLayoutSectionInfo alloc] init];
+        [sections addObject:section];
+        
         AAPLLayoutSectionMetrics *metrics = layoutMetrics[@(sectionIndex)];
         buildSection(section, metrics, sectionIndex);
     }
+    self.sections = sections;
 }
 
 - (void)invalidateLayoutForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger sectionIndex = indexPath.section;
-    NSInteger itemIndex = indexPath.item;
+    AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForIndexPath:indexPath];
 
-    AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForSectionAtIndex:sectionIndex];
+    NSUInteger itemIndex = globalIndexPathItem(indexPath);
     AAPLGridLayoutItemInfo *itemInfo = sectionInfo.items[itemIndex];
 
     UICollectionView *collectionView = self.collectionView;
@@ -1323,7 +1359,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     NSUInteger numberOfHeaders = section.headers.count;
     CGFloat hair = self.collectionView.aapl_hairline;
     NSInteger numberOfColumns = section.numberOfColumns;
-    NSUInteger numberOfSections = _layoutInfo.sections.count;
+    NSUInteger numberOfSections = collectionView.numberOfSections;
     
     AAPLCollectionViewGridLayoutAttributes *(^addSeparator)(NSIndexPath *, CGRect, CGRectEdge, NSString *, AAPLSeparatorOption) = ^AAPLCollectionViewGridLayoutAttributes *(NSIndexPath *indexPath, CGRect rect, CGRectEdge edge, NSString *kind, AAPLSeparatorOption bit){
         UIColor *color = section.separatorColor;
@@ -1548,8 +1584,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
     if (![dataSource isKindOfClass:[AAPLDataSource class]])
         dataSource = nil;
-
-    NSUInteger numberOfSections = [collectionView numberOfSections];
     
     const CGRect viewport = (CGRect){ CGPointZero, UIEdgeInsetsInsetRect(collectionView.bounds, contentInset).size };
     __block CGRect layoutRect = viewport;
@@ -1568,7 +1602,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     };
 
     CGFloat globalNonPinningHeight = 0;
-    AAPLGridLayoutSectionInfo *globalSection = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
+    AAPLGridLayoutSectionInfo *globalSection = self.globalSection;
     if (globalSection) {
         max = [globalSection layoutSectionWithRect:layoutRect measureSupplement:^CGSize(NSString *kind, NSUInteger idx, CGSize size) {
             NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:idx];
@@ -1579,11 +1613,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         globalNonPinningHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
     }
     
-    for (NSInteger sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
+    [self.sections enumerateObjectsUsingBlock:^(AAPLGridLayoutSectionInfo *section, NSUInteger sectionIndex, BOOL *stop) {
         layoutRect.size.height = fmax(0, layoutRect.size.height - max.y + layoutRect.origin.y);
         layoutRect.origin.y = max.y;
 
-        AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:sectionIndex];
         max = [section layoutSectionWithRect:layoutRect measureSupplement:^(NSString *kind, NSUInteger idx, CGSize size) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:idx inSection:sectionIndex];
             return measureSupplementary(kind, indexPath, size);
@@ -1591,9 +1624,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:idx inSection:sectionIndex];
             return [dataSource collectionView:collectionView sizeFittingSize:size forItemAtIndexPath:indexPath];
         }];
-
+        
         [self addLayoutAttributesForSection:section atIndex:sectionIndex dataSource:dataSource];
-    }
+    }];
 
     CGFloat layoutHeight = max.y;
 
@@ -1681,20 +1714,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
 - (AAPLGridLayoutSectionInfo *)firstSectionOverlappingYOffset:(CGFloat)yOffset
 {
-    __block AAPLGridLayoutSectionInfo *result = nil;
-
-    [_layoutInfo.sections enumerateKeysAndObjectsUsingBlock:^(NSNumber *sectionIndex, AAPLGridLayoutSectionInfo *sectionInfo, BOOL *stop) {
-        if (AAPLGlobalSection == [sectionIndex intValue])
-            return;
-
+    NSUInteger foundIdx = [self.sections indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLGridLayoutSectionInfo *sectionInfo, NSUInteger sectionIndex, BOOL *stop) {
         CGRect frame = sectionInfo.frame;
-        if (CGRectGetMinY(frame) <= yOffset && yOffset <= CGRectGetMaxY(frame)) {
-            result = sectionInfo;
-            *stop = YES;
-        }
+        return CGRectGetMinY(frame) <= yOffset && yOffset <= CGRectGetMaxY(frame);
     }];
-
-    return result;
+    
+    if (foundIdx == NSNotFound) { return nil; }
+    
+    return self.sections[foundIdx];
 }
 
 - (void)filterSpecialAttributes
@@ -1718,7 +1745,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [self resetPinnableAttributes:self.pinnableAttributes];
 
     // Pin the headers as appropriate
-    AAPLGridLayoutSectionInfo *section = [self sectionInfoForSectionAtIndex:AAPLGlobalSection];
+    AAPLGridLayoutSectionInfo *section = self.globalSection;
     if (section.pinnableHeaderAttributes) {
         pinnableY = [self applyTopPinningToAttributes:section.pinnableHeaderAttributes minY:pinnableY];
         [self finalizePinnedAttributes:section.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX];
