@@ -1472,7 +1472,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
     if (!globalSection && numberOfItems) {
         NSIndexPath *indexPath = itemIndexPath(numberOfItems);
-        AAPLSeparatorOption bit = (sectionIndex + 1 < numberOfSections) ? AAPLSeparatorOptionAfterLastSection : AAPLSeparatorOptionAfterSection;
+        AAPLSeparatorOption bit = (sectionIndex + 1 < numberOfSections) ? AAPLSeparatorOptionAfterSection : AAPLSeparatorOptionAfterLastSection;
         addSeparator(indexPath, section.frame, CGRectMaxYEdge, AAPLGridLayoutRowSeparatorKind, bit);
     }
 }
