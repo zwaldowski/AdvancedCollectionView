@@ -51,12 +51,6 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 /// Layout information for a section
 @interface AAPLGridLayoutSectionInfo : NSObject
 @property (nonatomic) CGRect frame;
-@property (nonatomic, weak) AAPLGridLayoutInfo *layoutInfo;
-@property (nonatomic, readonly) NSMutableArray *rows;
-@property (nonatomic, readonly) NSMutableArray *items;
-@property (nonatomic, readonly) NSArray *headers;
-@property (nonatomic, readonly) NSArray *footers;
-@property (nonatomic, readonly) AAPLGridLayoutSupplementalItemInfo *placeholder;
 @property (nonatomic) NSInteger numberOfColumns;
 @property (nonatomic) UIEdgeInsets insets;
 
@@ -77,8 +71,15 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @property (nonatomic, strong) NSMutableArray *nonPinnableHeaderAttributes;
 @property (nonatomic, strong) AAPLCollectionViewGridLayoutAttributes *backgroundAttribute;
 
-- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
 - (void)addItems:(NSInteger)count height:(CGFloat)height;
+@property (nonatomic, readonly) NSMutableArray *rows;
+@property (nonatomic, readonly) NSMutableArray *items;
+
+- (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind;
+- (AAPLGridLayoutSupplementalItemInfo *)supplementalItemOfKind:(NSString *)kind atIndex:(NSUInteger)index;
+@property (nonatomic, readonly) NSArray *headers;
+- (void)enumerateNonHeaderSupplementsPassingTest:(BOOL(^)(NSString *))passingTest usingBlock:(void(^)(AAPLGridLayoutSupplementalItemInfo *obj, NSString *kind, NSUInteger idx))block;
+
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
 @end
 

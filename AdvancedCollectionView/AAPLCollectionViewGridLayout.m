@@ -76,6 +76,8 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 
 static NSString * const AAPLGridLayoutRowSeparatorKind = @"AAPLGridLayoutRowSeparatorKind";
 static NSString * const AAPLGridLayoutColumnSeparatorKind = @"AAPLGridLayoutColumnSeparatorKind";
+static NSString * const AAPLGridLayoutHeaderSeparatorKind = @"headerSeparator";
+static NSString * const AAPLGridLayoutFooterSeparatorKind = @"footerSeparator";
 static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLayoutGlobalHeaderBackgroundKind";
 
 static inline CGPoint AAPLPointAddPoint(CGPoint point1, CGPoint point2)
@@ -178,6 +180,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutRowSeparatorKind];
     [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutColumnSeparatorKind];
+    [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutHeaderSeparatorKind];
+    [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutFooterSeparatorKind];
     [self registerClass:AAPLGridLayoutColorView.class forDecorationViewOfKind:AAPLGridLayoutGlobalHeaderBackgroundKind];
 
     _indexPathKindToDecorationAttributes = [NSMutableDictionary dictionary];
@@ -693,26 +697,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     
     AAPLGridLayoutSectionInfo *section = [self sectionInfoForIndexPath:indexPath];
     NSUInteger itemIndex = globalIndexPathItem(indexPath);
-    AAPLGridLayoutSupplementalItemInfo *supplementalItem;
-
-    CGRect frame = CGRectZero;
-
-    NSArray *supplementalItems;
-
-    if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder])
-        // supplementalItem might become nil if there's no placedholder, but that just means we return attributes that are empty
-        supplementalItem = section.placeholder;
-    else {
-        if ([kind isEqualToString:UICollectionElementKindSectionHeader])
-            supplementalItems = section.headers;
-        else if ([kind isEqualToString:UICollectionElementKindSectionFooter])
-            supplementalItems = section.footers;
-
-        if (itemIndex >= [supplementalItems count])
-            return nil;
-
-        supplementalItem = supplementalItems[itemIndex];
-    }
+    AAPLGridLayoutSupplementalItemInfo *supplementalItem = [section supplementalItemOfKind:kind atIndex:itemIndex];
+    if (!supplementalItem) { return nil; }
 
     AAPLCollectionViewGridLayoutAttributes *attributes = [[self.class layoutAttributesClass] layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
 
@@ -721,18 +707,17 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         attributes.hidden = YES;
     }
 
-    frame = supplementalItem.frame;
-
-    attributes.frame = frame;
+    attributes.frame = supplementalItem.frame;
     attributes.zIndex = HEADER_ZINDEX;
-
     attributes.editing = _editing;
     attributes.padding = supplementalItem.padding;
     attributes.backgroundColor = supplementalItem.backgroundColor ? : section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
 
-    if (!_preparingLayout)
+    if (!_preparingLayout) {
         _indexPathKindToSupplementaryAttributes[indexPathKind] = attributes;
+    }
+
     return attributes;
 }
 
@@ -1367,6 +1352,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionHeader];
         self.indexPathKindToSupplementaryAttributes[indexPathKind] = headerAttribute;
+
+        // Separators after global headers, before regular headers
+        if (headerIndex) { addSeparator(indexPath, headerFrame, CGRectMinYEdge, AAPLGridLayoutHeaderSeparatorKind, AAPLSeparatorOptionSupplements); }
     }];
     
     // Separator after non-global header
@@ -1387,19 +1375,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         addSeparator(indexPath, frame, CGRectMaxYEdge, AAPLGridLayoutRowSeparatorKind, bit);
     }
 
-    AAPLGridLayoutSupplementalItemInfo *placeholder = section.placeholder;
-    if (placeholder) {
-        NSIndexPath *indexPath = supplementIndexPath(0);
-        AAPLCollectionViewGridLayoutAttributes *placeholderAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:AAPLCollectionElementKindPlaceholder withIndexPath:indexPath];
-        placeholderAttribute.frame = placeholder.frame;
-        placeholderAttribute.zIndex = DEFAULT_ZINDEX + 1;
-        [self.layoutAttributes addObject:placeholderAttribute];
-
-        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLCollectionElementKindPlaceholder];
-        self.indexPathKindToSupplementaryAttributes[indexPathKind] = placeholderAttribute;
-    }
-
-    
     __block NSUInteger itemIndex = 0;
     [section.rows enumerateObjectsUsingBlock:^(AAPLGridLayoutRowInfo *row, NSUInteger rowIndex, BOOL *stop) {
         if (!row.items.count)
@@ -1447,26 +1422,25 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         }];
     }];
 
-    [section.footers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *footer, NSUInteger footerIndex, BOOL *stop) {
-        CGRect frame = footer.frame;
+    [section enumerateNonHeaderSupplementsPassingTest:NULL usingBlock:^(AAPLGridLayoutSupplementalItemInfo *item, NSString *kind, NSUInteger idx) {
+        CGRect frame = item.frame;
+        if (CGRectIsEmpty(frame)) { return; }
 
-        // ignore the footer if there are no items or the footer has no height
-        if (!numberOfItems || !footer.height || footer.hidden)
-            return;
+        NSIndexPath *indexPath = supplementIndexPath(idx);
+        AAPLCollectionViewGridLayoutAttributes *itemAttribute = (AAPLCollectionViewGridLayoutAttributes *)[attributeClass layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
+        itemAttribute.frame = frame;
+        itemAttribute.backgroundColor = item.backgroundColor ?: section.backgroundColor;
+        itemAttribute.selectedBackgroundColor = item.selectedBackgroundColor ?: section.selectedBackgroundColor;
+        itemAttribute.padding = item.padding;
+        [self.layoutAttributes addObject:itemAttribute];
 
-        NSIndexPath *indexPath = itemIndexPath(footerIndex);
-        AAPLCollectionViewGridLayoutAttributes *footerAttribute = [attributeClass layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:indexPath];
-        footerAttribute.frame = frame;
-        footerAttribute.zIndex = HEADER_ZINDEX;
-        footerAttribute.backgroundColor = footer.backgroundColor ? : section.backgroundColor;
-        footerAttribute.selectedBackgroundColor = footer.selectedBackgroundColor;
-        footerAttribute.padding = footer.padding;
-        footerAttribute.editing = self.editing;
-        footerAttribute.hidden = NO;
-        [self.layoutAttributes addObject:footerAttribute];
+        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:kind];
+        self.indexPathKindToSupplementaryAttributes[indexPathKind] = itemAttribute;
 
-        AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionFooter];
-        self.indexPathKindToSupplementaryAttributes[indexPathKind] = footerAttribute;
+        // Separator above footers
+        if ([kind isEqual:UICollectionElementKindSectionFooter]) {
+            addSeparator(indexPath, item.frame, CGRectMinYEdge, AAPLGridLayoutFooterSeparatorKind, AAPLSeparatorOptionSupplements);
+        }
     }];
     
     // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)

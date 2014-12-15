@@ -34,10 +34,16 @@
 
 @end
 
+@interface AAPLGridLayoutSectionInfo ()
 
-@implementation AAPLGridLayoutSectionInfo {
-    NSMutableDictionary *_supplementalItemArraysByKind;
-}
+@property (nonatomic, readonly) NSArray *footers;
+@property (nonatomic, readonly) AAPLGridLayoutSupplementalItemInfo *placeholder;
+@property (nonatomic, readonly) NSMutableDictionary *supplementalItemArraysByKind;
+
+@end
+
+
+@implementation AAPLGridLayoutSectionInfo
 
 - (instancetype)init
 {
@@ -58,17 +64,12 @@
 
 - (AAPLGridLayoutSupplementalItemInfo *)placeholder
 {
-    return [_supplementalItemArraysByKind[AAPLCollectionElementKindPlaceholder] firstObject];
+    return [self.supplementalItemArraysByKind[AAPLCollectionElementKindPlaceholder] firstObject];
 }
 
 - (NSArray *)headers
 {
-    return [NSArray arrayWithArray:_supplementalItemArraysByKind[UICollectionElementKindSectionHeader]];
-}
-
-- (NSArray *)footers
-{
-    return [NSArray arrayWithArray:_supplementalItemArraysByKind[UICollectionElementKindSectionFooter]];
+    return self.supplementalItemArraysByKind[UICollectionElementKindSectionHeader];
 }
 
 - (NSMutableArray *)nonPinnableHeaderAttributes
@@ -85,19 +86,25 @@
     AAPLGridLayoutSupplementalItemInfo *supplementalInfo = [[AAPLGridLayoutSupplementalItemInfo alloc] init];
     if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder]) {
         supplementalInfo.isPlaceholder = YES;
-        _supplementalItemArraysByKind[kind] = @[ supplementalInfo ];
+        self.supplementalItemArraysByKind[kind] = @[ supplementalInfo ];
     } else {
         supplementalInfo.header = [kind isEqual:UICollectionElementKindSectionHeader];
 
-        NSMutableArray *items = _supplementalItemArraysByKind[kind];
+        NSMutableArray *items = self.supplementalItemArraysByKind[kind];
         if (!items) {
             items = [NSMutableArray array];
-            _supplementalItemArraysByKind[kind] = items;
+            self.supplementalItemArraysByKind[kind] = items;
         }
         
         [items addObject:supplementalInfo];
     }
     return supplementalInfo;
+}
+
+- (AAPLGridLayoutSupplementalItemInfo *)supplementalItemOfKind:(NSString *)kind atIndex:(NSUInteger)index {
+    NSArray *items = self.supplementalItemArraysByKind[kind];
+    if (index >= items.count) { return nil; }
+    return items[index];
 }
 
 - (void)addItems:(NSInteger)count height:(CGFloat)height {
@@ -124,6 +131,17 @@
 
 - (UIEdgeInsets)itemPadding {
     return AAPLInsetsWithout(self.insets, UIRectEdgeTop | UIRectEdgeBottom);
+}
+
+- (void)enumerateNonHeaderSupplementsPassingTest:(BOOL(^)(NSString *))kindTest usingBlock:(void(^)(AAPLGridLayoutSupplementalItemInfo *obj, NSString *kind, NSUInteger idx))block
+{
+    [self.supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *objs, BOOL *stop) {
+        if ([kind isEqual:UICollectionElementKindSectionHeader]) { return; }
+        if (kindTest && !kindTest(kind)) { return; }
+        [objs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stopB) {
+            block(obj, kind, idx);
+        }];
+    }];
 }
 
 /// Layout all the items in this section and return the total height of the section
@@ -314,7 +332,7 @@
 
     [result appendString:@"\n    supplements = @[\n"];
 
-    [_supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *items, BOOL *__unused stop) {
+    [self.supplementalItemArraysByKind enumerateKeysAndObjectsUsingBlock:^(NSString *kind, NSArray *items, BOOL *__unused stop) {
         [result appendFormat:@"        %@ = @[\n", kind];
 
         for (AAPLGridLayoutSupplementalItemInfo *item in items) {
