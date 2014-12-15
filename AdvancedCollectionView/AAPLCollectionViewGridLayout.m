@@ -1405,10 +1405,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         if (!row.items.count)
             return;
 
+        CGRect rowFrame = row.frame;
+
         // If there's a separator, add it above the current row…
         if (rowIndex) {
-            CGRect rect = UIEdgeInsetsInsetRect(row.frame, section.separatorInsets);
-            addSeparator(itemIndexPath(rowIndex), rect, CGRectMinYEdge, AAPLGridLayoutRowSeparatorKind, AAPLSeparatorOptionRows);
+            UIEdgeInsets insets = AAPLInsetsWithout(section.separatorInsets, UIRectEdgeTop | UIRectEdgeBottom);
+            CGRect rect = UIEdgeInsetsInsetRect(rowFrame, insets);
+            NSIndexPath *indexPath = itemIndexPath(rowIndex);
+            addSeparator(indexPath, rect, CGRectMinYEdge, AAPLGridLayoutRowSeparatorKind, AAPLSeparatorOptionRows);
         }
 
         [row.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger idx, BOOL *stopB) {
@@ -1417,8 +1421,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             NSInteger columnIndex = item.columnIndex;
 
             if (columnIndex != NSNotFound && numberOfColumns > 1 && columnIndex > 0) {
+                UIEdgeInsets insets = AAPLInsetsWithout(section.separatorInsets, UIRectEdgeLeft | UIRectEdgeRight);
+                CGRect rect = UIEdgeInsetsInsetRect(itemFrame, insets);
                 NSIndexPath *indexPath = itemIndexPath(rowIndex * numberOfColumns + columnIndex);
-                addSeparator(indexPath, itemFrame, CGRectMinXEdge, AAPLGridLayoutColumnSeparatorKind, AAPLSeparatorOptionColumns);
+                addSeparator(indexPath, rect, CGRectMinXEdge, AAPLGridLayoutColumnSeparatorKind, AAPLSeparatorOptionColumns);
             }
 
             NSIndexPath *indexPath = itemIndexPath(itemIndex++);
