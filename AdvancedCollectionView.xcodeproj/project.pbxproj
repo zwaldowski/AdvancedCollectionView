@@ -57,6 +57,8 @@
 		DB24FC231A3F7E9E00C5D0B4 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC221A3F7E9E00C5D0B4 /* Types.swift */; };
 		DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */; };
 		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
+		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
+		DB3D6AFE1A41666D00D48A92 /* DataSource+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */; };
 		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
 		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -262,6 +264,8 @@
 		DB24FC221A3F7E9E00C5D0B4 /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
+		DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+CollectionView.swift"; sourceTree = "<group>"; };
 		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
 		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
 		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
@@ -446,6 +450,8 @@
 				DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */,
 				DB8A78F41A3E79F2008A79A6 /* Metrics.swift */,
 				DB8A78F71A3E8252008A79A6 /* DataSource.swift */,
+				DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */,
+				DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */,
 				DB8A79121A3EA12B008A79A6 /* Async.swift */,
 				DBE9D0BD1A3EC1A40040353A /* Foundation.swift */,
 				DB24FC221A3F7E9E00C5D0B4 /* Types.swift */,
@@ -793,8 +799,10 @@
 				DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */,
 				DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */,
 				DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */,
+				DB3D6AFE1A41666D00D48A92 /* DataSource+CollectionView.swift in Sources */,
 				DB81008D1A3CD40100E758F6 /* AAPLBasicDataSource.m in Sources */,
 				DB8A78F51A3E79F2008A79A6 /* Metrics.swift in Sources */,
+				DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */,
 				DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */,
 				DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */,
 				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,

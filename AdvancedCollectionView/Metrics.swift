@@ -21,6 +21,22 @@ public enum Section: Hashable {
         default: return Int.max.hashValue
         }
     }
+    
+    public static func all(#numberOfSections: Int) -> GeneratorOf<Section> {
+        var includedGlobal = false
+        var base = map(lazy(0..<numberOfSections), {
+            Section.Index($0)
+        }).generate()
+        
+        return GeneratorOf {
+            if includedGlobal {
+                return base.next()
+            }
+            includedGlobal = true
+            return .Global
+        }
+    }
+    
 }
 
 public func ==(lhs: Section, rhs: Section) -> Bool {

@@ -54,3 +54,14 @@ extension NSIndexPath {
     }
     
 }
+
+extension NSIndexPath {
+    
+    var globalInfo: (section: Section, item: Int) {
+        if length == 1 {
+            return (.Global, self[0])
+        }
+        return (.Index(self[0]), self[1])
+    }
+    
+}

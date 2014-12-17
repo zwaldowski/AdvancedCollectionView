@@ -22,6 +22,40 @@ public protocol CollectionViewDataSourceGridLayout: UICollectionViewDataSource {
     
 }
 
+// MARK: -
+
+private struct CacheKey {
+    let indexPath: NSIndexPath
+    let kind: String
+}
+
+private func ==(lhs: CacheKey, rhs: CacheKey) -> Bool {
+    return lhs.kind != rhs.kind ||
+        lhs.indexPath === rhs.indexPath ||
+        lhs.indexPath == rhs.indexPath
+}
+
+extension CacheKey: Equatable {}
+
+extension CacheKey: Hashable {
+    
+    var hashValue: Int {
+        return 31 &* indexPath.hashValue &+ kind.hashValue
+    }
+    
+}
+
+extension CacheKey: DebugPrintable {
+    
+    var debugDescription: String {
+        let commaSeparated = join(", ", map(indexPath) { String($0) })
+        return "\(kind)@{\(commaSeparated)}"
+    }
+    
+}
+
+// MARK: -
+
 public class GridLayout: UICollectionViewLayout {
     
     public let DefaultRowHeight = CGFloat(44)
