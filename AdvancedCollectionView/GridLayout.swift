@@ -33,4 +33,39 @@ public class GridLayout: UICollectionViewLayout {
         case SupplementPinned = 10000
     }
     
+    // MARK:
+    
+    var isEditing: Bool = false {
+        didSet {
+            
+        }
+    }
+    
+    // MARK: Public methods
+    
+    public func invalidateLayout(forItemAtIndexPath indexPath: NSIndexPath) {
+        // TODO:
+    }
+    
+    public func invalidateLayoutForGlobalSection() {
+        // TODO:
+    }
+    
+    
+    private var contentSizeAdjustment = CGSize.zeroSize
+    private var contentOffsetAdjustment = CGPoint.zeroPoint
+    
+    public override func prepareLayout() {
+        super.prepareLayout()
+        
+        contentSizeAdjustment = CGSize.zeroSize
+        contentOffsetAdjustment = CGPoint.zeroPoint
+        
+        let bounds = collectionView.map { $0.bounds } ?? CGRect.zeroRect
+        
+        if !bounds.isEmpty {
+            //[rbx _fetchItemsInfoForRect:rdx]
+        }
+    }
+    
 }

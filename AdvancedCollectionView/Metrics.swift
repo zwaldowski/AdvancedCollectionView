@@ -71,18 +71,18 @@ public struct SupplementaryMetrics {
     /// The kind of supplementary view these metrics describe
     public let kind: String
     /// Should this supplementary view be displayed while the placeholder is visible?
-    public var visibleWhileShowingPlaceholder = false
+    public var isVisibleWhileShowingPlaceholder = false
     /// Should this supplementary view be pinned to the edges of the view when
     /// scrolling? Only valid for headers and footers.
     public var shouldPin = false
     /// The size of the supplementary view relative to the layout.
     public var itemMeasurement = ItemMeasurement.None
     /// Should the supplementary view be hidden?
-    public var hidden = false
+    public var isHidden = false
     /// Use top & bottom padding to adjust spacing of header & footer elements.
     /// Not all headers & footers adhere to padding. Default @c UIEdgeInsetsZero
     /// which is interpretted by supplementary items to be their default values.
-    public var padding = UIEdgeInsetsZero
+    public var isPadding = UIEdgeInsetsZero
     /// How is this affected by other coinciding views?
     public var zIndex = GridLayout.ZIndex.Supplement.rawValue
     /// Optional reuse identifier. If not specified, it will be inferred from the

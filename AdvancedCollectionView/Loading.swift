@@ -23,4 +23,13 @@ public enum LoadingState {
     /// An error occurred while loading content.
     case Error(NSError)
     
+    var error: NSError? {
+        switch self {
+        case .Error(let error):
+            return error
+        default:
+            return nil
+        }
+    }
+    
 }

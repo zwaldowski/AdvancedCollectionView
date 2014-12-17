@@ -44,3 +44,13 @@ extension NSIndexPath: CollectionType {
     }
     
 }
+
+extension NSIndexPath {
+    
+    // This is intended for compatibility with ArrayLiteralConvertible
+    // c'est la vie
+    public convenience init(indexes elements: Int...) {
+        self.init(indexes: elements, length: elements.count)
+    }
+    
+}

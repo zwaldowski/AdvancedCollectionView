@@ -9,14 +9,10 @@
 import UIKit
 import Swift
 
-public enum SectionOperationDirection {
-    case None, Left, Right
-}
-
 public protocol DataSourcePresenter: class {
     
     /// Is this data source "hidden" by a placeholder either of its own or from an enclosing data source. Use this to determine whether to report that there are no items in your data source while loading.
-    var obscuredByPlaceholder: Bool { get }
+    var isObscuredByPlaceholder: Bool { get }
     
     func dataSourceDidInsertItems(dataSource: DataSource, indexPaths: [NSIndexPath])
     func dataSourceDidRemoveItems(dataSource: DataSource, indexPaths: [NSIndexPath])
@@ -39,13 +35,9 @@ public protocol DataSourcePresenter: class {
 
 public class DataSource: NSObject {
     
-    override public init() {
-        super.init()
-    }
+    // MARK: Parent-child primitives
     
-    weak private var presenter: DataSourcePresenter?
-    public let loadingState = LoadingState.Initial
-    
+    public weak var presenter: DataSourcePresenter?
     
     var isRootDataSource: Bool {
         if let presenter = presenter {
@@ -55,15 +47,17 @@ public class DataSource: NSObject {
         return true
     }
     
-    func childDataSource(forSection section: Section) -> DataSource {
+    public func childDataSource(forSection section: Section) -> DataSource {
         return self
     }
     
-    func localIndexPath(forGlobalIndexPath global: NSIndexPath) -> NSIndexPath {
+    public func localIndexPath(forGlobalIndexPath global: NSIndexPath) -> NSIndexPath {
         return global
     }
     
     public let numberOfSections: Int = 1
+    
+    // MARK: Collection view interface
     
     public func registerReusableViews(#collectionView: UICollectionView) {
         for supplMetrics in snapshotMetrics(section: .Global).supplementaryViews {
@@ -80,16 +74,82 @@ public class DataSource: NSObject {
         collectionView.registerClass(AAPLCollectionPlaceholderView.self, forSupplementaryViewOfKind: ElementKindPlaceholder, withReuseIdentifier: NSStringFromClass(AAPLCollectionPlaceholderView.self))
     }
     
-    private var sectionMetrics = [Section: SectionMetrics]()
-    private var headers = [SupplementaryMetrics]()
-    private var headersIndexesByKey = [String: (Int, SupplementaryMetrics)]()
-    
     // MARK: Loading
+    private(set) public var loadingState: LoadingState = .Initial {
+        didSet {
+            switch loadingState {
+            case .Loading, .Loaded, .NoContent, .Error:
+                updatePlaceholder(notifyVisibility: true)
+            default:
+                break
+            }
+        }
+    }
     
-    private var debounce: Async?
+    private var loadingDebounce: Async?
     public func setNeedsLoadContent() {
-        debounce?.cancel()
-        debounce = async(dispatch_get_main_queue(), loadContent)
+        loadingDebounce?.cancel()
+        loadingDebounce = async(Queue.mainQueue, loadContent)
+    }
+    
+    public final func beginLoading() {
+        switch loadingState {
+        case .Initial, .Loading:
+            loadingState = .Loading
+        default:
+            loadingState = .Refreshing
+        }
+        
+        notifyWillLoadContent()
+    }
+    
+    private let whenLoadedLock = dispatch_semaphore_create(1)
+    private var whenLoaded: Block? = nil
+    
+    public final func whenLoaded(completion: Block) {
+        dispatch_semaphore_wait(whenLoadedLock, DISPATCH_TIME_FOREVER)
+        if let oldCompletion = whenLoaded {
+            whenLoaded = {
+                oldCompletion()
+                completion()
+            }
+        } else {
+            whenLoaded = completion
+        }
+        dispatch_semaphore_signal(whenLoadedLock)
+    }
+    
+    public final func endLoading(#state: LoadingState, update: (() -> ())!) {
+        loadingState = state
+        
+        if shouldDisplayPlaceholder {
+            if let update = update {
+                enqueuePendingUpdate(update)
+            }
+        } else {
+            notifyBatchUpdate {
+                // Run pending updates
+                self.executePendingUpdates()
+                if let update = update {
+                    update()
+                }
+            }
+        }
+        
+        var block: Block? = nil
+        dispatch_semaphore_wait(whenLoadedLock, DISPATCH_TIME_FOREVER)
+        swap(&whenLoaded, &block)
+        dispatch_semaphore_signal(whenLoadedLock)
+        if let block = block {
+            block()
+        }
+        
+        
+        notifyContentLoaded(error: loadingState.error)
+    }
+    
+    public final func loadContent(handler: () -> ()) {
+        // TODO:
     }
     
     public func resetContent() { }
@@ -97,6 +157,10 @@ public class DataSource: NSObject {
     public func loadContent() { }
     
     // MARK: Metrics
+    
+    private var sectionMetrics = [Section: SectionMetrics]()
+    private var headers = [SupplementaryMetrics]()
+    private var headersIndexesByKey = [String: (Int, SupplementaryMetrics)]()
     
     public var defaultMetrics: SectionMetrics! = SectionMetrics(defaultMetrics: ()) {
         didSet {
@@ -191,9 +255,9 @@ public class DataSource: NSObject {
     public var errorMessage: String? = nil
     public var errorImage: UIImage? = nil
     
-    public var obscuredByPlaceholder: Bool {
+    public var isObscuredByPlaceholder: Bool {
         if shouldDisplayPlaceholder { return true }
-        return presenter?.obscuredByPlaceholder ?? false
+        return presenter?.isObscuredByPlaceholder ?? false
     }
     
     private var shouldDisplayPlaceholder: Bool {
@@ -354,7 +418,7 @@ public class DataSource: NSObject {
         presenter?.dataSourceDidReloadGlobalSection(self)
     }
     
-    public func notifyBatchUpdate(update: () -> (), completion: ((Bool) -> ())?) {
+    public func notifyBatchUpdate(update: () -> (), completion: ((Bool) -> ())? = nil) {
         assertMainThread()
         
         if let presenter = presenter {

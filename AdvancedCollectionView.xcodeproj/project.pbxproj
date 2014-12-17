@@ -54,6 +54,9 @@
 		1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */; };
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
+		DB24FC231A3F7E9E00C5D0B4 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC221A3F7E9E00C5D0B4 /* Types.swift */; };
+		DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */; };
+		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
 		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
 		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -256,6 +259,9 @@
 		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB24FC221A3F7E9E00C5D0B4 /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutAttributes.swift; sourceTree = "<group>"; };
+		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
 		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
 		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
@@ -395,7 +401,31 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		DB8100641A3CD2AE00E758F6 /* AdvancedCollectionView */ = {
+		DB24FC261A3F842500C5D0B4 /* Converted */ = {
+			isa = PBXGroup;
+			children = (
+				DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */,
+				1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */,
+				1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */,
+				1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */,
+				1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */,
+				1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */,
+				1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */,
+			);
+			name = Converted;
+			sourceTree = "<group>";
+		};
+		DB24FC271A3F843E00C5D0B4 /* Converted */ = {
+			isa = PBXGroup;
+			children = (
+				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
+				1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */,
+				1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */,
+			);
+			name = Converted;
+			sourceTree = "<group>";
+		};
+		DB24FC281A3F845B00C5D0B4 /* Base */ = {
 			isa = PBXGroup;
 			children = (
 				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
@@ -404,6 +434,23 @@
 				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
 				1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */,
 				DBCF8FAA1A3D18990053B77A /* AAPLMath.h */,
+			);
+			name = Base;
+			sourceTree = "<group>";
+		};
+		DB8100641A3CD2AE00E758F6 /* AdvancedCollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				DB8A79091A3E8479008A79A6 /* Loading.swift */,
+				DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */,
+				DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */,
+				DB8A78F41A3E79F2008A79A6 /* Metrics.swift */,
+				DB8A78F71A3E8252008A79A6 /* DataSource.swift */,
+				DB8A79121A3EA12B008A79A6 /* Async.swift */,
+				DBE9D0BD1A3EC1A40040353A /* Foundation.swift */,
+				DB24FC221A3F7E9E00C5D0B4 /* Types.swift */,
+				DB24FC291A3F869F00C5D0B4 /* Geometry.swift */,
+				DB24FC281A3F845B00C5D0B4 /* Base */,
 				DB8100831A3CD34600E758F6 /* Categories */,
 				DB8100841A3CD39500E758F6 /* Data Sources */,
 				DB8100851A3CD3A700E758F6 /* Layouts */,
@@ -461,11 +508,9 @@
 				1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */,
 				1FA42A5E192A7E1200F673A0 /* AAPLComposedDataSource_Private.h */,
 				1FA42A5F192A7E1200F673A0 /* AAPLComposedDataSource_Private.m */,
-				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
-				1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */,
-				1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */,
 				1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */,
 				1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */,
+				DB24FC271A3F843E00C5D0B4 /* Converted */,
 			);
 			name = "Data Sources";
 			sourceTree = "<group>";
@@ -474,23 +519,11 @@
 			isa = PBXGroup;
 			children = (
 				1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */,
-				DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */,
 				1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */,
 				1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */,
 				1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */,
 				1FA42A6C192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Private.h */,
-				1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */,
-				1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */,
-				1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */,
-				1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */,
-				1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */,
-				1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */,
-				DB8A79091A3E8479008A79A6 /* Loading.swift */,
-				DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */,
-				DB8A78F41A3E79F2008A79A6 /* Metrics.swift */,
-				DB8A78F71A3E8252008A79A6 /* DataSource.swift */,
-				DB8A79121A3EA12B008A79A6 /* Async.swift */,
-				DBE9D0BD1A3EC1A40040353A /* Foundation.swift */,
+				DB24FC261A3F842500C5D0B4 /* Converted */,
 			);
 			name = Layouts;
 			sourceTree = "<group>";
@@ -756,6 +789,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */,
 				DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */,
 				DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */,
 				DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */,
@@ -765,6 +799,7 @@
 				DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */,
 				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
+				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */,
 				DB81009C1A3CD40100E758F6 /* AAPLPlaceholderView.m in Sources */,
 				DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */,
@@ -781,6 +816,7 @@
 				DB8A78BC1A3E70BE008A79A6 /* GridLayout.swift in Sources */,
 				DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */,
 				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
+				DB24FC231A3F7E9E00C5D0B4 /* Types.swift in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
 				DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */,
@@ -968,6 +1004,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -994,6 +1031,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = AdvancedCollectionView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
