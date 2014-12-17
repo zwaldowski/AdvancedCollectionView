@@ -341,6 +341,9 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
 
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
+    if (self.isRootDataSource && indexPath.length == 1) {
+        return [super collectionView:collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
+    }
     return [_selectedDataSource collectionView:collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
 }
 
