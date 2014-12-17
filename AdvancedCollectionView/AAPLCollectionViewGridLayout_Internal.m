@@ -72,24 +72,12 @@
     return self.supplementalItemArraysByKind[UICollectionElementKindSectionHeader];
 }
 
-- (NSMutableArray *)nonPinnableHeaderAttributes
-{
-    // Lazy initialise this, because it's only used for the global section
-    if (_nonPinnableHeaderAttributes)
-        return _nonPinnableHeaderAttributes;
-    _nonPinnableHeaderAttributes = [NSMutableArray array];
-    return _nonPinnableHeaderAttributes;
-}
-
 - (AAPLGridLayoutSupplementalItemInfo *)addSupplementalItemOfKind:(NSString *)kind
 {
     AAPLGridLayoutSupplementalItemInfo *supplementalInfo = [[AAPLGridLayoutSupplementalItemInfo alloc] init];
     if ([kind isEqualToString:AAPLCollectionElementKindPlaceholder]) {
-        supplementalInfo.isPlaceholder = YES;
         self.supplementalItemArraysByKind[kind] = @[ supplementalInfo ];
     } else {
-        supplementalInfo.header = [kind isEqual:UICollectionElementKindSectionHeader];
-
         NSMutableArray *items = self.supplementalItemArraysByKind[kind];
         if (!items) {
             items = [NSMutableArray array];

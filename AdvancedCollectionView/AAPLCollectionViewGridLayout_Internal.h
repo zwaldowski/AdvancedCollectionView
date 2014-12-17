@@ -22,11 +22,10 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 /// Layout information about a supplementary item (header, footer, or placeholder)
 @interface AAPLGridLayoutSupplementalItemInfo : NSObject
 @property (nonatomic) CGRect frame;
-@property (nonatomic) BOOL header;
+
 @property (nonatomic) CGFloat height;
 @property (nonatomic) BOOL shouldPin;
 @property (nonatomic) BOOL visibleWhileShowingPlaceholder;
-@property (nonatomic) BOOL isPlaceholder;
 @property (nonatomic) UIColor *backgroundColor;
 @property (nonatomic) UIColor *selectedBackgroundColor;
 @property (nonatomic) BOOL hidden;
@@ -36,40 +35,28 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 
 /// Layout information about an item (cell)
 @interface AAPLGridLayoutItemInfo : NSObject
+@property (nonatomic) CGRect frame;
+
 @property (nonatomic) BOOL dragging;
 @property (nonatomic) NSInteger columnIndex;
-@property (nonatomic) CGRect frame;
 @property (nonatomic) BOOL needSizeUpdate;
 @end
 
 /// Layout information about a row
 @interface AAPLGridLayoutRowInfo : NSObject
 @property (nonatomic) CGRect frame;
+
 @property (nonatomic, strong) NSMutableArray *items;
 @end
 
 /// Layout information for a section
 @interface AAPLGridLayoutSectionInfo : NSObject
 @property (nonatomic) CGRect frame;
-@property (nonatomic) NSInteger numberOfColumns;
-@property (nonatomic) UIEdgeInsets insets;
 
-@property (nonatomic, readonly) CGRect headersRect;
-@property (nonatomic, readonly) UIEdgeInsets groupPadding;
-@property (nonatomic, readonly) UIEdgeInsets itemPadding;
-
-@property (nonatomic) UIEdgeInsets separatorInsets;
-@property (nonatomic, strong) UIColor *backgroundColor;
-@property (nonatomic, strong) UIColor *selectedBackgroundColor;
-@property (nonatomic, strong) UIColor *separatorColor;
-@property (nonatomic) AAPLSeparatorOption separators;
-@property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
 @property (nonatomic) NSUInteger phantomCellIndex;
 @property (nonatomic) CGSize phantomCellSize;
 
-@property (nonatomic, strong) NSMutableArray *pinnableHeaderAttributes;
-@property (nonatomic, strong) NSMutableArray *nonPinnableHeaderAttributes;
-@property (nonatomic, strong) AAPLCollectionViewGridLayoutAttributes *backgroundAttribute;
+@property (nonatomic, copy) NSArray *pinnableHeaderAttributes;
 
 - (void)addItems:(NSInteger)count height:(CGFloat)height;
 @property (nonatomic, readonly) NSMutableArray *rows;
@@ -81,6 +68,18 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 - (void)enumerateNonHeaderSupplementsPassingTest:(BOOL(^)(NSString *))passingTest usingBlock:(void(^)(AAPLGridLayoutSupplementalItemInfo *obj, NSString *kind, NSUInteger idx))block;
 
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem;
+
+@property (nonatomic) NSInteger numberOfColumns;
+@property (nonatomic) UIEdgeInsets insets;
+@property (nonatomic) UIEdgeInsets separatorInsets;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *selectedBackgroundColor;
+@property (nonatomic, strong) UIColor *separatorColor;
+@property (nonatomic) AAPLSeparatorOption separators;
+@property (nonatomic) AAPLCellLayoutOrder cellLayoutOrder;
+@property (nonatomic, readonly) CGRect headersRect;
+@property (nonatomic, readonly) UIEdgeInsets groupPadding;
+@property (nonatomic, readonly) UIEdgeInsets itemPadding;
 @end
 
 /// Used to look up supplementary & decoration attributes

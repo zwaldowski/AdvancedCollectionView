@@ -117,7 +117,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 @property (nonatomic, copy) NSArray *sections;
 @property (nonatomic) AAPLGridLayoutSectionInfo *globalSection;
 
-@property (nonatomic, strong) NSMutableArray *pinnableAttributes;
+@property (nonatomic) AAPLCollectionViewGridLayoutAttributes *globalSectionBackground;
+@property (nonatomic, copy) NSArray *nonPinnableGlobalAttributes;
+
 @property (nonatomic, strong) NSMutableDictionary *indexPathKindToSupplementaryAttributes;
 @property (nonatomic, strong) NSMutableDictionary *oldIndexPathKindToSupplementaryAttributes;
 @property (nonatomic, strong) NSMutableDictionary *indexPathKindToDecorationAttributes;
@@ -195,7 +197,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     _updateSectionDirections = [NSMutableDictionary dictionary];
     _layoutAttributes = [NSMutableArray array];
-    _pinnableAttributes = [NSMutableArray array];
 }
 
 
@@ -772,7 +773,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     NSInteger firstInsertedIndex = [self.insertedSections firstIndex];
     if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] integerValue]) {
         AAPLGridLayoutSectionInfo *globalSection = self.globalSection;
-        CGFloat globalNonPinnableHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
+        CGFloat globalNonPinnableHeight = [self heightOfAttributes:self.nonPinnableGlobalAttributes];
         CGFloat globalPinnableHeight = CGRectGetHeight(globalSection.frame) - globalNonPinnableHeight;
 
         AAPLGridLayoutSectionInfo *sectionInfo = self.sections[firstInsertedIndex];
@@ -1120,6 +1121,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     self.sections = nil;
     self.globalSection = nil;
+    self.globalSectionBackground = nil;
 
     NSMutableDictionary *tmp;
 
@@ -1248,7 +1250,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 }
 
 - (void)invalidateLayoutForGlobalSection {
-    _globalSection = nil;
+    self.globalSection = nil;
 
     AAPLGridLayoutInvalidationContext *context = AAPLGridLayoutInvalidationContext.new;
     context.invalidateLayoutMetrics = YES;
@@ -1297,9 +1299,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         
         return separatorAttributes;
     };
-
-    [section.pinnableHeaderAttributes removeAllObjects];
-    [section.nonPinnableHeaderAttributes removeAllObjects];
+    
+    NSMutableArray *newNonPinnable = [NSMutableArray new];
+    NSMutableArray *newPinnable = [NSMutableArray new];
 
     if (globalSection && section.backgroundColor) {
         // Add the background decoration attribute
@@ -1314,10 +1316,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         backgroundAttribute.hidden = NO;
         [_layoutAttributes addObject:backgroundAttribute];
 
-        section.backgroundAttribute = backgroundAttribute;
+        self.globalSectionBackground = backgroundAttribute;
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:AAPLGridLayoutGlobalHeaderBackgroundKind];
         _indexPathKindToDecorationAttributes[indexPathKind] = backgroundAttribute;
     }
+    
 
     [section.headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *header, NSUInteger headerIndex, BOOL *stop) {
         CGRect headerFrame = header.frame;
@@ -1343,11 +1346,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         [self.layoutAttributes addObject:headerAttribute];
 
         if (header.shouldPin) {
-            [section.pinnableHeaderAttributes addObject:headerAttribute];
-            [self.pinnableAttributes addObject:headerAttribute];
-        }
-        else if (globalSection) {
-            [section.nonPinnableHeaderAttributes addObject:headerAttribute];
+            [newPinnable addObject:headerAttribute];
+        } else {
+            [newNonPinnable addObject:headerAttribute];
         }
 
         AAPLIndexPathKind *indexPathKind = [[AAPLIndexPathKind alloc] initWithIndexPath:indexPath kind:UICollectionElementKindSectionHeader];
@@ -1449,6 +1450,11 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         AAPLSeparatorOption bit = (sectionIndex + 1 < numberOfSections) ? AAPLSeparatorOptionAfterSection : AAPLSeparatorOptionAfterLastSection;
         addSeparator(indexPath, section.frame, CGRectMaxYEdge, AAPLGridLayoutRowSeparatorKind, bit);
     }
+    
+    section.pinnableHeaderAttributes = newPinnable;
+    if (globalSection) {
+        self.nonPinnableGlobalAttributes = newNonPinnable;
+    }
 }
 
 - (CGFloat)heightOfAttributes:(NSArray *)attributes
@@ -1494,7 +1500,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     _layoutSize = CGSizeZero;
 
     [self.layoutAttributes removeAllObjects];
-    [self.pinnableAttributes removeAllObjects];
     
     id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
     if (![dataSource conformsToProtocol:@protocol(AAPLCollectionViewDataSourceGridLayout)]) {
@@ -1520,7 +1525,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         } measureItem:NULL];
         
         [self addLayoutAttributesForSection:globalSection atIndex:AAPLGlobalSection dataSource:dataSource];
-        globalNonPinningHeight = [self heightOfAttributes:globalSection.nonPinnableHeaderAttributes];
+        globalNonPinningHeight = [self heightOfAttributes:self.nonPinnableGlobalAttributes];
     }
     
     [self.sections enumerateObjectsUsingBlock:^(AAPLGridLayoutSectionInfo *section, NSUInteger sectionIndex, BOOL *stop) {
@@ -1622,6 +1627,18 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     }];
 }
 
+- (BOOL)sectionOverlappingYOffset:(CGFloat)yOffset
+{
+    NSUInteger foundIdx = [self.sections indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLGridLayoutSectionInfo *sectionInfo, NSUInteger sectionIndex, BOOL *stop) {
+        CGRect frame = sectionInfo.frame;
+        return CGRectGetMinY(frame) <= yOffset && yOffset <= CGRectGetMaxY(frame);
+    }];
+    
+    if (foundIdx == NSNotFound) { return nil; }
+    
+    return self.sections[foundIdx];
+}
+
 - (AAPLGridLayoutSectionInfo *)firstSectionOverlappingYOffset:(CGFloat)yOffset
 {
     NSUInteger foundIdx = [self.sections indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLGridLayoutSectionInfo *sectionInfo, NSUInteger sectionIndex, BOOL *stop) {
@@ -1652,34 +1669,44 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGFloat pinnableY = contentOffset.y + collectionView.contentInset.top;
     CGFloat nonPinnableY = pinnableY;
 
-    [self resetPinnableAttributes:self.pinnableAttributes];
-
     // Pin the headers as appropriate
     AAPLGridLayoutSectionInfo *section = self.globalSection;
     if (section.pinnableHeaderAttributes) {
+        [self resetPinnableAttributes:section.pinnableHeaderAttributes];
         pinnableY = [self applyTopPinningToAttributes:section.pinnableHeaderAttributes minY:pinnableY];
         [self finalizePinnedAttributes:section.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX];
     }
+    
+    [self resetPinnableAttributes:self.nonPinnableGlobalAttributes];
+    nonPinnableY = [self applyBottomPinningToAttributes:self.nonPinnableGlobalAttributes maxY:nonPinnableY];
+    [self finalizePinnedAttributes:self.nonPinnableGlobalAttributes zIndex:PINNED_HEADER_ZINDEX];
 
-    if (section.nonPinnableHeaderAttributes && [section.nonPinnableHeaderAttributes count]) {
-        [self resetPinnableAttributes:section.nonPinnableHeaderAttributes];
-        nonPinnableY = [self applyBottomPinningToAttributes:section.nonPinnableHeaderAttributes maxY:nonPinnableY];
-        [self finalizePinnedAttributes:section.nonPinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX];
-    }
-
-    if (section.backgroundAttribute) {
-        CGRect frame = section.backgroundAttribute.frame;
+    if (self.globalSectionBackground) {
+        CGRect frame = self.globalSectionBackground.frame;
         frame.origin.y = fmin(nonPinnableY, collectionView.bounds.origin.y);
-        CGFloat bottomY = fmax(CGRectGetMaxY([[section.pinnableHeaderAttributes lastObject] frame]), CGRectGetMaxY([[section.nonPinnableHeaderAttributes lastObject] frame]));
+        CGFloat bottomY = fmax(CGRectGetMaxY([[section.pinnableHeaderAttributes lastObject] frame]), CGRectGetMaxY([[self.nonPinnableGlobalAttributes lastObject] frame]));
         frame.size.height =  bottomY - frame.origin.y;
-        section.backgroundAttribute.frame = frame;
+        self.globalSectionBackground.frame = frame;
     }
-
-    AAPLGridLayoutSectionInfo *overlappingSection = [self firstSectionOverlappingYOffset:pinnableY];
-    if (overlappingSection) {
-        [self applyTopPinningToAttributes:overlappingSection.pinnableHeaderAttributes minY:pinnableY];
-        [self finalizePinnedAttributes:overlappingSection.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX - 100];
+    
+    __block BOOL foundSection = NO;
+    BOOL(^overlaps)(AAPLGridLayoutSectionInfo *) = ^(AAPLGridLayoutSectionInfo *sectionInfo){
+        CGRect frame = sectionInfo.frame;
+        if (!foundSection && CGRectGetMinY(frame) <= pinnableY && pinnableY <= CGRectGetMaxY(frame)) {
+            foundSection = YES;
+            return YES;
+        }
+        return NO;
     };
+    
+    for (AAPLGridLayoutSectionInfo *sectionInfo in self.sections) {
+        [self resetPinnableAttributes:sectionInfo.pinnableHeaderAttributes];
+        
+        if (overlaps(sectionInfo)) {
+            [self applyTopPinningToAttributes:sectionInfo.pinnableHeaderAttributes minY:pinnableY];
+            [self finalizePinnedAttributes:sectionInfo.pinnableHeaderAttributes zIndex:PINNED_HEADER_ZINDEX - 100];
+        }
+    }
 }
 
 - (AAPLCollectionViewGridLayoutAttributes *)initialLayoutAttributesForAttributes:(AAPLCollectionViewGridLayoutAttributes *)attributes
