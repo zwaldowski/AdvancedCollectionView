@@ -132,19 +132,37 @@
     }];
 }
 
+- (CGRectEdge)effectiveHorizontalSlicingEdge
+{
+    switch (_cellLayoutOrder) {
+        case AAPLCellLayoutOrderLeadingToTrailing:
+            return (UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight) ? CGRectMinXEdge : CGRectMaxXEdge;
+            break;
+        case AAPLCellLayoutOrderTrailingToLeading:
+            return (UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) ? CGRectMinXEdge : CGRectMaxXEdge;
+            break;
+        case AAPLCellLayoutOrderLeftToRight:
+            return CGRectMinXEdge;
+            break;
+        case AAPLCellLayoutOrderRightToLeft:
+            return CGRectMaxXEdge;
+            break;
+    }
+}
+
 /// Layout all the items in this section and return the total height of the section
 - (CGPoint)layoutSectionWithRect:(CGRect)viewport measureSupplement:(CGSize (^)(NSString *, NSUInteger, CGSize))measureSupplement measureItem:(CGSize (^)(NSUInteger, CGSize))measureItem
 {
-    UIEdgeInsets margins = self.insets;
+    [self.rows removeAllObjects];
+
     NSInteger numberOfItems = [self.items count];
     NSInteger numberOfColumns = self.numberOfColumns;
-    CGFloat columnWidth = (CGRectGetWidth(viewport) - margins.left - margins.right) / numberOfColumns;
     
-    __block CGFloat rowHeight = 0;
-    __block CGPoint origin = CGPointMake(CGRectGetMinX(viewport) + margins.left, CGRectGetMinY(viewport));
+    __block CGRect layoutRect = viewport;
+    layoutRect.size.height = CGRectGetHeight(CGRectInfinite);
 
     // First lay out headers
-    CGFloat headerBeginY = origin.y;
+    CGFloat headerBeginY = CGRectGetMinY(layoutRect);
     [self.headers enumerateObjectsUsingBlock:^(AAPLGridLayoutSupplementalItemInfo *headerInfo, NSUInteger headerIndex, BOOL *stop) {
         // skip headers if there are no items and the header isn't a global header
         if (!numberOfItems && !headerInfo.visibleWhileShowingPlaceholder)
@@ -159,144 +177,138 @@
             headerInfo.frame = CGRectMake(0, 0, CGRectGetWidth(viewport), UILayoutFittingExpandedSize.height);
             headerInfo.height = measureSupplement(UICollectionElementKindSectionHeader, headerIndex, headerInfo.frame.size).height;
         }
-
-        headerInfo.frame = CGRectMake(0, origin.y, CGRectGetWidth(viewport), headerInfo.height);
-        origin.y += headerInfo.height;
+        
+        CGRect newFrame;
+        CGRectDivide(layoutRect, &newFrame, &layoutRect, headerInfo.height, CGRectMinYEdge);
+        headerInfo.frame = newFrame;
     }];
     
-    _headersRect = CGRectMake(0, headerBeginY, CGRectGetWidth(viewport), origin.y - headerBeginY);
-
-    AAPLGridLayoutSupplementalItemInfo *placeholder = self.placeholder;
-    if (placeholder) {
-        // Height of the placeholder is equal to the height of the collection view minus the height of the headers
-        CGFloat height = CGRectGetHeight(viewport) - (origin.y - CGRectGetMinY(viewport));
-        placeholder.height = height;
-        placeholder.frame = CGRectMake(0, origin.y, CGRectGetWidth(viewport), height);
-        origin.y += height;
-    }
-
-    // Next lay out all the items in rows
-    [self.rows removeAllObjects];
-
-    NSAssert(!placeholder || !numberOfItems, @"Can't have both a placeholder and items");
+    _headersRect = CGRectMake(0, headerBeginY, CGRectGetWidth(viewport), CGRectGetMinY(layoutRect) - headerBeginY);
     
-    BOOL leftToRight;
-    switch (_cellLayoutOrder) {
-        case AAPLCellLayoutOrderLeadingToTrailing:
-            leftToRight = UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight;
-            break;
-        case AAPLCellLayoutOrderTrailingToLeading:
-            leftToRight = UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
-            break;
-        case AAPLCellLayoutOrderLeftToRight:
-            leftToRight = YES;
-            break;
-        case AAPLCellLayoutOrderRightToLeft:
-            leftToRight = NO;
-            break;
-    }
+    if (numberOfItems && !self.placeholder) {
+        // Lay out items and footers only if there actually ARE items.
+        __block CGRect itemsLayoutRect = UIEdgeInsetsInsetRect(layoutRect, self.groupPadding);
+        __block CGRect activeItemRect;
+        __block CGRect activeRowRect;
+        __block NSInteger columnIndex = 0;
+        __block AAPLGridLayoutRowInfo *row = nil;
 
-    // Lay out items and footers only if there actually ARE items.
-    if (numberOfItems) {
-
-        origin.y += margins.top;
-
-        NSInteger columnIndex = 0;
-        NSInteger itemIndex = 0;
-        NSEnumerator *itemEnumerator = self.items.objectEnumerator;
-        AAPLGridLayoutItemInfo *item = [itemEnumerator nextObject];
-        AAPLGridLayoutRowInfo *row = [self addRow];
-
-        while (item) {
-            BOOL phantomCell = (itemIndex == _phantomCellIndex);
-            BOOL hiddenCell = item.dragging;
-            BOOL needSizeUpdate = item.needSizeUpdate && measureItem;
-
-            CGFloat height = CGRectGetHeight(item.frame);
+        CGFloat itemsBeginY = CGRectGetMinY(itemsLayoutRect);
+        CGFloat columnWidth = CGRectGetWidth(itemsLayoutRect) / numberOfColumns;
+        CGRectEdge divideFrom = [self effectiveHorizontalSlicingEdge];
+        
+        void(^updateRowHeight)(CGFloat) = ^(CGFloat itemHeight){
+            CGRect rowFrame = row.frame;
             
-            if (hiddenCell) {
+            if (!CGRectIsEmpty(rowFrame) && CGRectGetHeight(rowFrame) >= itemHeight) { return; }
+            
+            CGRect appendRect;
+            CGRectDivide(itemsLayoutRect, &appendRect, &itemsLayoutRect, itemHeight - CGRectGetHeight(rowFrame), CGRectMinYEdge);
+            if (CGRectEqualToRect(rowFrame, CGRectZero)) {
+                rowFrame = appendRect;
+            } else {
+                rowFrame = CGRectUnion(rowFrame, appendRect);
+            }
+            
+            row.frame = activeRowRect = rowFrame;
+            
+            for (AAPLGridLayoutItemInfo *item in row.items) {
+                CGRect itemFrame = item.frame;
+                itemFrame.size.height = itemHeight;
+                item.frame = itemFrame;
+            }
+        };
+        
+        void(^advanceColumn)(void) = ^{
+            CGRectDivide(activeRowRect, &activeItemRect, &activeRowRect, columnWidth, divideFrom);
+            ++columnIndex;
+        };
+        
+        void(^beginRow)(void) = ^{
+            columnIndex = -1;
+            if (!row || row.items.count) {
+                row = [self addRow];
+            }
+            updateRowHeight(0);
+            advanceColumn();
+        };
+        
+        CGRect(^itemRect)(CGFloat) = ^(CGFloat itemHeight) {
+            return (CGRect){ activeItemRect.origin, { activeItemRect.size.width, itemHeight }};
+        };
+        
+        beginRow();
+        
+        [self.items enumerateObjectsUsingBlock:^(AAPLGridLayoutItemInfo *item, NSUInteger itemIndex, BOOL *stop) {
+            void(^pushItem)(CGFloat, NSUInteger) = ^(CGFloat height, NSUInteger column){
                 [row.items addObject:item];
-                item.frame = (CGRect){ origin, { columnWidth, height }};
-                item.columnIndex = NSNotFound;
-                item = [itemEnumerator nextObject];
-                ++itemIndex;
-                continue;
-            }
-
-            if (!(columnIndex % numberOfColumns)) {
-                origin.y += rowHeight;
-                rowHeight = 0;
-                columnIndex = 0;
-                
-                if (leftToRight) {
-                    origin.x = margins.left;
-                } else {
-                    origin.x = CGRectGetWidth(viewport) - margins.right - columnWidth;
-                }
-
-                // only create a new row if there were items in the previous row.
-                if ([row.items count])
-                    row = [self addRow];
-                row.frame = CGRectMake(margins.left, origin.y, CGRectGetWidth(viewport), rowHeight);
-                //                NSLog(@"row %d frame = %@", (itemIndex / numberOfColumns), NSStringFromCGRect(row.frame));
-            }
-
+                item.frame = itemRect(height);
+                item.columnIndex = column;
+            };
             
-            if (phantomCell)
-                height = _phantomCellSize.height;
-            else if (needSizeUpdate) {
+            CGFloat height = CGRectGetHeight(item.frame);
+
+            if (item.dragging) {
+                pushItem(height, NSNotFound);
+                return;
+            }
+
+            BOOL phantomCell = (itemIndex == self.phantomCellIndex);
+            BOOL needSizeUpdate = item.needSizeUpdate && measureItem;
+            
+            if (!(columnIndex % numberOfColumns)) {
+                beginRow();
+            }
+            
+            if (phantomCell) {
+                height = self.phantomCellSize.height;
+            } else if (needSizeUpdate) {
                 item.needSizeUpdate = NO;
-                item.frame = (CGRect){ origin, { columnWidth, UILayoutFittingExpandedSize.height }};
+                item.frame = itemRect(UILayoutFittingExpandedSize.height);
                 height = measureItem(itemIndex, item.frame.size).height;
             }
-
-            if (rowHeight < height)
-                rowHeight = height;
-
-            if (!phantomCell) {
-                [row.items addObject:item];
-
-                item.frame = (CGRect){ origin, { columnWidth, rowHeight }};
-                item.columnIndex = columnIndex;
-
-                //            NSLog(@"item %d frame = %@", itemIndex, NSStringFromCGRect(item.frame));
-                item = [itemEnumerator nextObject];
-            }
-
+            
+            CGFloat rowHeight = fmax(height, CGRectGetHeight(row.frame));
+            
             // keep row height up to date
-            CGRect rowFrame = row.frame;
-            rowFrame.size.height = rowHeight;
-            row.frame = rowFrame;
-
-            if (leftToRight) {
-                origin.x += columnWidth;
-            } else {
-                origin.x -= columnWidth;
+            updateRowHeight(rowHeight);
+            
+            if (!phantomCell) {
+                pushItem(rowHeight, columnIndex);
             }
-
-            ++columnIndex;
-            ++itemIndex;
-        }
-
-        origin.y += rowHeight + margins.bottom;
+            
+            advanceColumn();
+        }];
+        
+        CGFloat itemsHeight = CGRectGetMinY(itemsLayoutRect) - itemsBeginY;
+        CGRect itemsRect;
+        CGRectDivide(layoutRect, &itemsRect, &layoutRect, itemsHeight, CGRectMinYEdge);
 
         // lay out all footers
         for (AAPLGridLayoutSupplementalItemInfo *footerInfo in self.footers) {
             // skip hidden footers
             if (footerInfo.hidden)
                 continue;
+            
             // When showing the placeholder, we don't show footers
-            CGFloat height = footerInfo.height;
-            footerInfo.frame = CGRectMake(0, origin.y, CGRectGetWidth(viewport), height);
-            origin.y += height;
+            CGRect newFrame;
+            CGRectDivide(layoutRect, &newFrame, &layoutRect, footerInfo.height, CGRectMinYEdge);
+            footerInfo.frame = newFrame;
         }
-
+    } else if (!numberOfItems && self.placeholder) {
+        // Height of the placeholder is equal to the height of the collection view minus the height of the headers
+        CGRect frame = CGRectIntersection(layoutRect, viewport);
+        CGFloat height = CGRectGetHeight(frame);
+        self.placeholder.height = CGRectGetHeight(frame);
+        self.placeholder.frame = frame;
+        
+        CGRect unused;
+        CGRectDivide(layoutRect, &unused, &layoutRect, height, CGRectMinYEdge);
     }
 
-    self.frame = (CGRect){ viewport.origin, { CGRectGetWidth(viewport), origin.y - CGRectGetMinY(viewport) }};
+    self.frame = (CGRect){ viewport.origin, { CGRectGetWidth(viewport), CGRectGetMinY(layoutRect) - CGRectGetMinY(viewport) }};
     
-    CGPoint ret = CGPointMake(CGRectGetMaxX(viewport), origin.y);
-    
+    CGPoint ret = CGPointMake(CGRectGetMaxX(layoutRect), CGRectGetMinY(layoutRect));
     return ret;
 }
 
