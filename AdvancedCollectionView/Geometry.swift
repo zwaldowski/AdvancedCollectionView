@@ -85,6 +85,13 @@ extension CGRect {
         }
     }
     
+    func divide(amount: CGFloat, edge: CGRectEdge) -> (slice: CGRect, remainder: CGRect) {
+        var slice = CGRect.zeroRect
+        var remainder = CGRect.zeroRect
+        CGRectDivide(self, &slice, &remainder, amount, edge)
+        return (slice, remainder)
+    }
+    
 }
 
 // MARK: Arithmetic
