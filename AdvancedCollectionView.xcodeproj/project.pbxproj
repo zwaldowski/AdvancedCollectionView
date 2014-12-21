@@ -121,6 +121,7 @@
 		DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78F71A3E8252008A79A6 /* DataSource.swift */; };
 		DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A79091A3E8479008A79A6 /* Loading.swift */; };
 		DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A79121A3EA12B008A79A6 /* Async.swift */; };
+		DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3F93E1A45E9F40029B49D /* Multimap.swift */; };
 		DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D0BD1A3EC1A40040353A /* Foundation.swift */; };
 /* End PBXBuildFile section */
 
@@ -281,6 +282,7 @@
 		DB8A78F71A3E8252008A79A6 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DB8A79091A3E8479008A79A6 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		DB8A79121A3EA12B008A79A6 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		DBC3F93E1A45E9F40029B49D /* Multimap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multimap.swift; sourceTree = "<group>"; };
 		DBCF8FAA1A3D18990053B77A /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
 		DBE9D0BD1A3EC1A40040353A /* Foundation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Foundation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -456,6 +458,7 @@
 				DBE9D0BD1A3EC1A40040353A /* Foundation.swift */,
 				DB24FC221A3F7E9E00C5D0B4 /* Types.swift */,
 				DB24FC291A3F869F00C5D0B4 /* Geometry.swift */,
+				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
 				DB24FC281A3F845B00C5D0B4 /* Base */,
 				DB8100831A3CD34600E758F6 /* Categories */,
 				DB8100841A3CD39500E758F6 /* Data Sources */,
@@ -804,6 +807,7 @@
 				DB8A78F51A3E79F2008A79A6 /* Metrics.swift in Sources */,
 				DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */,
 				DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */,
+				DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */,
 				DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */,
 				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
