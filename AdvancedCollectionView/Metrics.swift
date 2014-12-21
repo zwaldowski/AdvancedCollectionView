@@ -51,10 +51,10 @@ public func ==(lhs: Section, rhs: Section) -> Bool {
 }
 
 public enum LayoutOrder {
-    case LeadingToTrailing
-    case TrailingToLeading
     case Natural
     case NaturalReverse
+    case LeadingToTrailing
+    case TrailingToLeading
 }
 
 public struct SeparatorOptions: RawOptionSetType {
