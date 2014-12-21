@@ -56,6 +56,141 @@ extension CacheKey: DebugPrintable {
 
 // MARK: -
 
+private struct SupplementInfo {
+    let metrics: SupplementaryMetrics
+    var frame = CGRect.zeroRect
+}
+
+private struct ItemInfo {
+    var frame = CGRect.zeroRect
+    var measuredHeight = ItemMeasurement.None
+    var isDragging = false
+    var columnIndex = 0
+}
+
+private struct RowInfo {
+    let items = [ItemInfo]()
+    var frame = CGRect.zeroRect
+}
+
+private extension SectionMetrics {
+    
+    var groupPadding: UIEdgeInsets? {
+        return padding?.without(.Left | .Right)
+    }
+    
+    var itemPadding: UIEdgeInsets? {
+        return padding?.without(.Top | .Bottom)
+    }
+    
+    /// Extension-safe
+    private static let layoutDirection: UIUserInterfaceLayoutDirection = {
+        let direction = NSParagraphStyle.defaultWritingDirectionForLanguage(nil)
+        switch NSParagraphStyle.defaultWritingDirectionForLanguage(nil) {
+        case .LeftToRight:
+            return .LeftToRight
+        case .RightToLeft:
+            return .RightToLeft
+        case .Natural:
+            if let localization = NSBundle.mainBundle().preferredLocalizations.first as? String {
+                return NSLocale.characterDirectionForLanguage(localization) == .RightToLeft ? .RightToLeft : .LeftToRight
+            }
+            return .LeftToRight
+        }
+    }()
+    
+    var effectiveLayoutSlicingEdge: CGRectEdge {
+        let layout = itemLayout ?? .Natural
+        switch layout {
+        case .Natural:
+            return SectionMetrics.layoutDirection == .LeftToRight ? .MinXEdge : .MaxXEdge
+        case .NaturalReverse:
+            return SectionMetrics.layoutDirection == .RightToLeft ? .MinXEdge : .MaxXEdge
+        case .LeadingToTrailing:
+            return .MinXEdge
+        case .TrailingToLeading:
+            return .MaxXEdge
+        }
+    }
+    
+}
+
+private struct SectionInfo {
+    let metrics: SectionMetrics
+    var frame = CGRect.zeroRect
+    
+    var phantomCell: (index: Int, size: CGSize)? = nil
+    
+    var pinnableAttributes = [GridLayoutAttributes]()
+    
+    private var rows = [RowInfo]()
+    private var items = [ItemInfo]()
+    
+    private typealias SupplementalItemsMap = Multimap<String, SupplementInfo>
+    private var supplementalItems = SupplementalItemsMap()
+    
+    enum Supplement {
+        case Header
+        case Other(String)
+        case AllOther
+    }
+    
+    private var nonHeaders: SequenceOf<SupplementalItemsMap.Group> {
+        return supplementalItems.groups { (key, _) in
+            key != UICollectionElementKindSectionHeader && key != ElementKindPlaceholder
+        }
+    }
+    
+    func count(#supplements: Supplement) -> Int {
+        switch supplements {
+        case .Header:
+            return supplementalItems[UICollectionElementKindSectionHeader].count
+        case .Other(let kind):
+            return supplementalItems[kind].count
+        case .AllOther:
+            return reduce(lazy(nonHeaders).map({
+                $0.1.count
+            }), 0, +)
+        }
+    }
+    
+    func enumerate(#supplements: Supplement) -> SupplementalItemsMap.Generator {
+        switch supplements {
+        case .Header:
+            return supplementalItems.enumerate(forKey: UICollectionElementKindSectionHeader)
+        case .Other(let kind):
+            return supplementalItems.enumerate(forKey: kind)
+        case .AllOther:
+            return MultimapGenerator(nonHeaders)
+        }
+    }
+    
+    subscript(supplement: (Supplement, Int)) -> SupplementInfo? {
+        switch supplement.0 {
+        case .Header:
+            return supplementalItems[(UICollectionElementKindSectionHeader, supplement.1)]
+        case .Other(let kind):
+            return supplementalItems[(kind, supplement.1)]
+        case .AllOther:
+            return nil
+        }
+    }
+    
+    var placeholder: SupplementInfo? {
+        return supplementalItems[ElementKindPlaceholder].first
+    }
+    
+    typealias MeasureSupplement = (kind: String, index: Int, fittingSize: CGSize) -> CGSize
+    typealias MeasureItem = (index: Int, fittingSize: CGSize) -> CGSize
+    
+    mutating func layout(rect viewport: CGRect, measureSupplement: MeasureSupplement, measureItem: MeasureItem? = nil) -> CGPoint {
+        return CGPoint.zeroPoint
+    }
+    
+}
+
+// MARK: -
+
 public class GridLayout: UICollectionViewLayout {
     
     public let DefaultRowHeight = CGFloat(44)
@@ -85,7 +220,7 @@ public class GridLayout: UICollectionViewLayout {
         // TODO:
     }
     
-    
+
     private var contentSizeAdjustment = CGSize.zeroSize
     private var contentOffsetAdjustment = CGPoint.zeroPoint
     
