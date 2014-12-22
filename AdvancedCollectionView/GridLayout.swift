@@ -165,12 +165,12 @@ private struct SectionInfo {
         }
     }
     
-    subscript(supplement: (Supplement, Int)) -> SupplementInfo? {
+    subscript(supplement: Supplement, index: Int) -> SupplementInfo? {
         switch supplement.0 {
         case .Header:
-            return supplementalItems[(UICollectionElementKindSectionHeader, supplement.1)]
+            return supplementalItems[UICollectionElementKindSectionHeader, index]
         case .Other(let kind):
-            return supplementalItems[(kind, supplement.1)]
+            return supplementalItems[kind, index]
         case .AllOther:
             return nil
         }

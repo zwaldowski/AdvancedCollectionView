@@ -21,13 +21,6 @@ public struct Multimap<Key: Hashable, Value> {
     
 }
 
-extension Multimap {
-    
-    
-    
-    
-}
-
 // MARK: Initializers
 
 extension Multimap: DictionaryLiteralConvertible {
@@ -50,8 +43,6 @@ extension Multimap: DictionaryLiteralConvertible {
 
 extension Multimap {
     
-    typealias Index = (key: Key, index: Int)
-    
     public var count: Int {
         return Swift.reduce(lazy(map).map { $0.1.count }, 0, +)
     }
@@ -65,8 +56,8 @@ extension Multimap {
         set(newValue) { map[i] = newValue }
     }
     
-    public subscript(i: Index) -> Value? {
-        return map[i.key]?[i.index]
+    public subscript(key: Key, index: Values.Index) -> Value? {
+        return map[key]?[index]
     }
     
     public func contains(key: Key) -> Bool {
@@ -96,9 +87,9 @@ extension Multimap {
         }
     }
     
-    public mutating func remove(atIndex index: Index) {
-        mutate(arrayForKey: index.key) { (inout array: Values) in
-            _ = array.removeAtIndex(index.index)
+    public mutating func remove(fromKey key: Key, atIndex index: Values.Index) {
+        mutate(arrayForKey: key) { (inout array: Values) in
+            _ = array.removeAtIndex(index)
         }
     }
     
@@ -122,7 +113,7 @@ extension Multimap {
         })
     }
     
-    public mutating func insert(newElement: Value, forKey key: Key, atIndex index: Int) {
+    public mutating func insert(newElement: Value, forKey key: Key, atIndex index: Values.Index) {
         mutate(arrayForKey: key, transform: { (inout array: Values) in
             array.insert(newElement, atIndex: index)
         }, replace: {
@@ -208,7 +199,7 @@ public struct MultimapGenerator<K: Hashable, V>: GeneratorType, SequenceType {
 
 extension Multimap: SequenceType {
     
-    typealias Element = (key: Key, index: Int, value: Value)
+    typealias Element = (key: Key, index: Values.Index, value: Value)
     typealias ElementFilter = Element -> Bool
     
     public func generate() -> MultimapGenerator<Key, Value> {
