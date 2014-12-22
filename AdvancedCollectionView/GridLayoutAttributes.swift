@@ -32,8 +32,8 @@ public class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
     public override var hash: Int {
         var hash = super.hash
-        let update = { (inValue: Int?) -> () in
-            hash = 31 &* (inValue ?? 0) &+ hash
+        func update(value: Int?) {
+            hash = 31 &* (value ?? 0) &+ hash
         }
         update(isPinned.hashValue)
         update(backgroundColor?.hashValue)
