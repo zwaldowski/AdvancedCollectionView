@@ -1,31 +1,41 @@
 //  Copyright (c) 2014 Rob Rix. All rights reserved.
 
 /// A set of unique elements as determined by `hashValue` and `==`.
-public struct Set<Element: Hashable>: ArrayLiteralConvertible, ExtensibleCollectionType, Hashable, Printable {
+public struct Set<Element: Hashable> {
     
-	// MARK: Constructors
+    /// The underlying dictionary.
+    private var values: [Element: Unit]
+    
+    /// Constructs a `Set` with a dictionary of `values`.
+    private init(values: [Element: Unit]) {
+        self.values = values
+    }
+    
+}
 
-	/// Constructs a `Set` with the elements of `sequence`.
-	public init<S: SequenceType where S.Generator.Element == Element>(_ sequence: S) {
-		self.init(values: [:])
-		extend(sequence)
-	}
+// MARK: Constructors
 
-	/// Constructs a `Set` from a variadic parameter list.
-	public init(_ elements: Element...) {
-		self.init(elements)
-	}
+extension Set {
+    
+    /// Constructs a `Set` with the elements of `sequence`.
+    public init<S: SequenceType where S.Generator.Element == Element>(_ sequence: S) {
+        self.init()
+        extend(sequence)
+    }
+    
+    /// Constructs the empty `Set`.
+    public init() {
+        self.init(values: [:])
+    }
+    
+    /// Constructs a `Set` with a hint as to the capacity it should allocate.
+    public init(minimumCapacity: Int) {
+        self.init(values: [Element:Unit](minimumCapacity: minimumCapacity))
+    }
+    
+}
 
-	/// Constructs the empty `Set`.
-	public init() {
-		self.init(values: [:])
-	}
-
-	/// Constructs a `Set` with a hint as to the capacity it should allocate.
-	public init(minimumCapacity: Int) {
-		self.init(values: [Element:Unit](minimumCapacity: minimumCapacity))
-	}
-
+extension Set {
 
 	// MARK: Properties
 
@@ -36,7 +46,6 @@ public struct Set<Element: Hashable>: ArrayLiteralConvertible, ExtensibleCollect
 	public var isEmpty: Bool {
 		return self.values.isEmpty
 	}
-
 
 	// MARK: Primitive methods
 
@@ -102,112 +111,124 @@ public struct Set<Element: Hashable>: ArrayLiteralConvertible, ExtensibleCollect
 		return set.strictSubset(self)
 	}
 
-
-	// MARK: Higher-order functions
-
-	/// Returns a new set with the result of applying `transform` to each element.
-	public func map<Result>(transform: Element -> Result) -> Set<Result> {
-		return flatMap { [transform($0)] }
-	}
-
-	/// Applies `transform` to each element and returns a new set which is the union of each resulting set.
-	public func flatMap<Result, S: SequenceType where S.Generator.Element == Result>(transform: Element -> S) -> Set<Result> {
-		return reduce(Set<Result>()) { $0 + transform($1) }
-	}
-
-	/// Combines each element of the receiver with an accumulator value using `combine`, starting with `initial`.
-	public func reduce<Into>(initial: Into, combine: (Into, Element) -> Into) -> Into {
-		return Swift.reduce(self, initial, combine)
-	}
-
-
-	// MARK: ArrayLiteralConvertible
-
-	public init(arrayLiteral elements: Element...) {
-		self.init(elements)
-	}
-
-
-	// MARK: SequenceType
-
-	public func generate() -> GeneratorOf<Element> {
-		return GeneratorOf(values.keys.generate())
-	}
-
-
-	// MARK: CollectionType
-
-	public var startIndex: DictionaryIndex<Element, Unit> { return values.startIndex }
-	public var endIndex: DictionaryIndex<Element, Unit> { return values.endIndex }
-
-	public subscript(v: ()) -> Element {
-		get { return values[values.startIndex].0 }
-		set { insert(newValue) }
-	}
-
-	public subscript(index: DictionaryIndex<Element, Unit>) -> Element {
-		return values[index].0
-	}
-
-
-	// MARK: ExtensibleCollectionType
-
-	/// In theory, reserve capacity for `n` elements. However, Dictionary does not implement reserveCapacity(), so we just silently ignore it.
-	public func reserveCapacity(n: Set<Element>.Index.Distance) {}
-
-	/// Inserts each element of `sequence` into the receiver.
-	public mutating func extend<S: SequenceType where S.Generator.Element == Element>(sequence: S) {
-		// Note that this should just be for each in sequence; this is working around a compiler crasher.
-		for each in [Element](sequence) {
-			insert(each)
-		}
-	}
-
-	/// Appends `element` onto the `Set`.
-	public mutating func append(element: Element) {
-		insert(element)
-	}
-
-
-	// MARK: Hashable
-
-	/// Hashes using Bob Jenkins’ one-at-a-time hash.
-	///
-	/// http://en.wikipedia.org/wiki/Jenkins_hash_function#one-at-a-time
-	///
-	/// NB: Jenkins’ usage appears to have been string keys; the usage employed here seems similar but may have subtle differences which have yet to be discovered.
-	public var hashValue: Int {
-		var h = reduce(0) { into, each in
-			var h = into + each.hashValue
-			h += (h << 10)
-			h ^= (h >> 6)
-			return h
-		}
-		h += (h << 3)
-		h ^= (h >> 11)
-		h += (h << 15)
-		return h
-	}
-
-
-	// MARK: Printable
-
-	public var description: String {
-        let list = join(", ", map(toString))
-		return "{\(list)}"
-	}
-
-	// MARK: Private
-
-	/// Constructs a `Set` with a dictionary of `values`.
-	private init(values: [Element: Unit]) {
-		self.values = values
-	}
-
-	/// The underlying dictionary.
-	private var values: [Element: Unit]
 }
 
+// MARK: - SequenceType
+
+extension Set: SequenceType {
+    
+    public func generate() -> GeneratorOf<Element> {
+        return GeneratorOf(values.keys.generate())
+    }
+    
+    /// Returns a new set with the result of applying `transform` to each element.
+    public func map<Result>(transform: Element -> Result) -> Set<Result> {
+        return flatMap { [transform($0)] }
+    }
+    
+    /// Applies `transform` to each element and returns a new set which is the union of each resulting set.
+    public func flatMap<Result, S: SequenceType where S.Generator.Element == Result>(transform: Element -> S) -> Set<Result> {
+        return reduce(Set<Result>()) { $0 + transform($1) }
+    }
+    
+    /// Combines each element of the receiver with an accumulator value using `combine`, starting with `initial`.
+    public func reduce<Into>(initial: Into, combine: (Into, Element) -> Into) -> Into {
+        return Swift.reduce(self, initial, combine)
+    }
+    
+}
+
+// MARK: - CollectionType
+
+extension Set: CollectionType {
+    
+    typealias Index = DictionaryIndex<Element, Unit>
+    
+    public var startIndex: Index { return values.startIndex }
+    public var endIndex: Index { return values.endIndex }
+    
+    public subscript(v: ()) -> Element {
+        get { return values[values.startIndex].0 }
+        set { insert(newValue) }
+    }
+    
+    public subscript(index: Index) -> Element {
+        return values[index].0
+    }
+    
+}
+
+// MARK: - ExtensibleCollectionType
+
+extension Set: ExtensibleCollectionType {
+    
+    /// In theory, reserve capacity for `n` elements. However, Dictionary does not implement reserveCapacity(), so we just silently ignore it.
+    public func reserveCapacity(n: Set<Element>.Index.Distance) {}
+    
+    /// Inserts each element of `sequence` into the receiver.
+    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(sequence: S) {
+        // Note that this should just be for each in sequence; this is working around a compiler crasher.
+        for each in [Element](sequence) {
+            insert(each)
+        }
+    }
+    
+    /// Appends `element` onto the `Set`.
+    public mutating func append(element: Element) {
+        insert(element)
+    }
+    
+}
+
+// MARK: - Hashable
+
+/// Defines equality for sets of equatable elements.
+public func == <Element> (a: Set<Element>, b: Set<Element>) -> Bool {
+    return a.values == b.values
+}
+
+extension Set: Hashable {
+    
+    /// Hashes using Bob Jenkins’ one-at-a-time hash.
+    ///
+    /// http://en.wikipedia.org/wiki/Jenkins_hash_function#one-at-a-time
+    ///
+    /// NB: Jenkins’ usage appears to have been string keys; the usage employed here seems similar but may have subtle differences which have yet to be discovered.
+    public var hashValue: Int {
+        var h = reduce(0) { into, each in
+            var h = into + each.hashValue
+            h += (h << 10)
+            h ^= (h >> 6)
+            return h
+        }
+        h += (h << 3)
+        h ^= (h >> 11)
+        h += (h << 15)
+        return h
+    }
+    
+}
+
+// MARK: - Printable
+
+extension Set: Printable {
+    
+    public var description: String {
+        let list = join(", ", map(toString))
+        return "{\(list)}"
+    }
+    
+}
+
+// MARK: - ArrayLiteralConvertible
+
+extension Set: ArrayLiteralConvertible {
+    
+    public init(arrayLiteral elements: Element...) {
+        self.init(elements)
+    }
+    
+}
 
 // MARK: - Operators
 
@@ -229,7 +250,6 @@ public func -= <Element> (inout set: Set<Element>, other: Set<Element>) {
 	}
 }
 
-
 /// Intersects with `set` with `other`.
 public func &= <Element> (inout set: Set<Element>, other: Set<Element>) {
 	for element in set {
@@ -242,10 +262,4 @@ public func &= <Element> (inout set: Set<Element>, other: Set<Element>) {
 /// Returns the intersection of `set` and `other`.
 public func & <Element> (set: Set<Element>, other: Set<Element>) -> Set<Element> {
 	return set.intersection(other)
-}
-
-
-/// Defines equality for sets of equatable elements.
-public func == <Element> (a: Set<Element>, b: Set<Element>) -> Bool {
-	return a.values == b.values
 }
