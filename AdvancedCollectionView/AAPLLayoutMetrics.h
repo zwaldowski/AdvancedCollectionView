@@ -75,12 +75,6 @@ typedef void (^AAPLLayoutSupplementaryItemConfigurationBlock)(id /*UICollectionR
 /// Optional reuse identifier. If not specified, this will be inferred from the class of the supplementary view.
 @property (nonatomic, copy) NSString *reuseIdentifier;
 
-/// An optional block used to create an instance of the supplementary view.
-@property (nonatomic, copy) AAPLLayoutSupplementaryItemCreationBlock createView;
-
-/// A block that can be used to configure the supplementary view after it is created.
-@property (nonatomic, copy) AAPLLayoutSupplementaryItemConfigurationBlock configureView;
-
 /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
 - (void)configureWithBlock:(AAPLLayoutSupplementaryItemConfigurationBlock)block;
 

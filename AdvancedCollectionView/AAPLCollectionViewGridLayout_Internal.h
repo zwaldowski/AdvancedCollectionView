@@ -13,11 +13,8 @@
 #import "AAPLCollectionViewGridLayout_Private.h"
 #import "AAPLLayoutMetrics.h"
 
-typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
-
 @class AAPLGridLayoutSectionInfo;
 @class AAPLGridLayoutRowInfo;
-@class AAPLGridLayoutInfo;
 
 /// Layout information about a supplementary item (header, footer, or placeholder)
 @interface AAPLGridLayoutSupplementalItemInfo : NSObject

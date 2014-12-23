@@ -170,33 +170,19 @@
 
 - (id)valueForUndefinedKey:(NSString *)key
 {
-    return [_wrappedView valueForKey:key];
+    return [self.wrappedView valueForKey:key];
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-    [_wrappedView setValue:value forKey:key];
-}
-
-#pragma mark - UICollectionView helper methods
-
-- (id)aapl_dequeueReusableCellWithClass:(Class)viewClass forIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *reuseIdentifier = NSStringFromClass(viewClass);
-    return [self dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
-}
-
-- (id)aapl_dequeueReusableSupplementaryViewOfKind:(NSString *)elementKind withClass:(Class)viewClass forIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *reuseIdentifier = NSStringFromClass(viewClass);
-    return [self dequeueReusableSupplementaryViewOfKind:elementKind withReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    [self.wrappedView setValue:value forKey:key];
 }
 
 #pragma mark - UICollectionView common methods
 
 - (NSIndexPath *)indexPathForCell:(UICollectionViewCell *)cell
 {
-    NSIndexPath *globalIndexPath = [(UICollectionView *)_wrappedView indexPathForCell:cell];
+    NSIndexPath *globalIndexPath = [self.wrappedView indexPathForCell:cell];
 
     return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
 }
@@ -206,25 +192,25 @@
     NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
     NSUInteger globalNewSection = [_mapping globalSectionForLocalSection:newSection];
 
-    [(UICollectionView *)_wrappedView moveSection:globalSection toSection:globalNewSection];
+    [self.wrappedView moveSection:globalSection toSection:globalNewSection];
 }
 
 #pragma mark - UICollectionView methods that accept index paths
 
 - (id)dequeueReusableCellWithReuseIdentifier:(NSString *)identifier forIndexPath:(NSIndexPath*)indexPath
 {
-    return [(UICollectionView *)_wrappedView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
+    return [self.wrappedView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
 }
 
 - (id)dequeueReusableSupplementaryViewOfKind:(NSString*)elementKind withReuseIdentifier:(NSString *)identifier forIndexPath:(NSIndexPath*)indexPath
 {
-    return [(UICollectionView *)_wrappedView dequeueReusableSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier forIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
+    return [self.wrappedView dequeueReusableSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier forIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
 }
 
 // returns nil or an array of selected index paths
 - (NSArray *)indexPathsForSelectedItems
 {
-    NSArray *globalIndexPaths = [(UICollectionView *)_wrappedView indexPathsForSelectedItems];
+    NSArray *globalIndexPaths = [self.wrappedView indexPathsForSelectedItems];
     if (!globalIndexPaths)
         return nil;
     return [_mapping localIndexPathsForGlobalIndexPaths:globalIndexPaths];
@@ -232,44 +218,44 @@
 
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition
 {
-    [(UICollectionView *)_wrappedView selectItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] animated:animated scrollPosition:scrollPosition];
+    [self.wrappedView selectItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] animated:animated scrollPosition:scrollPosition];
 }
 
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated
 {
-    [(UICollectionView *)_wrappedView deselectItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] animated:animated];
+    [self.wrappedView deselectItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] animated:animated];
 }
 
 - (NSInteger)numberOfItemsInSection:(NSInteger)section
 {
     NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UICollectionView *)_wrappedView numberOfItemsInSection:globalSection];
+    return [self.wrappedView numberOfItemsInSection:globalSection];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [(UICollectionView *)_wrappedView layoutAttributesForItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
+    return [self.wrappedView layoutAttributesForItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    return [(UICollectionView *)_wrappedView layoutAttributesForSupplementaryElementOfKind:kind atIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
+    return [self.wrappedView layoutAttributesForSupplementaryElementOfKind:kind atIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
 }
 
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
-    NSIndexPath *globalIndexPath = [(UICollectionView *)_wrappedView indexPathForItemAtPoint:point];
+    NSIndexPath *globalIndexPath = [self.wrappedView indexPathForItemAtPoint:point];
     return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
 }
 
 - (UICollectionViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [(UICollectionView *)_wrappedView cellForItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
+    return [self.wrappedView cellForItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath]];
 }
 
 - (NSArray *)indexPathsForVisibleItems
 {
-    NSArray *globalIndexPaths = [(UICollectionView *)_wrappedView indexPathsForVisibleItems];
+    NSArray *globalIndexPaths = [self.wrappedView indexPathsForVisibleItems];
     if (![globalIndexPaths count])
         return nil;
 
@@ -278,7 +264,7 @@
 
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UICollectionViewScrollPosition)scrollPosition animated:(BOOL)animated
 {
-    [(UICollectionView *)_wrappedView scrollToItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] atScrollPosition:scrollPosition animated:animated];
+    [self.wrappedView scrollToItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] atScrollPosition:scrollPosition animated:animated];
 }
 
 - (void)insertSections:(NSIndexSet *)sections
@@ -290,7 +276,7 @@
         [globalSections addIndex:globalSection];
     }];
 
-    [(UICollectionView *)_wrappedView insertSections:sections];
+    [self.wrappedView insertSections:sections];
 }
 
 - (void)deleteSections:(NSIndexSet *)sections
@@ -302,7 +288,7 @@
         [globalSections addIndex:globalSection];
     }];
 
-    [(UICollectionView *)_wrappedView deleteSections:sections];
+    [self.wrappedView deleteSections:sections];
 }
 
 - (void)reloadSections:(NSIndexSet *)sections
@@ -314,7 +300,7 @@
         [globalSections addIndex:globalSection];
     }];
 
-    [(UICollectionView *)_wrappedView reloadSections:sections];
+    [self.wrappedView reloadSections:sections];
 }
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths
@@ -325,7 +311,7 @@
         [globalIndexPaths addObject:globalIndexPath];
     }
 
-    [(UICollectionView *)_wrappedView insertItemsAtIndexPaths:globalIndexPaths];
+    [self.wrappedView insertItemsAtIndexPaths:globalIndexPaths];
 }
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths
@@ -336,7 +322,7 @@
         [globalIndexPaths addObject:globalIndexPath];
     }
 
-    [(UICollectionView *)_wrappedView deleteItemsAtIndexPaths:globalIndexPaths];
+    [self.wrappedView deleteItemsAtIndexPaths:globalIndexPaths];
 }
 
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
@@ -347,12 +333,12 @@
         [globalIndexPaths addObject:globalIndexPath];
     }
 
-    [(UICollectionView *)_wrappedView reloadItemsAtIndexPaths:globalIndexPaths];
+    [self.wrappedView reloadItemsAtIndexPaths:globalIndexPaths];
 }
 
 - (void)moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath
 {
-    [(UICollectionView *)_wrappedView moveItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] toIndexPath:[_mapping globalIndexPathForLocalIndexPath:newIndexPath]];
+    [self.wrappedView moveItemAtIndexPath:[_mapping globalIndexPathForLocalIndexPath:indexPath] toIndexPath:[_mapping globalIndexPathForLocalIndexPath:newIndexPath]];
 }
 
 @end

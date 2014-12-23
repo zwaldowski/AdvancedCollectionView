@@ -81,12 +81,12 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
 
 - (void)setSelectedDataSource:(AAPLDataSource *)selectedDataSource
 {
-    [self setSelectedDataSource:selectedDataSource animated:NO completionHandler:nil];
+    [self setSelectedDataSource:selectedDataSource animated:NO];
 }
 
 - (void)setSelectedDataSource:(AAPLDataSource *)selectedDataSource animated:(BOOL)animated
 {
-    [self setSelectedDataSource:selectedDataSource animated:animated completionHandler:nil];
+    [self setSelectedDataSource:selectedDataSource animated:animated completionHandler:NULL];
 }
 
 - (void)setSelectedDataSource:(AAPLDataSource *)selectedDataSource animated:(BOOL)animated completionHandler:(dispatch_block_t)handler
@@ -178,11 +178,11 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     header.shouldPin = YES;
     // Show this header regardless of whether there are items
     header.visibleWhileShowingPlaceholder = YES;
-    header.configureView = ^(UICollectionReusableView *headerView, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+    [header configureWithBlock:^(UICollectionReusableView *headerView, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLSegmentedHeaderView *segmentedHeaderView = (AAPLSegmentedHeaderView *)headerView;
         AAPLSegmentedDataSource *segmentedDataSource = (AAPLSegmentedDataSource *)dataSource;
         [segmentedDataSource configureSegmentedControl:segmentedHeaderView.segmentedControl];
-    };
+    }];
 
     return header;
 }

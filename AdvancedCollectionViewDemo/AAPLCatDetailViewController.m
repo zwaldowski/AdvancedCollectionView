@@ -41,11 +41,11 @@
     globalHeader.visibleWhileShowingPlaceholder = YES;
     globalHeader.height = 110;
     globalHeader.supplementaryViewClass = [AAPLCatDetailHeader class];
-    globalHeader.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+    [globalHeader configureWithBlock:^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLCatDetailHeader *headerView = (AAPLCatDetailHeader *)view;
         headerView.bottomBorderColor = nil;
         [headerView configureWithCat:weakself.cat];
-    };
+    }];
 
     self.collectionView.dataSource = self.dataSource;
 }

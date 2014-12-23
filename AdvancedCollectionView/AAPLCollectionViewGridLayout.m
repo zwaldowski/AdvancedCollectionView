@@ -264,12 +264,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     NSUInteger itemIndex = globalIndexPathItem(indexPath);
     if (itemIndex >= section.items.count) { return nil; }
     AAPLGridLayoutItemInfo *item = section.items[itemIndex];
-
-    UICollectionView *collectionView = self.collectionView;
-    id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
-    if (![dataSource conformsToProtocol:@protocol(AAPLCollectionViewDataSourceGridLayout)]) {
-        dataSource = nil;
-    }
     
     attributes = [[self.class layoutAttributesClass] layoutAttributesForCellWithIndexPath:indexPath];
 
@@ -1197,30 +1191,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         attr.pinnedHeader = !_approxeq(CGRectGetMinY(attr.frame), attr.unpinnedY);
         attr.zIndex = zIndex - attrIndex - 1;
     }];
-}
-
-- (BOOL)sectionOverlappingYOffset:(CGFloat)yOffset
-{
-    NSUInteger foundIdx = [self.sections indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLGridLayoutSectionInfo *sectionInfo, NSUInteger sectionIndex, BOOL *stop) {
-        CGRect frame = sectionInfo.frame;
-        return CGRectGetMinY(frame) <= yOffset && yOffset <= CGRectGetMaxY(frame);
-    }];
-    
-    if (foundIdx == NSNotFound) { return nil; }
-    
-    return self.sections[foundIdx];
-}
-
-- (AAPLGridLayoutSectionInfo *)firstSectionOverlappingYOffset:(CGFloat)yOffset
-{
-    NSUInteger foundIdx = [self.sections indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(AAPLGridLayoutSectionInfo *sectionInfo, NSUInteger sectionIndex, BOOL *stop) {
-        CGRect frame = sectionInfo.frame;
-        return CGRectGetMinY(frame) <= yOffset && yOffset <= CGRectGetMaxY(frame);
-    }];
-    
-    if (foundIdx == NSNotFound) { return nil; }
-    
-    return self.sections[foundIdx];
 }
 
 - (void)filterSpecialAttributes

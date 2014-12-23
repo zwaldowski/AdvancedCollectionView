@@ -38,7 +38,6 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     item->_shouldPin = _shouldPin;
     item->_visibleWhileShowingPlaceholder = _visibleWhileShowingPlaceholder;
     item->_supplementaryViewClass = _supplementaryViewClass;
-    item->_createView = _createView;
     item->_configureView = _configureView;
     item->_backgroundColor = _backgroundColor;
     item->_selectedBackgroundColor = _selectedBackgroundColor;
@@ -51,13 +50,13 @@ NSInteger const AAPLGlobalSection = NSIntegerMax;
     NSParameterAssert(block != nil);
 
     if (!_configureView) {
-        self.configureView = block;
+        _configureView = block;
         return;
     }
 
     // chain the old with the new
     AAPLLayoutSupplementaryItemConfigurationBlock oldConfigBlock = _configureView;
-    self.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+    _configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         oldConfigBlock(view, dataSource, indexPath);
         block(view, dataSource, indexPath);
     };

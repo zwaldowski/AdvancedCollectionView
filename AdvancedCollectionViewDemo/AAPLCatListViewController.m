@@ -68,19 +68,6 @@
     return dataSource;
 }
 
-- (AAPLCatListDataSource *)newAllCatsDataSource DEPRECATED_ATTRIBUTE
-{
-    AAPLCatListDataSource *dataSource = [[AAPLCatListDataSource alloc] init];
-
-    dataSource.title = NSLocalizedString(@"All", @"Title for available cats list");
-    dataSource.noContentMessage = NSLocalizedString(@"All the big cats are napping or roaming elsewhere. Please try again later.", @"The message to show when no cats are available");
-    dataSource.noContentTitle = NSLocalizedString(@"No Cats", @"The title to show when no cats are available");
-    dataSource.errorMessage = NSLocalizedString(@"A problem with the network prevented loading the available cats.\nPlease, check your network settings.", @"Message to show when unable to load cats");
-    dataSource.errorTitle = NSLocalizedString(@"Unable To Load Cats", @"Title of message to show when unable to load cats");
-
-    return dataSource;
-}
-
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

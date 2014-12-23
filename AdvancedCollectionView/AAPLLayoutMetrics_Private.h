@@ -13,6 +13,7 @@
 #import "AAPLLayoutMetrics.h"
 
 @interface AAPLLayoutSupplementaryMetrics ()
+@property (nonatomic, copy, readonly) AAPLLayoutSupplementaryItemConfigurationBlock configureView;
 @end
 
 @interface AAPLLayoutSectionMetrics ()

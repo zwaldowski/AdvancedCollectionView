@@ -72,13 +72,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     }
 }
 
-#pragma mark - UICollectionViewDelegate methods
-
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return NO;
-}
-
 #pragma mark - AAPLDataSourceDelegate methods
 
 #if UPDATE_DEBUGGING

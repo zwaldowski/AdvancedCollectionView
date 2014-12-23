@@ -780,11 +780,7 @@
     
     // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
     NSIndexPath *localIndexPath = [self localIndexPathForGlobalIndexPath:indexPath];
-    UICollectionReusableView *view;
-    if (metrics.createView)
-        view = metrics.createView(collectionView, kind, metrics.reuseIdentifier, localIndexPath);
-    else
-        view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:metrics.reuseIdentifier forIndexPath:indexPath];
+    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:metrics.reuseIdentifier forIndexPath:indexPath];
 
     NSAssert(view != nil, @"Unable to dequeue a reusable view with identifier %@", metrics.reuseIdentifier);
     if (!view)

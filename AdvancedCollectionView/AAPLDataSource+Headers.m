@@ -23,10 +23,10 @@ static NSString *AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
 
     header = [self newHeaderForKey:AAPLDataSourceTitleHeaderKey];
     header.supplementaryViewClass = [AAPLSectionHeaderView class];
-    header.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+    [header configureWithBlock:^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLSectionHeaderView *headerView = (AAPLSectionHeaderView *)view;
         headerView.leftText = title ?: dataSource.title;
-    };
+    }];
     
     return header;
 }
@@ -35,10 +35,10 @@ static NSString *AAPLDataSourceTitleHeaderKey = @"AAPLDataSourceTitleHeaderKey";
 {
     AAPLLayoutSupplementaryMetrics *newHeader = [self newHeaderForSectionAtIndex:sectionIndex];
     newHeader.supplementaryViewClass = [AAPLSectionHeaderView class];
-    newHeader.configureView = ^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
+    [newHeader configureWithBlock:^(UICollectionReusableView *view, AAPLDataSource *dataSource, NSIndexPath *indexPath) {
         AAPLSectionHeaderView *headerView = (AAPLSectionHeaderView *)view;
         headerView.leftText = title;
-    };
+    }];
     return newHeader;
 }
 

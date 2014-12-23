@@ -53,7 +53,7 @@
 
 - (instancetype)initWithCollectionView:(UICollectionView *)view mapping:(AAPLComposedMapping *)mapping;
 
-@property (nonatomic, readonly) UIView *wrappedView;
+@property (nonatomic, readonly) UICollectionView *wrappedView;
 @property (nonatomic, readonly) AAPLComposedMapping *mapping;
 
 @end
