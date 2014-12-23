@@ -108,8 +108,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     struct {
         /// the data source has the can edit method
         unsigned int dataSourceHasCanEdit:1;
-        /// the data source has the snapshot metrics method
-        unsigned int dataSourceHasSnapshotMetrics:1;
         /// layout data becomes invalid if the data source changes
         unsigned int layoutDataIsValid:1;
         /// layout metrics will only be valid if layout data is also valid
@@ -708,17 +706,12 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     return result;
 }
 
-- (void)updateFlagsFromCollectionView
-{
-    id dataSource = self.collectionView.dataSource;
-    _flags.dataSourceHasCanEdit = [dataSource respondsToSelector:@selector(collectionView:canEditItemAtIndexPath:)];
-    _flags.dataSourceHasSnapshotMetrics = [dataSource respondsToSelector:@selector(snapshotMetrics)];
-}
-
 - (NSDictionary *)snapshotMetrics
 {
-    if (!_flags.dataSourceHasSnapshotMetrics) { return nil; }
     id <AAPLCollectionViewDataSourceGridLayout> dataSource = (id <AAPLCollectionViewDataSourceGridLayout>)self.collectionView.dataSource;
+    if (![dataSource conformsToProtocol:@protocol(AAPLCollectionViewDataSourceGridLayout)]) {
+        return nil;
+    }
     return [dataSource snapshotMetrics];
 }
 
@@ -1085,8 +1078,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     _preparingLayout = YES;
 
     LAYOUT_TRACE();
-
-    [self updateFlagsFromCollectionView];
 
     if (!_flags.layoutDataIsValid) {
         [self createLayoutInfoFromDataSource];
