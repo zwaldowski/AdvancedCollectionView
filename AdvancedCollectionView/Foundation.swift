@@ -193,4 +193,12 @@ extension NSIndexSet: SequenceType {
         return IndexSetGenerator(indexSet: self, reverse: true, range: range)
     }
     
+    public func map(transform: Int -> Int) -> NSIndexSet {
+        let indexSet = NSMutableIndexSet()
+        for idx in self {
+            indexSet.addIndex(transform(idx))
+        }
+        return indexSet
+    }
+    
 }
