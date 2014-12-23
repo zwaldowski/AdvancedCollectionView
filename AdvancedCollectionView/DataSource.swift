@@ -50,6 +50,9 @@ public class DataSource: NSObject {
     }
     
     // MARK: Loading
+    
+    private var loadingInstance: Loader<DataSource>? = nil
+    
     private(set) public var loadingState: LoadingState = .Initial {
         didSet {
             switch loadingState {
@@ -94,7 +97,7 @@ public class DataSource: NSObject {
         dispatch_semaphore_signal(whenLoadedLock)
     }
     
-    public final func endLoading(#state: LoadingState, update: (() -> ())!) {
+    public final func endLoading(#state: LoadingState, update: Block?) {
         loadingState = state
         
         if shouldDisplayPlaceholder {
@@ -105,9 +108,7 @@ public class DataSource: NSObject {
             notifyBatchUpdate {
                 // Run pending updates
                 self.executePendingUpdates()
-                if let update = update {
-                    update()
-                }
+                update?()
             }
         }
         
@@ -115,19 +116,40 @@ public class DataSource: NSObject {
         dispatch_semaphore_wait(whenLoadedLock, DISPATCH_TIME_FOREVER)
         swap(&whenLoaded, &block)
         dispatch_semaphore_signal(whenLoadedLock)
-        if let block = block {
-            block()
-        }
-        
+        block?()
         
         notifyContentLoaded(error: loadingState.error)
     }
     
-    public final func loadContent(handler: () -> ()) {
-        // TODO:
+    public final func loadContent(handler: (Loader<DataSource>) -> ()) {
+        beginLoading()
+        
+        let newLoading = Loader<DataSource>{ (newState, update) in
+            if newState == nil { return }
+            self.endLoading(state: newState!) {
+                [weak self] in
+                switch (self, update) {
+                case (.Some(let weakSelf), .Some(let update)):
+                    update(weakSelf)
+                default:
+                    break
+                }
+            }
+            
+        }
+        
+        // Tell previous loading instance it's no longer current and remember this loading instance
+        loadingInstance?.isCurrent = false
+        loadingInstance = newLoading
+        
+        // Call the provided block to actually do the load
+        handler(newLoading)
     }
     
-    public func resetContent() { }
+    public func resetContent() {
+        loadingState = .Initial
+        loadingInstance?.isCurrent = false
+    }
     
     public func loadContent() { }
     

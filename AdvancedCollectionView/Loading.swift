@@ -33,3 +33,44 @@ public enum LoadingState {
     }
     
 }
+
+public final class Loader<T> {
+    
+    public typealias Update = T -> ()
+    public typealias CompletionHandler = (LoadingState?, Update?) -> ()
+
+    private var completionHandler: CompletionHandler!
+    init(completionHandler: CompletionHandler) {
+        self.completionHandler = completionHandler
+    }
+    
+    public var isCurrent = true
+    
+    private func done(newState state: LoadingState?, update: Update? = nil) {
+        if completionHandler == nil { return }
+        let block = completionHandler
+        
+        async(Queue.mainQueue) {
+            block(state, update)
+        }
+        
+        completionHandler = nil
+    }
+    
+    public func ignore() {
+        done(newState: nil)
+    }
+    
+    public func update(content update: Update) {
+        done(newState: .Loaded, update: update)
+    }
+    
+    public func update(#error: NSError) {
+        done(newState: .Error(error), update: nil)
+    }
+    
+    public func update(noContent update: Update) {
+        done(newState: .NoContent, update: update)
+    }
+    
+}
