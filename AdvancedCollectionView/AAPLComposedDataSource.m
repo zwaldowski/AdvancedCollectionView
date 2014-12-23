@@ -38,7 +38,7 @@
 
 - (id)wrapperForView:(UICollectionView *)collectionView mapping:(AAPLComposedMapping *)mapping
 {
-    return [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
+    return [[AAPLComposedViewWrapper alloc] initWithCollectionView:collectionView mapping:mapping];
 }
 
 - (void)updateMappings
@@ -296,7 +296,7 @@
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
-    UICollectionView *wrapper = [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
+    UICollectionView *wrapper = [self wrapperForView:collectionView mapping:mapping];
     AAPLDataSource *dataSource = mapping.dataSource;
     NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
     
@@ -306,7 +306,7 @@
 - (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
-    UICollectionView *wrapper = [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
+    UICollectionView *wrapper = [self wrapperForView:collectionView mapping:mapping];
     AAPLDataSource *dataSource = mapping.dataSource;
     NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
     
@@ -320,7 +320,7 @@
     [self updateMappings];
 
     AAPLComposedMapping *mapping = [self mappingForGlobalSection:section];
-    UICollectionView *wrapper = [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
+    UICollectionView *wrapper = [self wrapperForView:collectionView mapping:mapping];
     NSInteger localSection = [mapping localSectionForGlobalSection:section];
     AAPLDataSource *dataSource = mapping.dataSource;
 
@@ -337,7 +337,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
-    UICollectionView *wrapper = [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
+    UICollectionView *wrapper = [self wrapperForView:collectionView mapping:mapping];
     AAPLDataSource *dataSource = mapping.dataSource;
     NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
 

@@ -116,21 +116,10 @@
 
 @implementation AAPLComposedViewWrapper
 
-+ (id)wrapperForView:(UIView *)view mapping:(AAPLComposedMapping *)mapping
+- (instancetype)initWithCollectionView:(UICollectionView *)view mapping:(AAPLComposedMapping *)mapping
 {
-    if (!view)
-        return nil;
-    return [[AAPLComposedViewWrapper alloc] initWithView:view mapping:mapping];
-}
-
-- (id)initWithView:(UIView *)view mapping:(AAPLComposedMapping *)mapping
-{
-    NSParameterAssert([view isKindOfClass:[UITableView class]] || [view isKindOfClass:[UICollectionView class]]);
-
     self = [super init];
-    if (!self)
-        return nil;
-
+    if (!self) { return nil; }
     _wrappedView = view;
     _mapping = mapping;
     return self;
@@ -145,15 +134,7 @@
 
 + (NSMethodSignature *)instanceMethodSignatureForSelector:(SEL)selector
 {
-    NSMethodSignature *signature = [super instanceMethodSignatureForSelector:selector];
-    if (signature)
-        return signature;
-
-    signature = [[UITableView class] instanceMethodSignatureForSelector:selector];
-    if (signature)
-        return signature;
-
-    return [[UICollectionView class] instanceMethodSignatureForSelector:selector];
+    return [super instanceMethodSignatureForSelector:selector] ?: [UICollectionView instanceMethodSignatureForSelector:selector];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
@@ -181,9 +162,6 @@
     if (class_respondsToSelector(self, selector))
         return YES;
 
-    if ([UITableView instancesRespondToSelector:selector])
-        return YES;
-
     if ([UICollectionView instancesRespondToSelector:selector])
         return YES;
 
@@ -200,196 +178,6 @@
     [_wrappedView setValue:value forKey:key];
 }
 
-#pragma mark - UITableView & UICollectionView common methods
-
-- (NSIndexPath *)indexPathForCell:(id)cell
-{
-    NSIndexPath *globalIndexPath;
-
-    if ([_wrappedView isKindOfClass:[UITableView class]])
-        globalIndexPath = [(UITableView *)_wrappedView indexPathForCell:cell];
-    else
-        globalIndexPath = [(UICollectionView *)_wrappedView indexPathForCell:cell];
-
-    return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
-}
-
-- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    NSUInteger globalNewSection = [_mapping globalSectionForLocalSection:newSection];
-
-    if ([_wrappedView isKindOfClass:[UITableView class]])
-        [(UITableView *)_wrappedView moveSection:globalSection toSection:globalNewSection];
-    else
-        [(UICollectionView *)_wrappedView moveSection:globalSection toSection:globalNewSection];
-}
-
-
-#pragma mark - UITableView methods that accept index paths
-
-- (NSInteger)numberOfSections
-{
-    return _mapping.sectionCount;
-}
-
-- (NSInteger)numberOfRowsInSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView numberOfRowsInSection:globalSection];
-}
-
-- (CGRect)rectForSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView rectForSection:globalSection];
-}
-
-- (CGRect)rectForHeaderInSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView rectForHeaderInSection:globalSection];
-}
-
-- (CGRect)rectForFooterInSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView rectForFooterInSection:globalSection];
-}
-
-- (CGRect)rectForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    return [(UITableView *)_wrappedView rectForRowAtIndexPath:globalIndexPath];
-}
-
-- (NSIndexPath *)indexPathForRowAtPoint:(CGPoint)point
-{
-    NSIndexPath *globalIndexPath = [(UITableView *)_wrappedView indexPathForRowAtPoint:point];
-    return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
-}
-
-- (NSArray *)indexPathsForRowsInRect:(CGRect)rect
-{
-    NSArray *globalIndexPaths = [(UITableView *)_wrappedView indexPathsForRowsInRect:rect];
-    return [_mapping localIndexPathsForGlobalIndexPaths:globalIndexPaths];
-}
-
-- (UITableViewCell *)cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    return [(UITableView *)_wrappedView cellForRowAtIndexPath:globalIndexPath];
-}
-
-- (NSArray *)indexPathsForVisibleRows
-{
-    NSArray *globalIndexPaths = [(UITableView *)_wrappedView indexPathsForVisibleRows];
-    return [_mapping localIndexPathsForGlobalIndexPaths:globalIndexPaths];
-}
-
-- (UITableViewHeaderFooterView *)headerViewForSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView headerViewForSection:globalSection];
-}
-
-- (UITableViewHeaderFooterView *)footerViewForSection:(NSInteger)section
-{
-    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
-    return [(UITableView *)_wrappedView footerViewForSection:globalSection];
-}
-
-- (void)scrollToRowAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UITableViewScrollPosition)scrollPosition animated:(BOOL)animated
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    [(UITableView *)_wrappedView scrollToRowAtIndexPath:globalIndexPath atScrollPosition:scrollPosition animated:animated];
-}
-
-- (void)insertSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
-    [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
-    }];
-    [(UITableView *)_wrappedView insertSections:globalSections withRowAnimation:animation];
-}
-
-- (void)deleteSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
-    [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
-    }];
-    [(UITableView *)_wrappedView deleteSections:globalSections withRowAnimation:animation];
-}
-
-- (void)reloadSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
-    [sections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        [globalSections addIndex:[self.mapping globalSectionForLocalSection:localSection]];
-    }];
-    [(UITableView *)_wrappedView reloadSections:globalSections withRowAnimation:animation];
-}
-
-- (void)insertRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSArray *globalIndexPaths = [_mapping globalIndexPathsForLocalIndexPaths:indexPaths];
-    [(UITableView *)_wrappedView insertRowsAtIndexPaths:globalIndexPaths withRowAnimation:animation];
-}
-
-- (void)deleteRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSArray *globalIndexPaths = [_mapping globalIndexPathsForLocalIndexPaths:indexPaths];
-    [(UITableView *)_wrappedView deleteRowsAtIndexPaths:globalIndexPaths withRowAnimation:animation];
-}
-
-- (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
-{
-    NSArray *globalIndexPaths = [_mapping globalIndexPathsForLocalIndexPaths:indexPaths];
-    [(UITableView *)_wrappedView reloadRowsAtIndexPaths:globalIndexPaths withRowAnimation:animation];
-}
-
-- (void)moveRowAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    NSIndexPath *globalNewIndexPath = [_mapping globalIndexPathForLocalIndexPath:newIndexPath];
-
-    [(UITableView *)_wrappedView moveRowAtIndexPath:globalIndexPath toIndexPath:globalNewIndexPath];
-}
-
-- (NSIndexPath *)indexPathForSelectedRow
-{
-    NSIndexPath *globalIndexPath = [(UITableView *)_wrappedView indexPathForSelectedRow];
-    return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
-}
-
-- (NSArray *)indexPathsForSelectedRows
-{
-    NSArray *globalIndexPaths = [(UITableView *)_wrappedView indexPathsForSelectedRows];
-    if (!globalIndexPaths)
-        return nil;
-    return [_mapping localIndexPathsForGlobalIndexPaths:globalIndexPaths];
-}
-
-- (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    [(UITableView *)_wrappedView selectRowAtIndexPath:globalIndexPath animated:animated scrollPosition:scrollPosition];
-}
-
-- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    [(UITableView *)_wrappedView deselectRowAtIndexPath:globalIndexPath animated:animated];
-}
-
-- (id)dequeueReusableCellWithIdentifier:(NSString *)identifier forIndexPath:(NSIndexPath *)indexPath
-{
-    NSIndexPath *globalIndexPath = [_mapping globalIndexPathForLocalIndexPath:indexPath];
-    return [(UITableView *)_wrappedView dequeueReusableCellWithIdentifier:identifier forIndexPath:globalIndexPath];
-}
-
 #pragma mark - UICollectionView helper methods
 
 - (id)aapl_dequeueReusableCellWithClass:(Class)viewClass forIndexPath:(NSIndexPath *)indexPath
@@ -402,6 +190,23 @@
 {
     NSString *reuseIdentifier = NSStringFromClass(viewClass);
     return [self dequeueReusableSupplementaryViewOfKind:elementKind withReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+}
+
+#pragma mark - UICollectionView common methods
+
+- (NSIndexPath *)indexPathForCell:(UICollectionViewCell *)cell
+{
+    NSIndexPath *globalIndexPath = [(UICollectionView *)_wrappedView indexPathForCell:cell];
+
+    return [_mapping localIndexPathForGlobalIndexPath:globalIndexPath];
+}
+
+- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection
+{
+    NSUInteger globalSection = [_mapping globalSectionForLocalSection:section];
+    NSUInteger globalNewSection = [_mapping globalSectionForLocalSection:newSection];
+
+    [(UICollectionView *)_wrappedView moveSection:globalSection toSection:globalNewSection];
 }
 
 #pragma mark - UICollectionView methods that accept index paths

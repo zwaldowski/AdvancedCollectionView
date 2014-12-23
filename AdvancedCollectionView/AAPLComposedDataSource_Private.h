@@ -48,12 +48,12 @@
 
 @end
 
-/// An object that pretends to be either a UITableView or UICollectionView that handles transparently mapping from local to global index paths
+/// An object that pretends to be a UICollectionView that handles transparently mapping from local to global index paths
 @interface AAPLComposedViewWrapper : NSObject
 
-+ (id)wrapperForView:(UIView *)view mapping:(AAPLComposedMapping *)mapping;
+- (instancetype)initWithCollectionView:(UICollectionView *)view mapping:(AAPLComposedMapping *)mapping;
 
-@property (nonatomic, retain) UIView *wrappedView;
-@property (nonatomic, retain) AAPLComposedMapping *mapping;
+@property (nonatomic, readonly) UIView *wrappedView;
+@property (nonatomic, readonly) AAPLComposedMapping *mapping;
 
 @end
