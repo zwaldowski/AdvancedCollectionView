@@ -81,9 +81,4 @@
     return dataSource;
 }
 
-- (void)toggleFavorite:(id)sender
-{
-    self.cat.favorite = !self.cat.favorite;
-}
-
 @end

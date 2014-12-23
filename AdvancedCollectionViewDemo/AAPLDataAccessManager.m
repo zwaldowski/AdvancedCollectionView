@@ -67,7 +67,7 @@
     }
 }
 
-- (void)fetchCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
+- (void)fetchCatListReversed:(BOOL)reversed withCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
 {
     [self fetchJSONResourceWithName:@"CatList" completionHandler:^(NSDictionary *json, NSError *error) {
         if (error) {
@@ -78,10 +78,10 @@
             }
             return;
         }
-
+        
         NSArray *results = json[@"results"];
         NSAssert([results isKindOfClass:[NSArray class]], @"results property should be an array of cats");
-
+        
         NSMutableArray *cats = [NSMutableArray array];
         for (NSDictionary *catDictionary in results) {
             AAPLCat *cat = [AAPLCat catWithDictionaryRepresentation:catDictionary];
@@ -89,26 +89,25 @@
                 continue;
             [cats addObject:cat];
         }
-
-        [cats sortUsingComparator:^(AAPLCat *cat1, AAPLCat *cat2) {
+        
+        static NSComparator const ctor = ^(AAPLCat *cat1, AAPLCat *cat2) {
             return [cat1.name localizedCaseInsensitiveCompare:cat2.name];
-        }];
-
+        };
+        
+        if (reversed) {
+            [cats sortWithOptions:NSSortConcurrent usingComparator:^(AAPLCat *cat1, AAPLCat *cat2) {
+                return ctor(cat2, cat1);
+            }];
+        } else {
+            [cats sortWithOptions:NSSortConcurrent usingComparator:ctor];
+        }
+        
         if (handler) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 handler(cats, nil);
             });
         }
     }];
-}
-
-- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
-{
-    if (handler) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            handler(@[], nil);
-        });
-    }
 }
 
 - (void)fetchDetailForCat:(AAPLCat *)cat completionHandler:(void (^)(AAPLCat *, NSError *))handler

@@ -4,7 +4,7 @@
  
  Abstract:
  
-  The header view shown in the cat detail screen. This view shows the name of the cat, its conservation status, and the favorite flag.
+  The header view shown in the cat detail screen. This view shows the name of the cat and its conservation status.
   
  */
 
@@ -15,11 +15,5 @@
 @interface AAPLCatDetailHeader : AAPLPinnableHeaderView
 
 - (void)configureWithCat:(AAPLCat *)cat;
-
-@end
-
-@interface NSObject (AAPLCatDetailHeaderActions)
-
-- (void)toggleFavorite:(AAPLCatDetailHeader *)sender;
 
 @end

@@ -4,7 +4,7 @@
  
  Abstract:
  
-  A basic data source that either fetches the list of all available cats or the user's favorite cats. If this data source represents the favorites, it listens for a notification with the name AAPLCatFavoriteToggledNotificationName and will update itself appropriately.
+  A basic data source that either fetches the list of all available cats.
   
  */
 
@@ -17,11 +17,6 @@
 @end
 
 @implementation AAPLCatListDataSource
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AAPLCatFavoriteToggledNotificationName object:nil];
-}
 
 - (void)registerReusableViewsWithCollectionView:(UICollectionView *)collectionView
 {
@@ -39,43 +34,17 @@
     cell.secondaryLabel.text = cat.shortDescription;
     cell.secondaryLabel.font = [UIFont systemFontOfSize:10];
 
-    if (self.showingFavorites)
-        cell.editActions = @[[AAPLAction destructiveActionWithTitle:NSLocalizedString(@"Delete", @"Delete") selector:@selector(swipeToDeleteCell:)]];
-
     return cell;
 }
 
-- (void)setShowingFavorites:(BOOL)showingFavorites
+- (void)setReversed:(BOOL)reversed
 {
-    if (showingFavorites == _showingFavorites)
+    if (reversed == _reversed)
         return;
-
-    _showingFavorites = showingFavorites;
+    
+    _reversed = reversed;
     [self resetContent];
     [self setNeedsLoadContent];
-
-    if (showingFavorites)
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeFavoriteToggledNotification:) name:AAPLCatFavoriteToggledNotificationName object:nil];
-}
-
-- (void)observeFavoriteToggledNotification:(NSNotification *)notification
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AAPLCat *cat = notification.object;
-        NSMutableArray *items = [self.items mutableCopy];
-        NSUInteger position = [items indexOfObject:cat];
-
-        if (cat.favorite) {
-            if (NSNotFound == position)
-                [items addObject:cat];
-        }
-        else {
-            if (NSNotFound != position)
-                [items removeObjectAtIndex:position];
-        }
-
-        self.items = items;
-    });
 }
 
 - (void)loadContent
@@ -102,11 +71,8 @@
                     me.items = @[];
                 }];
         };
-
-        if (self.showingFavorites)
-            [[AAPLDataAccessManager manager] fetchFavoriteCatListWithCompletionHandler:handler];
-        else
-            [[AAPLDataAccessManager manager] fetchCatListWithCompletionHandler:handler];
+        
+        [[AAPLDataAccessManager manager] fetchCatListReversed:self.reversed withCompletionHandler:handler];
     }];
 }
 

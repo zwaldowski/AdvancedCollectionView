@@ -4,13 +4,11 @@
  
  Abstract:
  
-  Plain old data object for a cat. When the value of its favorite property changes, it sends a notification with the name AAPLCatFavoriteToggledNotificationName.
+  Plain old data object for a cat.
   
  */
 
 #import "AAPLCat.h"
-
-NSString * const AAPLCatFavoriteToggledNotificationName = @"AAPLCatFavoriteToggledNotificationName";
 
 @implementation AAPLCat
 
@@ -37,17 +35,6 @@ static NSMapTable *AAPLAllCatsTable()
     [allCats setObject:cat forKey:uniqueID];
 
     return cat;
-}
-
-- (void)setFavorite:(BOOL)favorite
-{
-    if (_favorite == favorite)
-        return;
-
-    _favorite = favorite;
-
-    // Let everyone know our favorite status has changed.
-    [[NSNotificationCenter defaultCenter] postNotificationName:AAPLCatFavoriteToggledNotificationName object:self];
 }
 
 - (void)updateWithDictionaryRepresentation:(NSDictionary *)dictionaryRepresentation

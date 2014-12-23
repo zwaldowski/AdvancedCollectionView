@@ -16,8 +16,7 @@
 
 + (AAPLDataAccessManager *)manager;
 
-- (void)fetchCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler;
-- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler;
+- (void)fetchCatListReversed:(BOOL)reversed withCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler;
 - (void)fetchDetailForCat:(AAPLCat *)cat completionHandler:(void(^)(AAPLCat *cat, NSError *error))handler;
 - (void)fetchSightingsForCat:(AAPLCat *)cat completionHandler:(void(^)(NSArray *sightings, NSError *error))handler;
 
