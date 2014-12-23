@@ -27,13 +27,4 @@
 /// Determine whether or not a cell is editable. Default implementation returns YES.
 - (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath;
 
-/// Determine whether or not the cell is movable. Default implementation returns NO.
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
-
-/// Determine whether an item may be moved from its original location to a proposed location. Default implementation returns NO.
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
-
-/// Called by the collection view to alert the data source that an item has been moved. The data source should update its contents.
-- (void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
-
 @end

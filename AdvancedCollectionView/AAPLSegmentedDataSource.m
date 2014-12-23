@@ -349,22 +349,10 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
 
 - (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [_selectedDataSource collectionView:collectionView canEditItemAtIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    return [_selectedDataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
-}
-
-- (void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    [_selectedDataSource collectionView:collectionView moveItemAtIndexPath:indexPath toIndexPath:destinationIndexPath];
+    if ([_selectedDataSource respondsToSelector:@selector(collectionView:canEditItemAtIndexPath:)]) {
+        return [_selectedDataSource collectionView:collectionView canEditItemAtIndexPath:indexPath];
+    }
+    return YES;
 }
 
 #pragma mark - UICollectionViewDataSource methods

@@ -17,8 +17,6 @@
 @property (nonatomic) NSInteger columnIndex;
 /// Is the layout in edit mode
 @property (nonatomic) BOOL editing;
-/// Is the cell movable according to the data source. Only YES when editing
-@property (nonatomic) BOOL movable;
 
 /// Y offset when not pinned
 @property (nonatomic) CGFloat unpinnedY;

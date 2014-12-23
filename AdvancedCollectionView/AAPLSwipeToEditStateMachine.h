@@ -4,7 +4,7 @@
  
  Abstract:
  
-  A state machine that manages a UILongPressGestureRecognizer and a UIPanGestureRecognizer to handle swipe to edit as well as drag to reorder.
+  A state machine that manages a UIPanGestureRecognizer to handle swipe to edit.
   
  */
 

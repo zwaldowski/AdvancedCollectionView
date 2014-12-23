@@ -4,7 +4,7 @@
  
  Abstract:
  
-  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit and drag to reorder support.
+  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit support.
   
 */
 

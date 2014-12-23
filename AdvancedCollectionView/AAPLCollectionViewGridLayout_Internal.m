@@ -54,8 +54,6 @@
     _rows = [NSMutableArray array];
     _items = [NSMutableArray array];
     _numberOfColumns = 1;
-    _phantomCellIndex = NSNotFound;
-    _phantomCellSize = CGSizeZero;
     _pinnableHeaderAttributes = [NSMutableArray array];
     _supplementalItemArraysByKind = NSMutableDictionary.new;
 
@@ -248,21 +246,13 @@
             
             CGFloat height = CGRectGetHeight(item.frame);
 
-            if (item.dragging) {
-                pushItem(height, NSNotFound);
-                return;
-            }
-
-            BOOL phantomCell = (itemIndex == self.phantomCellIndex);
             BOOL needSizeUpdate = item.needSizeUpdate && measureItem;
             
             if (!(columnIndex % numberOfColumns)) {
                 beginRow();
             }
             
-            if (phantomCell) {
-                height = self.phantomCellSize.height;
-            } else if (needSizeUpdate) {
+            if (needSizeUpdate) {
                 item.needSizeUpdate = NO;
                 item.frame = itemRect(UILayoutFittingExpandedSize.height);
                 height = measureItem(itemIndex, item.frame.size).height;
@@ -273,9 +263,7 @@
             // keep row height up to date
             updateRowHeight(rowHeight);
             
-            if (!phantomCell) {
-                pushItem(rowHeight, columnIndex);
-            }
+            pushItem(rowHeight, columnIndex);
             
             advanceColumn();
         }];

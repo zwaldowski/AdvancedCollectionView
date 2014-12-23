@@ -14,16 +14,7 @@
 #import "AAPLCollectionViewGridLayoutAttributes_Private.h"
 #import "AAPLDataSource_Private.h"
 
-/// Drag & Drop additions
 @interface AAPLCollectionViewGridLayout ()
-
-/// Start dragging a cell at the specified index path
-- (void)beginDraggingItemAtIndexPath:(NSIndexPath *)indexPath;
-- (void)endDragging;
-- (void)cancelDragging;
-
-/// drag the cell based on the information provided by the gesture recognizer
-- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer;
 
 // Data source delegate methods that are helpful for performing animation
 - (void)dataSource:(AAPLDataSource *)dataSource didInsertSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction;

@@ -4,7 +4,7 @@
  
  Abstract:
  
-  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit and drag to reorder support.
+  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit support.
   
  */
 
@@ -49,14 +49,10 @@ NS_INLINE UIColor *actionColor(void) {
 @property (nonatomic, strong) NSLayoutConstraint *contentLeftConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *contentWidthConstraint;
 @property (nonatomic, strong) NSArray *editingConstraints;
-@property (nonatomic, strong) UIImageView *reorderImageView;
 @property (nonatomic, strong) UIImageView *removeImageView;
 @property (nonatomic, strong) AAPLActionsView *editActionsView;
 @property (nonatomic) BOOL removeControlRotated;
 @property (nonatomic, readwrite) BOOL shouldDisplaySwipeToEditAccessories;
-
-/// Flag from attributes
-@property (nonatomic) BOOL movable;
 
 @end
 
@@ -232,14 +228,16 @@ NS_INLINE UIColor *actionColor(void) {
 
 @implementation AAPLCollectionViewCell
 
++ (BOOL)requiresConstraintBasedLayout
+{
+    return YES;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
-
-    // We default to showing the reorder control unless we're told not to.
-    _showsReorderControl = YES;
 
     // We don't get background or selectedBackground views unless we create them!
     self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -280,11 +278,6 @@ NS_INLINE UIColor *actionColor(void) {
 
     [_removeImageView setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 
-    _reorderImageView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"AAPLDragGrabber"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
-    _reorderImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    _reorderImageView.tintColor = [UIColor lightGrayColor];
-    [_reorderImageView setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-
     contentView.clipsToBounds = YES;
     return self;
 }
@@ -318,13 +311,6 @@ NS_INLINE UIColor *actionColor(void) {
 - (UIView *)removeControl
 {
     return _removeImageView;
-}
-
-- (UIView *)reorderControl
-{
-    if (![self shouldShowReorderControl])
-        return nil;
-    return _reorderImageView;
 }
 
 - (void)invalidateCollectionViewLayout
@@ -568,7 +554,6 @@ NS_INLINE UIColor *actionColor(void) {
         self.backgroundView.backgroundColor = attributes.backgroundColor;
         self.selectedBackgroundView.backgroundColor = attributes.selectedBackgroundColor;
         BOOL oldEditing = _editing;
-        self.movable = attributes.movable;
         self.editing = attributes.editing;
         if (oldEditing != self.editing) {
             if (self.editing)
@@ -592,11 +577,6 @@ NS_INLINE UIColor *actionColor(void) {
     CGRect bottomHairlineFrame = _bottomHairline.frame;
     bottomHairlineFrame.origin.y = 0;
     _bottomHairline.frame = bottomHairlineFrame;
-}
-
-- (BOOL)shouldShowReorderControl
-{
-    return self.showsReorderControl && self.movable;
 }
 
 - (void)rotateRemoveControl
@@ -660,7 +640,6 @@ NS_INLINE UIColor *actionColor(void) {
     UIView *superContentView = [super contentView];
 
     CGFloat contentHeight = CGRectGetHeight(_privateContentView.frame);
-    CGFloat contentWidth = CGRectGetWidth(_privateContentView.frame);
 
     CGFloat editingWidth = 0;
     [superContentView addSubview:_removeImageView];
@@ -676,19 +655,6 @@ NS_INLINE UIColor *actionColor(void) {
     _removeImageView.frame = removeFrame;
 
     editingWidth += removeWidth + 15;
-
-    if ([self shouldShowReorderControl]) {
-        [superContentView addSubview:_reorderImageView];
-
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:_reorderImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:superContentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:_reorderImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:_privateContentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-
-        CGRect reorderFrame = _reorderImageView.frame;
-        reorderFrame.origin = CGPointMake(contentWidth, ceil((contentHeight - CGRectGetHeight(reorderFrame))/2));
-        _reorderImageView.frame = reorderFrame;
-
-        editingWidth += CGRectGetWidth(_reorderImageView.frame) + 15;
-    }
 
     _editingConstraints = constraints;
     [superContentView addConstraints:constraints];
@@ -716,7 +682,6 @@ NS_INLINE UIColor *actionColor(void) {
         [superContentView removeConstraints:self.editingConstraints];
         self.editingConstraints = nil;
         [self.removeImageView removeFromSuperview];
-        [self.reorderImageView removeFromSuperview];
         [self hideEditActions];
     }];
 }

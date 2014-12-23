@@ -4,7 +4,7 @@
  
  Abstract:
  
-  A state machine that manages a UILongPressGestureRecognizer and a UIPanGestureRecognizer to handle swipe to edit as well as drag to reorder.
+  A state machine that manages a a UIPanGestureRecognizer to handle swipe to edit.
   
  */
 
@@ -42,7 +42,6 @@ NSString * const AAPLSwipeStateAnimatingShut = @"AnimatingShutState";
 NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 #define REMOVE_CONTROL_EDGE_INSETS UIEdgeInsetsMake(-15, -15, -15, -15)
-#define REORDER_CONTROL_EDGE_INSETS UIEdgeInsetsMake(-15, -15, -15, -15)
 
 @interface AAPLCancelSwipeToEditGestureRecognizer : UITapGestureRecognizer
 
@@ -58,7 +57,6 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 @property (nonatomic, strong) UICollectionView *collectionView;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (nonatomic, strong) AAPLCollectionViewCell *editingCell;
 @property (nonatomic) CGFloat startTrackingX;
 
@@ -86,19 +84,12 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
     _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _panGestureRecognizer.delegate = self;
 
-    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
-    _longPressGestureRecognizer.minimumPressDuration = 0.05;
-    _longPressGestureRecognizer.delegate = self;
-
     for (UIGestureRecognizer *recognizer in _collectionView.gestureRecognizers) {
         if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]])
             [recognizer requireGestureRecognizerToFail:_panGestureRecognizer];
-        if ([recognizer isKindOfClass:[UILongPressGestureRecognizer class]])
-            [recognizer requireGestureRecognizerToFail:_longPressGestureRecognizer];
     }
 
     [collectionView addGestureRecognizer:_panGestureRecognizer];
-    [collectionView addGestureRecognizer:_longPressGestureRecognizer];
 
     return self;
 }
@@ -181,22 +172,10 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
-    if (!_batchEditing)
-        [self handleNormalPan:recognizer];
-    else
-        [self handleBatchEditPan:recognizer];
-}
-
-- (void)handleBatchEditPan:(UIPanGestureRecognizer *)recognizer
-{
-    UICollectionView *collectionView = self.collectionView;
-    AAPLCollectionViewGridLayout *layout = (AAPLCollectionViewGridLayout *)collectionView.collectionViewLayout;
-    if ([layout isKindOfClass:[AAPLCollectionViewGridLayout class]])
-        [layout handlePanGesture:recognizer];
-}
-
-- (void)handleNormalPan:(UIPanGestureRecognizer *)recognizer
-{
+    if (_batchEditing) {
+        return;
+    }
+    
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
         {
@@ -281,50 +260,6 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
         [self shutActionPaneForEditingCellAnimated:YES];
 }
 
-- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
-{
-    UICollectionView *collectionView = self.collectionView;
-    AAPLCollectionViewGridLayout *layout = (AAPLCollectionViewGridLayout *)collectionView.collectionViewLayout;
-    if (![layout isKindOfClass:[AAPLCollectionViewGridLayout class]])
-        layout = nil;
-
-    NSIndexPath *indexPath = self.trackedIndexPath;
-
-    switch (recognizer.state) {
-        case UIGestureRecognizerStateBegan:
-            if (_batchEditing && [self.currentState isEqualToString:AAPLSwipeStateTracking])
-                [layout beginDraggingItemAtIndexPath:indexPath];
-            break;
-
-        case UIGestureRecognizerStateCancelled:
-            if (_batchEditing && [self.currentState isEqualToString:AAPLSwipeStateTracking])
-                [layout cancelDragging];
-            self.currentState = AAPLSwipeStateNothing;
-            break;
-            
-        case UIGestureRecognizerStateEnded:
-            if ([self.currentState isEqualToString:AAPLSwipeStateEditing] || [self.currentState isEqualToString:AAPLSwipeStateAnimatingOpen])
-                [self shutActionPaneForEditingCellAnimated:YES];
-            else if (_batchEditing && [self.currentState isEqualToString:AAPLSwipeStateTracking]) {
-                [layout endDragging];
-                self.currentState = AAPLSwipeStateNothing;
-            }
-            else if ([self.currentState isEqualToString:AAPLSwipeStateNothing]) {
-                // Tap in the remove control
-                self.currentState = AAPLSwipeStateAnimatingOpen;
-                [_editingCell openActionPaneAnimated:YES completionHandler:^(BOOL finished){
-                    // Only set it to editing if we're still in the same state as we previously set. It can change if that devilish user keeps fiddling with things.
-                    if ([AAPLSwipeStateAnimatingOpen isEqualToString:self.currentState])
-                        self.currentState = AAPLSwipeStateEditing;
-                }];
-            }
-            break;
-
-        default:
-            break;
-    }
-}
-
 #pragma mark - State Transition methods
 
 - (void)didEnterEditingState
@@ -372,62 +307,8 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    SWIPE_LOG(@"batchEditing=%@ recogniser=%@ currentState=%@", NSStringFromBOOL(_batchEditing), (gestureRecognizer==_longPressGestureRecognizer ? @"LongPress" : (gestureRecognizer == _panGestureRecognizer ? @"Pan" : @"OTHER")), self.currentState);
+    SWIPE_LOG(@"batchEditing=%@ recogniser=%@ currentState=%@", NSStringFromBOOL(_batchEditing), (gestureRecognizer == _panGestureRecognizer ? @"Pan" : @"OTHER"), self.currentState);
 
-    if (gestureRecognizer == _longPressGestureRecognizer) {
-        // handle batch editing taps in the remove and reorder controls
-        if (_batchEditing && [self.currentState isEqualToString:AAPLSwipeStateNothing]) {
-
-            NSUInteger numberOfTouches = gestureRecognizer.numberOfTouches;
-            for (NSUInteger touchIndex = 0; touchIndex < numberOfTouches; ++touchIndex) {
-                CGPoint touchLocation = [gestureRecognizer locationOfTouch:touchIndex inView:_collectionView];
-                NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:touchLocation];
-                AAPLCollectionViewCell *cell = (AAPLCollectionViewCell *)[_collectionView cellForItemAtIndexPath:indexPath];
-                if (![cell isKindOfClass:[AAPLCollectionViewCell class]])
-                    return NO;
-
-                // Check if the tap is in the remove control
-                UIView *removeControl = cell.removeControl;
-                CGRect removeBounds = UIEdgeInsetsInsetRect(removeControl.bounds, REMOVE_CONTROL_EDGE_INSETS);
-                touchLocation = [gestureRecognizer locationOfTouch:touchIndex inView:removeControl];
-                if (CGRectContainsPoint(removeBounds, touchLocation)) {
-                    _editingCell = cell;
-                    return YES;
-                }
-
-                // Check if the tap is in the reorder control
-                UIView *reorderControl = cell.reorderControl;
-                CGRect reorderBounds = UIEdgeInsetsInsetRect(reorderControl.bounds, REORDER_CONTROL_EDGE_INSETS);
-                touchLocation = [gestureRecognizer locationOfTouch:touchIndex inView:reorderControl];
-                if (CGRectContainsPoint(reorderBounds, touchLocation)) {
-                    _editingCell = cell;
-                    self.currentState = AAPLSwipeStateTracking;
-                    return YES;
-                }
-            }
-
-            _editingCell = nil;
-            // Didn't find a touch that was in the remove control
-            return NO;
-        }
-
-        // cancel taps only work once we're in full edit mode or animating open
-        if (![self.currentState isEqualToString:AAPLSwipeStateEditing] && ![self.currentState isEqualToString:AAPLSwipeStateAnimatingOpen])
-            return NO;
-
-        // don't allow the cancel gesture to recognise if any of the touches are within the edit actions
-        NSUInteger numberOfTouches = gestureRecognizer.numberOfTouches;
-        UIView *editActionsView = _editingCell.actionsView;
-        CGRect disabledRect = editActionsView.bounds;
-
-        for (NSUInteger touchIndex = 0; touchIndex < numberOfTouches; ++touchIndex) {
-            CGPoint touchLocation = [gestureRecognizer locationOfTouch:touchIndex inView:editActionsView];
-            if (CGRectContainsPoint(disabledRect, touchLocation))
-                return NO;
-        }
-        
-        return YES;
-    }
 
     if (gestureRecognizer == _panGestureRecognizer) {
         // When batch editing, we transition to tracking when we detect a tap in the reorder control, so allow the pan recogniser to begin when we're tracking
@@ -470,12 +351,6 @@ NSString * const AAPLSwipeStateGroupEdit = @"GroupEdit";
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ([_longPressGestureRecognizer isEqual:gestureRecognizer])
-        return [_panGestureRecognizer isEqual:otherGestureRecognizer];
-
-    if ([_panGestureRecognizer isEqual:gestureRecognizer])
-        return [_longPressGestureRecognizer isEqual:otherGestureRecognizer];
-
     return NO;
 }
 

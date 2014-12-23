@@ -37,7 +37,6 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 @interface AAPLGridLayoutItemInfo : NSObject
 @property (nonatomic) CGRect frame;
 
-@property (nonatomic) BOOL dragging;
 @property (nonatomic) NSInteger columnIndex;
 @property (nonatomic) BOOL needSizeUpdate;
 @end
@@ -52,9 +51,6 @@ typedef CGSize (^AAPLLayoutMeasureBlock)(NSInteger itemIndex, CGRect frame);
 /// Layout information for a section
 @interface AAPLGridLayoutSectionInfo : NSObject
 @property (nonatomic) CGRect frame;
-
-@property (nonatomic) NSUInteger phantomCellIndex;
-@property (nonatomic) CGSize phantomCellSize;
 
 @property (nonatomic, copy) NSArray *pinnableHeaderAttributes;
 

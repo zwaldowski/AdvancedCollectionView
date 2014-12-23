@@ -4,7 +4,7 @@
  
  Abstract:
  
-  A subclass of UICollectionViewController that adds support for swipe to edit and drag reordering.
+  A subclass of UICollectionViewController that adds support for swipe to edit.
   
  */
 

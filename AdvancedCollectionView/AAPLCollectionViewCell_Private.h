@@ -4,7 +4,7 @@
  
  Abstract:
  
-  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit and drag to reorder support.
+  The base collection view cell used by the AAPLCollectionViewGridLayout code. This cell provides swipe to edit support.
   
   This file contains properties and methods that are used for communication internally between the layout, the swipe to edit state machine and other mechanisms. Most likely, it is not necessary to access these methods and properties to use AAPLCollectionViewCell correctly.
   
@@ -18,7 +18,6 @@
 
 @property (nonatomic, readonly, strong) UIView *actionsView;
 @property (nonatomic, readonly, strong) UIView *removeControl;
-@property (nonatomic, readonly, strong) UIView *reorderControl;
 
 @property (nonatomic) CGFloat swipeTrackingPosition;
 @property (nonatomic, readonly) CGFloat minimumSwipeTrackingPosition;
@@ -28,9 +27,6 @@
 
 /// The color of the separators that will be shown while editing. Ignored if showsSeparatorsWhileEditing is NO.
 @property (nonatomic, strong) UIColor *separatorColor;
-
-/// Will a reorder control be shown while this cell is in edit mode? Default is NO.
-@property (nonatomic) BOOL showsReorderControl;
 
 // this is called during a UIView animation block for when the cell is removed
 - (void)closeForDelete;

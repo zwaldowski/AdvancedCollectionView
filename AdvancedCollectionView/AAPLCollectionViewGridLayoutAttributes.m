@@ -27,7 +27,6 @@
     result = (NSUInteger)(prime * result + _padding.bottom);
     result = (NSUInteger)(prime * result + _padding.right);
     result = prime * result + _editing;
-    result = prime * result + _movable;
     return result;
 }
 
@@ -40,7 +39,7 @@
     if (![super isEqual:other])
         return NO;
 
-    if (_editing != other->_editing || _movable != other->_movable)
+    if (_editing != other->_editing)
         return NO;
 
     if (_pinnedHeader != other->_pinnedHeader || _columnIndex != other->_columnIndex)
@@ -68,7 +67,6 @@
     attributes->_selectedBackgroundColor = _selectedBackgroundColor;
     attributes->_padding = _padding;
     attributes->_editing = _editing;
-    attributes->_movable = _movable;
     attributes->_unpinnedY = _unpinnedY;
     return attributes;
 }

@@ -63,12 +63,6 @@ static inline NSString *__unused AAPLStringFromNSIndexPath(NSIndexPath *indexPat
 #define LAYOUT_LOG(...)
 #endif
 
-
-#define DRAG_SHADOW_HEIGHT 19
-
-#define SCROLL_SPEED_MAX_MULTIPLIER 4.0
-#define FRAMES_PER_SECOND 60.0
-
 #define DEFAULT_ZINDEX 1
 #define SEPARATOR_ZINDEX 100
 #define HEADER_ZINDEX 1000
@@ -80,38 +74,11 @@ static NSString * const AAPLGridLayoutHeaderSeparatorKind = @"headerSeparator";
 static NSString * const AAPLGridLayoutFooterSeparatorKind = @"footerSeparator";
 static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLayoutGlobalHeaderBackgroundKind";
 
-static inline CGPoint AAPLPointAddPoint(CGPoint point1, CGPoint point2)
-{
-    return CGPointMake(point1.x + point2.x, point1.y + point2.y);
-}
-
-typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
-    AAPLAutoScrollDirectionUnknown = 0,
-    AAPLAutoScrollDirectionUp,
-    AAPLAutoScrollDirectionDown,
-    AAPLAutoScrollDirectionLeft,
-    AAPLAutoScrollDirectionRight
-};
 
 @interface AAPLCollectionViewGridLayout ()
 @property (nonatomic) CGSize layoutSize;
 @property (nonatomic) CGSize oldLayoutSize;
 @property (nonatomic) BOOL preparingLayout;
-
-/// Scroll direction isn't really supported, but it might be in the future. Always returns UICollectionViewScrollDirectionVertical.
-@property (nonatomic, readonly) UICollectionViewScrollDirection scrollDirection;
-@property (nonatomic) CGFloat scrollingSpeed;
-@property (nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;
-@property (strong, nonatomic) NSIndexPath *selectedItemIndexPath;
-@property (strong, nonatomic) NSIndexPath *sourceItemIndexPath;
-@property (strong, nonatomic) UIView *currentView;
-@property (assign, nonatomic) CGPoint currentViewCenter;
-@property (assign, nonatomic) CGPoint panTranslationInCollectionView;
-@property (strong, nonatomic) CADisplayLink *displayLink;
-@property (nonatomic) AAPLAutoScrollDirection autoscrollDirection;
-@property (nonatomic) CGRect autoscrollBounds;
-@property (nonatomic) CGRect dragBounds;
-@property (nonatomic) CGSize dragCellSize;
 
 @property (nonatomic, strong) NSMutableArray *layoutAttributes;
 @property (nonatomic, copy) NSArray *sections;
@@ -141,12 +108,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     struct {
         /// the data source has the can edit method
         unsigned int dataSourceHasCanEdit:1;
-        /// the data source has the can move method
-        unsigned int dataSourceHasCanMoveItem:1;
-        /// the data source has the can move item to index path method
-        unsigned int dataSourceHasCanMoveItemToIndex:1;
-        /// the data source has the move item to index path method
-        unsigned int dataSourceHasMoveItemToIndex:1;
         /// the data source has the snapshot metrics method
         unsigned int dataSourceHasSnapshotMetrics:1;
         /// layout data becomes invalid if the data source changes
@@ -193,8 +154,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     _indexPathKindToSupplementaryAttributes = [NSMutableDictionary dictionary];
     _oldIndexPathKindToSupplementaryAttributes = [NSMutableDictionary dictionary];
 
-    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(100, 100, 100, 100);
-
     _updateSectionDirections = [NSMutableDictionary dictionary];
     _layoutAttributes = [NSMutableArray array];
 }
@@ -210,340 +169,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     _editing = editing;
     [self invalidateLayout];
 }
-
-#pragma mark - Drag & Drop
-
-- (void)beginDraggingItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionView *collectionView = self.collectionView;
-    UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-
-    CGRect dragFrame = cell.frame;
-    _dragCellSize = dragFrame.size;
-
-    UIView *snapshotView = [cell snapshotViewAfterScreenUpdates:YES];
-
-    UIImageView *shadowView = [[UIImageView alloc] initWithFrame:CGRectInset(dragFrame, 0, -DRAG_SHADOW_HEIGHT)];
-    shadowView.image = [[UIImage imageNamed:@"AAPLDragShadow"] resizableImageWithCapInsets:UIEdgeInsetsMake(DRAG_SHADOW_HEIGHT, 1, DRAG_SHADOW_HEIGHT, 1)];
-    shadowView.opaque = NO;
-    
-    dragFrame.origin = CGPointMake(0, DRAG_SHADOW_HEIGHT);
-    snapshotView.frame = dragFrame;
-    [shadowView addSubview:snapshotView];
-    _currentView = shadowView;
-
-    _currentView.center = cell.center;
-    [collectionView addSubview:_currentView];
-
-    _currentViewCenter = _currentView.center;
-    _selectedItemIndexPath = indexPath;
-    _sourceItemIndexPath = indexPath;
-
-    AAPLGridLayoutSectionInfo *sectionInfo = [self sectionInfoForIndexPath:indexPath];
-    AAPLGridLayoutItemInfo *itemInfo = sectionInfo.items[indexPath.item];
-    itemInfo.dragging = YES;
-
-    _autoscrollBounds = CGRectZero;
-    _autoscrollBounds.size = collectionView.frame.size;
-    _autoscrollBounds = UIEdgeInsetsInsetRect(_autoscrollBounds, _scrollingTriggerEdgeInsets);
-
-    CGRect collectionViewFrame = collectionView.frame;
-    CGFloat collectionViewWidth = CGRectGetWidth(collectionViewFrame);
-    CGFloat collectionViewHeight = CGRectGetHeight(collectionViewFrame);
-
-    _dragBounds = CGRectMake(_dragCellSize.width/2, _dragCellSize.height/2, collectionViewWidth - _dragCellSize.width, collectionViewHeight - _dragCellSize.height);
-}
-
-- (void)cancelDragging
-{
-    [_currentView removeFromSuperview];
-
-    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForIndexPath:_sourceItemIndexPath];
-    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForIndexPath:_selectedItemIndexPath];
-
-    destinationSection.phantomCellIndex = NSNotFound;
-    destinationSection.phantomCellSize = CGSizeZero;
-
-    NSInteger fromIndex = _sourceItemIndexPath.item;
-
-    AAPLGridLayoutItemInfo *item = sourceSection.items[fromIndex];
-    item.dragging = NO;
-
-    AAPLGridLayoutInvalidationContext *context = [[AAPLGridLayoutInvalidationContext alloc] init];
-    context.invalidateLayoutMetrics = YES;
-    [self invalidateLayoutWithContext:context];
-}
-
-- (void)endDragging
-{
-    [_currentView removeFromSuperview];
-
-    AAPLGridLayoutSectionInfo *sourceSection = [self sectionInfoForIndexPath:_sourceItemIndexPath];
-    AAPLGridLayoutSectionInfo *destinationSection = [self sectionInfoForIndexPath:_selectedItemIndexPath];
-
-    destinationSection.phantomCellIndex = NSNotFound;
-    destinationSection.phantomCellSize = CGSizeZero;
-
-    NSIndexPath *fromIndexPath = _sourceItemIndexPath;
-    NSIndexPath *toIndexPath = _selectedItemIndexPath;
-
-    NSInteger fromIndex = fromIndexPath.item;
-    NSInteger toIndex = toIndexPath.item;
-
-    AAPLGridLayoutItemInfo *item = sourceSection.items[fromIndex];
-    item.dragging = NO;
-
-    BOOL needsUpdate = YES;
-
-    if (sourceSection == destinationSection) {
-        if (fromIndex == toIndex)
-            needsUpdate = NO;
-
-        if (fromIndex < toIndex) {
-            toIndex--;
-            toIndexPath = [NSIndexPath indexPathForItem:toIndex inSection:toIndexPath.section];
-        }
-    }
-
-    if (needsUpdate) {
-        [sourceSection.items removeObjectAtIndex:fromIndex];
-        [destinationSection.items insertObject:item atIndex:toIndex];
-
-        if (_flags.dataSourceHasMoveItemToIndex) {
-            UICollectionView *collectionView = self.collectionView;
-            id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
-
-            // Tell the data source, but don't animate because we've already updated everything in place.
-            [UIView performWithoutAnimation:^{
-                [dataSource collectionView:collectionView moveItemAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
-            }];
-        }
-    }
-
-    AAPLGridLayoutInvalidationContext *context = [[AAPLGridLayoutInvalidationContext alloc] init];
-    context.invalidateLayoutMetrics = YES;
-    [self invalidateLayoutWithContext:context];
-
-    _selectedItemIndexPath = nil;
-}
-
-- (UICollectionViewScrollDirection)scrollDirection
-{
-    return UICollectionViewScrollDirectionVertical;
-}
-
-- (void)invalidateScrollTimer
-{
-    if (!_displayLink.paused)
-        [_displayLink invalidate];
-    _displayLink = nil;
-}
-
-- (void)setupScrollTimerInDirection:(AAPLAutoScrollDirection)direction {
-    if (_displayLink && !_displayLink.paused) {
-        if (_autoscrollDirection == direction)
-            return;
-    }
-
-    [self invalidateScrollTimer];
-
-    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleScroll:)];
-    _autoscrollDirection = direction;
-
-    [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-}
-
-// Tight loop, allocate memory sparely, even if they are stack allocation.
-- (void)handleScroll:(CADisplayLink *)displayLink
-{
-    AAPLAutoScrollDirection direction = _autoscrollDirection;
-    if (direction == AAPLAutoScrollDirectionUnknown)
-        return;
-
-    UICollectionView *collectionView = self.collectionView;
-    CGSize frameSize = collectionView.bounds.size;
-    CGSize contentSize = collectionView.contentSize;
-    CGPoint contentOffset = collectionView.contentOffset;
-
-    // Need to keep the distance as an integer, because the contentOffset property is automatically rounded. This would cause the view center to begin to diverge from the scrolling and appear to slip away from under the user's finger.
-    CGFloat distance = AAPLRound(self.scrollingSpeed / FRAMES_PER_SECOND, collectionView.aapl_scale, NSRoundBankers);
-    CGPoint translation = CGPointZero;
-
-    switch (direction) {
-        case AAPLAutoScrollDirectionUp: {
-            distance = -distance;
-            CGFloat minY = 0.0f;
-
-            if ((contentOffset.y + distance) <= minY) {
-                distance = -contentOffset.y;
-            }
-
-            translation = CGPointMake(0.0f, distance);
-            break;
-        }
-
-        case AAPLAutoScrollDirectionDown: {
-            CGFloat maxY = fmax(contentSize.height, frameSize.height) - frameSize.height;
-
-            if ((contentOffset.y + distance) >= maxY) {
-                distance = maxY - contentOffset.y;
-            }
-
-            translation = CGPointMake(0.0f, distance);
-            break;
-        }
-
-        case AAPLAutoScrollDirectionLeft: {
-            distance = -distance;
-            CGFloat minX = 0.0f;
-
-            if ((contentOffset.x + distance) <= minX) {
-                distance = -contentOffset.x;
-            }
-
-            translation = CGPointMake(distance, 0.0f);
-            break;
-        }
-
-        case AAPLAutoScrollDirectionRight: {
-            CGFloat maxX = fmax(contentSize.width, frameSize.width) - frameSize.width;
-
-            if ((contentOffset.x + distance) >= maxX) {
-                distance = maxX - contentOffset.x;
-            }
-
-            translation = CGPointMake(distance, 0.0f);
-            break;
-        }
-
-        default:
-            break;
-    }
-
-    _currentViewCenter = AAPLPointAddPoint(_currentViewCenter, translation);
-    _currentView.center = [self pointConstrainedToDragBounds:AAPLPointAddPoint(_currentViewCenter, _panTranslationInCollectionView)];
-    collectionView.contentOffset = AAPLPointAddPoint(contentOffset, translation);
-}
-
-- (void)makeSpaceForDraggedCell
-{
-    NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentView.center];
-    NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
-
-    AAPLGridLayoutSectionInfo *oldSection = [self sectionInfoForIndexPath:previousIndexPath];
-    AAPLGridLayoutSectionInfo *newSection = [self sectionInfoForIndexPath:newIndexPath];
-
-    if (!newIndexPath)
-        return;
-
-    // If I've already made space for the cell, all indexes in that section need to be incremented by 1
-    if (oldSection.phantomCellIndex == previousIndexPath.item && newIndexPath.section == previousIndexPath.section && newIndexPath.item >= oldSection.phantomCellIndex)
-        newIndexPath = [NSIndexPath indexPathForItem:newIndexPath.item+1 inSection:newIndexPath.section];
-
-    if ([newIndexPath isEqual:previousIndexPath])
-        return;
-
-    UICollectionView *collectionView = self.collectionView;
-    id<AAPLCollectionViewDataSourceGridLayout> dataSource = (id)collectionView.dataSource;
-
-    if (!_flags.dataSourceHasCanMoveItemToIndex || ![dataSource collectionView:collectionView canMoveItemAtIndexPath:_sourceItemIndexPath toIndexPath:newIndexPath]) {
-        return;
-    }
-
-    oldSection.phantomCellIndex = NSNotFound;
-    oldSection.phantomCellSize = CGSizeZero;
-    newSection.phantomCellIndex = newIndexPath.item;
-    newSection.phantomCellSize = _dragCellSize;
-    _selectedItemIndexPath = newIndexPath;
-
-    AAPLGridLayoutInvalidationContext *context = [[AAPLGridLayoutInvalidationContext alloc] init];
-    context.invalidateLayoutMetrics = YES;
-    [self invalidateLayoutWithContext:context];
-}
-
-- (CGPoint)pointConstrainedToDragBounds:(CGPoint)viewCenter
-{
-    if (UICollectionViewScrollDirectionVertical == self.scrollDirection) {
-        CGFloat left = CGRectGetMinX(_dragBounds);
-        CGFloat right = CGRectGetMaxX(_dragBounds);
-        if (viewCenter.x < left)
-            viewCenter.x = left;
-        else if (viewCenter.x > right)
-            viewCenter.x = right;
-    }
-
-    return viewCenter;
-}
-
-- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer
-{
-    UICollectionView *collectionView = self.collectionView;
-    CGPoint contentOffset = collectionView.contentOffset;
-
-    switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan:
-
-        case UIGestureRecognizerStateChanged: {
-            self.panTranslationInCollectionView = [gestureRecognizer translationInView:collectionView];
-            CGPoint viewCenter = AAPLPointAddPoint(self.currentViewCenter, self.panTranslationInCollectionView);
-
-            self.currentView.center = [self pointConstrainedToDragBounds:viewCenter];
-
-            [self makeSpaceForDraggedCell];
-
-            CGPoint location = [gestureRecognizer locationInView:collectionView];
-
-            switch (self.scrollDirection) {
-                case UICollectionViewScrollDirectionVertical: {
-                    CGFloat y = location.y - contentOffset.y;
-                    CGFloat top = CGRectGetMinY(_autoscrollBounds);
-                    CGFloat bottom = CGRectGetMaxY(_autoscrollBounds);
-
-                    if (y < top) {
-                        self.scrollingSpeed = 300 * ((top - y) / _scrollingTriggerEdgeInsets.top) * SCROLL_SPEED_MAX_MULTIPLIER;
-                        [self setupScrollTimerInDirection:AAPLAutoScrollDirectionUp];
-                    }
-                    else if (y > bottom) {
-                        self.scrollingSpeed = 300 * ((y - bottom) / _scrollingTriggerEdgeInsets.bottom) * SCROLL_SPEED_MAX_MULTIPLIER;
-                        [self setupScrollTimerInDirection:AAPLAutoScrollDirectionDown];
-                    }
-                    else
-                        [self invalidateScrollTimer];
-                    break;
-                }
-
-                case UICollectionViewScrollDirectionHorizontal: {
-                    CGFloat x = location.x - contentOffset.x;
-                    CGFloat left = CGRectGetMinX(_autoscrollBounds);
-                    CGFloat right = CGRectGetMaxX(_autoscrollBounds);
-
-                    if (viewCenter.x < left) {
-                        self.scrollingSpeed = 300 * ((left - x) / _scrollingTriggerEdgeInsets.left) * SCROLL_SPEED_MAX_MULTIPLIER;
-                        [self setupScrollTimerInDirection:AAPLAutoScrollDirectionLeft];
-                    }
-                    else if (viewCenter.x > right) {
-                        self.scrollingSpeed = 300 * ((x - right) / _scrollingTriggerEdgeInsets.right) * SCROLL_SPEED_MAX_MULTIPLIER;
-                        [self setupScrollTimerInDirection:AAPLAutoScrollDirectionRight];
-                    }
-                    else
-                        [self invalidateScrollTimer];
-                    break;
-                }
-            }
-            break;
-        }
-
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded: {
-            [self invalidateScrollTimer];
-            break;
-        }
-            
-        default:
-            break;
-    }
-}
-
 
 #pragma mark - UICollectionViewLayout API
 
@@ -666,19 +291,13 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     
     attributes = [[self.class layoutAttributesClass] layoutAttributesForCellWithIndexPath:indexPath];
 
-    // Drag & Drop
-    attributes.hidden = item.dragging;
-
     // Need to be clever if we're still preparing the layout…
-    if (_preparingLayout) {
-        attributes.hidden = YES;
-    }
+    attributes.hidden = _preparingLayout;
     attributes.frame = item.frame;
     attributes.zIndex = DEFAULT_ZINDEX;
     attributes.backgroundColor = section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
     attributes.editing = _editing ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : NO;
-    attributes.movable = _editing ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
     attributes.columnIndex = item.columnIndex;
 
     LAYOUT_LOG(@"Created attributes for %@: %@ hidden = %@ preparingLayout %@", AAPLStringFromNSIndexPath(indexPath), NSStringFromCGRect(attributes.frame), AAPLStringFromBOOL(attributes.hidden), AAPLStringFromBOOL(_preparingLayout));
@@ -872,17 +491,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     return result;
 }
-
-
-- (NSArray *)indexPathsToInsertForSupplementaryViewOfKind:(NSString *)kind
-{
-    LAYOUT_LOG(@"kind=%@", kind);
-    return [super indexPathsToInsertForSupplementaryViewOfKind:kind];
-}
-
-//- (NSArray *)indexPathsToInsertForDecorationViewOfKind:(NSString *)kind
-//{
-//}
 
 - (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingDecorationElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
@@ -1104,9 +712,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 {
     id dataSource = self.collectionView.dataSource;
     _flags.dataSourceHasCanEdit = [dataSource respondsToSelector:@selector(collectionView:canEditItemAtIndexPath:)];
-    _flags.dataSourceHasCanMoveItem = [dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)];
-    _flags.dataSourceHasCanMoveItemToIndex = [dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:toIndexPath:)];
-    _flags.dataSourceHasMoveItemToIndex = [dataSource respondsToSelector:@selector(collectionView:moveItemAtIndexPath:toIndexPath:)];
     _flags.dataSourceHasSnapshotMetrics = [dataSource respondsToSelector:@selector(snapshotMetrics)];
 }
 
@@ -1410,12 +1015,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
             newAttribute.editing = self.editing ? (self->_flags.dataSourceHasCanEdit ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : YES) : NO;
-            newAttribute.movable = self.editing && self->_flags.dataSourceHasCanMoveItem ? [dataSource collectionView:collectionView canMoveItemAtIndexPath:indexPath] : NO;
             newAttribute.columnIndex = columnIndex;
             newAttribute.hidden = NO;
-
-            // Drag & Drop
-            newAttribute.hidden = item.dragging;
 
             [self.layoutAttributes addObject:newAttribute];
 
