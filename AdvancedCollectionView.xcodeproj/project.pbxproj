@@ -77,7 +77,6 @@
 		DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */; };
 		DB8100951A3CD40100E758F6 /* AAPLLayoutMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */; };
 		DB8100961A3CD40100E758F6 /* AAPLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */; };
-		DB8100971A3CD40100E758F6 /* AAPLSwipeToEditStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A7C192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.m */; };
 		DB8100981A3CD40100E758F6 /* AAPLBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */; };
 		DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */; };
 		DB81009A1A3CD40100E758F6 /* AAPLHairlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */; };
@@ -86,8 +85,6 @@
 		DB81009D1A3CD40100E758F6 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */; };
 		DB81009E1A3CD40100E758F6 /* AAPLSegmentedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */; };
 		DB81009F1A3CD44300E758F6 /* AAPLContentLoading.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */; };
-		DB8100A01A3CD44A00E758F6 /* AAPLAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A40192A7E1200F673A0 /* AAPLAction.m */; };
-		DB8100A11A3CD45200E758F6 /* AAPLAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A3F192A7E1200F673A0 /* AAPLAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A21A3CD45200E758F6 /* AAPLContentLoading.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A31A3CD45200E758F6 /* AAPLStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100A41A3CD45A00E758F6 /* AAPLDataSource+Headers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -107,7 +104,6 @@
 		DB8100B31A3CD49600E758F6 /* AAPLCollectionViewGridLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB8100B41A3CD49600E758F6 /* AAPLLayoutMetrics_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB8100B51A3CD49C00E758F6 /* AAPLCollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B61A3CD49C00E758F6 /* AAPLSwipeToEditStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A7B192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB8100B71A3CD4A500E758F6 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100B81A3CD4A500E758F6 /* AAPLCollectionViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100B91A3CD4A500E758F6 /* AAPLHairlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -115,7 +111,6 @@
 		DB8100BB1A3CD4A500E758F6 /* AAPLPlaceholderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8100BD1A3CD4A500E758F6 /* AAPLSegmentedHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100BE1A3CD4A900E758F6 /* AAPLCollectionViewCell_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A84192A7E1200F673A0 /* AAPLCollectionViewCell_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -163,8 +158,6 @@
 		1FA42970192A798300F673A0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1FA42972192A798300F673A0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1FA4297E192A798300F673A0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		1FA42A3F192A7E1200F673A0 /* AAPLAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLAction.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A40192A7E1200F673A0 /* AAPLAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLAction.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLContentLoading.h; sourceTree = "<group>"; };
 		1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLContentLoading.m; sourceTree = "<group>"; };
 		1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLStateMachine.h; sourceTree = "<group>"; };
@@ -199,13 +192,10 @@
 		1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLLayoutMetrics_Private.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A7B192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLSwipeToEditStateMachine.h; sourceTree = "<group>"; };
-		1FA42A7C192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSwipeToEditStateMachine.m; sourceTree = "<group>"; };
 		1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLBasicCell.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLBasicCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewCell.h; sourceTree = "<group>"; };
 		1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewCell.m; sourceTree = "<group>"; };
-		1FA42A84192A7E1200F673A0 /* AAPLCollectionViewCell_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewCell_Private.h; sourceTree = "<group>"; };
 		1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLHairlineView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLHairlineView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPinnableHeaderView.h; sourceTree = "<group>"; };
@@ -397,8 +387,6 @@
 			isa = PBXGroup;
 			children = (
 				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
-				1FA42A3F192A7E1200F673A0 /* AAPLAction.h */,
-				1FA42A40192A7E1200F673A0 /* AAPLAction.m */,
 				1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */,
 				1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */,
 				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
@@ -494,8 +482,6 @@
 			children = (
 				1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */,
 				1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */,
-				1FA42A7B192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.h */,
-				1FA42A7C192A7E1200F673A0 /* AAPLSwipeToEditStateMachine.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -507,7 +493,6 @@
 				1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */,
 				1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */,
 				1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */,
-				1FA42A84192A7E1200F673A0 /* AAPLCollectionViewCell_Private.h */,
 				1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */,
 				1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */,
 				1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */,
@@ -554,13 +539,11 @@
 			files = (
 				DB8100A31A3CD45200E758F6 /* AAPLStateMachine.h in Headers */,
 				DB8100B41A3CD49600E758F6 /* AAPLLayoutMetrics_Private.h in Headers */,
-				DB8100A11A3CD45200E758F6 /* AAPLAction.h in Headers */,
 				DB8100AD1A3CD46200E758F6 /* AAPLSegmentedDataSource.h in Headers */,
 				DB8100B81A3CD4A500E758F6 /* AAPLCollectionViewCell.h in Headers */,
 				DB8100B21A3CD49600E758F6 /* AAPLCollectionViewGridLayout_Private.h in Headers */,
 				DB8100B71A3CD4A500E758F6 /* AAPLBasicCell.h in Headers */,
 				DB8100AC1A3CD46200E758F6 /* AAPLDataSource_Private.h in Headers */,
-				DB8100B61A3CD49C00E758F6 /* AAPLSwipeToEditStateMachine.h in Headers */,
 				DB8100AA1A3CD46200E758F6 /* AAPLComposedDataSource_Private.h in Headers */,
 				DB8100AB1A3CD46200E758F6 /* AAPLDataSource.h in Headers */,
 				DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */,
@@ -576,7 +559,6 @@
 				DB8100B01A3CD48E00E758F6 /* AAPLLayoutMetrics.h in Headers */,
 				DB8100BA1A3CD4A500E758F6 /* AAPLPinnableHeaderView.h in Headers */,
 				DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */,
-				DB8100BE1A3CD4A900E758F6 /* AAPLCollectionViewCell_Private.h in Headers */,
 				DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */,
 				DB8100B31A3CD49600E758F6 /* AAPLCollectionViewGridLayoutAttributes_Private.h in Headers */,
 				DB8100AF1A3CD48E00E758F6 /* AAPLCollectionViewGridLayoutAttributes.h in Headers */,
@@ -756,7 +738,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8100A01A3CD44A00E758F6 /* AAPLAction.m in Sources */,
 				DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */,
 				DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */,
 				DB81008D1A3CD40100E758F6 /* AAPLBasicDataSource.m in Sources */,
@@ -777,7 +758,6 @@
 				DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */,
 				DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */,
 				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
-				DB8100971A3CD40100E758F6 /* AAPLSwipeToEditStateMachine.m in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
 				DB81009D1A3CD40100E758F6 /* AAPLSectionHeaderView.m in Sources */,

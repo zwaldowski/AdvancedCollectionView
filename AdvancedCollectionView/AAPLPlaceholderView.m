@@ -12,7 +12,6 @@
 #import "AAPLMath.h"
 
 #define CORNER_RADIUS 3.0
-#define VERTICAL_ELEMENT_SPACING 35.0
 #define CONTINUOUS_CURVES_SIZE_FACTOR (1.528665)
 #define BUTTON_WIDTH 124.0
 #define BUTTON_HEIGHT 29.0
@@ -378,86 +377,6 @@
         [oldPlaceHolder removeFromSuperview];
     };
 
-    if (animated) {
-        [UIView animateWithDuration:0.25 animations:animation completion:completion];
-    }
-    else {
-        [UIView performWithoutAnimation:^{
-            animation();
-            completion(YES);
-        }];
-    }
-}
-
-@end
-
-
-@interface AAPLPlaceholderCell ()
-@property (nonatomic, strong) AAPLPlaceholderView *placeholderView;
-@end
-
-@implementation AAPLPlaceholderCell
-
-- (void)hidePlaceholderAnimated:(BOOL)animated
-{
-    AAPLPlaceholderView *placeholderView = _placeholderView;
-
-    if (!placeholderView)
-        return;
-    
-    void(^completion)(BOOL) = ^(BOOL finished){
-        [placeholderView removeFromSuperview];
-        // If it's still the current placeholder, get rid of it
-        if ([self.placeholderView isEqual:placeholderView]) {
-            self.placeholderView = nil;
-        }
-    };
-
-    if (animated) {
-        [UIView animateWithDuration:0.25 animations:^{
-            placeholderView.alpha = 0.0;
-        } completion:completion];
-    }
-    else {
-        [UIView performWithoutAnimation:^{
-            completion(YES);
-        }];
-    }
-}
-
-- (void)showPlaceholderWithTitle:(NSString *)title message:(NSString *)message image:(UIImage *)image animated:(BOOL)animated
-{
-    UIView *contentView = self.contentView;
-
-    AAPLPlaceholderView *oldPlaceHolder = self.placeholderView;
-
-    if (oldPlaceHolder && [oldPlaceHolder.title isEqualToString:title] && [oldPlaceHolder.message isEqualToString:message])
-        return;
-
-    AAPLPlaceholderView *newPlaceholder = [[AAPLPlaceholderView alloc] initWithFrame:CGRectZero title:title message:message image:image buttonTitle:nil buttonAction:nil];
-    newPlaceholder.alpha = 0.0;
-    newPlaceholder.translatesAutoresizingMaskIntoConstraints = NO;
-    [contentView addSubview:newPlaceholder];
-    self.placeholderView = newPlaceholder;
-
-    NSMutableArray *constraints = [NSMutableArray array];
-    NSDictionary *views = NSDictionaryOfVariableBindings(newPlaceholder);
-
-    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[newPlaceholder]|" options:0 metrics:nil views:views]];
-    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[newPlaceholder]|" options:0 metrics:nil views:views]];
-
-    [contentView addConstraints:constraints];
-    [contentView sendSubviewToBack:newPlaceholder];
-    
-    void(^animation)(void) = ^{
-        newPlaceholder.alpha = 1.0;
-        oldPlaceHolder.alpha = 0.0;
-    };
-    
-    void(^completion)(BOOL) = ^(BOOL finished){
-        [oldPlaceHolder removeFromSuperview];
-    };
-    
     if (animated) {
         [UIView animateWithDuration:0.25 animations:animation completion:completion];
     }

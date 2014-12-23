@@ -6,8 +6,6 @@
  
   A UICollectionViewLayout subclass that works with AAPLDataSource instances to render content in a manner similar to UITableView but with such additional features as multiple columns, pinning headers, and placeholder views.
   
-  These properties and methods are used for internal communication between the AAPLDataSource  AAPLSwipeToEditStateMachine and the AAPLCollectionViewGridLayout. Using these classes doesn't require using these methods and properties.
-  
  */
 
 #import "AAPLCollectionViewGridLayout.h"

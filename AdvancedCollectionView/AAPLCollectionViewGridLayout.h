@@ -20,7 +20,4 @@
 /// Recompute the layout for a global header.
 - (void)invalidateLayoutForGlobalSection;
 
-/// Is the layout in editing mode? Default is NO.
-@property (nonatomic, getter = isEditing) BOOL editing;
-
 @end

@@ -26,7 +26,6 @@
     result = (NSUInteger)(prime * result + _padding.left);
     result = (NSUInteger)(prime * result + _padding.bottom);
     result = (NSUInteger)(prime * result + _padding.right);
-    result = prime * result + _editing;
     return result;
 }
 
@@ -37,9 +36,6 @@
 
     AAPLCollectionViewGridLayoutAttributes *other = object;
     if (![super isEqual:other])
-        return NO;
-
-    if (_editing != other->_editing)
         return NO;
 
     if (_pinnedHeader != other->_pinnedHeader || _columnIndex != other->_columnIndex)
@@ -66,7 +62,6 @@
     attributes->_backgroundColor = _backgroundColor;
     attributes->_selectedBackgroundColor = _selectedBackgroundColor;
     attributes->_padding = _padding;
-    attributes->_editing = _editing;
     attributes->_unpinnedY = _unpinnedY;
     return attributes;
 }

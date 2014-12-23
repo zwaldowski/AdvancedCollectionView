@@ -1,25 +1,17 @@
 /*
  Copyright (C) 2014 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
- 
- Abstract:
- 
-  A subclass of UICollectionViewController that adds support for swipe to edit.
-  
  */
 
 #import "AAPLCollectionViewController.h"
 #import "AAPLDataSource_Private.h"
-#import "AAPLSwipeToEditStateMachine.h"
 #import "AAPLCollectionViewGridLayout_Private.h"
-#import "AAPLCollectionViewCell.h"
 
 #define UPDATE_DEBUGGING 0
 
 static void * const AAPLDataSourceContext = @"DataSourceContext";
 
 @interface AAPLCollectionViewController () <UICollectionViewDelegate, AAPLDataSourceDelegate>
-@property (nonatomic, strong) AAPLSwipeToEditStateMachine *swipeStateMachine;
 @end
 
 @implementation AAPLCollectionViewController
@@ -34,7 +26,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     [super loadView];
     //  We need to know when the data source changes on the collection view so we can become the delegate for any APPLDataSource subclasses.
     [self.collectionView addObserver:self forKeyPath:@"dataSource" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:AAPLDataSourceContext];
-    _swipeStateMachine = [[AAPLSwipeToEditStateMachine alloc] initWithCollectionView:self.collectionView];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -48,13 +39,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
         [dataSource registerReusableViewsWithCollectionView:collectionView];
         [dataSource setNeedsLoadContent];
     }
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    self.editing = NO;
-    [_swipeStateMachine viewDidDisappear:animated];
 }
 
 - (void)setCollectionView:(UICollectionView *)collectionView
@@ -88,63 +72,11 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     }
 }
 
-- (void)setEditing:(BOOL)editing
-{
-    if (_editing == editing)
-        return;
-
-    _editing = editing;
-
-    AAPLCollectionViewGridLayout *layout = (AAPLCollectionViewGridLayout *)self.collectionView.collectionViewLayout;
-
-    NSAssert([layout isKindOfClass:[AAPLCollectionViewGridLayout class]], @"Editing only supported when using a layout derived from AAPLCollectionViewGridLayout");
-
-    if ([layout isKindOfClass:[AAPLCollectionViewGridLayout class]])
-        layout.editing = editing;
-    self.swipeStateMachine.batchEditing = editing;
-    [layout invalidateLayout];
-}
-
-#pragma mark - Swipe to delete support
-
-- (void)shutActionPaneAnimated:(BOOL)animated
-{
-    [self.swipeStateMachine shutActionPaneForEditingCellAnimated:animated];
-}
-
-- (void)swipeToDeleteCell:(AAPLCollectionViewCell *)sender
-{
-    UICollectionView *collectionView = self.collectionView;
-    AAPLCollectionViewGridLayout *layout = (AAPLCollectionViewGridLayout *)collectionView.collectionViewLayout;
-    if (![layout isKindOfClass:[AAPLCollectionViewGridLayout class]])
-        return;
-
-    AAPLDataSource *dataSource = (AAPLDataSource *)collectionView.dataSource;
-    if (![dataSource isKindOfClass:[AAPLDataSource class]])
-        return;
-
-    NSIndexPath *deleteIndexPath = [self.collectionView indexPathForCell:sender];
-    [dataSource removeItemAtIndexPath:deleteIndexPath];
-}
-
-- (void)willDismissActionSheetFromCell:(UICollectionViewCell *)cell
-{
-    [_swipeStateMachine shutActionPaneForEditingCellAnimated:YES];
-}
-
 #pragma mark - UICollectionViewDelegate methods
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [_swipeStateMachine.currentState isEqualToString:AAPLSwipeStateNothing];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (self.editing)
-        return NO;
-    else
-        return YES;
+    return NO;
 }
 
 #pragma mark - AAPLDataSourceDelegate methods
@@ -191,16 +123,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
 
 - (void)dataSource:(AAPLDataSource *)dataSource didRemoveItemsAtIndexPaths:(NSArray *)indexPaths
 {
-    NSIndexPath *trackedIndexPath = _swipeStateMachine.trackedIndexPath;
-    if (trackedIndexPath) {
-        for (NSIndexPath *indexPath in indexPaths) {
-            if ([trackedIndexPath isEqual:indexPath]) {
-                [_swipeStateMachine shutActionPaneForEditingCellAnimated:NO];
-                break;
-            }
-        }
-    }
-
 #if UPDATE_DEBUGGING
     NSLog(@"REMOVE ITEMS: %@", [self stringFromArrayOfIndexPaths:indexPaths]);
 #endif
@@ -234,16 +156,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
 {
     if (!sections)  // bail if nil just to keep collection view safe and pure
         return;
-
-    NSIndexPath *trackedIndexPath = _swipeStateMachine.trackedIndexPath;
-    if (trackedIndexPath) {
-        [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
-            if (trackedIndexPath.section  == sectionIndex) {
-                [self.swipeStateMachine shutActionPaneForEditingCellAnimated:NO];
-                *stop = YES;
-            }
-        }];
-    }
 
 #if UPDATE_DEBUGGING
     NSLog(@"DELETE SECTIONS: %@", [self stringFromIndexSet:sections]);

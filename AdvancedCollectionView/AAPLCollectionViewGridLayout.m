@@ -10,8 +10,6 @@
 
 #import "AAPLCollectionViewGridLayout_Internal.h"
 #import "AAPLLayoutMetrics_Private.h"
-#import "AAPLDataSource.h"
-#import "AAPLCollectionViewGridLayoutAttributes_Private.h"
 #import "UICollectionView+Helpers.h"
 #import "AAPLMath.h"
 #import "UIView+Helpers.h"
@@ -106,8 +104,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
 @implementation AAPLCollectionViewGridLayout  {
     struct {
-        /// the data source has the can edit method
-        unsigned int dataSourceHasCanEdit:1;
         /// layout data becomes invalid if the data source changes
         unsigned int layoutDataIsValid:1;
         /// layout metrics will only be valid if layout data is also valid
@@ -154,18 +150,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
     _updateSectionDirections = [NSMutableDictionary dictionary];
     _layoutAttributes = [NSMutableArray array];
-}
-
-
-#pragma mark - Properties
-
-- (void)setEditing:(BOOL)editing
-{
-    if (editing == _editing)
-        return;
-
-    _editing = editing;
-    [self invalidateLayout];
 }
 
 #pragma mark - UICollectionViewLayout API
@@ -295,7 +279,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
     attributes.zIndex = DEFAULT_ZINDEX;
     attributes.backgroundColor = section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
-    attributes.editing = _editing ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : NO;
     attributes.columnIndex = item.columnIndex;
 
     LAYOUT_LOG(@"Created attributes for %@: %@ hidden = %@ preparingLayout %@", AAPLStringFromNSIndexPath(indexPath), NSStringFromCGRect(attributes.frame), AAPLStringFromBOOL(attributes.hidden), AAPLStringFromBOOL(_preparingLayout));
@@ -327,7 +310,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
 
     attributes.frame = supplementalItem.frame;
     attributes.zIndex = HEADER_ZINDEX;
-    attributes.editing = _editing;
     attributes.padding = supplementalItem.padding;
     attributes.backgroundColor = supplementalItem.backgroundColor ? : section.backgroundColor;
     attributes.selectedBackgroundColor = section.selectedBackgroundColor;
@@ -939,7 +921,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
         headerAttribute.backgroundColor = header.backgroundColor ? : section.backgroundColor;
         headerAttribute.selectedBackgroundColor = header.selectedBackgroundColor;
         headerAttribute.padding = header.padding;
-        headerAttribute.editing = self.editing;
         headerAttribute.hidden = NO;
         [self.layoutAttributes addObject:headerAttribute];
 
@@ -1007,7 +988,6 @@ static NSString * const AAPLGridLayoutGlobalHeaderBackgroundKind = @"AAPLGridLay
             newAttribute.zIndex = DEFAULT_ZINDEX;
             newAttribute.backgroundColor = section.backgroundColor;
             newAttribute.selectedBackgroundColor = section.selectedBackgroundColor;
-            newAttribute.editing = self.editing ? (self->_flags.dataSourceHasCanEdit ? [dataSource collectionView:collectionView canEditItemAtIndexPath:indexPath] : YES) : NO;
             newAttribute.columnIndex = columnIndex;
             newAttribute.hidden = NO;
 

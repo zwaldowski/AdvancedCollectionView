@@ -58,7 +58,7 @@
             }
 
             if (error) {
-                [loading doneWithError:error];
+                [loading updateWithError:error];
                 return;
             }
 

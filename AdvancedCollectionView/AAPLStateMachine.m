@@ -55,30 +55,20 @@ static NSString * const AAPLStateNil = @"Nil";
     return currentState;
 }
 
-- (BOOL)applyState:(NSString *)toState
-{
-    return [self _setCurrentState:toState];
-}
-
 - (void)setCurrentState:(NSString *)toState
 {
-    [self _setCurrentState:toState];
-}
-
-- (BOOL)_setCurrentState:(NSString *)toState
-{
     NSString *fromState = self.currentState;
-       
+    
     if (self.shouldLogStateTransitions)
         NSLog(@" ••• request state change from %@ to %@", fromState, toState);
-
+    
     NSString *appliedToState = [self _validateTransitionFromState:fromState toState:toState];
     if (!appliedToState)
-        return NO;
-
+        return;
+    
     // ...send will-change message for downstream KVO support...
     id target = [self target];
-
+    
     SEL genericWillChangeAction = @selector(stateWillChange);
     if ([target respondsToSelector:genericWillChangeAction]) {
         typedef void (*ObjCMsgSendReturnVoid)(id, SEL);
@@ -92,8 +82,6 @@ static NSString * const AAPLStateNil = @"Nil";
     
     // ... send messages
     [self _performTransitionFromState:fromState toState:appliedToState];
-
-    return [toState isEqual:appliedToState];
 }
 
 - (NSString *)_missingTransitionFromState:(NSString *)fromState toState:(NSString *)toState

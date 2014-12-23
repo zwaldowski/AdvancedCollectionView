@@ -92,7 +92,6 @@
         return;
 
     self.hidden = layoutAttributes.hidden;
-    self.userInteractionEnabled = !layoutAttributes.editing;
 
     if (UIEdgeInsetsEqualToEdgeInsets(layoutAttributes.padding, UIEdgeInsetsZero))
         self.padding = self.defaultPadding;

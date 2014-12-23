@@ -9,75 +9,64 @@
  */
 
 #import "AAPLHairlineView.h"
+#import "UIView+Helpers.h"
 
 NS_INLINE UIColor *hairlineColor(void) {
     return [UIColor colorWithWhite:0.8f alpha:1];
 }
 
 @interface AAPLHairlineView ()
-@property (nonatomic) AAPLHairlineAlignment alignment;
+@property (nonatomic) UILayoutConstraintAxis axis;
 @end
 
 @implementation AAPLHairlineView
 
-+ (AAPLHairlineView *)hairlineViewForAlignment:(AAPLHairlineAlignment)alignment
+- (void)commonInit
 {
-    AAPLHairlineView *view = [[self alloc] initWithFrame:CGRectZero];
-    view.alignment = alignment;
-    return view;
-}
-
-- (instancetype)init
-{
-    return [self initWithFrame:CGRectZero];
+    self.backgroundColor = hairlineColor();
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    if (!self)
-        return nil;
-    self.backgroundColor = hairlineColor();
-    self.alignment = AAPLHairlineAlignmentHorizontal;
+    if (!self) { return nil; }
+    [self commonInit];
     return self;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
     self = [super initWithCoder:coder];
-    if (!self)
-        return nil;
-    self.backgroundColor = hairlineColor();
-    self.alignment = AAPLHairlineAlignmentHorizontal;
+    if (!self) { return nil; }
+    [self commonInit];
     return self;
-}
-
-- (CGFloat)thickness
-{
-    return [[UIScreen mainScreen] scale] > 1 ? 0.5 : 1.0;
 }
 
 - (void)setFrame:(CGRect)frame
 {
-    CGFloat hairline = self.thickness;
+    CGFloat hairline = self.aapl_hairline;
+    UILayoutConstraintAxis axis;
+    
     if (CGRectGetWidth(frame) > CGRectGetHeight(frame)) {
         frame.size.height = hairline;
-        _alignment = AAPLHairlineAlignmentHorizontal;
-        [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-    }
-    else {
+        axis = UILayoutConstraintAxisHorizontal;
+    } else {
         frame.size.width = hairline;
-        _alignment = AAPLHairlineAlignmentHorizontal;
-        [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-        [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
+        axis = UILayoutConstraintAxisVertical;
     }
+    
+    self.axis = axis;
+
+    UILayoutConstraintAxis alternate = axis == UILayoutConstraintAxisHorizontal ? UILayoutConstraintAxisVertical : UILayoutConstraintAxisHorizontal;
+    [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:axis];
+    [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:alternate];
+    
     [super setFrame:frame];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    CGFloat hairline = self.thickness;
+    CGFloat hairline = self.aapl_hairline;
     if (size.width > size.height)
         size.height = hairline;
     else
@@ -87,9 +76,12 @@ NS_INLINE UIColor *hairlineColor(void) {
 
 - (CGSize)intrinsicContentSize
 {
-    if (AAPLHairlineAlignmentHorizontal == _alignment)
-        return CGSizeMake(UIViewNoIntrinsicMetric, self.thickness);
-    else
-        return CGSizeMake(self.thickness, UIViewNoIntrinsicMetric);
+    CGFloat hairline = self.aapl_hairline;
+    if (self.axis == UILayoutConstraintAxisHorizontal) {
+        return CGSizeMake(UIViewNoIntrinsicMetric, hairline);
+    } else {
+        return CGSizeMake(hairline, UIViewNoIntrinsicMetric);
+    }
 }
+
 @end

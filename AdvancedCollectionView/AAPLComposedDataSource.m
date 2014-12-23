@@ -143,15 +143,6 @@
     return results;
 }
 
-- (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
-    AAPLDataSource *dataSource = mapping.dataSource;
-    NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
-
-    [dataSource removeItemAtIndexPath:localIndexPath];
-}
-
 #pragma mark - AAPLComposedDataSource API
 
 - (void)addDataSource:(AAPLDataSource *)dataSource
@@ -320,16 +311,6 @@
     NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
     
     return [dataSource collectionView:wrapper sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:localIndexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    AAPLComposedMapping *mapping = [self mappingForGlobalSection:indexPath.section];
-    UICollectionView *wrapper = [AAPLComposedViewWrapper wrapperForView:collectionView mapping:mapping];
-    AAPLDataSource *dataSource = mapping.dataSource;
-    NSIndexPath *localIndexPath = [mapping localIndexPathForGlobalIndexPath:indexPath];
-    
-    return [dataSource collectionView:wrapper canEditItemAtIndexPath:localIndexPath];
 }
 
 #pragma mark - UICollectionViewDataSource methods

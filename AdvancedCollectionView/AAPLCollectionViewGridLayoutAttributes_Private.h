@@ -15,8 +15,6 @@
 @interface AAPLCollectionViewGridLayoutAttributes ()
 /// What is the column index for this item?
 @property (nonatomic) NSInteger columnIndex;
-/// Is the layout in edit mode
-@property (nonatomic) BOOL editing;
 
 /// Y offset when not pinned
 @property (nonatomic) CGFloat unpinnedY;

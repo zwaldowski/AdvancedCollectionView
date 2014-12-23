@@ -103,20 +103,14 @@ NSString * const AAPLLoadStateError = @"ErrorState";
     [self _doneWithNewState:nil error:nil update:nil];
 }
 
-- (void)done
-{
-    [self _doneWithNewState:AAPLLoadStateContentLoaded error:nil update:nil];
-}
-
 - (void)updateWithContent:(AAPLLoadingUpdateBlock)update
 {
     [self _doneWithNewState:AAPLLoadStateContentLoaded error:nil update:update];
 }
 
-- (void)doneWithError:(NSError *)error
+- (void)updateWithError:(NSError *)error
 {
-    NSString *newState = error ? AAPLLoadStateError : AAPLLoadStateContentLoaded;
-    [self _doneWithNewState:newState error:error update:nil];
+    [self _doneWithNewState:AAPLLoadStateError error:error update:nil];
 }
 
 - (void)updateWithNoContent:(AAPLLoadingUpdateBlock)update

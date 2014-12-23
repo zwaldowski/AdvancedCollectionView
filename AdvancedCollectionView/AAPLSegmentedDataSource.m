@@ -10,7 +10,6 @@
 
 #import "AAPLDataSource_Private.h"
 #import "AAPLSegmentedDataSource.h"
-#import "AAPLLayoutMetrics.h"
 #import "AAPLSegmentedHeaderView.h"
 
 NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHeaderKey";
@@ -80,27 +79,6 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     _selectedDataSource = nil;
 }
 
-- (AAPLDataSource *)dataSourceAtIndex:(NSInteger)dataSourceIndex
-{
-    return _dataSources[dataSourceIndex];
-}
-
-- (NSInteger)selectedDataSourceIndex
-{
-    return [_dataSources indexOfObject:_selectedDataSource];
-}
-
-- (void)setSelectedDataSourceIndex:(NSInteger)selectedDataSourceIndex
-{
-    [self setSelectedDataSourceIndex:selectedDataSourceIndex animated:NO];
-}
-
-- (void)setSelectedDataSourceIndex:(NSInteger)selectedDataSourceIndex animated:(BOOL)animated
-{
-    AAPLDataSource *dataSource = [_dataSources objectAtIndex:selectedDataSourceIndex];
-    [self setSelectedDataSource:dataSource animated:animated completionHandler:nil];
-}
-
 - (void)setSelectedDataSource:(AAPLDataSource *)selectedDataSource
 {
     [self setSelectedDataSource:selectedDataSource animated:NO completionHandler:nil];
@@ -120,7 +98,6 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     }
 
     [self willChangeValueForKey:@"selectedDataSource"];
-    [self willChangeValueForKey:@"selectedDataSourceIndex"];
     NSAssert([_dataSources containsObject:selectedDataSource], @"selected data source must be contained in this data source");
 
     AAPLDataSource *oldDataSource = _selectedDataSource;
@@ -141,7 +118,6 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     _selectedDataSource = selectedDataSource;
 
     [self didChangeValueForKey:@"selectedDataSource"];
-    [self didChangeValueForKey:@"selectedDataSourceIndex"];
 
     // Update the sections all at once.
     [self notifyBatchUpdate:^{
@@ -167,23 +143,25 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     return [_selectedDataSource itemAtIndexPath:indexPath];
 }
 
-- (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    [_selectedDataSource removeItemAtIndexPath:indexPath];
-}
-
 - (void)configureSegmentedControl:(UISegmentedControl *)segmentedControl
 {
-    NSArray *titles = [self.dataSources valueForKey:@"title"];
-
     [segmentedControl removeAllSegments];
-    [titles enumerateObjectsUsingBlock:^(NSString *segmentTitle, NSUInteger segmentIndex, BOOL *stop) {
-        if ([segmentTitle isEqual:[NSNull null]])
-            segmentTitle = @"NULL";
+    
+    AAPLDataSource *selected = self.selectedDataSource;
+    __block NSInteger selectedIndex = -1;
+    
+    [self.dataSources enumerateObjectsUsingBlock:^(AAPLDataSource *dataSource, NSUInteger segmentIndex, BOOL *stop) {
+        NSString *segmentTitle = dataSource.title ?: @"NULL";
         [segmentedControl insertSegmentWithTitle:segmentTitle atIndex:segmentIndex animated:NO];
+        
+        if ([dataSource isEqual:selected]) {
+            selectedIndex = segmentIndex;
+        }
     }];
+
     [segmentedControl addTarget:self action:@selector(selectedSegmentIndexChanged:) forControlEvents:UIControlEventValueChanged];
-    segmentedControl.selectedSegmentIndex = self.selectedDataSourceIndex;
+    
+    segmentedControl.selectedSegmentIndex = selectedIndex;
 }
 
 - (AAPLLayoutSupplementaryMetrics *)segmentedControlHeader
@@ -345,14 +323,6 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
         return [super collectionView:collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
     }
     return [_selectedDataSource collectionView:collectionView sizeFittingSize:size forSupplementaryElementOfKind:kind atIndexPath:indexPath];
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if ([_selectedDataSource respondsToSelector:@selector(collectionView:canEditItemAtIndexPath:)]) {
-        return [_selectedDataSource collectionView:collectionView canEditItemAtIndexPath:indexPath];
-    }
-    return YES;
 }
 
 #pragma mark - UICollectionViewDataSource methods

@@ -11,7 +11,6 @@
 #import "AAPLDataSource_Private.h"
 #import "AAPLLayoutMetrics_Private.h"
 #import "AAPLPlaceholderView.h"
-#import "AAPLCollectionViewGridLayout.h"
 #import "UICollectionView+Helpers.h"
 @import Darwin.libkern.OSAtomic;
 
@@ -71,12 +70,6 @@
 {
     NSAssert(NO, @"Should be implemented by subclasses");
     return nil;
-}
-
-- (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSAssert(NO, @"Should be implemented by subclasses");
-    return;
 }
 
 - (NSInteger)numberOfSections

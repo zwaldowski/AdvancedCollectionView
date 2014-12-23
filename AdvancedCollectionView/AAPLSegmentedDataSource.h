@@ -34,14 +34,8 @@
 /// A reference to the selected data source.
 @property (nonatomic, strong) AAPLDataSource *selectedDataSource;
 
-/// The index of the selected data source in the collection.
-@property (nonatomic) NSInteger selectedDataSourceIndex;
-
 /// Set the selected data source with animation. By default, setting the selected data source is not animated.
 - (void)setSelectedDataSource:(AAPLDataSource *)selectedDataSource animated:(BOOL)animated;
-
-/// Set the index of the selected data source with optional animation. By default, setting the selected data source index is not animated.
-- (void)setSelectedDataSourceIndex:(NSInteger)selectedDataSourceIndex animated:(BOOL)animated;
 
 /// Call this method to configure a segmented control with the titles of the data sources. This method also sets the target & action of the segmented control to switch the selected data source.
 - (void)configureSegmentedControl:(UISegmentedControl *)segmentedControl;

@@ -37,12 +37,6 @@
     return indexPaths;
 }
 
-- (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSIndexSet *removedIndexes = [NSIndexSet indexSetWithIndex:indexPath.item];
-    [self removeItemsAtIndexes:removedIndexes];
-}
-
 - (void)setItems:(NSArray *)items
 {
     [self setItems:items animated:NO];

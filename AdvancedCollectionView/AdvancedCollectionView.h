@@ -19,7 +19,6 @@ FOUNDATION_EXPORT const unsigned char AdvancedCollectionViewVersionString[];
 
 #import <AdvancedCollectionView/AAPLStateMachine.h>
 #import <AdvancedCollectionView/AAPLContentLoading.h>
-#import <AdvancedCollectionView/AAPLAction.h>
 
 #import <AdvancedCollectionView/AAPLDataSource.h>
 #import <AdvancedCollectionView/AAPLBasicDataSource.h>

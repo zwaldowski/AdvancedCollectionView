@@ -41,10 +41,8 @@ typedef void (^AAPLLoadingUpdateBlock)(id object);
 @interface AAPLLoading : NSObject
 /// Signals that this result should be ignored. Sends a nil value for the state to the completion handler.
 - (void)ignore;
-/// Signals that loading is complete with no errors. This triggers a transition to the Loaded state.
-- (void)done;
 /// Signals that loading failed with an error. This triggers a transition to the Error state.
-- (void)doneWithError:(NSError *)error;
+- (void)updateWithError:(NSError *)error;
 /// Signals that loading is complete, transitions into the Loaded state and then runs the update block.
 - (void)updateWithContent:(AAPLLoadingUpdateBlock)update;
 /// Signals that loading completed with no content, transitions to the No Content state and then runs the update block.

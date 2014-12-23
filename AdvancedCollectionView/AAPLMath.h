@@ -26,16 +26,6 @@
 #define round(x)   __tg_fn(x, x, round)(x)
 #define ceil(x)    __tg_fn(x, x, ceil)(x)
 
-NS_INLINE CGFloat AAPLRound(CGFloat value, CGFloat inScale, NSRoundingMode mode) {
-    CGFloat scale = fmax(inScale, (CGFloat)1);
-    switch (mode) {
-        case NSRoundPlain: return round(value * scale) / scale;
-        case NSRoundUp: return ceil(value * scale) / scale;
-        case NSRoundDown: return floor(value * scale) / scale;
-        case NSRoundBankers: return rint(value * scale) / scale;
-    }
-}
-
 NS_INLINE BOOL _approxeqf(float a, float b) { return fabs(a - b) < FLT_EPSILON; }
 NS_INLINE BOOL _approxeq(double a, double b) { return fabs(a - b) < DBL_EPSILON; }
 #define _approxeq(x, y) __tg_fn(x, y, _approxeq)(x, y)
@@ -56,6 +46,7 @@ NS_INLINE CGRect AAPLSeparatorRect(CGRect frame, CGRectEdge edge, CGFloat width)
         case CGRectMaxXEdge: return CGRectMake(CGRectGetMaxX(frame) - width, CGRectGetMinY(frame), width, CGRectGetHeight(frame));
         case CGRectMaxYEdge: return CGRectMake(CGRectGetMinX(frame), CGRectGetMaxY(frame) - width, CGRectGetWidth(frame), width);
     }
+    return frame;
 }
 
 #endif /* !AdvancedCollectionView_Math_h */

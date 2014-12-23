@@ -22,9 +22,4 @@
 /// Compute a flattened snapshot of the layout metrics associated with this and any child data sources.
 - (NSDictionary /*NSNumber:AAPLLayoutMetrics*/ *)snapshotMetrics;
 
-@optional
-
-/// Determine whether or not a cell is editable. Default implementation returns YES.
-- (BOOL)collectionView:(UICollectionView *)collectionView canEditItemAtIndexPath:(NSIndexPath *)indexPath;
-
 @end

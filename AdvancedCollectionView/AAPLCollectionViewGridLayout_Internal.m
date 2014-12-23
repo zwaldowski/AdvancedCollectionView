@@ -135,16 +135,12 @@
     switch (_cellLayoutOrder) {
         case AAPLCellLayoutOrderLeadingToTrailing:
             return (UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight) ? CGRectMinXEdge : CGRectMaxXEdge;
-            break;
         case AAPLCellLayoutOrderTrailingToLeading:
             return (UIApplication.sharedApplication.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) ? CGRectMinXEdge : CGRectMaxXEdge;
-            break;
-        case AAPLCellLayoutOrderLeftToRight:
-            return CGRectMinXEdge;
-            break;
         case AAPLCellLayoutOrderRightToLeft:
             return CGRectMaxXEdge;
-            break;
+        default:
+            return CGRectMinXEdge;
     }
 }
 
@@ -186,8 +182,8 @@
     if (numberOfItems && !self.placeholder) {
         // Lay out items and footers only if there actually ARE items.
         __block CGRect itemsLayoutRect = UIEdgeInsetsInsetRect(layoutRect, self.groupPadding);
-        __block CGRect activeItemRect;
-        __block CGRect activeRowRect;
+        __block CGRect activeItemRect = CGRectZero;
+        __block CGRect activeRowRect = CGRectZero;
         __block NSInteger columnIndex = 0;
         __block AAPLGridLayoutRowInfo *row = nil;
 
