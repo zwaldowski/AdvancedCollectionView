@@ -53,7 +53,7 @@ public class DataSource: NSObject {
     
     private var loadingInstance: Loader<DataSource>? = nil
     
-    private(set) public var loadingState: LoadingState = .Initial {
+    internal(set) public var loadingState: LoadingState = .Initial {
         didSet {
             switch loadingState {
             case .Loading, .Loaded, .NoContent, .Error:

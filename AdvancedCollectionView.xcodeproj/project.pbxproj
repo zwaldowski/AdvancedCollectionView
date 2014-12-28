@@ -59,8 +59,10 @@
 		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
 		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
 		DB3D6AFE1A41666D00D48A92 /* DataSource+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */; };
+		DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* SetType.swift */; };
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
+		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
 		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
 		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -126,6 +128,7 @@
 		DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78F71A3E8252008A79A6 /* DataSource.swift */; };
 		DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A79091A3E8479008A79A6 /* Loading.swift */; };
 		DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A79121A3EA12B008A79A6 /* Async.swift */; };
+		DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB805A21A4F52280009C6CF /* OrderedSet.swift */; };
 		DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3F93E1A45E9F40029B49D /* Multimap.swift */; };
 		DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D0BD1A3EC1A40040353A /* Foundation.swift */; };
 /* End PBXBuildFile section */
@@ -272,8 +275,10 @@
 		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
 		DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+CollectionView.swift"; sourceTree = "<group>"; };
+		DB5FB6A21A4F527C0041062F /* SetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetType.swift; sourceTree = "<group>"; };
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
+		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
 		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
 		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
 		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
@@ -292,6 +297,7 @@
 		DB8A78F71A3E8252008A79A6 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DB8A79091A3E8479008A79A6 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		DB8A79121A3EA12B008A79A6 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		DBB805A21A4F52280009C6CF /* OrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedSet.swift; sourceTree = "<group>"; };
 		DBC3F93E1A45E9F40029B49D /* Multimap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multimap.swift; sourceTree = "<group>"; };
 		DBCF8FAA1A3D18990053B77A /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
 		DBE9D0BD1A3EC1A40040353A /* Foundation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Foundation.swift; sourceTree = "<group>"; };
@@ -443,25 +449,27 @@
 			name = Converted;
 			sourceTree = "<group>";
 		};
-		DB24FC281A3F845B00C5D0B4 /* Base */ = {
+		DB24FC281A3F845B00C5D0B4 /* Base (Converted) */ = {
 			isa = PBXGroup;
 			children = (
-				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
 				1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */,
 				1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */,
+				DBCF8FAA1A3D18990053B77A /* AAPLMath.h */,
 				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
 				1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */,
-				DBCF8FAA1A3D18990053B77A /* AAPLMath.h */,
+				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
 			);
-			name = Base;
+			name = "Base (Converted)";
 			sourceTree = "<group>";
 		};
 		DB71E6581A489DA000AFC472 /* Collections */ = {
 			isa = PBXGroup;
 			children = (
 				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
-				DB71E6541A489D9C00AFC472 /* Set.swift */,
+				DB5FB6A21A4F527C0041062F /* SetType.swift */,
 				DB71E6551A489D9C00AFC472 /* Unit.swift */,
+				DB71E6541A489D9C00AFC472 /* Set.swift */,
+				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
 			);
 			name = Collections;
 			sourceTree = "<group>";
@@ -484,7 +492,8 @@
 				DB24FC221A3F7E9E00C5D0B4 /* Types.swift */,
 				DB24FC291A3F869F00C5D0B4 /* Geometry.swift */,
 				DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */,
-				DB24FC281A3F845B00C5D0B4 /* Base */,
+				DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */,
+				DB24FC281A3F845B00C5D0B4 /* Base (Converted) */,
 				DB8100831A3CD34600E758F6 /* Categories */,
 				DB8100841A3CD39500E758F6 /* Data Sources */,
 				DB8100851A3CD3A700E758F6 /* Layouts */,
@@ -838,10 +847,12 @@
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
 				DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */,
+				DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */,
 				DB81009C1A3CD40100E758F6 /* AAPLPlaceholderView.m in Sources */,
 				DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */,
 				DB8100951A3CD40100E758F6 /* AAPLLayoutMetrics.m in Sources */,
 				DB8100961A3CD40100E758F6 /* AAPLCollectionViewController.m in Sources */,
+				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
 				DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */,
 				DB81009E1A3CD40100E758F6 /* AAPLSegmentedHeaderView.m in Sources */,
 				DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */,
@@ -856,6 +867,7 @@
 				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Types.swift in Sources */,
 				DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */,
+				DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */,
 				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
