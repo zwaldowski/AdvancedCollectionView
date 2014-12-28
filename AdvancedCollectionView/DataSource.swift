@@ -22,12 +22,8 @@ public class DataSource: NSObject {
         return true
     }
     
-    public func childDataSource(forSection section: Section) -> DataSource {
-        return self
-    }
-    
-    public func localIndexPath(forGlobalIndexPath global: NSIndexPath) -> NSIndexPath {
-        return global
+    public func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
+        return (self, indexPath)
     }
     
     public let numberOfSections: Int = 1
