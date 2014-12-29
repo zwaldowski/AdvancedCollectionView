@@ -29,9 +29,7 @@ public class SegmentedDataSource: DataSource {
     
     /// Remove the data source from the collection.
     public func remove(#dataSource: DataSource) {
-        if let index = find(dataSources, dataSource) {
-            dataSources.removeAtIndex(index)
-            
+        if let ds = removeValue(&dataSources, dataSource) {
             if dataSource.container === self {
                 dataSource.container = nil
             }

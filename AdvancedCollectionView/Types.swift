@@ -46,3 +46,10 @@ func take<C: Sliceable where C.Index: Strideable>(collection: C, eachSlice slice
         return collection[range]
     }
 }
+
+func removeValue<C: RangeReplaceableCollectionType, T: Equatable where C.Generator.Element == T>(inout x: C, value: T) -> T? {
+    if let index = find(x, value) {
+        return x.removeAtIndex(index)
+    }
+    return nil
+}
