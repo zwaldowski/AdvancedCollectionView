@@ -11,11 +11,11 @@ import UIKit
 
 struct ComposedMapping {
     
-    private let dataSource: AAPLDataSource
+    private let dataSource: DataSource
     private var globalToLocal = [Int: Int]()
     private var localToGlobal = [Int: Int]()
     
-    private init(dataSource: AAPLDataSource) {
+    init(dataSource: DataSource) {
         self.dataSource = dataSource
     }
     
@@ -35,8 +35,16 @@ extension ComposedMapping {
         return sections.map { self.localSection(forGlobalSection: $0) }
     }
     
+    private func globalSections<S: SequenceType where S.Generator.Element == Int>(forLocalSections sequence: S) -> NSIndexSet {
+        return NSIndexSet(indexes: lazy(sequence).map({ self.globalSection(forLocalSection: $0) }))
+    }
+    
     func globalSections(forLocalSections sections: NSIndexSet) -> NSIndexSet {
-        return sections.map { self.globalSection(forLocalSection: $0) }
+        return globalSections(forLocalSections: sections)
+    }
+    
+    func globalSections(forNumberOfSections sections: Int) -> NSIndexSet {
+        return globalSections(forLocalSections: 0..<sections)
     }
     
     func localIndexPath(forGlobalIndexPath indexPath: NSIndexPath) -> NSIndexPath {
