@@ -85,7 +85,7 @@ extension Set: ExtensibleCollectionType {
     
     public mutating func extend<S: SequenceType where S.Generator.Element == Element>(sequence: S) {
         // Note that this should just be for each in sequence; this is working around a compiler crasher.
-        for each in [Element](sequence) {
+        for each in SequenceOf<Element>(sequence) {
             insert(each)
         }
     }

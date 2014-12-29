@@ -129,8 +129,8 @@ extension Multimap {
         })
     }
     
-    public mutating func extend<S: SequenceType where S.Generator.Element == Group>(#groups: S) {
-        for entry in [Group](groups) {
+    public mutating func extend<S: SequenceType where S.Generator.Element == Group>(groups newElements: S) {
+        for entry in SequenceOf<Group>(newElements) {
             mutate(arrayForKey: entry.key, transform: { (inout array: Values) in
                 array.extend(entry.array)
             }, replace: {
