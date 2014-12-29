@@ -10,7 +10,20 @@ import UIKit
 
 public class DataSource: NSObject {
     
+    /// The title of this data source. This value is used to populate section headers and the segmented control tab.
+    public final var title: String?
+    
     // MARK: Parent-child primitives
+    
+    public var numberOfSections: Int {
+        return 1
+    }
+    
+    public func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
+        return (self, indexPath)
+    }
+    
+    // MARK: Parent-child utilities
     
     public weak var container: DataSourceContainer?
     
@@ -21,12 +34,6 @@ public class DataSource: NSObject {
         }
         return true
     }
-    
-    public func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
-        return (self, indexPath)
-    }
-    
-    public let numberOfSections: Int = 1
     
     // MARK: Collection view interface
     
@@ -222,7 +229,7 @@ public class DataSource: NSObject {
         }
     }
     
-    public func removeHeader(header: SupplementaryMetrics, forKey key: String) {
+    public func removeHeader(forKey key: String) {
         if let index = headersIndexesByKey.indexForKey(key) {
             let (_, (arrayIdx, _)) = headersIndexesByKey[index]
             headersIndexesByKey.removeAtIndex(index)
@@ -240,27 +247,22 @@ public class DataSource: NSObject {
     
     private(set) public var placeholderView: AAPLCollectionPlaceholderView? = nil
     
-    public var noContentTitle: String? = nil
-    public var noContentMessage: String? = nil
-    public var noContentImage: UIImage? = nil
-    
-    public var errorTitle: String? = nil
-    public var errorMessage: String? = nil
-    public var errorImage: UIImage? = nil
+    public var emptyContent = PlaceholderContent(title: nil, message: nil, image: nil)
+    public var errorContent = PlaceholderContent(title: nil, message: nil, image: nil)
     
     public var isObscuredByPlaceholder: Bool {
         if shouldDisplayPlaceholder { return true }
         return container?.isObscuredByPlaceholder ?? false
     }
     
-    private var shouldDisplayPlaceholder: Bool {
-        switch (loadingState, errorMessage, errorTitle, noContentMessage, noContentTitle) {
-        case (.Error, .Some, _, _, _), (.Error, _, .Some, _, _):
+    public var shouldDisplayPlaceholder: Bool {
+        switch (loadingState, emptyContent.isEmpty, errorContent.isEmpty) {
+        case (.NoContent, false, _):
+            return true
+        case (.Error, _, false):
             // If we're in the error state & have an error message or title
             return true
-        case (.NoContent, _, _, .Some, _), (.NoContent, _, _, _, .Some):
-            return true
-        case (.Loading, _, _, _, _):
+        case (.Loading, _, _):
             return true
         default:
             return false
@@ -276,16 +278,16 @@ public class DataSource: NSObject {
                 placeholderView.showActivityIndicator(false)
             case .NoContent:
                 placeholderView.showActivityIndicator(false)
-                placeholderView.showPlaceholderWithTitle(noContentTitle, message: noContentMessage, image: noContentImage, animated: true)
+                placeholderView.showPlaceholderWithTitle(emptyContent.title, message: emptyContent.message, image: emptyContent.image, animated: true)
             case .Error(let err):
                 placeholderView.showActivityIndicator(false)
-                placeholderView.showPlaceholderWithTitle(errorTitle, message: errorMessage, image: errorImage, animated: true)
+                placeholderView.showPlaceholderWithTitle(errorContent.title, message: errorContent.message, image: errorContent.image, animated: true)
             default:
                 placeholderView.hidePlaceholderAnimated(true)
             }
         }
         
-        if notify && (noContentTitle != nil || noContentMessage != nil || errorTitle != nil || errorMessage != nil) {
+        if notify && (!emptyContent.isEmpty || !errorContent.isEmpty) {
             notifySectionsReloaded(NSIndexSet(range: 0..<numberOfSections))
         }
     }

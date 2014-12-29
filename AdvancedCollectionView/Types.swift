@@ -12,6 +12,23 @@ public enum SectionOperationDirection {
     case Default, Left, Right
 }
 
+public struct PlaceholderContent {
+    public let title: String?
+    public let message: String?
+    public let image: UIImage?
+    
+    public var isEmpty: Bool {
+        switch (title, message) {
+        case (.Some(let text), _):
+            return !text.isEmpty
+        case (.None, .Some(let text)):
+            return !text.isEmpty
+        default:
+            return true
+        }
+    }
+}
+
 // MARK: Bitmasks
 
 @transparent func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T, bit: T) -> Bool {

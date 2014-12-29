@@ -59,6 +59,7 @@
 		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
 		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
 		DB3D6AFE1A41666D00D48A92 /* DataSource+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */; };
+		DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */; };
 		DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* SetType.swift */; };
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
@@ -275,6 +276,7 @@
 		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
 		DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+CollectionView.swift"; sourceTree = "<group>"; };
+		DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedDataSource.swift; sourceTree = "<group>"; };
 		DB5FB6A21A4F527C0041062F /* SetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetType.swift; sourceTree = "<group>"; };
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
@@ -440,6 +442,10 @@
 		DB24FC271A3F843E00C5D0B4 /* Converted */ = {
 			isa = PBXGroup;
 			children = (
+				1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */,
+				1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */,
+				1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */,
+				1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */,
 				1FA42A5E192A7E1200F673A0 /* AAPLComposedDataSource_Private.h */,
 				1FA42A5F192A7E1200F673A0 /* AAPLComposedDataSource_Private.m */,
 				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
@@ -493,6 +499,7 @@
 				DB24FC291A3F869F00C5D0B4 /* Geometry.swift */,
 				DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */,
 				DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */,
+				DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */,
 				DB24FC281A3F845B00C5D0B4 /* Base (Converted) */,
 				DB8100831A3CD34600E758F6 /* Categories */,
 				DB8100841A3CD39500E758F6 /* Data Sources */,
@@ -545,12 +552,8 @@
 		DB8100841A3CD39500E758F6 /* Data Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */,
-				1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */,
 				1FA42A5C192A7E1200F673A0 /* AAPLComposedDataSource.h */,
 				1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */,
-				1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */,
-				1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */,
 				DB24FC271A3F843E00C5D0B4 /* Converted */,
 			);
 			name = "Data Sources";
@@ -869,6 +872,7 @@
 				DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */,
 				DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */,
 				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,
+				DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
 				DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */,

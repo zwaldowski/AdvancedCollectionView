@@ -131,19 +131,23 @@ public struct SupplementaryMetrics {
     
     var configureView: ((view: UICollectionReusableView, dataSource: DataSource, indexPath: NSIndexPath) -> ())?
     
+    public init(kind: String) {
+        self.kind = kind
+    }
+    
     /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
-    public mutating func configure<V: UICollectionReusableView, DS: DataSource>(closure: (view: V!, dataSource: DS!, indexPath: NSIndexPath) -> ()) {
+    public mutating func configure<V: UICollectionReusableView, DS: DataSource>(closure: (view: V, dataSource: DS, indexPath: NSIndexPath) -> ()) {
         viewType = V.self
         
         if let old = configureView {
             // chain the old with the new
             configureView = {
                 old(view: $0, dataSource: $1, indexPath: $2)
-                closure(view: $0 as? V, dataSource: $1 as? DS, indexPath: $2)
+                closure(view: $0 as V, dataSource: $1 as DS, indexPath: $2)
             }
         } else {
             configureView = {
-                closure(view: $0 as? V, dataSource: $1 as? DS, indexPath: $2)
+                closure(view: $0 as V, dataSource: $1 as DS, indexPath: $2)
             }
         }
     }
