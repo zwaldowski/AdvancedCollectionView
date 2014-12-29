@@ -97,11 +97,11 @@ extension NSIndexSet {
         self.init(indexesInRange: NSRange(range))
     }
     
-}
-
-extension NSIndexSet {
+    public convenience init(_ elements: Int...) {
+        self.init(indexes: elements)
+    }
     
-    public convenience init(indexes elements: Int...) {
+    public convenience init<S: SequenceType where S.Generator.Element == Int>(indexes elements: S) {
         let set = NSMutableIndexSet()
         for idx in elements {
             set.addIndex(idx)
