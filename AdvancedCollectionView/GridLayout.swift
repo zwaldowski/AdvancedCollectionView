@@ -645,25 +645,27 @@ extension GridLayout: DebugPrintable {
 
 extension GridLayout: DataSourcePresenter {
     
-    public func dataSourceWillInsertSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection) {
-        for sectionIndex in indexes {
-            updateSectionDirections[.Index(sectionIndex)] = direction
+    public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
+        
+        func setSectionDirections(forIndexes indexes: NSIndexSet, direction: SectionOperationDirection) {
+            for sectionIndex in indexes {
+                updateSectionDirections[.Index(sectionIndex)] = direction
+            }
         }
-    }
-    
-    public func dataSourceWillRemoveSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection) {
-        for sectionIndex in indexes {
-            updateSectionDirections[.Index(sectionIndex)] = direction
+        
+        switch sectionAction {
+        case .Insert(let indexes, let direction):
+            setSectionDirections(forIndexes: indexes, direction)
+        case .Remove(let indexes, let direction):
+            setSectionDirections(forIndexes: indexes, direction)
+        case .Move(let section, let newSection, let direction):
+            updateSectionDirections[.Index(section)] = direction
+            updateSectionDirections[.Index(newSection)] = direction
+        case .ReloadGlobal:
+            invalidateLayoutForGlobalSection()
+        default:
+            break
         }
-    }
-    
-    public func dataSourceWillMoveSection(dataSource: DataSource, from section: Int, to newSection: Int, direction: SectionOperationDirection) {
-        updateSectionDirections[.Index(section)] = direction
-        updateSectionDirections[.Index(newSection)] = direction
-    }
-    
-    public func dataSourceDidReloadGlobalSection(dataSource: DataSource) {
-        invalidateLayoutForGlobalSection()
     }
     
 }

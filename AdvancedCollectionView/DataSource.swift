@@ -325,117 +325,83 @@ public class DataSource: NSObject {
         }
     }
     
-    public func notifyItemsInserted(indexPaths: [NSIndexPath]) {
+    public func notify(#sectionAction: SectionAction) {
         assertMainThread()
         
-        if shouldDisplayPlaceholder {
-            return enqueuePendingUpdate { [weak self] in
-                self?.notifyItemsInserted(indexPaths)
+        container?.dataSourceWillPerform(self, sectionAction: sectionAction)
+    }
+    
+    public func notify(#itemAction: ItemAction) {
+        assertMainThread()
+        
+        switch (itemAction, shouldDisplayPlaceholder, container) {
+        case (.Insert, true, _), (.Remove, true, _), (.Reload, true, _), (.Move, true, _):
+            enqueuePendingUpdate { [weak self] in
+                self?.notify(itemAction: itemAction)
                 return
             }
-        }
-        
-        container?.dataSourceDidInsertItems(self, indexPaths: indexPaths)
-    }
-    
-    public func notifyItemsRemoved(indexPaths: [NSIndexPath]) {
-        assertMainThread()
-        
-        if shouldDisplayPlaceholder {
-            return enqueuePendingUpdate { [weak self] in
-                self?.notifyItemsRemoved(indexPaths)
-                return
-            }
-        }
-        
-        container?.dataSourceDidRemoveItems(self, indexPaths: indexPaths)
-    }
-    
-    public func notifyItemsReloaded(indexPaths: [NSIndexPath]) {
-        assertMainThread()
-        
-        if shouldDisplayPlaceholder {
-            return enqueuePendingUpdate { [weak self] in
-                self?.notifyItemsReloaded(indexPaths)
-                return
-            }
-        }
-        
-        container?.dataSourceDidReloadItems(self, indexPaths: indexPaths)
-    }
-    
-    public func notifyItemMoved(#from: NSIndexPath, to: NSIndexPath) {
-        assertMainThread()
-        
-        if shouldDisplayPlaceholder {
-            return enqueuePendingUpdate { [weak self] in
-                self?.notifyItemMoved(from: from, to: to)
-                return
-            }
-        }
-        
-        container?.dataSourceDidMoveItem(self, from: from, to: to)
-    }
-    
-    public func notifySectionsInserted(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
-        assertMainThread()
-        
-        container?.dataSourceWillInsertSections(self, indexes: indexSet, direction: direction)
-    }
-    
-    public func notifySectionsRemoved(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
-        assertMainThread()
-        
-        container?.dataSourceWillRemoveSections(self, indexes: indexSet, direction: direction)
-    }
-    
-    public func notifySectionsReloaded(indexSet: NSIndexSet) {
-        assertMainThread()
-        
-        container?.dataSourceDidReloadSections(self, indexes: indexSet)
-    }
-    
-    public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .Default) {
-        assertMainThread()
-        
-        container?.dataSourceWillMoveSection(self, from: from, to: to, direction: direction)
-    }
-    
-    public func notifyDidReloadData() {
-        assertMainThread()
-        
-        container?.dataSourceDidReloadData(self)
-    }
-    
-    public func notifyDidReloadGlobalSection() {
-        assertMainThread()
-        
-        container?.dataSourceDidReloadGlobalSection(self)
-    }
-    
-    public func notifyBatchUpdate(update: () -> (), completion: ((Bool) -> ())? = nil) {
-        assertMainThread()
-        
-        if let container = container {
-            container.dataSourcePerformBatchUpdate(self, update: update, completion: completion)
-        } else {
+        case (.BatchUpdate(let update, let completion), _, .None):
             update()
             if let completion = completion {
                 completion(true)
             }
+        default:
+            container?.dataSourceWillPerform(self, itemAction: itemAction)
         }
     }
     
-    public func notifyContentLoaded(#error: NSError?) {
-        assertMainThread()
-        
-        container?.dataSourceDidLoadContent(self, error: error)
+    // MARK: Convenience notifications
+    
+    public func notifySectionsInserted(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Insert(indexSet, direction: direction))
+    }
+    
+    public func notifySectionsRemoved(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Remove(indexSet, direction: direction))
+    }
+    
+    public func notifySectionsReloaded(indexSet: NSIndexSet) {
+        notify(sectionAction: .Reload(indexSet))
+    }
+    
+    public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Move(from: from, to: to, direction: direction))
+    }
+    
+    public func notifyDidReloadGlobalSection() {
+        notify(sectionAction: .ReloadGlobal)
+    }
+    
+    public func notifyItemsInserted(indexPaths: [NSIndexPath]) {
+        notify(itemAction: .Insert(indexPaths))
+    }
+    
+    public func notifyItemsRemoved(indexPaths: [NSIndexPath]) {
+        notify(itemAction: .Remove(indexPaths))
+    }
+    
+    public func notifyItemsReloaded(indexPaths: [NSIndexPath]) {
+        notify(itemAction: .Reload(indexPaths))
+    }
+    
+    public func notifyItemMoved(#from: NSIndexPath, to: NSIndexPath) {
+        notify(itemAction: .Move(from: from, to: to))
+    }
+    
+    public func notifyDidReloadData() {
+        notify(itemAction: .ReloadAll)
+    }
+    
+    public func notifyBatchUpdate(update: () -> (), completion: ((Bool) -> ())? = nil) {
+        notify(itemAction: .BatchUpdate(update: update, completion: completion))
     }
     
     public func notifyWillLoadContent() {
-        assertMainThread()
-        
-        container?.dataSourceWillLoadContent(self)
+        notify(itemAction: .WillLoad)
+    }
+    
+    public func notifyContentLoaded(#error: NSError?) {
+        notify(itemAction: .DidLoad(error))
     }
     
 }

@@ -8,32 +8,41 @@
 
 import UIKit
 
+public enum SectionAction {
+    
+    case Insert(NSIndexSet, direction: SectionOperationDirection)
+    case Remove(NSIndexSet, direction: SectionOperationDirection)
+    case Reload(NSIndexSet)
+    case Move(from: Int, to: Int, direction: SectionOperationDirection)
+    case ReloadGlobal
+    
+}
+
 public protocol DataSourcePresenter: class {
     
-    func dataSourceWillInsertSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection)
-    func dataSourceWillRemoveSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection)
-    func dataSourceWillMoveSection(dataSource: DataSource, from: Int, to: Int, direction: SectionOperationDirection)
+    func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction)
     
-    func dataSourceDidReloadGlobalSection(dataSource: DataSource)
+}
 
+public enum ItemAction {
+    
+    case Insert([NSIndexPath])
+    case Remove([NSIndexPath])
+    case Reload([NSIndexPath])
+    case Move(from: NSIndexPath, to: NSIndexPath)
+    
+    case ReloadAll
+    case BatchUpdate(update: () -> (), completion: ((Bool) -> ())?)
+    case WillLoad
+    case DidLoad(NSError?)
+    
 }
 
 public protocol DataSourceContainer: DataSourcePresenter {
     
     /// Is this data source "hidden" by a placeholder either of its own or from an enclosing data source. Use this to determine whether to report that there are no items in your data source while loading.
     var isObscuredByPlaceholder: Bool { get }
-    
-    func dataSourceDidInsertItems(dataSource: DataSource, indexPaths: [NSIndexPath])
-    func dataSourceDidRemoveItems(dataSource: DataSource, indexPaths: [NSIndexPath])
-    func dataSourceDidReloadItems(dataSource: DataSource, indexPaths: [NSIndexPath])
-    func dataSourceDidMoveItem(dataSource: DataSource, from: NSIndexPath, to: NSIndexPath)
-    
-    func dataSourceDidReloadSections(dataSource: DataSource, indexes: NSIndexSet)
-    
-    func dataSourceDidReloadData(dataSource: DataSource)
-    func dataSourcePerformBatchUpdate(dataSource: DataSource, update: () -> (), completion: ((Bool) -> ())?)
-    
-    func dataSourceWillLoadContent(dataSource: DataSource)
-    func dataSourceDidLoadContent(dataSource: DataSource, error: NSError?)
+
+    func dataSourceWillPerform(dataSource: DataSource, itemAction: ItemAction)
     
 }

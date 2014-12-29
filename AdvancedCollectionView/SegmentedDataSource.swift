@@ -287,78 +287,23 @@ extension SegmentedDataSource: CollectionViewDataSourceGridLayout {
 
 extension SegmentedDataSource: DataSourceContainer {
     
-    public func dataSourceDidInsertItems(dataSource: DataSource, indexPaths: [NSIndexPath]) {
+    public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
         if dataSource != _selectedDataSource { return }
-        notifyItemsInserted(indexPaths)
+        notify(sectionAction: sectionAction)
     }
     
-    public func dataSourceDidRemoveItems(dataSource: DataSource, indexPaths: [NSIndexPath]) {
-        if dataSource != _selectedDataSource { return }
-        notifyItemsRemoved(indexPaths)
-    }
-    
-    public func dataSourceDidReloadItems(dataSource: DataSource, indexPaths: [NSIndexPath]) {
-        if dataSource != _selectedDataSource { return }
-        notifyItemsReloaded(indexPaths)
-    }
-    
-    public func dataSourceDidMoveItem(dataSource: DataSource, from: NSIndexPath, to: NSIndexPath) {
-        if dataSource != _selectedDataSource { return }
-        notifyItemMoved(from: from, to: to)
-    }
-    
-    public func dataSourceWillInsertSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection) {
-        if dataSource != _selectedDataSource { return }
-        notifySectionsInserted(indexes, direction: direction)
-    }
-    
-    public func dataSourceWillRemoveSections(dataSource: DataSource, indexes: NSIndexSet, direction: SectionOperationDirection) {
-        if dataSource != _selectedDataSource { return }
-        notifySectionsRemoved(indexes, direction: direction)
-    }
-    
-    public func dataSourceWillMoveSection(dataSource: DataSource, from: Int, to: Int, direction: SectionOperationDirection) {
-        if dataSource != _selectedDataSource { return }
-        notifySectionsMoved(from: from, to: to, direction: direction)
-    }
-    
-    public func dataSourceDidReloadGlobalSection(dataSource: DataSource) {
-        if dataSource != _selectedDataSource { return }
-        notifyDidReloadGlobalSection()
-    }
-
-    public func dataSourceDidReloadSections(dataSource: DataSource, indexes: NSIndexSet) {
-        if dataSource != _selectedDataSource { return }
-        notifySectionsReloaded(indexes)
-    }
-    
-    public func dataSourceDidReloadData(dataSource: DataSource) {
-        if dataSource != _selectedDataSource { return }
-        notifyDidReloadData()
-    }
-    
-    public func dataSourcePerformBatchUpdate(dataSource: DataSource, update: () -> (), completion: ((Bool) -> ())?) {
-        if dataSource != _selectedDataSource {
+    public func dataSourceWillPerform(dataSource: DataSource, itemAction: ItemAction) {
+        switch (selectedDataSource, itemAction) {
+        case (let ds, _) where ds == dataSource:
+            notify(itemAction: itemAction)
+        case (_, .BatchUpdate(let update, let completion)):
             update();
             if let completion = completion {
                 completion(true)
             }
-            return
+        default: break
         }
-        
-        notifyBatchUpdate(update, completion: completion)
     }
-    
-    public func dataSourceWillLoadContent(dataSource: DataSource) {
-        if dataSource != _selectedDataSource { return }
-        notifyWillLoadContent()
-    }
-    
-    public func dataSourceDidLoadContent(dataSource: DataSource, error: NSError?) {
-        if dataSource != _selectedDataSource { return }
-        notifyContentLoaded(error: error)
-    }
-
     
 }
 
