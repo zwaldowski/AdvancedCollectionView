@@ -11,19 +11,11 @@ import UIKit
 /// A data source that switches among a number of child data sources.
 public class SegmentedDataSource: DataSource {
     
+    /// Should the data source create a default header that allows switching between the data sources. Set to NO if switching is accomplished through some other means. Default value is YES.
+    public var shouldDisplayDefaultHeader = true
+
     /// The collection of data sources contained within this segmented data source.
     private(set) public var dataSources = [DataSource]()
-    
-    /// Should the data source create a default header that allows switching between the data sources. Set to NO if switching is accomplished through some other means. Default value is YES.
-    private var shouldDisplayDefaultHeader = true
-
-    override public var numberOfSections: Int {
-        return selectedDataSource?.numberOfSections ?? 1
-    }
-
-    override public func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
-        return selectedDataSource?.childDataSource(forGlobalIndexPath: indexPath) ?? (self, indexPath)
-    }
     
     /// Add a data source to the end of the collection. The `title` of `dataSource` will be used to populate a new segment in the control associated with this data source.
     public func add(#dataSource: DataSource) {
@@ -57,6 +49,8 @@ public class SegmentedDataSource: DataSource {
         dataSources.removeAll()
         selectedDataSource = nil
     }
+    
+    // MARK: Selected data source
     
     private weak var _selectedDataSource: DataSource? = nil
     
@@ -111,6 +105,8 @@ public class SegmentedDataSource: DataSource {
         }
     }
     
+    // MARK: Segmented control
+    
     /// Call this method to configure a segmented control with the titles of the data sources. This method also sets the target & action of the segmented control to switch the selected data source.
     public func configureSegmentedControl(segmentedControl: UISegmentedControl) {
         segmentedControl.removeAllSegments()
@@ -153,6 +149,14 @@ public class SegmentedDataSource: DataSource {
     
     
     // MARK: Overrides
+    
+    public override var numberOfSections: Int {
+        return selectedDataSource?.numberOfSections ?? 1
+    }
+    
+    public override func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
+        return selectedDataSource?.childDataSource(forGlobalIndexPath: indexPath) ?? (self, indexPath)
+    }
     
     public override func snapshotMetrics(#section: Section) -> SectionMetrics {
         let key = "SegmentedHeaderKey"
@@ -256,8 +260,6 @@ public class SegmentedDataSource: DataSource {
     }
     
 }
-
-// MARK: Data source overrides
 
 extension SegmentedDataSource: UICollectionViewDataSource {
     
