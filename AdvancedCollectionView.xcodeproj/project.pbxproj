@@ -132,6 +132,7 @@
 		DB9E05E01A510F4C004CF47F /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9E05DF1A510F4C004CF47F /* CollectionViewController.swift */; };
 		DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB805A21A4F52280009C6CF /* OrderedSet.swift */; };
 		DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3F93E1A45E9F40029B49D /* Multimap.swift */; };
+		DBCD173C1A5129C30072D6CB /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */; };
 		DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE9D0BD1A3EC1A40040353A /* Foundation.swift */; };
 /* End PBXBuildFile section */
 
@@ -301,6 +302,7 @@
 		DB8A79091A3E8479008A79A6 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		DB8A79121A3EA12B008A79A6 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		DB9E05DF1A510F4C004CF47F /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
+		DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionary.swift; sourceTree = "<group>"; };
 		DBB805A21A4F52280009C6CF /* OrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedSet.swift; sourceTree = "<group>"; };
 		DBC3F93E1A45E9F40029B49D /* Multimap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multimap.swift; sourceTree = "<group>"; };
 		DBCF8FAA1A3D18990053B77A /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 				DB71E6551A489D9C00AFC472 /* Unit.swift */,
 				DB71E6541A489D9C00AFC472 /* Set.swift */,
 				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
+				DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */,
 			);
 			name = Collections;
 			sourceTree = "<group>";
@@ -846,6 +849,7 @@
 				DB8A78F51A3E79F2008A79A6 /* Metrics.swift in Sources */,
 				DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */,
 				DB9E05E01A510F4C004CF47F /* CollectionViewController.swift in Sources */,
+				DBCD173C1A5129C30072D6CB /* OrderedDictionary.swift in Sources */,
 				DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */,
 				DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */,
 				DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */,

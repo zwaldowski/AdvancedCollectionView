@@ -94,14 +94,61 @@ extension OrderedSet: ExtensibleCollectionType {
         ordered.reserveCapacity(n)
     }
     
-    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(sequence: S) {
-        for each in SequenceOf<Element>(sequence) {
-            insert(each)
+    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(newElements: S) {
+        let asSeq = SequenceOf<Element>(newElements)
+        
+        ordered.reserveCapacity(countElements(ordered) + underestimateCount(asSeq))
+        
+        for el in asSeq {
+            insert(el)
         }
     }
     
     public mutating func append(element: Element) {
         insert(element)
+    }
+    
+}
+
+// MARK: RangeReplaceableCollectionType
+
+extension OrderedSet: RangeReplaceableCollectionType {
+    
+    /// Replace the given `subRange` of elements with `newElements`.
+    public mutating func replaceRange<C : CollectionType where C.Generator.Element == Element>(subRange: Range<Ordered.Index>, with newElements: C) {
+        removeRange(subRange)
+        splice(newElements, atIndex: subRange.startIndex)
+    }
+    
+    /// Insert `newElement` at index `i`.
+    public mutating func insert(newElement: Element, atIndex i: Ordered.Index) {
+        if elements.insert(newElement) {
+            ordered.insert(newElement, atIndex: i)
+        }
+    }
+    
+    /// Insert `newElements` at index `i`
+    public mutating func splice<S : CollectionType where S.Generator.Element == Element>(newElements: S, atIndex i: Ordered.Index) {
+        ordered.splice(newElements, atIndex: i)
+        elements += newElements
+    }
+    
+    /// Remove the element at index `i`.
+    public mutating func removeAtIndex(i: Ordered.Index) -> Element {
+        let el = ordered.removeAtIndex(i)
+        elements.remove(el)
+        return el
+    }
+    
+    /// Remove the indicated `subRange` of elements
+    public mutating func removeRange(subRange: Range<Ordered.Index>) {
+        Swift.removeRange(&self, subRange)
+    }
+    
+    /// Removes all elements from the receiver.
+    public mutating func removeAll(keepCapacity: Bool = false) {
+        elements.removeAll(keepCapacity: keepCapacity)
+        ordered.removeAll(keepCapacity: keepCapacity)
     }
     
 }
@@ -178,14 +225,13 @@ extension OrderedSet: Printable {
     
 }
 
-// MARK: Convenience
+// MARK: Sorting
+
 
 extension OrderedSet {
     
-    /// Removes all elements from the receiver.
-    public mutating func removeAll(keepCapacity: Bool = false) {
-        elements.removeAll(keepCapacity: keepCapacity)
-        ordered.removeAll(keepCapacity: keepCapacity)
+    public mutating func sort(isOrderedBefore function: (Element, Element) -> Bool) {
+        ordered.sort(function)
     }
     
 }
