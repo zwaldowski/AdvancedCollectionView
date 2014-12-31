@@ -8,16 +8,12 @@
 
 import UIKit
 
-
 struct ComposedMapping {
     
-    private let dataSource: DataSource
     private var globalToLocal = [Int: Int]()
     private var localToGlobal = [Int: Int]()
     
-    init(dataSource: DataSource) {
-        self.dataSource = dataSource
-    }
+    init() {}
     
 }
 
@@ -72,7 +68,7 @@ extension ComposedMapping {
         localToGlobal[localSection] = globalSection
     }
     
-    mutating func updateMappings(startingWithGlobalSection globalSection: Int) -> Int {
+    mutating func updateMappings(startingWithGlobalSection globalSection: Int, dataSource: DataSource) -> Int {
         globalToLocal.removeAll(keepCapacity: true)
         localToGlobal.removeAll(keepCapacity: true)
         
@@ -87,7 +83,6 @@ extension ComposedMapping {
     
 }
 
-@objc
 final class ComposedViewWrapper: NSObject {
     
     private let wrapped: UICollectionView
