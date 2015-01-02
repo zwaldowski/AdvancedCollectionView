@@ -8,7 +8,6 @@
 
 import CoreGraphics
 import UIKit.UIGeometry
-import Swift
 
 // MARK: Rounding
 
@@ -26,7 +25,7 @@ private func rround<T: Scalable>(value: T, scale: T = 1.0, function: T -> T) -> 
 
 // MARK: Approximate equality for UI purposes
 
-public protocol ApproximatelyEquatable: AbsoluteValuable, Comparable {
+public protocol ApproximatelyEquatable: AbsoluteValuable, FloatingPointType, Comparable {
     class var accuracy: Self { get }
 }
 
@@ -159,8 +158,23 @@ extension CATransform3D: Equatable { }
 
 public extension CGRect {
     
-    mutating func inset(insets: UIEdgeInsets) {
-        self = UIEdgeInsetsInsetRect(self, insets)
+    func inset(insets: UIEdgeInsets) -> CGRect {
+        return UIEdgeInsetsInsetRect(self, insets)
+    }
+    
+}
+
+// MARK: UIKit Geometry
+
+extension UIView {
+    
+    var scale: CGFloat {
+        let screen = window?.screen ?? UIScreen.mainScreen()
+        return screen.scale
+    }
+    
+    var hairline: CGFloat {
+        return 1 / scale
     }
     
 }
