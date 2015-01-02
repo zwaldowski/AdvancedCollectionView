@@ -31,8 +31,11 @@ public struct PlaceholderContent {
 
 // MARK: Bitmasks
 
-@transparent func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T, bit: T) -> Bool {
-    return (mask & bit) != nil
+@transparent func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T?, bit: T) -> Bool {
+    if let mask = mask {
+        return (mask & bit) != nil
+    }
+    return false
 }
 
 // MARK: Utilities
