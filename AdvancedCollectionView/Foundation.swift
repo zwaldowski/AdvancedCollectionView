@@ -9,7 +9,7 @@
 import Foundation
 
 func assertMainThread(file: StaticString = __FILE__, line: UWord = __LINE__) {
-    assert(NSThread.isMainThread(), "This code must be called on the main thread.")
+    assert(NSThread.isMainThread(), "This code must be called on the main thread.", file: file, line: line)
 }
 
 // MARK: Index path
@@ -43,7 +43,7 @@ extension NSIndexPath {
     
     // This is intended for compatibility with ArrayLiteralConvertible
     // c'est la vie
-    public convenience init(indexes elements: Int...) {
+    public convenience init(_ elements: Int...) {
         self.init(indexes: elements, length: elements.count)
     }
     
@@ -51,11 +51,17 @@ extension NSIndexPath {
 
 extension NSIndexPath {
     
+    // TODO: get rid of
     var globalInfo: (section: Section, item: Int) {
         if length == 1 {
             return (.Global, self[0])
         }
         return (.Index(self[0]), self[1])
+    }
+    
+    var stringValue: String {
+        let str = join(", ", lazy(self).map(toString))
+        return "{\(str)}"
     }
     
 }
@@ -107,6 +113,11 @@ extension NSIndexSet {
             set.addIndex(idx)
         }
         self.init(indexSet: set)
+    }
+    
+    var stringValue: String {
+        let str = join(", ", lazy(self).map(toString))
+        return "[\(str)]"
     }
     
 }

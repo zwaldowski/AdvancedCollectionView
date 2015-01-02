@@ -8,21 +8,6 @@
 
 import UIKit
 
-private func string(fromIndexSet indexSet: NSIndexSet) -> String {
-    return join(", ", lazy(indexSet).map(toString))
-}
-
-private func string(fromIndexPath indexPath: NSIndexPath) -> String {
-    let str = join(", ", lazy(indexPath).map(toString))
-    return "{\(str)}"
-}
-
-private func string(fromIndexPaths indexPaths: [NSIndexPath]) -> String {
-    return join(", ", lazy(indexPaths).map {
-        return string(fromIndexPath: $0)
-    })
-}
-
 public enum SectionAction {
     
     case Insert(NSIndexSet, direction: SectionOperationDirection)
@@ -38,11 +23,11 @@ extension SectionAction: DebugPrintable {
     public var debugDescription: String {
         switch self {
         case .Insert(let indexSet, _):
-            return "INSERT SECTIONS: \(string(fromIndexSet: indexSet))"
+            return "INSERT SECTIONS: \(indexSet.stringValue)"
         case .Remove(let indexSet, _):
-            return "DELETE SECTIONS: \(string(fromIndexSet: indexSet))"
+            return "DELETE SECTIONS: \(indexSet.stringValue)"
         case .Reload(let indexSet):
-            return "REFRESH SECTIONS: \(string(fromIndexSet: indexSet))"
+            return "REFRESH SECTIONS: \(indexSet.stringValue)"
         case .Move(let from, let to, _):
             return "MOVE SECTION: \(from) TO: \(to)"
         case .ReloadGlobal:
@@ -75,6 +60,13 @@ public enum ItemAction {
 extension ItemAction: DebugPrintable {
     
     public var debugDescription: String {
+        func string(fromIndexPaths indexPaths: [NSIndexPath]) -> String {
+            let str = join(", ", lazy(indexPaths).map {
+                return $0.stringValue
+                })
+            return "[\(str)]"
+        }
+        
         switch self {
         case .Insert(let indexPaths):
             return "INSERT ITEMS: \(string(fromIndexPaths: indexPaths))"
@@ -83,7 +75,7 @@ extension ItemAction: DebugPrintable {
         case .Reload(let indexPaths):
             return "REFRESH ITEMS: \(string(fromIndexPaths: indexPaths))"
         case .Move(let from, let to):
-            return "MOVE ITEM: \(string(fromIndexPath: from)) TO: \(string(fromIndexPath: to))"
+            return "MOVE ITEM: \(from.stringValue) TO: \(to.stringValue)"
         case .ReloadAll:
             return "RELOAD"
         case .BatchUpdate(_, let completion):
