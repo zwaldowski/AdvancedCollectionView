@@ -56,3 +56,37 @@ func removeValue<C: RangeReplaceableCollectionType, T: Equatable where C.Generat
     }
     return nil
 }
+
+
+func mapWithIndex<T, U, C: CollectionType where C.Generator.Element == T>(collection: C, transform fn: (C.Index, T) -> U) -> [U] {
+    return map(collection.startIndex..<collection.endIndex) {
+        fn($0, collection[$0])
+    }
+}
+
+func mapWithIndexReversed<T, U, C: CollectionType where C.Index == Int, C.Generator.Element == T>(collection: C, transform fn: (C.Index, T) -> U) -> [U] {
+    let lastIdx = collection.endIndex.predecessor()
+    let first = fn(lastIdx, collection[lastIdx])
+    let range = collection.startIndex..<lastIdx
+    
+    var ret = [U](count: countElements(collection), repeatedValue: first)
+    ret.withUnsafeMutableBufferPointer { (buf) -> () in
+        for idx in lazy(range).reverse() {
+            buf[idx] = fn(idx, collection[idx])
+        }
+    }
+    return ret
+}
+
+extension Dictionary {
+    
+    func map<NewKey, NewValue>(fn: (Key, Value) -> (NewKey, NewValue)) -> [NewKey: NewValue] {
+        var d = [NewKey: NewValue](minimumCapacity: count)
+        for (oldKey, oldValue) in self {
+            let (newKey, newValue) = fn(oldKey, oldValue)
+            d.updateValue(newValue, forKey: newKey)
+        }
+        return d
+    }
+    
+}
