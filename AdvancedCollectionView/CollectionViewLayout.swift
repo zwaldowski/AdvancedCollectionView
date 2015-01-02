@@ -19,3 +19,16 @@ extension UICollectionViewLayout {
     
 }
 
+extension UICollectionViewLayoutAttributes {
+
+    convenience init<T: RawRepresentable where T.RawValue == String>(forSupplement element: T, indexPath: NSIndexPath) {
+        self.init(forSupplementaryViewOfKind: element.rawValue, withIndexPath: indexPath)
+    }
+
+    convenience init<T: RawRepresentable where T.RawValue == String>(forDecoration element: T, indexPath: NSIndexPath) {
+        self.init(forDecorationViewOfKind: element.rawValue, withIndexPath: indexPath)
+    }
+
+}
+
+}
