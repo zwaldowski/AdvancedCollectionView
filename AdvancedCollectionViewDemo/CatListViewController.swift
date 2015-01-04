@@ -45,7 +45,7 @@ class CatListViewController: CollectionViewController {
         collectionView?.dataSource = segmented
         
         // Create a segmented control to place in the navigation bar and ask the segmented data source to manage it.
-        let segmentedControl = UISegmentedControl()
+        let segmentedControl = UISegmentedControl(items: [])
         segmented.configureSegmentedControl(segmentedControl)
         navigationItem.titleView = segmentedControl
     }
