@@ -49,12 +49,14 @@ public class DataSource: NSObject {
             }
         }
         
-        collectionView.registerClass(AAPLCollectionPlaceholderView.self, forSupplementaryViewOfKind: ElementKindPlaceholder, withReuseIdentifier: NSStringFromClass(AAPLCollectionPlaceholderView.self))
+        
+        
+        collectionView.registerClass(AAPLCollectionPlaceholderView.self, forSupplement: GridLayout.SupplementKind.Placeholder)
     }
     
     // MARK: Loading
     
-    private var loadingInstance: Loader<DataSource>? = nil
+    private var loadingInstance: Loader? = nil
     
     public var loadingState: LoadingState = .Initial {
         didSet {
@@ -124,21 +126,16 @@ public class DataSource: NSObject {
         notifyContentLoaded(error: loadingState.error)
     }
     
-    public final func loadContent(handler: (Loader<DataSource>) -> ()) {
+    public final func startLoadingContent(handler: Loader -> ()) {
         beginLoading()
         
-        let newLoading = Loader<DataSource>{ (newState, update) in
+        let newLoading = Loader{ (newState, update) in
             if newState == nil { return }
             self.endLoading(state: newState!) {
-                [weak self] in
-                switch (self, update) {
-                case (.Some(let weakSelf), .Some(let update)):
-                    update(weakSelf)
-                default:
-                    break
-                }
+                
+                update?()
+                return
             }
-            
         }
         
         // Tell previous loading instance it's no longer current and remember this loading instance
@@ -199,8 +196,6 @@ public class DataSource: NSObject {
         case (false, .Index(0)):
             // We need to handle global headers and the placeholder view for section 0
             metrics.supplementaryViews = headers + metrics.supplementaryViews
-            metrics.hasPlaceholder = shouldDisplayPlaceholder
-        case (_, .Index(0)):
             metrics.hasPlaceholder = shouldDisplayPlaceholder
         default: break
         }
@@ -294,7 +289,7 @@ public class DataSource: NSObject {
     
     func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> AAPLCollectionPlaceholderView {
         if placeholderView == nil {
-            placeholderView = collectionView.dequeueReusableSupplementaryViewOfKind(ElementKindPlaceholder, withReuseIdentifier: NSStringFromClass(AAPLCollectionPlaceholderView.self), forIndexPath: indexPath) as? AAPLCollectionPlaceholderView
+            placeholderView = collectionView.dequeueReusableSupplement(kind: GridLayout.SupplementKind.Placeholder, indexPath: indexPath, type: AAPLCollectionPlaceholderView.self)
         }
         updatePlaceholder(notifyVisibility: false)
         return placeholderView!

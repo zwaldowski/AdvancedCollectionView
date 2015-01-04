@@ -8,6 +8,10 @@
 
 import UIKit
 
+public enum SectionOperationDirection {
+    case Default, Left, Right
+}
+
 public enum SectionAction {
     
     case Insert(NSIndexSet, direction: SectionOperationDirection)

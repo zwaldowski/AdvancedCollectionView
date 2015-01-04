@@ -34,9 +34,9 @@ public enum LoadingState {
     
 }
 
-public final class Loader<T> {
+public final class Loader {
     
-    public typealias Update = T -> ()
+    public typealias Update = () -> ()
     public typealias CompletionHandler = (LoadingState?, Update?) -> ()
 
     private var completionHandler: CompletionHandler!
@@ -65,11 +65,11 @@ public final class Loader<T> {
         done(newState: .Loaded, update: update)
     }
     
-    public func update(#error: NSError) {
+    public func error(error: NSError) {
         done(newState: .Error(error), update: nil)
     }
     
-    public func update(noContent update: Update) {
+    public func noContent(update: Update) {
         done(newState: .NoContent, update: update)
     }
     

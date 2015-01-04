@@ -8,47 +8,7 @@
 
 import UIKit
 
-public let DefaultRowHeight = CGFloat(44)
 public let ElementKindPlaceholder = "placeholder"
-
-public enum Section: Hashable {
-    case Index(Int)
-    case Global
-    
-    public var hashValue: Int {
-        switch self {
-        case .Index(let a): return a.hashValue
-        default: return Int.max.hashValue
-        }
-    }
-    
-    public static func all(#numberOfSections: Int) -> GeneratorOf<Section> {
-        var includedGlobal = false
-        var base = map(lazy(0..<numberOfSections), {
-            Section.Index($0)
-        }).generate()
-        
-        return GeneratorOf {
-            if includedGlobal {
-                return base.next()
-            }
-            includedGlobal = true
-            return .Global
-        }
-    }
-    
-}
-
-public func ==(lhs: Section, rhs: Section) -> Bool {
-    switch (lhs, rhs) {
-    case (.Index(let a), .Index(let b)):
-        return a == b
-    case (.Global, .Global):
-        return true
-    default:
-        return false
-    }
-}
 
 public enum LayoutOrder {
     case Natural
@@ -73,12 +33,6 @@ public struct SeparatorOptions: RawOptionSetType {
     public static var AfterLastSection: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 5) }
 }
 
-public enum ItemMeasurement {
-    case None
-    case Value(CGFloat)
-    case Estimated(CGFloat)
-}
-
 public struct SupplementaryMetrics {
     
     /// The class to use when dequeuing an instance of this supplementary view
@@ -92,7 +46,7 @@ public struct SupplementaryMetrics {
     /// scrolling? Only valid for headers and footers.
     public var shouldPin = false
     /// The size of the supplementary view relative to the layout.
-    public var itemMeasurement = ItemMeasurement.None
+    public var measurement = ElementLength.None
     /// Should the supplementary view be hidden?
     public var isHidden = false
     /// Use top & bottom padding to adjust spacing of header & footer elements.
@@ -159,13 +113,13 @@ public struct SectionMetrics {
     public init() { }
     
     public init(defaultMetrics: ()) {
-        itemMeasurement = .Value(DefaultRowHeight)
+        measurement = .Default
         numberOfColumns = 1
         separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns | SeparatorOptions.AfterSections
     }
     
     /// The size of each row in the section.
-    public var itemMeasurement: ItemMeasurement? = nil
+    public var measurement = ElementLength.None
     /// Number of columns in this section. Sections will inherit a default of
     /// 1 from the data source.
     public var numberOfColumns: Int? = nil
@@ -225,17 +179,17 @@ public struct SectionMetrics {
     }
     
     public mutating func apply(metrics other: SectionMetrics) {
-        if let otherMeasurement = other.itemMeasurement { itemMeasurement = otherMeasurement }
+        if other.measurement != ElementLength.None { measurement = other.measurement }
         if let otherColumns = other.numberOfColumns { numberOfColumns = otherColumns }
         if let otherPadding = other.padding { padding = otherPadding }
         if let otherOrder = other.itemLayout { itemLayout = otherOrder }
         if let otherSeparators = other.separators { separators = otherSeparators }
         if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }
-        if other.setSeparatorColor { separatorColor = other.separatorColor }
-        if other.setBackgroundColor { backgroundColor = other.backgroundColor }
-        if other.setSelectedBackgroundColor { selectedBackgroundColor = other.selectedBackgroundColor }
-        if other.setTintColor { tintColor = other.tintColor }
-        if other.setSelectedTintColor { selectedTintColor = other.selectedTintColor }
+        if let otherSeparatorColor = other.separatorColor { separatorColor = otherSeparatorColor }
+        if let otherBackgroundColor = other.backgroundColor { backgroundColor = otherBackgroundColor }
+        if let otherSelectedBackgroundColor = other.selectedBackgroundColor { selectedBackgroundColor = otherSelectedBackgroundColor }
+        if let otherTintColor = other.tintColor { tintColor = otherTintColor }
+        if let otherSelectedTintColor = other.selectedTintColor { selectedTintColor = otherSelectedTintColor }
         supplementaryViews.extend(other.supplementaryViews)
         hasPlaceholder |= other.hasPlaceholder
     }

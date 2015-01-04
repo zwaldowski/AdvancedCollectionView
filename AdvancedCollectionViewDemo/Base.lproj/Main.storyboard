@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6724" systemVersion="14C81f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="72V-Mp-TOC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6724" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="72V-Mp-TOC">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6711"/>
     </dependencies>
     <scenes>
@@ -24,12 +23,12 @@
         <!--Big Cats-->
         <scene sceneID="FVZ-Nf-IJf">
             <objects>
-                <collectionViewController title="Big Cats" id="2pL-km-O3X" customClass="APPLCatListViewController" sceneMemberID="viewController">
+                <collectionViewController title="Big Cats" id="2pL-km-O3X" customClass="CatListViewController" customModule="AdvancedCollectionViewDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="TN8-YN-wRs">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewLayout key="collectionViewLayout" id="nrV-QC-wH3" customClass="AAPLCollectionViewGridLayout"/>
+                        <collectionViewLayout key="collectionViewLayout" id="nrV-QC-wH3" customClass="GridLayout" customModule="AdvancedCollectionView"/>
                         <cells/>
                         <connections>
                             <outlet property="delegate" destination="2pL-km-O3X" id="6DN-xJ-w2G"/>

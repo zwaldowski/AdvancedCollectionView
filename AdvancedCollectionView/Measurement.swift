@@ -11,10 +11,6 @@ import UIKit
 /// A category of methods that makes working with reusable cells and supplementary views a bit easier.
 public extension UICollectionReusableView {
     
-    private struct Measurement {
-        static let supportConstraints = floor(NSFoundationVersionNumber) > 1047.25
-    }
-    
     /// This is kind of a hack because cells don't have an intrinsic content size or any other way to constrain them to a size. As a result, labels that *should* wrap at the bounds of a cell, don't. So by adding width and height constraints to the cell temporarily, we can make the labels wrap and the layout compute correctly.
     public func preferredLayoutSize(fittingSize targetSize: CGSize) -> CGSize {
         frame.size = targetSize
@@ -24,7 +20,7 @@ public extension UICollectionReusableView {
             return newSize
         }
         
-        if Measurement.supportConstraints {
+        if Constants.isiOS8 {
             layoutIfNeeded()
             let newSize = systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
             return update(measuredSize: newSize)
@@ -58,7 +54,7 @@ public extension UICollectionViewCell {
             return fitted
         }
         
-        if Measurement.supportConstraints {
+        if Constants.isiOS8 {
             layoutIfNeeded()
             let newSize = contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
             return update(measuredSize: newSize)

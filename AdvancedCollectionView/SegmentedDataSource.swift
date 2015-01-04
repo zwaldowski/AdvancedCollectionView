@@ -19,12 +19,14 @@ public class SegmentedDataSource: DataSource {
     
     /// Add a data source to the end of the collection. The `title` of `dataSource` will be used to populate a new segment in the control associated with this data source.
     public func add(#dataSource: DataSource) {
-        if dataSources.isEmpty {
-            selectedDataSource = dataSource
-        }
+        let isEmpty = dataSources.isEmpty
         
         dataSources.append(dataSource)
         dataSource.container = self
+        
+        if isEmpty {
+            selectedDataSource = dataSource
+        }
     }
     
     /// Remove the data source from the collection.

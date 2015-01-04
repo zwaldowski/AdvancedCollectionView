@@ -271,9 +271,15 @@ extension Multimap: SequenceType {
     
     public mutating func updateMap(transform fn: Element -> Value) {
         map = map.map { (key, array) in
-            return (key, mapWithIndex(array) {
+            return (key, array.mapWithIndex {
                 fn((key, $0, $1))
             })
+        }
+    }
+    
+    public mutating func updateMapWithIndex(groupForKey key: Key, transform: (Values.Index, Value) -> Value) {
+        mutate(arrayForKey: key) { (inout array: Values) in
+            array = array.mapWithIndex(transform)
         }
     }
     

@@ -6,41 +6,14 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-import Foundation
-
-public enum PinningState {
-    case Pinned(CGFloat)
-    case Unpinned
-}
-
-public func ==(lhs: PinningState, rhs: PinningState) -> Bool {
-    switch (lhs, rhs) {
-    case (.Pinned(let a), .Pinned(let b)):
-        return a == b
-    case (.Unpinned, .Unpinned):
-        return true
-    default:
-        return false
-    }
-}
-
-extension PinningState: Hashable {
-    
-    public var hashValue: Int {
-        switch self {
-        case let .Pinned(unpinnedY):
-            return unpinnedY.hashValue
-        case .Unpinned:
-            return 0
-        }
-    }
-    
-}
+import UIKit
 
 public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
     /// If this is a header, is it pinned to the top of the collection view?
-    public var pinned: PinningState = .Unpinned
+    public var pinned = false
+    /// If this is pinned, where is our minY when we unpin it?
+    public var unpinned: CGFloat? = nil
     /// The background color for the view
     public var backgroundColor: UIColor? = nil
     /// The background color when selected
@@ -61,6 +34,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
             hash = 31 &* (value ?? 0) &+ hash
         }
         update(pinned.hashValue)
+        update(unpinned?.hashValue)
         update(backgroundColor?.hashValue)
         update(selectedBackgroundColor?.hashValue)
         update(tintColor?.hashValue)
@@ -76,6 +50,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
         if !super.isEqual(object) { return false }
         if let other = object as? GridLayoutAttributes {
             if pinned != other.pinned { return false }
+            if unpinned != other.unpinned { return false }
             if backgroundColor != other.backgroundColor { return false }
             if selectedBackgroundColor != other.selectedBackgroundColor { return false }
             if tintColor != other.tintColor { return false }
@@ -91,6 +66,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     public override func copyWithZone(zone: NSZone) -> AnyObject {
         var attributes = super.copyWithZone(zone) as GridLayoutAttributes
         attributes.pinned = pinned
+        attributes.unpinned = unpinned
         attributes.backgroundColor = backgroundColor
         attributes.selectedBackgroundColor = selectedBackgroundColor
         attributes.tintColor = tintColor

@@ -8,21 +8,7 @@
 
 import Foundation
 
-func assertMainThread(file: StaticString = __FILE__, line: UWord = __LINE__) {
-    assert(NSThread.isMainThread(), "This code must be called on the main thread.", file: file, line: line)
-}
-
-// MARK: Index path
-
-public func ==(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
-    return lhs.compare(rhs) == .OrderedSame
-}
-public func <(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
-    return lhs.compare(rhs) == .OrderedAscending
-    
-}
-
-extension NSIndexPath: Comparable { }
+// MARK: NSIndexPath
 
 extension NSIndexPath: CollectionType {
     
@@ -39,6 +25,16 @@ extension NSIndexPath: CollectionType {
     
 }
 
+public func ==(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
+    return lhs.compare(rhs) == .OrderedSame
+}
+public func <(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
+    return lhs.compare(rhs) == .OrderedAscending
+    
+}
+
+extension NSIndexPath: Comparable { }
+
 extension NSIndexPath {
     
     // This is intended for compatibility with ArrayLiteralConvertible
@@ -47,27 +43,63 @@ extension NSIndexPath {
         self.init(indexes: elements, length: elements.count)
     }
     
+    var stringValue: String {
+        let str = join(", ", lazy(self).map(toString))
+        return "(\(str))"
+    }
+    
 }
 
-extension NSIndexPath {
+// MARK: NSIndexSet
+
+extension NSIndexSet: SequenceType {
     
-    // TODO: get rid of
-    var globalInfo: (section: Section, item: Int) {
-        if length == 1 {
-            return (.Global, self[0])
+    public func generate() -> IndexSetGenerator {
+        return IndexSetGenerator(indexSet: self)
+    }
+    
+    public func range(range: Range<Int>) -> IndexSetGenerator {
+        return IndexSetGenerator(indexSet: self, range: range)
+    }
+    
+    public func reverse(inRange range: Range<Int>? = nil) -> IndexSetGenerator {
+        return IndexSetGenerator(indexSet: self, reverse: true, range: range)
+    }
+    
+    public func map(transform: Int -> Int) -> NSIndexSet {
+        let indexSet = NSMutableIndexSet()
+        for idx in self {
+            indexSet.addIndex(transform(idx))
         }
-        return (.Index(self[0]), self[1])
+        return indexSet
+    }
+    
+}
+
+extension NSIndexSet {
+    
+    public convenience init(range: Range<Int>) {
+        self.init(indexesInRange: NSRange(range))
+    }
+    
+    public convenience init(_ elements: Int...) {
+        self.init(indexes: elements)
+    }
+    
+    public convenience init<S: SequenceType where S.Generator.Element == Int>(indexes elements: S) {
+        let set = NSMutableIndexSet()
+        for idx in elements {
+            set.addIndex(idx)
+        }
+        self.init(indexSet: set)
     }
     
     var stringValue: String {
         let str = join(", ", lazy(self).map(toString))
-        return "{\(str)}"
+        return "[\(str)]"
     }
     
 }
-
-
-// MARK: Index set
 
 public func -=(left: NSMutableIndexSet, right: NSIndexSet) {
     left.removeIndexes(right)
@@ -97,30 +129,7 @@ public func +(left: NSIndexSet, right: NSIndexSet) -> NSMutableIndexSet {
     return indexSet
 }
 
-extension NSIndexSet {
-    
-    public convenience init(range: Range<Int>) {
-        self.init(indexesInRange: NSRange(range))
-    }
-    
-    public convenience init(_ elements: Int...) {
-        self.init(indexes: elements)
-    }
-    
-    public convenience init<S: SequenceType where S.Generator.Element == Int>(indexes elements: S) {
-        let set = NSMutableIndexSet()
-        for idx in elements {
-            set.addIndex(idx)
-        }
-        self.init(indexSet: set)
-    }
-    
-    var stringValue: String {
-        let str = join(", ", lazy(self).map(toString))
-        return "[\(str)]"
-    }
-    
-}
+// MARK: IndexSetGenerator
 
 public struct IndexSetGenerator: GeneratorType, SequenceType {
     
@@ -186,30 +195,6 @@ public struct IndexSetGenerator: GeneratorType, SequenceType {
     
     public func generate() -> IndexSetGenerator {
         return IndexSetGenerator(indexSet: indexSet, reverse: reverse, range: range)
-    }
-    
-}
-
-extension NSIndexSet: SequenceType {
-    
-    public func generate() -> IndexSetGenerator {
-        return IndexSetGenerator(indexSet: self)
-    }
-    
-    public func range(range: Range<Int>) -> IndexSetGenerator {
-        return IndexSetGenerator(indexSet: self, range: range)
-    }
-    
-    public func reverse(inRange range: Range<Int>? = nil) -> IndexSetGenerator {
-        return IndexSetGenerator(indexSet: self, reverse: true, range: range)
-    }
-    
-    public func map(transform: Int -> Int) -> NSIndexSet {
-        let indexSet = NSMutableIndexSet()
-        for idx in self {
-            indexSet.addIndex(transform(idx))
-        }
-        return indexSet
     }
     
 }

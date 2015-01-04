@@ -11,21 +11,31 @@ import UIKit.UIGeometry
 
 // MARK: Rounding
 
-public protocol Scalable: FloatingPointType, FloatLiteralConvertible {
+public protocol Scalable: Comparable {
     func *(lhs: Self, rhs: Self) -> Self
     func /(lhs: Self, rhs: Self) -> Self
+    class var identityScalar: Self { get }
 }
 
-extension Double: Scalable {}
-extension CGFloat: Scalable {}
-
-private func rround<T: Scalable>(value: T, scale: T = 1.0, function: T -> T) -> T {
-    return (scale > T(1)) ? (function(value * scale) / scale) : function(value)
+extension Float: Scalable {
+    public static let identityScalar = Float(1)
 }
 
-// MARK: Approximate equality for UI purposes
+extension Double: Scalable {
+    public static let identityScalar = Double(1)
+}
 
-public protocol ApproximatelyEquatable: AbsoluteValuable, FloatingPointType, Comparable {
+extension CGFloat: Scalable {
+    public static let identityScalar = CGFloat(CGFloat.NativeType.identityScalar)
+}
+
+private func rround<T: Scalable>(value: T, scale: T = T.identityScalar, function: T -> T) -> T {
+    return (scale > T.identityScalar) ? (function(value * scale) / scale) : function(value)
+}
+
+// MARK: Approximate equality (for UI purposes)
+
+public protocol ApproximatelyEquatable: AbsoluteValuable, Comparable {
     class var accuracy: Self { get }
 }
 
@@ -48,7 +58,7 @@ infix operator !~== { associativity none precedence 130 }
     return T.abs(rhs - lhs) <= T.accuracy
 }
 
-@transparent public func !~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
+public func !~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
     return !(lhs ~== rhs)
 }
 
@@ -60,16 +70,49 @@ infix operator !~== { associativity none precedence 130 }
 
 extension UIEdgeInsets: Equatable {
     
+    mutating func remove(edges: UIRectEdge) {
+        if contains(edges, .Top) { top = 0 }
+        if contains(edges, .Left) { left = 0 }
+        if contains(edges, .Bottom) { bottom = 0 }
+        if contains(edges, .Right) { right = 0 }
+    }
+    
     func without(edges: UIRectEdge) -> UIEdgeInsets {
         var ret = self
-        if contains(edges, .Top) { ret.top = 0 }
-        if contains(edges, .Left) { ret.left = 0 }
-        if contains(edges, .Bottom) { ret.bottom = 0 }
-        if contains(edges, .Right) { ret.right = 0 }
+        ret.remove(edges)
         return ret
     }
     
 }
+
+public extension CGRect {
+    
+    mutating func inset(#insets: UIEdgeInsets) {
+        self = UIEdgeInsetsInsetRect(self, insets)
+    }
+    
+    func rectByInsetting(#insets: UIEdgeInsets) -> CGRect {
+        return UIEdgeInsetsInsetRect(self, insets)
+    }
+    
+}
+
+// MARK: Vector arithmetic
+
+public prefix func -(p: CGPoint) -> CGPoint {
+    return CGPoint(x: -p.x, y: -p.y)
+}
+
+public func +(lhs:CGPoint, rhs:CGPoint) -> CGPoint {
+    return CGPoint(x:lhs.x + rhs.x, y:lhs.y + rhs.y)
+}
+
+public func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+}
+
+public func +=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs + rhs }
+public func -=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs - rhs }
 
 // MARK: Rects
 
@@ -84,82 +127,19 @@ extension CGRect {
         }
     }
     
-    func divide(amount: CGFloat, edge: CGRectEdge) -> (slice: CGRect, remainder: CGRect) {
+    mutating func divide(amount: CGFloat, edge: CGRectEdge = .MinYEdge) -> CGRect {
+        var slice = CGRect.zeroRect
+        var remainder = CGRect.zeroRect
+        CGRectDivide(self, &slice, &remainder, amount, edge)
+        self = remainder
+        return slice
+    }
+    
+    func rectsByDividing(#amount: CGFloat, edge: CGRectEdge = .MinYEdge) -> (slice: CGRect, remainder: CGRect) {
         var slice = CGRect.zeroRect
         var remainder = CGRect.zeroRect
         CGRectDivide(self, &slice, &remainder, amount, edge)
         return (slice, remainder)
-    }
-    
-}
-
-// MARK: Arithmetic
-
-public prefix func -(p: CGPoint) -> CGPoint {
-    return CGPoint(x: -p.x, y: -p.y)
-}
-
-public prefix func -(t: CGAffineTransform) -> CGAffineTransform {
-    return CGAffineTransformInvert(t)
-}
-
-public func +(lhs: CGAffineTransform, rhs: CGAffineTransform) -> CGAffineTransform {
-    return CGAffineTransformConcat(lhs, rhs)
-}
-
-public func -(lhs: CGAffineTransform, rhs: CGAffineTransform) -> CGAffineTransform {
-    return lhs + -rhs
-}
-
-public prefix func -(t: CATransform3D) -> CATransform3D {
-    return CATransform3DInvert(t)
-}
-
-public func +(lhs: CATransform3D, rhs: CATransform3D) -> CATransform3D {
-    return CATransform3DConcat(lhs, rhs)
-}
-
-public func -(lhs: CATransform3D, rhs: CATransform3D) -> CATransform3D {
-    return lhs + -rhs
-}
-
-public func += (inout lhs: CGAffineTransform, rhs: CGAffineTransform) { lhs = lhs + rhs }
-public func -= (inout lhs: CGAffineTransform, rhs: CGAffineTransform) { lhs = lhs - rhs }
-public func += (inout lhs: CATransform3D, rhs: CATransform3D) { lhs = lhs + rhs }
-public func -= (inout lhs: CATransform3D, rhs: CATransform3D) { lhs = lhs - rhs }
-
-// MARK: Vector arithmetic
-
-public func +(lhs:CGPoint, rhs:CGPoint) -> CGPoint {
-    return CGPoint(x:lhs.x + rhs.x, y:lhs.y + rhs.y)
-}
-
-public func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-    return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
-}
-
-public func +=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs + rhs }
-public func -=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs - rhs }
-
-// MARK: Equatability
-
-public func ==(lhs: CGAffineTransform, rhs: CGAffineTransform) -> Bool {
-    return CGAffineTransformEqualToTransform(lhs, rhs)
-}
-
-public func ==(lhs: CATransform3D, rhs: CATransform3D) -> Bool {
-    return CATransform3DEqualToTransform(lhs, rhs)
-}
-
-extension CGAffineTransform: Equatable { }
-extension CATransform3D: Equatable { }
-
-// MARK: Insets
-
-public extension CGRect {
-    
-    func inset(insets: UIEdgeInsets) -> CGRect {
-        return UIEdgeInsetsInsetRect(self, insets)
     }
     
 }
