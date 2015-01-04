@@ -17,9 +17,9 @@ public struct PlaceholderContent {
     public var isEmpty: Bool {
         switch (title, message) {
         case (.Some(let text), _):
-            return !text.isEmpty
+            return text.isEmpty
         case (.None, .Some(let text)):
-            return !text.isEmpty
+            return text.isEmpty
         default:
             return true
         }

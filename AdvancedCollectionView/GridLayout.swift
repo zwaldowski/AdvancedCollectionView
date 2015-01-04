@@ -419,12 +419,14 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func indexPathsToDeleteForDecorationViewOfKind(elementKind: String) -> [AnyObject] {
-        let kind = DecorationKind(rawValue: elementKind)!
-        return lazy(decorationAttributesCacheOld).filter {
-            $0.0.kind == kind && self.decorationAttributesCache[$0.0] != nil
-        }.map {
-            $0.0.indexPath
-        }.array
+        if let kind = DecorationKind(rawValue: elementKind) {
+            return lazy(decorationAttributesCacheOld).filter {
+                $0.0.kind == kind && self.decorationAttributesCache[$0.0] != nil
+            }.map {
+                $0.0.indexPath
+            }.array
+        }
+        return []
     }
     
     public override func initialLayoutAttributesForAppearingDecorationElementOfKind(elementKind: String, atIndexPath decorationIndexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
@@ -755,7 +757,7 @@ public class GridLayout: UICollectionViewLayout {
         let ip = getIndexPath()
         let kind = SupplementKind(rawValue: rawKind)!
         
-        let attribute = layoutAttributesType(forDecoration: kind, indexPath: ip)
+        let attribute = layoutAttributesType(forSupplement: kind, indexPath: ip)
         attribute.frame = item.frame
         attribute.unpinned = item.frame.minY
         attribute.zIndex = ZIndex.Supplement.rawValue

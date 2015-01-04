@@ -144,7 +144,7 @@ extension SectionInfo {
     
     private var notNamed: SequenceOf<SupplementalItemsMap.Group> {
         return supplementalItems.groups { (key, _) in
-            key != UICollectionElementKindSectionHeader && key != UICollectionElementKindSectionFooter && key != ElementKindPlaceholder
+            key != UICollectionElementKindSectionHeader && key != UICollectionElementKindSectionFooter
         }
     }
     
@@ -177,13 +177,22 @@ extension SectionInfo {
     }
     
     var placeholder: SupplementInfo? {
-        return supplementalItems[ElementKindPlaceholder].first
+        get {
+            return supplementalItems[ElementKindPlaceholder].first
+        }
+        set {
+            if let info = newValue {
+                supplementalItems.update(CollectionOfOne(info), forKey: ElementKindPlaceholder)
+            } else {
+                supplementalItems.remove(valuesForKey: ElementKindPlaceholder)
+            }
+        }
     }
     
     mutating func addSupplementalItem(metrics: SupplementaryMetrics) {
         let info = SupplementInfo(metrics: metrics)
         if metrics.kind == ElementKindPlaceholder {
-            supplementalItems.update(CollectionOfOne(info), forKey: ElementKindPlaceholder)
+            placeholder = info
         } else {
             supplementalItems.append(info, forKey: metrics.kind)
         }
@@ -321,11 +330,13 @@ extension SectionInfo {
                 
                 return footerInfo
             }
-        case (_, .Some(var placeholder)) where numberOfItems == 0:
+        case (_, .Some(var info)) where numberOfItems == 0:
             // Height of the placeholder is equal to the height of the collection view minus the height of the headers
             let frame = layoutRect.rectByIntersecting(viewport)
-            placeholder.measurement = .Static(frame.height)
-            placeholder.frame = frame
+            info.measurement = .Static(frame.height)
+            info.frame = frame
+            placeholder = info
+            
             _ = layoutRect.divide(frame.height)
         default: break
         }
