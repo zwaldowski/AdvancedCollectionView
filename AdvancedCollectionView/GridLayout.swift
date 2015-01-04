@@ -56,7 +56,6 @@ public class GridLayout: UICollectionViewLayout {
     typealias SupplementCacheKey = GridLayoutCacheKey<SupplementKind>
     typealias DecorationCacheKey = GridLayoutCacheKey<DecorationKind>
     
-    private let layoutDebugging = true
     private let layoutLogging = true
     
     private var layoutSize = CGSize.zeroSize
@@ -213,10 +212,15 @@ public class GridLayout: UICollectionViewLayout {
         contentSizeAdjustment = CGSize.zeroSize
         contentOffsetAdjustment = CGPoint.zeroPoint
         
+        log("layoutDataIsValid \(flags.layoutDataIsValid), layoutMetricsAreValid \(flags.layoutMetricsAreValid)")
+        
         super.invalidateLayoutWithContext(context)
     }
     
     public override func prepareLayout() {
+        trace()
+        log("bounds = \(collectionView?.bounds ?? CGRect.zeroRect)")
+        
         contentSizeAdjustment = CGSize.zeroSize
         contentOffsetAdjustment = CGPoint.zeroPoint
         
@@ -240,14 +244,20 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
+        trace()
         updateSpecialAttributes()
-        return layoutAttributes.filter {
+        let ret = layoutAttributes.filter {
             $0.frame.intersects(rect)
         }
+        log("Requested layout attributes:\n\(layoutAttributesDescription(ret))")
+        return ret
     }
     
     public override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+        trace()
+        
         if let existing = itemAttributesCache[indexPath] {
+            log("Found attributes for \(indexPath.stringValue): \(existing.frame)")
             return existing
         }
         
@@ -265,6 +275,8 @@ public class GridLayout: UICollectionViewLayout {
             attributes.tintColor = info.metrics.tintColor
             attributes.selectedTintColor = info.metrics.selectedTintColor
             
+            log("Synthesized attributes for \(indexPath.stringValue): \(attributes.frame) (preparing layout \(flags.preparingLayout))")
+            
             if !flags.preparingLayout {
                 itemAttributesCache[indexPath] = attributes
             }
@@ -275,6 +287,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+        trace()
+        
         let key = SupplementCacheKey(representedElementKind: elementKind, indexPath: indexPath)
         if let existing = supplementaryAttributesCache[key] {
             return existing
@@ -305,6 +319,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func layoutAttributesForDecorationViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+        trace()
+        
         let key = DecorationCacheKey(representedElementKind: elementKind, indexPath: indexPath)
         if let existing = decorationAttributesCache[key] {
             return existing
@@ -361,11 +377,14 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func collectionViewContentSize() -> CGSize {
+        trace()
         return flags.preparingLayout ? oldLayoutSize : layoutSize
     }
     
     public override func prepareForCollectionViewUpdates(updateItems: [AnyObject]!) {
         for updateItem in updateItems as [UICollectionViewUpdateItem] {
+            trace()
+            
             switch (updateItem.updateAction, updateItem.indexPathBeforeUpdate, updateItem.indexPathAfterUpdate) {
             case (.Insert, _, let indexPath) where indexPath.item == NSNotFound:
                 insertedSections.addIndex(indexPath.section)
@@ -389,6 +408,7 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func finalizeCollectionViewUpdates() {
+        trace()
         insertedIndexPaths.removeAll()
         removedIndexPaths.removeAll()
         insertedSections.removeAllIndexes()
@@ -408,6 +428,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func initialLayoutAttributesForAppearingDecorationElementOfKind(elementKind: String, atIndexPath decorationIndexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("initial decoration:\(elementKind) indexPath:\(decorationIndexPath.stringValue)")
+        
         let key = DecorationCacheKey(representedElementKind: elementKind, indexPath: decorationIndexPath)
         let (section, _) = unpack(indexPath: decorationIndexPath)
         
@@ -425,6 +447,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func finalLayoutAttributesForDisappearingDecorationElementOfKind(elementKind: String, atIndexPath decorationIndexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("final decoration:\(elementKind) indexPath:\(decorationIndexPath.stringValue)")
+        
         let key = DecorationCacheKey(representedElementKind: elementKind, indexPath: decorationIndexPath)
         let (section, _) = unpack(indexPath: decorationIndexPath)
         
@@ -442,6 +466,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func initialLayoutAttributesForAppearingSupplementaryElementOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("initial supplement:\(elementKind) indexPath:\(indexPath.stringValue)")
+        
         let kind = SupplementKind(rawValue: elementKind)!
         let key = SupplementCacheKey(kind: kind, indexPath: indexPath)
         let (section, _) = unpack(indexPath: indexPath)
@@ -466,6 +492,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func finalLayoutAttributesForDisappearingSupplementaryElementOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("final supplement:\(elementKind) indexPath:\(indexPath.stringValue)")
+        
         let kind = SupplementKind(rawValue: elementKind)!
         let key = SupplementCacheKey(kind: kind, indexPath: indexPath)
         let (section, _) = unpack(indexPath: indexPath)
@@ -487,6 +515,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func initialLayoutAttributesForAppearingItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("initial indexPath:\(indexPath.stringValue)")
+        
         let (section, _) = unpack(indexPath: indexPath)
         
         if var result = itemAttributesCache[indexPath]?.copy() as? Attributes {
@@ -503,6 +533,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func finalLayoutAttributesForDisappearingItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("final indexPath:\(indexPath.stringValue)")
+        
         let (section, _) = unpack(indexPath: indexPath)
         
         if var result = itemAttributesCacheOld[indexPath]?.copy() as? Attributes {
@@ -689,7 +721,7 @@ public class GridLayout: UICollectionViewLayout {
         flags.layoutMetricsAreValid = true
         flags.preparingLayout = false
         
-        log("layout attributes:\n\(layoutAttributesDescription)")
+        log("prepared layout attributes:\n\(layoutAttributesDescription(layoutAttributes))")
         
         // But if the headers changed, we need to invalidate…
         if (shouldInvalidate) {
@@ -1056,6 +1088,24 @@ public class GridLayout: UICollectionViewLayout {
 
 extension GridLayout: DebugPrintable {
     
+    private func layoutAttributesDescription(attributes: [Attributes]) -> String {
+        return join("\n", lazy(attributes).map { attr in
+            let typeStr = { () -> String in
+                switch attr.representedElementCategory {
+                case .Cell: return "Cell"
+                case .DecorationView: return "Decoration \(attr.representedElementKind)"
+                case .SupplementaryView: return "Supplement \(attr.representedElementKind)"
+                }
+                }()
+            
+            var ret = "  \(typeStr) indexPath=\(attr.indexPath.stringValue) frame=\(attr.frame)"
+            if attr.hidden {
+                ret += " hidden=true"
+            }
+            return ret
+        })
+    }
+    
     private var layoutAttributesDescription: String {
         return join("\n", layoutAttributes.map { attr in
             let typeStr = { () -> String in
@@ -1066,7 +1116,7 @@ extension GridLayout: DebugPrintable {
                 }
             }()
             
-            var ret = "  \(typeStr) indexPath=\(attr.indexPath.stringValue) frame=\(attr.frame) hidden=\(attr.hidden)"
+            var ret = "  \(typeStr) indexPath=\(attr.indexPath.stringValue) frame=\(attr.frame)"
             if attr.hidden {
                 ret += " hidden=true"
             }
