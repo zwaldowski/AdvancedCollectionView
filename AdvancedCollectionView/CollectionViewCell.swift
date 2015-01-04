@@ -9,6 +9,7 @@
 import UIKit
 
 /// The base collection view cell used by the grid layout code.
+/// TODO: rename, conflicts with some ObjC namespacing
 public class CollectionViewCell: UICollectionViewCell {
     
     public override class func requiresConstraintBasedLayout() -> Bool {
@@ -30,6 +31,7 @@ public class CollectionViewCell: UICollectionViewCell {
     }
     
     public override func awakeFromNib() {
+        super.awakeFromNib()
         commonInit()
     }
     
@@ -80,18 +82,24 @@ public class CollectionViewCell: UICollectionViewCell {
     // MARK: UIView
     
     public override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        super.touchesBegan(touches, withEvent: event)
+        
         if manualTapSupport && enabled {
             highlighted = true
         }
     }
     
     public override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        super.touchesEnded(touches, withEvent: event)
+        
         if manualTapSupport {
             highlighted = false
         }
     }
     
     public override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+        super.touchesCancelled(touches, withEvent: event)
+        
         if manualTapSupport {
             highlighted = false
         }
