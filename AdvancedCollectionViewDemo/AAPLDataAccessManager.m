@@ -20,12 +20,18 @@
 
 + (AAPLDataAccessManager *)manager
 {
+    return [self shared];
+}
+
+
++ (AAPLDataAccessManager *)shared
+{
     static AAPLDataAccessManager *manager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[AAPLDataAccessManager alloc] init];
     });
-
+    
     return manager;
 }
 

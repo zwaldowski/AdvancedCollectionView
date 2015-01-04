@@ -15,6 +15,7 @@
 @interface AAPLDataAccessManager : NSObject
 
 + (AAPLDataAccessManager *)manager;
++ (AAPLDataAccessManager *)shared;
 
 - (void)fetchCatListReversed:(BOOL)reversed withCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler;
 - (void)fetchDetailForCat:(AAPLCat *)cat completionHandler:(void(^)(AAPLCat *cat, NSError *error))handler;
