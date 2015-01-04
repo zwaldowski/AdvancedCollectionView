@@ -264,7 +264,7 @@ public class DataSource: NSObject {
         }
     }
     
-    public func updatePlaceholder(notifyVisibility notify: Bool) {
+    public func updatePlaceholder(_ placeholderView: AAPLCollectionPlaceholderView? = nil, notifyVisibility notify: Bool = false) {
         if let placeholderView = placeholderView {
             switch loadingState {
             case .Loading:
@@ -291,7 +291,7 @@ public class DataSource: NSObject {
         if placeholderView == nil {
             placeholderView = collectionView.dequeueReusableSupplement(kind: GridLayout.SupplementKind.Placeholder, indexPath: indexPath, type: AAPLCollectionPlaceholderView.self)
         }
-        updatePlaceholder(notifyVisibility: false)
+        updatePlaceholder(placeholderView, notifyVisibility: false)
         return placeholderView!
     }
     

@@ -207,8 +207,8 @@ public class SegmentedDataSource: DataSource {
         return selectedDataSource?.shouldDisplayPlaceholder ?? false
     }
     
-    public override func updatePlaceholder(notifyVisibility notify: Bool) {
-        _selectedDataSource?.updatePlaceholder(notifyVisibility: notify)
+    public override func updatePlaceholder(placeholderView: AAPLCollectionPlaceholderView?, notifyVisibility notify: Bool) {
+        _selectedDataSource?.updatePlaceholder(placeholderView, notifyVisibility: notify)
     }
     
     public override var emptyContent: PlaceholderContent {
