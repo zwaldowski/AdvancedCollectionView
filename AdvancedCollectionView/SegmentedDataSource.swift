@@ -204,21 +204,7 @@ public class SegmentedDataSource: DataSource {
         if super.shouldDisplayPlaceholder {
             return true
         }
-        
-        if let child = selectedDataSource {
-            switch (child.loadingState, child.emptyContent.isEmpty, child.errorContent.isEmpty) {
-            case (.NoContent, false, _):
-                return true
-            case (.Error, _, false):
-                return true
-            case (.Loading, _, _):
-                return true
-            default:
-                return false
-            }
-        }
-        
-        return false
+        return selectedDataSource?.shouldDisplayPlaceholder ?? false
     }
     
     public override func updatePlaceholder(notifyVisibility notify: Bool) {
