@@ -123,7 +123,7 @@ extension Set: SetType {
     }
     
     public mutating func insert(element: Element) -> Bool {
-        return values.updateValue(Unit(), forKey: element) != nil
+        return values.updateValue(Unit(), forKey: element) == nil
     }
     
     public mutating func remove(element: Element) -> Bool {

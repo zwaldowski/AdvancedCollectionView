@@ -14,7 +14,7 @@ public class ComposedDataSource: DataSource {
     private var mappings = OrderedDictionary<DataSource, ComposedMapping>()
     
     public var dataSources: [DataSource] {
-        return mappings.keys.ordered
+        return mappings.keys
     }
     
     private var sectionDataSources = [DataSource]()
@@ -25,13 +25,13 @@ public class ComposedDataSource: DataSource {
         
         dataSource.container = self
         
-        let mapping = ComposedMapping()
-        mappings.append(dataSource, mapping)
-        
+        mappings.append(dataSource, ComposedMapping())
         updateMappings()
         
-        let addedSections = mapping.globalSections(forNumberOfSections: dataSource.numberOfSections)
-        notifySectionsInserted(addedSections, direction: .Default)
+        let mapping = mappings[dataSource]
+        if let addedSections = mapping?.globalSections(forNumberOfSections: dataSource.numberOfSections) {
+            notifySectionsInserted(addedSections)
+        }
     }
     
     /// Remove the specified data source from this data source.

@@ -71,19 +71,19 @@ extension Multimap {
 extension Multimap {
     
     private mutating func mutate(arrayForKey key: Key, transform: (inout array: Values) -> (), replace: (() -> Values)? = nil) {
-        var newArr: Values!
-        if var newArr = map[key] {
-            transform(array: &newArr)
-        } else if let replace = replace {
-            newArr = replace()
-        } else {
-            return
+        func update(#array: Values) {
+            if array.count > 0 {
+                map[key] = array
+            } else {
+                map.removeValueForKey(key)
+            }
         }
         
-        if newArr.count > 0 {
-            map[key] = newArr
-        } else {
-            map.removeValueForKey(key)
+        if var newArr = map[key] {
+            transform(array: &newArr)
+            update(array: newArr)
+        } else if let replace = replace {
+            update(array: replace())
         }
     }
     

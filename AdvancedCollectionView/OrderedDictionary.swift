@@ -8,10 +8,10 @@
 
 public struct OrderedDictionary<Key: Hashable, Value> {
     
-    typealias Keys = OrderedSet<Key>
+    typealias Keys = [Key]
     typealias Hash = [Key: Value]
     
-    private(set) var keys: Keys
+    private(set) public var keys: Keys
     private var elements: Hash
     
     private init(keys: Keys, elements: Hash) {
@@ -42,7 +42,7 @@ extension OrderedDictionary {
     }
     
     public init() {
-        self.init(keys: OrderedSet(), elements: [:])
+        self.init(keys: Keys(), elements: [:])
     }
     
     public init<S: SequenceType where S.Generator.Element == Element>(_ sequence: S) {
@@ -64,10 +64,11 @@ extension OrderedDictionary: SequenceType {
     public typealias Element = Hash.Element
     
     public func generate() -> GeneratorOf<Element> {
+        let elements = self.elements
         var keysGenerator = keys.generate()
         return GeneratorOf {
             if let nextKey = keysGenerator.next() {
-                let value = self.elements[nextKey]!
+                let value = elements[nextKey]!
                 return (nextKey, value)
             }
             return nil
@@ -108,7 +109,7 @@ extension OrderedDictionary: CollectionType {
     
     /// Gets a subrange of existing keys in an ordered dictionary using square bracket subscripting with an integer range.*/
     public subscript(#keyRange: Range<Index>) -> Slice<Key> {
-        return keys.ordered[keyRange]
+        return keys[keyRange]
     }
     
 }
@@ -124,7 +125,7 @@ extension OrderedDictionary: ExtensibleCollectionType {
     public mutating func extend<S: SequenceType where S.Generator.Element == Element>(newElements: S) {
         let asSeq = SequenceOf<Element>(newElements)
 
-        keys.reserveCapacity(countElements(keys) + underestimateCount(asSeq))
+        reserveCapacity(countElements(keys) + underestimateCount(asSeq))
 
         for el in asSeq {
             append(el)
@@ -132,8 +133,9 @@ extension OrderedDictionary: ExtensibleCollectionType {
     }
     
     public mutating func append(element: Element) {
-        elements[element.0] = element.1
-        keys.append(element.0)
+        if elements.updateValue(element.1, forKey: element.0) == nil {
+            keys.append(element.0)
+        }
     }
     
 }
@@ -227,7 +229,7 @@ extension OrderedDictionary {
     /// Removes the key-value pair for the specified key and returns its value, or nil if a value for that key did not previously exist.*/
     mutating func removeValueForKey(key: Key) -> Value? {
         if let ret = elements.removeValueForKey(key) {
-            keys.remove(key)
+            removeValue(&keys, key)
             return ret
         }
         return nil
@@ -237,7 +239,7 @@ extension OrderedDictionary {
 
     /// Sorts the receiver in place using a given closure to determine the order of a provided pair of elements.
     mutating func sort(isOrderedBefore sortFunction: (Element, Element) -> Bool) {
-        keys = OrderedSet(Swift.sorted(self, sortFunction).map { $0.0 })
+        keys = Keys(Swift.sorted(self, sortFunction).map { $0.0 })
     }
     
     /// Sorts the receiver in place using a given closure to determine the order of a provided pair of elements by their keys.
