@@ -17,6 +17,8 @@ class CatDetailHeader: PinnableHeaderView {
     private weak var conservationStatusLabel: UILabel!
     
     override func commonInit() {
+        super.commonInit()
+        
         let name = UILabel()
         name.setTranslatesAutoresizingMaskIntoConstraints(false)
         name.font = UIFont.systemFontOfSize(24)

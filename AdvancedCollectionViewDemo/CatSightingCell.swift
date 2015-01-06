@@ -16,6 +16,8 @@ class CatSightingCell: AdvancedCollectionView.CollectionViewCell {
     private weak var descriptionLabel: UILabel!
     
     override func commonInit() {
+        super.commonInit()
+        
         let date = UILabel()
         date.setTranslatesAutoresizingMaskIntoConstraints(false)
         date.font = UIFont.preferredFontForTextStyle(UIFontTextStyleCaption1)

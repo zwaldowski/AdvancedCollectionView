@@ -14,6 +14,8 @@ class TextValueCell: AdvancedCollectionView.CollectionViewCell {
     private weak var label: UILabel!
     
     override func commonInit() {
+        super.commonInit()
+        
         let label = UILabel()
         label.setTranslatesAutoresizingMaskIntoConstraints(false)
         contentView.addSubview(label)
