@@ -269,8 +269,8 @@ public class GridLayout: UICollectionViewLayout {
             let frame = { () -> CGRect in
                 if indexPath == self.measuringItemFrame?.0 {
                     return self.measuringItemFrame!.1
-                } else if index >= info.items.count {
-                    return info.items[index].frame
+                } else if let item = info[index] {
+                    return item.frame
                 } else {
                     return CGRect.zeroRect
                 }
@@ -306,7 +306,7 @@ public class GridLayout: UICollectionViewLayout {
         
         let (section, index) = unpack(indexPath: indexPath)
         if let info = sectionInfo(forSection: section) {
-            let item = info.supplementalItems[elementKind, index]
+            let item = info[elementKind, index]
 
             let attributes = layoutAttributesType(forSupplementaryViewOfKind: elementKind, withIndexPath: indexPath)
             
@@ -787,7 +787,6 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     private func addLayoutAttributes(forSection section: Section, withInfo info: SectionInfo) {
-        let numberOfItems = info.items.count
         let numberOfSections = collectionView?.numberOfSections() ?? 0
         
         let afterSectionBit = { () -> SeparatorOptions in
@@ -841,7 +840,7 @@ public class GridLayout: UICollectionViewLayout {
         
         // Lay out headers
         for (rawKind, idx, item) in info[.Header] {
-            if info.items.count == 0 && !item.metrics.isVisibleWhileShowingPlaceholder { continue }
+            if info.numberOfItems == 0 && !item.metrics.isVisibleWhileShowingPlaceholder { continue }
             
             if let attribute = addSupplementAttributes(kind: rawKind, indexPath: indexPath(idx), info: item, metrics: info.metrics) {
                 appendPinned(attribute, item.metrics.shouldPin)
@@ -857,13 +856,13 @@ public class GridLayout: UICollectionViewLayout {
         
         // Separator after non-global headers
         let numberOfHeaders = info.count(supplements: .Header) ?? 0
-        switch (numberOfHeaders, numberOfItems) {
-        case (0, _) where numberOfItems != 0:
-            addSeparator(toRect: info.headersRect, indexPath: indexPath(0), bit: .BeforeSections, kind: .HeaderSeparator, metrics: info.metrics)
-        case (_, 0) where numberOfHeaders != 0:
-            addSeparator(toRect: info.headersRect, indexPath: indexPath(numberOfHeaders), bit: afterSectionBit, kind: .HeaderSeparator, metrics: info.metrics)
+        switch (numberOfHeaders, info.numberOfItems) {
         case (0, 0):
             break
+        case (0, let items) where items != 0:
+            addSeparator(toRect: info.headersRect, indexPath: indexPath(0), bit: .BeforeSections, kind: .HeaderSeparator, metrics: info.metrics)
+        case (let headers, 0) where headers != 0:
+            addSeparator(toRect: info.headersRect, indexPath: indexPath(numberOfHeaders), bit: afterSectionBit, kind: .HeaderSeparator, metrics: info.metrics)
         default:
             addSeparator(toRect: info.headersRect.rectByInsetting(insets: info.metrics.groupPadding), indexPath: indexPath(numberOfHeaders), bit: .Supplements, kind: .HeaderSeparator, metrics: info.metrics)
         }
@@ -922,9 +921,9 @@ public class GridLayout: UICollectionViewLayout {
         
         
         // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
-        switch (section, numberOfItems) {
-        case (.Index, _) where numberOfItems != 0:
-            addSeparator(toRect: info.frame, indexPath: indexPath(numberOfItems), bit: afterSectionBit, metrics: info.metrics)
+        switch (section, info.numberOfItems) {
+        case (.Index, let items) where items != 0:
+            addSeparator(toRect: info.frame, indexPath: indexPath(items), bit: afterSectionBit, metrics: info.metrics)
         default: break
         }
     }

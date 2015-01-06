@@ -119,15 +119,17 @@ struct SectionInfo {
     typealias SupplementalItemsMap = Multimap<String, SupplementInfo>
     
     let metrics: SectionMetrics
-    private(set) var frame = CGRect.zeroRect
-    private(set) var items = [ItemInfo]()
-    private(set) var rows = [RowInfo]() // ephemeral
-    private(set) var supplementalItems = SupplementalItemsMap()
-    private(set) var headersRect = CGRect.zeroRect
-    
+
     init(metrics: SectionMetrics) {
         self.metrics = metrics
     }
+    
+    private var items = [ItemInfo]()
+    private(set) var rows = [RowInfo]() // ephemeral
+    private var supplementalItems = SupplementalItemsMap()
+    
+    private(set) var frame = CGRect.zeroRect
+    private(set) var headersRect = CGRect.zeroRect
     
 }
 
@@ -200,6 +202,21 @@ extension SectionInfo {
     
     mutating func addItems(count: Int) {
         items += Repeat(count: count, repeatedValue: ItemInfo())
+    }
+    
+    subscript (kind: String, supplementIndex: Int) -> SupplementInfo? {
+        return supplementalItems[kind, supplementIndex]
+    }
+    
+    var numberOfItems: Int {
+        return items.count
+    }
+    
+    subscript (itemIndex: Int) -> ItemInfo? {
+        if itemIndex < items.endIndex {
+            return items[itemIndex]
+        }
+        return nil
     }
     
 }
