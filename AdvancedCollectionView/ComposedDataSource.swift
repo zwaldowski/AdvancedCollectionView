@@ -9,7 +9,7 @@
 import UIKit
 
 /// A data source that maps between multiple child data sources. Child data sources may have multiple sections. Load content messages will be sent to all child data sources.
-public class ComposedDataSource: DataSource {
+public class ComposedDataSource: DataSource, DataSourceContainer {
     
     private var mappings = OrderedDictionary<DataSource, ComposedMapping>()
     
@@ -28,10 +28,8 @@ public class ComposedDataSource: DataSource {
         mappings.append(dataSource, ComposedMapping())
         updateMappings()
         
-        let mapping = mappings[dataSource]
-        if let addedSections = mapping?.globalSections(forNumberOfSections: dataSource.numberOfSections) {
-            notifySectionsInserted(addedSections)
-        }
+        let addedSections = mappings[dataSource]!.globalSections(forNumberOfSections: dataSource.numberOfSections)
+        notifySectionsInserted(addedSections)
     }
     
     /// Remove the specified data source from this data source.
@@ -42,7 +40,7 @@ public class ComposedDataSource: DataSource {
         dataSource.container = nil
         
         updateMappings()
-        notifySectionsRemoved(removedSections, direction: .Default)
+        notifySectionsRemoved(removedSections)
     }
     
     /// Clear the collection of data sources.
@@ -77,7 +75,7 @@ public class ComposedDataSource: DataSource {
     
     private func globalSections(forLocalSections local: NSIndexSet, dataSource: DataSource) -> NSIndexSet {
         let mapping = mappings[dataSource]!
-        return mapping.globalSections(forLocalSections: local)
+        return NSIndexSet(indexes: mapping.globalSections(forLocalSections: local))
     }
     
     private func globalIndexPaths(forLocalIndexPaths local: [NSIndexPath], dataSource: DataSource) -> [NSIndexPath] {
@@ -216,50 +214,8 @@ public class ComposedDataSource: DataSource {
             dataSource.resetContent()
         }
     }
-
-}
-
-extension ComposedDataSource: UICollectionViewDataSource {
     
-    public override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // If we're showing the placeholder, ignore what the child data sources have to say about the number of items.
-        if shouldDisplayPlaceholder { return 0 }
-
-        updateMappings()
-        
-        let (wrapper, dataSource, localSection) = map(globalSection: section, collectionView: collectionView)
-        
-        let numberOfSections = dataSource.numberOfSectionsInCollectionView(wrapper)
-        assert(localSection < numberOfSections, "local section is out of bounds for composed data source")
-        
-        return dataSource.collectionView(wrapper, numberOfItemsInSection: localSection)
-    }
-    
-    public override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath globalIndexPath: NSIndexPath) -> UICollectionViewCell {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
-
-        return dataSource.collectionView(wrapper, cellForItemAtIndexPath: indexPath)
-    }
-    
-}
-
-extension ComposedDataSource: CollectionViewDataSourceGridLayout {
-    
-    public override func sizeFittingSize(size: CGSize, itemAtIndexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
-        
-        return dataSource.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: wrapper)
-    }
-    
-    public override func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
-        
-        return dataSource.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: wrapper)
-    }
-    
-}
-
-extension ComposedDataSource: DataSourceContainer {
+    // MARK: DataSourceContainer
     
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
         switch sectionAction {
@@ -274,15 +230,15 @@ extension ComposedDataSource: DataSourceContainer {
             updateMappings()
             notifySectionsRemoved(newSections, direction: direction)
         case .Reload(let indexes):
+            updateMappings()
             let mapping = mappings[dataSource]!
             let newSections = mapping.globalSections(forLocalSections: indexes)
             notifySectionsReloaded(newSections)
-            updateMappings()
         case .Move(let from, let to, let direction):
+            updateMappings()
             let mapping = mappings[dataSource]!
             let globalOld = mapping.globalSection(forLocalSection: from)
             let globalNew = mapping.globalSection(forLocalSection: to)
-            updateMappings()
             notifySectionsMoved(from: globalOld, to: globalNew, direction: direction)
         default:
             notify(sectionAction: sectionAction)
@@ -324,6 +280,42 @@ extension ComposedDataSource: DataSourceContainer {
         default:
             notify(itemAction: itemAction)
         }
+    }
+
+    // MARK: UICollectionViewDataSource
+    
+    public override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // If we're showing the placeholder, ignore what the child data sources have to say about the number of items.
+        if shouldDisplayPlaceholder { return 0 }
+
+        updateMappings()
+        
+        let (wrapper, dataSource, localSection) = map(globalSection: section, collectionView: collectionView)
+        
+        let numberOfSections = dataSource.numberOfSectionsInCollectionView(wrapper)
+        assert(localSection < numberOfSections, "local section is out of bounds for composed data source")
+        
+        return dataSource.collectionView(wrapper, numberOfItemsInSection: localSection)
+    }
+    
+    public override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath globalIndexPath: NSIndexPath) -> UICollectionViewCell {
+        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+
+        return dataSource.collectionView(wrapper, cellForItemAtIndexPath: indexPath)
+    }
+    
+    // MARK: CollectionViewDataSourceGridLayout
+    
+    public override func sizeFittingSize(size: CGSize, itemAtIndexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
+        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+        
+        return dataSource.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: wrapper)
+    }
+    
+    public override func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
+        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+        
+        return dataSource.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: wrapper)
     }
     
 }

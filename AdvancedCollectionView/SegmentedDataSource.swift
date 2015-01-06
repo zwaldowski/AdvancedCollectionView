@@ -9,7 +9,7 @@
 import UIKit
 
 /// A data source that switches among a number of child data sources.
-public class SegmentedDataSource: DataSource {
+public class SegmentedDataSource: DataSource, DataSourceContainer {
     
     /// Should the data source create a default header that allows switching between the data sources. Set to NO if switching is accomplished through some other means. Default value is YES.
     public var shouldDisplayDefaultHeader = true
@@ -245,9 +245,7 @@ public class SegmentedDataSource: DataSource {
         }
     }
     
-}
-
-extension SegmentedDataSource: UICollectionViewDataSource {
+    // MARK: UICollectionViewDataSource
     
     public override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if shouldDisplayPlaceholder { return 0 }
@@ -258,10 +256,8 @@ extension SegmentedDataSource: UICollectionViewDataSource {
         let cell = selectedDataSource?.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
         return cell!
     }
-
-}
-
-extension SegmentedDataSource: CollectionViewDataSourceGridLayout {
+    
+    // MARK: CollectionViewDataSourceGridLayout
     
     public override func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
         return selectedDataSource?.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: collectionView) ?? size
@@ -271,9 +267,7 @@ extension SegmentedDataSource: CollectionViewDataSourceGridLayout {
         return selectedDataSource?.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: collectionView) ?? size
     }
 
-}
-
-extension SegmentedDataSource: DataSourceContainer {
+    // MARK: DataSourceContainer
     
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
         if dataSource != _selectedDataSource { return }

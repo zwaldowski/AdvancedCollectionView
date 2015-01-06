@@ -49,6 +49,8 @@ public protocol DataSourcePresenter: NSObjectProtocol {
 
 public enum ItemAction {
     
+    public typealias IndexMove = (from: Int, to: Int)
+    
     case Insert([NSIndexPath])
     case Remove([NSIndexPath])
     case Reload([NSIndexPath])

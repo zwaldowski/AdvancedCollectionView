@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class DataSource: NSObject {
+public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLayout {
     
     /// The title of this data source. This value is used to populate section headers and the segmented control tab.
     public final var title: String?
@@ -347,16 +347,16 @@ public class DataSource: NSObject {
     
     // MARK: Convenience notifications
     
-    public func notifySectionsInserted(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
-        notify(sectionAction: .Insert(indexSet, direction: direction))
+    public func notifySectionsInserted<T: SequenceType where T.Generator.Element == Int>(sections: T, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Insert(NSIndexSet(indexes: sections), direction: direction))
     }
     
-    public func notifySectionsRemoved(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
-        notify(sectionAction: .Remove(indexSet, direction: direction))
+    public func notifySectionsRemoved<T: SequenceType where T.Generator.Element == Int>(sections: T, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Remove(NSIndexSet(indexes: sections), direction: direction))
     }
     
-    public func notifySectionsReloaded(indexSet: NSIndexSet) {
-        notify(sectionAction: .Reload(indexSet))
+    public func notifySectionsReloaded<T: SequenceType where T.Generator.Element == Int>(sections: T) {
+        notify(sectionAction: .Reload(NSIndexSet(indexes: sections)))
     }
     
     public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .Default) {
@@ -371,7 +371,17 @@ public class DataSource: NSObject {
         notify(itemAction: .Insert(indexPaths))
     }
     
+    public func notifyItemsInserted<T: SequenceType where T.Generator.Element == Int>(items: T, inSection section: Int) {
+        let indexPaths = map(items) { NSIndexPath(section, $0) }
+        notify(itemAction: .Insert(indexPaths))
+    }
+    
     public func notifyItemsRemoved(indexPaths: [NSIndexPath]) {
+        notify(itemAction: .Remove(indexPaths))
+    }
+    
+    public func notifyItemsRemoved<T: SequenceType where T.Generator.Element == Int>(items: T, inSection section: Int) {
+        let indexPaths = map(items) { NSIndexPath(section, $0) }
         notify(itemAction: .Remove(indexPaths))
     }
     
@@ -379,8 +389,19 @@ public class DataSource: NSObject {
         notify(itemAction: .Reload(indexPaths))
     }
     
+    public func notifyItemsReloaded<T: SequenceType where T.Generator.Element == Int>(items: T, inSection section: Int) {
+        let indexPaths = map(items) { NSIndexPath(section, $0) }
+        notify(itemAction: .Reload(indexPaths))
+    }
+    
     public func notifyItemMoved(#from: NSIndexPath, to: NSIndexPath) {
         notify(itemAction: .Move(from: from, to: to))
+    }
+    
+    public func notifyItemsMoved<T: SequenceType where T.Generator.Element == ItemAction.IndexMove>(items: T, inSection section: Int) {
+        for (oldIndex, newIndex) in items {
+            notifyItemMoved(from: NSIndexPath(section, oldIndex), to: NSIndexPath(section, newIndex))
+        }
     }
     
     public func notifyDidReloadData() {
@@ -397,6 +418,102 @@ public class DataSource: NSObject {
     
     public func notifyContentLoaded(#error: NSError?) {
         notify(itemAction: .DidLoad(error))
+    }
+        
+    // MARK: SequenceType
+    
+    public func generate() -> GeneratorOf<Section> {
+        return Section.all(numberOfSections: numberOfSections)
+    }
+    
+    // MARK: UICollectionViewDataSource
+    
+    public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return numberOfSections
+    }
+    
+    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        fatalError("This method must be overridden in a subclass")
+    }
+    
+    public final func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
+        if kind == ElementKindPlaceholder {
+            return dequeuePlaceholderView(collectionView: collectionView, indexPath: indexPath)
+        }
+        
+        
+        // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
+        var section: Section
+        var dataSource: DataSource
+        var localIndexPath: NSIndexPath
+        var localItem: Int
+        
+        if indexPath.length == 1 {
+            section = .Global
+            dataSource = self
+            localIndexPath = indexPath
+            localItem = indexPath[0]
+        } else {
+            (dataSource, localIndexPath) = childDataSource(forGlobalIndexPath: indexPath)
+            section = .Index(indexPath.section)
+            let info = childDataSource(forGlobalIndexPath: indexPath)
+            localIndexPath = info.1
+            section = Section.Index(localIndexPath[0])
+            localItem = localIndexPath[1]
+        }
+        
+        let sectionMetrics = snapshotMetrics(section: section)
+        let supplements = lazy(sectionMetrics.supplementaryViews).filter {
+            $0.kind == kind
+        }
+        
+        var metrics: SupplementaryMetrics! = nil
+        for (i, supplMetrics) in enumerate(supplements) {
+            if i == localItem {
+                metrics = supplMetrics
+                break
+            }
+        }
+        
+        let view = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: metrics.reuseIdentifier, forIndexPath: indexPath) as UICollectionReusableView
+        
+        if let configure = metrics.configureView {
+            configure(view: view, dataSource: dataSource, indexPath: localIndexPath)
+        }
+        
+        return view
+    }
+    
+    // MARK: CollectionViewDataSourceGridLayout
+    
+    public func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
+        let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
+        let fittingSize = cell.aapl_preferredLayoutSizeFittingSize(size)
+        cell.removeFromSuperview() // force it to get put in the reuse pool now
+        return fittingSize
+    }
+    
+    public func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
+        let cell = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath)
+        let fittingSize = cell.aapl_preferredLayoutSizeFittingSize(size)
+        cell.removeFromSuperview() // force it to get put in the reuse pool now
+        return fittingSize
+    }
+    
+    public func snapshotMetrics() -> [Section : SectionMetrics] {
+        let defaultBackground = UIColor.whiteColor()
+        return reduce(self, [:]) { (var dict, section) in
+            var metrics = self.snapshotMetrics(section: section)
+            if metrics.backgroundColor == nil {
+                metrics.backgroundColor = defaultBackground
+            }
+            dict[section] = metrics
+            return dict
+        }
     }
     
 }
