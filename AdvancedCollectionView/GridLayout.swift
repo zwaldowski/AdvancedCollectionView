@@ -83,6 +83,8 @@ public class GridLayout: UICollectionViewLayout {
     private var removedSections = NSMutableIndexSet()
     private var reloadedSections = NSMutableIndexSet()
     
+    private var measuringItemFrame: (NSIndexPath, CGRect)?
+    
     private struct Flags {
         /// layout data becomes invalid if the data source changes
         var layoutDataIsValid = false
@@ -144,8 +146,9 @@ public class GridLayout: UICollectionViewLayout {
     public func invalidateLayout(forItemAtIndexPath indexPath: NSIndexPath) {
         
         var section = sections[indexPath.section]
-        section.remeasureItem(atIndex: indexPath.item) { (index, fittingSize) in
-            return self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: fittingSize) ?? CGSize.zeroSize
+        section.remeasureItem(atIndex: indexPath.item) { (index, measuringRect) in
+            self.measuringItemFrame = (indexPath, measuringRect)
+            return self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize.zeroSize
         }
         sections[indexPath.section] = section
         
@@ -263,12 +266,19 @@ public class GridLayout: UICollectionViewLayout {
         
         let (section, index) = unpack(indexPath: indexPath)
         if let info = sectionInfo(forSection: section) {
-            if index >= info.items.count { return nil }
-            let item = info.items[index]
+            let frame = { () -> CGRect in
+                if indexPath == self.measuringItemFrame?.0 {
+                    return self.measuringItemFrame!.1
+                } else if index >= info.items.count {
+                    return info.items[index].frame
+                } else {
+                    return CGRect.zeroRect
+                }
+            }()
             
             let attributes = layoutAttributesType(forCellWithIndexPath: indexPath)
             attributes.hidden = flags.preparingLayout
-            attributes.frame = item.frame
+            attributes.frame = frame
             attributes.zIndex = ZIndex.Item.rawValue
             attributes.backgroundColor = info.metrics.backgroundColor
             attributes.selectedBackgroundColor = info.metrics.selectedBackgroundColor
@@ -697,7 +707,9 @@ public class GridLayout: UICollectionViewLayout {
             section.layout(rect: layoutRect, nextStart: &start, measureSupplement: {
                 measureSupplement($0, NSIndexPath(sectionIndex, $1), $2)
             }, measureItem: {
-                self.dataSource?.sizeFittingSize($1, itemAtIndexPath: NSIndexPath(sectionIndex, $0), collectionView: self.collectionView!) ?? $1
+                let indexPath = NSIndexPath(sectionIndex, $0)
+                self.measuringItemFrame = (indexPath, $1)
+                return self.dataSource?.sizeFittingSize($1.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? $1.size
             })
             
             self.addLayoutAttributes(forSection: .Index(sectionIndex), withInfo: section)

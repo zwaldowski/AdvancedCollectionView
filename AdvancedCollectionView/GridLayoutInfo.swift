@@ -206,8 +206,8 @@ extension SectionInfo {
 
 extension SectionInfo {
     
-    typealias MeasureSupplement = (kind: String, index: Int, fittingSize: CGSize) -> CGSize
-    typealias MeasureItem = (index: Int, fittingSize: CGSize) -> CGSize
+    typealias MeasureSupplement = ( kind: String, index: Int, fittingSize: CGSize) -> CGSize
+    typealias MeasureItem = (index: Int, measuringFrame: CGRect) -> CGSize
     
     mutating func layout(rect viewport: CGRect, inout nextStart: CGPoint, measureSupplement: MeasureSupplement, measureItem: MeasureItem? = nil) {
         rows.removeAll(keepCapacity: true)
@@ -264,33 +264,19 @@ extension SectionInfo {
                 let original = items[range]
                 
                 // take a measurement pass through all items
-                let reviewPass = original.map { (var item) -> ItemInfo in
-                    switch (item.measurement, self.metrics.measurement) {
-                    case (.None, .None): break
-                    case (_, .Static(let value)):
+                let measurePass = original.mapWithIndex { (sliceIdx, var item) -> ItemInfo in
+                    switch (item.measurement, self.metrics.measurement, measureItem) {
+                    case (_, .Static(let value), _):
                         item.measurement = .Static(value)
-                    case (.None, .Estimate(let estimate)):
-                        item.measurement = .Estimate(estimate)
-                        item.frame = CGRect(origin: itemsLayoutRect.origin, size: CGSize(width: columnWidth, height: UILayoutFittingExpandedSize.height))
-                    default: break
-                    }
-                    return item
-                }
-                
-                items[range] = reviewPass
-                
-                let measurePass = reviewPass.mapWithIndex { (sliceIdx, var item) -> ItemInfo in
-                    switch (item.measurement, measureItem) {
-                    case (.Estimate(let estimate), .Some(let measure)):
+                    case (_, .Estimate(let estimate), .Some(let measure)):
                         let idx = range.startIndex.advancedBy(sliceIdx)
-                        let measured = measure(index: idx, fittingSize: item.frame.size)
+                        let frame = CGRect(origin: itemsLayoutRect.origin, size: CGSize(width: columnWidth, height: UILayoutFittingExpandedSize.height))
+                        let measured = measure(index: idx, measuringFrame: frame)
                         item.measurement = .Static(measured.height)
                     default: break
                     }
                     return item
                 }
-                
-                // Don't update the items list with this purposefully
                 
                 let rowHeight = maxElement(lazy(measurePass).map { $0.measurement.lengthValue })
                 let rowRect = itemsLayoutRect.divide(rowHeight)
@@ -301,7 +287,6 @@ extension SectionInfo {
                     return item
                 }
                 
-                let row = RowInfo(items: finalPass, frame: rowRect)
                 rows.append(RowInfo(items: finalPass, frame: rowRect))
                 
                 items[range] = finalPass
@@ -353,7 +338,7 @@ extension SectionInfo {
         var item = items[index]
         
         let fittingSize = CGSize(width: item.frame.width, height: UILayoutFittingExpandedSize.height)
-        item.frame.size = function(index: index, fittingSize: fittingSize)
+        item.frame.size = function(index: index, measuringFrame: CGRect(origin: item.frame.origin, size: fittingSize))
         
         items[index] = item
     }
