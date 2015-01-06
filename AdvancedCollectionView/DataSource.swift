@@ -492,14 +492,14 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     public func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
         let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
-        let fittingSize = cell.aapl_preferredLayoutSizeFittingSize(size)
+        let fittingSize = cell.preferredLayoutSize(fittingSize: size)
         cell.removeFromSuperview() // force it to get put in the reuse pool now
         return fittingSize
     }
     
     public func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
         let cell = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath)
-        let fittingSize = cell.aapl_preferredLayoutSizeFittingSize(size)
+        let fittingSize = cell.preferredLayoutSize(fittingSize: size)
         cell.removeFromSuperview() // force it to get put in the reuse pool now
         return fittingSize
     }

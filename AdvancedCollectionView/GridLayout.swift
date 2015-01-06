@@ -145,7 +145,7 @@ public class GridLayout: UICollectionViewLayout {
         
         var section = sections[indexPath.section]
         section.remeasureItem(atIndex: indexPath.item) { (index, fittingSize) in
-            return self.collectionView?.cellForItemAtIndexPath(indexPath)?.aapl_preferredLayoutSizeFittingSize(fittingSize) ?? CGSize.zeroSize
+            return self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: fittingSize) ?? CGSize.zeroSize
         }
         sections[indexPath.section] = section
         

@@ -18,6 +18,10 @@ class TextValueCell: AdvancedCollectionView.CollectionViewCell {
         
         let label = UILabel()
         label.setTranslatesAutoresizingMaskIntoConstraints(false)
+        label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote)
+        label.textColor = UIColor(white: 0.3, alpha: 1)
+        label.lineBreakMode = .ByWordWrapping
+        label.numberOfLines = 0
         contentView.addSubview(label)
         self.label = label
         
@@ -25,15 +29,14 @@ class TextValueCell: AdvancedCollectionView.CollectionViewCell {
         let metrics = [ "hPad": 15, "vPad": 3 ]
         var constraints = [NSLayoutConstraint]()
         
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[label]-hPad-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[label]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-vPad-[label]-vPad-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
         
         contentView.addConstraints(constraints)
     }
     
     override func layoutSubviews() {
-        super.layoutSubviews()
-        label.preferredMaxLayoutWidth = contentView.bounds.width
+        label.preferredMaxLayoutWidth = bounds.width - 30;
         super.layoutSubviews()
     }
     
