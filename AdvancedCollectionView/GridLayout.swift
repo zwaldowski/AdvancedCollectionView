@@ -847,9 +847,9 @@ public class GridLayout: UICollectionViewLayout {
         let numberOfHeaders = info.count(supplements: .Header) ?? 0
         switch (numberOfHeaders, numberOfItems) {
         case (0, _) where numberOfItems != 0:
-            addSeparator(toRect: info.headersRect, indexPath: indexPath(0), bit: .BeforeSections, metrics: info.metrics)
+            addSeparator(toRect: info.headersRect, indexPath: indexPath(0), bit: .BeforeSections, kind: .HeaderSeparator, metrics: info.metrics)
         case (_, 0) where numberOfHeaders != 0:
-            addSeparator(toRect: info.headersRect, indexPath: indexPath(numberOfHeaders), bit: afterSectionBit, metrics: info.metrics)
+            addSeparator(toRect: info.headersRect, indexPath: indexPath(numberOfHeaders), bit: afterSectionBit, kind: .HeaderSeparator, metrics: info.metrics)
         case (0, 0):
             break
         default:
