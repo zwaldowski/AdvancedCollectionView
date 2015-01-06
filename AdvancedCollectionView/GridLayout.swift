@@ -853,7 +853,7 @@ public class GridLayout: UICollectionViewLayout {
         case (0, 0):
             break
         default:
-            addSeparator(toRect: info.headersRect.rectByInsetting(insets: info.metrics.groupPadding), indexPath: indexPath(numberOfHeaders), bit: .Supplements, metrics: info.metrics)
+            addSeparator(toRect: info.headersRect.rectByInsetting(insets: info.metrics.groupPadding), indexPath: indexPath(numberOfHeaders), bit: .Supplements, kind: .HeaderSeparator, metrics: info.metrics)
         }
         
         // Lay out rows
