@@ -11,7 +11,7 @@ import UIKit
 public class CollectionViewController: UICollectionViewController, DataSourceContainer {
     
     private var dataSourceContext = 0
-    private let updateDebugging = false
+    private let updateDebugging = true
     
     deinit {
         collectionView?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)

@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-func updateDiff<New: CollectionType, Old: SequenceType where New.Generator.Element: Hashable, Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New) -> (deleted: [Int], inserted: [Int], moved: [(Int, Int)]) {
+public func diff<New: CollectionType, Old: SequenceType where New.Generator.Element: Hashable, Old.Generator.Element == New.Generator.Element>(#oldItems: Old, #newItems: New) -> (deleted: [Int], inserted: [Int], moved: [(Int, Int)]) {
     let oldItemSet = OrderedSet(oldItems)
     let newItemSet = OrderedSet(newItems)
     
@@ -32,31 +32,52 @@ func updateDiff<New: CollectionType, Old: SequenceType where New.Generator.Eleme
     return (deletedIndexes, insertedIndexes, movedIndexes)
 }
 
+public func diff<New: CollectionType, Old: CollectionType where Old.Generator.Element == New.Generator.Element>(#oldItems: Old, #newItems: New) -> (reloaded: Range<Int>, deleted: Range<Int>, inserted: Range<Int>) {
+    func emptyRange(start: Int) -> Range<Int> {
+        return start..<start
+    }
+    
+    let oldCount = underestimateCount(oldItems)
+    let newCount = underestimateCount(newItems)
+    
+    if oldCount > newCount {
+        return (0..<newCount, newCount..<oldCount, emptyRange(newCount))
+    } else if oldCount < newCount {
+        return (0..<oldCount, emptyRange(oldCount), oldCount..<newCount)
+    } else {
+        let empty = emptyRange(oldCount)
+        return (0..<newCount, empty, empty)
+    }
+}
+
 /// A data source that manages a single section of items backed by an array.
 public class BasicDataSource: DataSource {
     
     public func notifyUpdate<New: CollectionType, Old: SequenceType where New.Generator.Element: Hashable, Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New, animated: Bool) {
+        let newEmpty = isEmpty(newItems)
+        
         if !animated {
-            updateLoadingState(isEmpty(newItems))
+            updateLoadingState(newEmpty)
             notifySectionsReloaded(NSIndexSet(index: 0))
             return
         }
         
-        let (deleted, inserted, moved) = updateDiff(oldItems: oldItems, newItems)
+        let (deleted, inserted, moved) = diff(oldItems: oldItems, newItems: newItems)
         
-        updateLoadingState(isEmpty(newItems))
+        updateLoadingState(newEmpty)
+        notifyItemsRemoved(deleted, inSection: 0)
+        notifyItemsInserted(inserted, inSection: 0)
+        notifyItemsMoved(moved, inSection: 0)
+    }
+    
+    public func notifyUpdateSimple<New: CollectionType, Old: CollectionType where Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New) {
+        let newEmpty = isEmpty(newItems)
+        let (reloaded, deleted, inserted) = diff(oldItems: oldItems, newItems: newItems)
         
-        notifyItemsRemoved(deleted.map {
-            NSIndexPath(0, $0)
-        })
-        
-        notifyItemsInserted(inserted.map {
-            NSIndexPath(0, $0)
-        })
-        
-        for (oldIndex, newIndex) in moved {
-            notifyItemMoved(from: NSIndexPath(0, oldIndex), to: NSIndexPath(0, newIndex))
-        }
+        updateLoadingState(newEmpty)
+        notifyItemsReloaded(reloaded, inSection: 0)
+        notifyItemsRemoved(deleted, inSection: 0)
+        notifyItemsInserted(inserted, inSection: 0)
     }
     
     public func updateLoadingState(isEmpty: Bool) {

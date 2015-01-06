@@ -46,12 +46,12 @@
         <!--Cat Detail-->
         <scene sceneID="muE-Pr-Ak4">
             <objects>
-                <collectionViewController title="Cat Detail" id="SCt-QJ-b0A" customClass="AAPLCatDetailViewController" sceneMemberID="viewController">
+                <collectionViewController title="Cat Detail" id="SCt-QJ-b0A" customClass="CatDetailViewController" customModule="AdvancedCollectionViewDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="iZs-B1-p7x">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewLayout key="collectionViewLayout" id="Lzk-Nm-idt" customClass="AAPLCollectionViewGridLayout"/>
+                        <collectionViewLayout key="collectionViewLayout" id="Lzk-Nm-idt" customClass="GridLayout" customModule="AdvancedCollectionView"/>
                         <cells/>
                         <connections>
                             <outlet property="delegate" destination="SCt-QJ-b0A" id="Fnr-aU-LAD"/>

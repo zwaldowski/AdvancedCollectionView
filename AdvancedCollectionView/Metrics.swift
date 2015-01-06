@@ -36,7 +36,7 @@ public struct SeparatorOptions: RawOptionSetType {
 public struct SupplementaryMetrics {
     
     /// The class to use when dequeuing an instance of this supplementary view
-    var viewType: UICollectionReusableView.Type = UICollectionReusableView.self
+    public var viewType: UICollectionReusableView.Type = UICollectionReusableView.self
 
     /// The kind of supplementary view these metrics describe
     public let kind: String

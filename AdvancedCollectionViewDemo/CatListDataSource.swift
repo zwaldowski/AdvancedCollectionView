@@ -46,8 +46,6 @@ class CatListDataSource: BasicDataSource {
     
     // MARK: DataSource
     
-    
-    
     override func resetContent() {
         super.resetContent()
         items = []

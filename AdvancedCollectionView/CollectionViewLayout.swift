@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
+// TODO: get rid of proxy, make these extensions on UICollectionView
 public func register<CV: UICollectionView, V: UICollectionViewCell>(typeForCell type: V.Type, #collectionView: CV, reuseIdentifier identifier: String = NSStringFromClass(V)) {
     collectionView.registerClass(type, forCellWithReuseIdentifier: identifier)
 }

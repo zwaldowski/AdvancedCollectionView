@@ -3,4 +3,5 @@
 //
 
 #import "AAPLCat.h"
+#import "AAPLCatSighting.h"
 #import "AAPLDataAccessManager.h"

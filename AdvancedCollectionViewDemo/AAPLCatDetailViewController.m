@@ -19,7 +19,6 @@
 @property (nonatomic, strong) AAPLSegmentedDataSource *dataSource;
 @property (nonatomic, strong) AAPLCatDetailDataSource *detailDataSource;
 @property (nonatomic, strong) AAPLCatSightingsDataSource *sightingsDataSource;
-@property (nonatomic, strong) id selectedDataSourceObserver;
 @end
 
 @implementation AAPLCatDetailViewController
