@@ -9,6 +9,7 @@
 import UIKit
 import AdvancedCollectionView
 
+/// The header view shown in the cat detail screen. This view shows the name of the cat and its conservation status.
 class CatDetailHeader: PinnableHeaderView {
     
     private weak var nameLabel: UILabel!
@@ -32,7 +33,7 @@ class CatDetailHeader: PinnableHeaderView {
         description.numberOfLines = 2
         description.textColor = UIColor(white: 0.4, alpha: 1)
         contentView.addSubview(description)
-        descriptionLabel = name
+        descriptionLabel = description
         
         let statusValue = UILabel()
         statusValue.setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -40,7 +41,7 @@ class CatDetailHeader: PinnableHeaderView {
         statusValue.numberOfLines = 1
         statusValue.textColor = UIColor(white: 0.6, alpha: 1)
         contentView.addSubview(statusValue)
-        conservationStatusValue = name
+        conservationStatusValue = statusValue
         
         let statusLabel = UILabel()
         statusLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -48,13 +49,13 @@ class CatDetailHeader: PinnableHeaderView {
         statusLabel.numberOfLines = 1
         statusLabel.textColor = UIColor(white: 0.4, alpha: 1)
         contentView.addSubview(statusLabel)
-        conservationStatusLabel = name
+        conservationStatusLabel = statusLabel
         
         let views = [
-            "nameLabel": nameLabel,
-            "descriptionLabel": descriptionLabel,
-            "conservationStatusValue": conservationStatusValue,
-            "conservationStatusLabel": conservationStatusLabel
+            "nameLabel": name,
+            "descriptionLabel": description,
+            "conservationStatusValue": statusValue,
+            "conservationStatusLabel": statusLabel
         ]
         let metrics = [ "pad": 3 ]
         
