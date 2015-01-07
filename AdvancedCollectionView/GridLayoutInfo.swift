@@ -246,8 +246,6 @@ extension SectionInfo {
             
             var length = CGFloat(0)
             switch (headerInfo.measurement, headerInfo.metrics.measurement) {
-            case (.None, .None):
-                return headerInfo
             case (_, .Static(let value)):
                 headerInfo.measurement = .Static(value)
                 length = value
