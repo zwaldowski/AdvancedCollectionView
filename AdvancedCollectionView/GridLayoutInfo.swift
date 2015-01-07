@@ -237,10 +237,10 @@ extension SectionInfo {
                 length = value
             case (.None, .Estimate(let estimate)):
                 // This header needs to be measured!
-                let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: viewport.width, height: UILayoutFittingExpandedSize.height))
-                let fittingSize = CGSize(width: viewport.width, height: UILayoutFittingExpandedSize.height)
-                length = measureSupplement(kind: headerKey, index: headerIndex, measuringFrame: frame).height
-                headerInfo.measurement = .Static(length)
+                let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: viewport.width, height: estimate))
+                let measure = measureSupplement(kind: headerKey, index: headerIndex, measuringFrame: frame)
+                headerInfo.measurement = .Static(measure.height)
+                length = measure.height
             default: break
             }
             
@@ -271,7 +271,7 @@ extension SectionInfo {
                         item.measurement = .Static(value)
                     case (_, .Estimate(let estimate), .Some(let measure)):
                         let idx = range.startIndex.advancedBy(sliceIdx)
-                        let frame = CGRect(origin: itemsLayoutRect.origin, size: CGSize(width: columnWidth, height: UILayoutFittingExpandedSize.height))
+                        let frame = CGRect(origin: itemsLayoutRect.origin, size: CGSize(width: columnWidth, height: estimate))
                         let measured = measure(index: idx, measuringFrame: frame)
                         item.measurement = .Static(measured.height)
                     default: break

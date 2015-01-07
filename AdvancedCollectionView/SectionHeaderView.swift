@@ -29,7 +29,7 @@ public class SectionHeaderView: PinnableHeaderView {
         button.titleLabel?.font = secondaryFont()
         button.setTitleColor(UIColor(white: 0.46, alpha: 1), forState: .Disabled)
         
-        addSubview(button)
+        contentView.addSubview(button)
         _actionButton = button
         invalidateConstraints()
         
@@ -52,14 +52,14 @@ public class SectionHeaderView: PinnableHeaderView {
         let left = UILabel()
         left.setTranslatesAutoresizingMaskIntoConstraints(false)
         left.font = primaryFont()
-        addSubview(left)
+        contentView.addSubview(left)
         leadingLabel = left
         
         let right = UILabel()
         right.setTranslatesAutoresizingMaskIntoConstraints(false)
         right.setContentHuggingPriority(750, forAxis: .Horizontal)
         right.font = secondaryFont()
-        addSubview(right)
+        contentView.addSubview(right)
         trailingLabel = right
     }
     
@@ -102,7 +102,7 @@ public class SectionHeaderView: PinnableHeaderView {
 
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-top-[leading]-bottom-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
         
-        addConstraints(constraints)
+        contentView.addConstraints(constraints)
         super.updateConstraints()
     }
     
@@ -111,7 +111,7 @@ public class SectionHeaderView: PinnableHeaderView {
     }
     
     public override func invalidateConstraints() {
-        removeConstraints(constraints)
+        contentView.removeConstraints(constraints)
         constraints.removeAll()
         super.invalidateConstraints()
     }

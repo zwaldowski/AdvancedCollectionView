@@ -20,7 +20,7 @@ public class SegmentedHeaderView: PinnableHeaderView {
         let control = UISegmentedControl()
         control.setTranslatesAutoresizingMaskIntoConstraints(false)
         control.setContentHuggingPriority(750, forAxis: .Vertical)
-        addSubview(control)
+        contentView.addSubview(control)
         segmentedControl = control
     }
     
@@ -29,7 +29,7 @@ public class SegmentedHeaderView: PinnableHeaderView {
     }
     
     public override func invalidateConstraints() {
-        removeConstraints(segmentedControlConstraints)
+        contentView.removeConstraints(segmentedControlConstraints)
         segmentedControlConstraints.removeAll()
         super.invalidateConstraints()
     }
@@ -62,7 +62,7 @@ public class SegmentedHeaderView: PinnableHeaderView {
             segmentedControlConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-leftMargin-[segmentedControl]-rightMargin-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
         }
         
-        addConstraints(segmentedControlConstraints)
+        contentView.addConstraints(segmentedControlConstraints)
         
         super.updateConstraints()
     } 
