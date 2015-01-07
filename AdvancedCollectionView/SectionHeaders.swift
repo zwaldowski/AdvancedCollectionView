@@ -20,7 +20,7 @@ extension DataSource {
         
         var header = SupplementaryMetrics(kind: UICollectionElementKindSectionHeader)
         header.measurement = .Estimate(44)
-        header.viewType = AAPLSectionHeaderView.self
+        header.viewType = SectionHeaderView.self
         header.configure { (view: AAPLSectionHeaderView, dataSource: DataSource, indexPath) -> () in
             view.leftText = title ?? dataSource.title
         }

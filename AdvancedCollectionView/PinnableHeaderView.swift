@@ -15,7 +15,7 @@ func defaultPinnableBorderColor() -> UIColor {
 // A subclass-ready section header view for pinnable headers.
 public class PinnableHeaderView: CollectionViewCell {
     
-    private weak var borderView: AAPLHairlineView!
+    private weak var borderView: HairlineView!
     private var backgroundColorBeforePinning: UIColor?
     
     public override func commonInit() {
@@ -23,7 +23,7 @@ public class PinnableHeaderView: CollectionViewCell {
         
         backgroundColor = UIColor.whiteColor()
         
-        let border = AAPLHairlineView()
+        let border = HairlineView(frame: CGRect.zeroRect)
         border.setTranslatesAutoresizingMaskIntoConstraints(false)
         addSubview(border)
         borderView = border
