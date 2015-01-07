@@ -113,11 +113,11 @@ public class GridLayout: UICollectionViewLayout {
     // MARK: Init
 
     func commonInit() {
-        registerClass(AAPLGridLayoutColorView.self, forDecorationView: DecorationKind.RowSeparator)
-        registerClass(AAPLGridLayoutColorView.self, forDecorationView: DecorationKind.ColumnSeparator)
-        registerClass(AAPLGridLayoutColorView.self, forDecorationView: DecorationKind.HeaderSeparator)
-        registerClass(AAPLGridLayoutColorView.self, forDecorationView: DecorationKind.FooterSeparator)
-        registerClass(AAPLGridLayoutColorView.self, forDecorationView: DecorationKind.GlobalHeaderBackground)
+        registerClass(ColorView.self, forDecorationView: DecorationKind.RowSeparator)
+        registerClass(ColorView.self, forDecorationView: DecorationKind.ColumnSeparator)
+        registerClass(ColorView.self, forDecorationView: DecorationKind.HeaderSeparator)
+        registerClass(ColorView.self, forDecorationView: DecorationKind.FooterSeparator)
+        registerClass(ColorView.self, forDecorationView: DecorationKind.GlobalHeaderBackground)
     }
 
     public override init() {

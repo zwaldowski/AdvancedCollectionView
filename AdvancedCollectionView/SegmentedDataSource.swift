@@ -141,7 +141,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         header.shouldPin = true
         // Show this header regardless of whether there are items
         header.isVisibleWhileShowingPlaceholder = true
-        header.configure { (view: AAPLSegmentedHeaderView, dataSource: SegmentedDataSource, indexPath) -> () in
+        header.configure { (view: SegmentedHeaderView, dataSource: SegmentedDataSource, indexPath) -> () in
             dataSource.configureSegmentedControl(view.segmentedControl)
         }
         
@@ -208,7 +208,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         return selectedDataSource?.shouldDisplayPlaceholder ?? false
     }
     
-    public override func updatePlaceholder(placeholderView: AAPLCollectionPlaceholderView?, notifyVisibility notify: Bool) {
+    public override func updatePlaceholder(placeholderView: CollectionPlaceholderView?, notifyVisibility notify: Bool) {
         _selectedDataSource?.updatePlaceholder(placeholderView, notifyVisibility: notify)
     }
     

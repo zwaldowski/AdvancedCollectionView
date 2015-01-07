@@ -11,7 +11,7 @@ import UIKit
 /// A header view with a segmented control for displaying titles of child data sources in a segmented data source.
 public class SegmentedHeaderView: PinnableHeaderView {
     
-    private weak var segmentedControl: UISegmentedControl!
+    private(set) public weak var segmentedControl: UISegmentedControl!
     private var segmentedControlConstraints = [NSLayoutConstraint]()
     
     public override func commonInit() {

@@ -49,7 +49,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             }
         }
         
-        collectionView.register(typeForSupplement: AAPLCollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder)
+        collectionView.register(typeForSupplement: CollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder)
     }
     
     // MARK: Loading
@@ -238,7 +238,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     // MARK: Placeholders
     
-    private(set) public var placeholderView: AAPLCollectionPlaceholderView? = nil
+    private(set) public var placeholderView: CollectionPlaceholderView? = nil
     
     public var emptyContent = PlaceholderContent(title: nil, message: nil, image: nil)
     public var errorContent = PlaceholderContent(title: nil, message: nil, image: nil)
@@ -262,21 +262,21 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         }
     }
     
-    public func updatePlaceholder(_ placeholderView: AAPLCollectionPlaceholderView? = nil, notifyVisibility notify: Bool = false) {
+    public func updatePlaceholder(_ placeholderView: CollectionPlaceholderView? = nil, notifyVisibility notify: Bool = false) {
         if let placeholderView = placeholderView {
             switch loadingState {
             case .Loading:
-                placeholderView.showActivityIndicator(true)
+                placeholderView.showsActivityIndicator = true
             case .Loaded:
-                placeholderView.showActivityIndicator(false)
+                placeholderView.showsActivityIndicator = false
             case .NoContent:
-                placeholderView.showActivityIndicator(false)
-                placeholderView.showPlaceholderWithTitle(emptyContent.title, message: emptyContent.message, image: emptyContent.image, animated: true)
+                placeholderView.showsActivityIndicator = false
+                placeholderView.showPlaceholder(content: emptyContent, animated: true)
             case .Error(let err):
-                placeholderView.showActivityIndicator(false)
-                placeholderView.showPlaceholderWithTitle(errorContent.title, message: errorContent.message, image: errorContent.image, animated: true)
+                placeholderView.showsActivityIndicator = false
+                placeholderView.showPlaceholder(content: errorContent, animated: true)
             default:
-                placeholderView.hidePlaceholderAnimated(true)
+                placeholderView.hidePlaceholder(animated: true)
             }
         }
         
@@ -285,9 +285,9 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         }
     }
     
-    func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> AAPLCollectionPlaceholderView {
+    func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> CollectionPlaceholderView {
         if placeholderView == nil {
-            placeholderView = collectionView.dequeue(supplementOfType: AAPLCollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
+            placeholderView = collectionView.dequeue(supplementOfType: CollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
         }
         updatePlaceholder(placeholderView, notifyVisibility: false)
         return placeholderView!

@@ -10,7 +10,7 @@ import UIKit
 
 extension DataSource {
     
-    /// A header for the data source with a specific title. Uses AAPLSectionHeaderView.
+    /// A header for the data source with a specific title. Uses SectionHeaderView.
     public func addSectionHeader(title: String? = nil) -> SupplementaryMetrics {
         let key = "TitleHeaderKey"
         
@@ -21,8 +21,8 @@ extension DataSource {
         var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(44)
         header.viewType = SectionHeaderView.self
-        header.configure { (view: AAPLSectionHeaderView, dataSource: DataSource, indexPath) -> () in
-            view.leftText = title ?? dataSource.title
+        header.configure { (view: SectionHeaderView, dataSource: DataSource, indexPath) -> () in
+            view.leadingLabel.text = title ?? dataSource.title
         }
         
         addHeader(header, forKey: key)
