@@ -342,9 +342,7 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
-        let oldBounds = collectionView?.bounds ?? CGRect.zeroRect
-        if newBounds.size.width != oldBounds.size.width { return true }
-        return newBounds.origin == oldBounds.origin
+        return true
     }
     
     public override func invalidationContextForBoundsChange(newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
