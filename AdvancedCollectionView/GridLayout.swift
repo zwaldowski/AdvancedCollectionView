@@ -956,7 +956,7 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         let finalizePinning = { (attributes: Attributes, zIndex: ZIndex, offset: Int) -> () in
-            attributes.zIndex = zIndex.hashValue - offset - 1
+            attributes.zIndex = zIndex.rawValue - offset - 1
             if let unpinned = attributes.unpinned {
                 attributes.pinned = attributes.frame.minY !~== unpinned
             } else {
