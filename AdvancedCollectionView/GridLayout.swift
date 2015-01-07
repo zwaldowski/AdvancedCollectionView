@@ -74,7 +74,8 @@ public class GridLayout: UICollectionViewLayout {
     private var removedSections = NSMutableIndexSet()
     private var reloadedSections = NSMutableIndexSet()
     
-    private var measuringItemFrame: (NSIndexPath, CGRect)?
+    private var measuringItem: (NSIndexPath, CGRect)?
+    private var measuringSupplement: (String, NSIndexPath, CGRect)?
     
     private struct Flags {
         /// layout data becomes invalid if the data source changes
@@ -138,7 +139,7 @@ public class GridLayout: UICollectionViewLayout {
         
         var section = sections[indexPath.section]
         section.remeasureItem(atIndex: indexPath.item) { (index, measuringRect) in
-            self.measuringItemFrame = (indexPath, measuringRect)
+            self.measuringItem = (indexPath, measuringRect)
             return self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize.zeroSize
         }
         sections[indexPath.section] = section
@@ -257,12 +258,13 @@ public class GridLayout: UICollectionViewLayout {
         
         let (section, index) = unpack(indexPath: indexPath)
         if let info = sectionInfo(forSection: section) {
-            let frame = { () -> CGRect in
-                if indexPath == self.measuringItemFrame?.0 {
-                    return self.measuringItemFrame!.1
-                } else if let item = info[index] {
+            let frame = { _ -> CGRect in
+                switch (self.measuringItem, info[index]) {
+                case (.Some(let (ip, rect)), _) where ip == indexPath:
+                    return rect
+                case (_, .Some(let item)):
                     return item.frame
-                } else {
+                default:
                     return CGRect.zeroRect
                 }
             }()
@@ -296,27 +298,35 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         let (section, index) = unpack(indexPath: indexPath)
-        if let info = sectionInfo(forSection: section) {
-            let item = info[kind, index]
-
-            let attributes = layoutAttributesType(forSupplementaryViewOfKind: kind, withIndexPath: indexPath)
-            
-            attributes.hidden = flags.preparingLayout
-            attributes.frame = item?.frame ?? CGRect.zeroRect
-            attributes.zIndex = ZIndex.Supplement.rawValue
-            attributes.padding = item?.metrics.padding ?? UIEdgeInsetsZero
-            attributes.backgroundColor = item?.metrics.backgroundColor ?? info.metrics.backgroundColor
-            attributes.selectedBackgroundColor = item?.metrics.selectedBackgroundColor ?? info.metrics.selectedBackgroundColor
-            attributes.tintColor = item?.metrics.tintColor ?? info.metrics.tintColor
-            attributes.selectedTintColor = item?.metrics.selectedTintColor ?? info.metrics.selectedTintColor
-            
-            if !flags.preparingLayout {
-                supplementaryAttributesCache[key] = attributes
+        let info = sectionInfo(forSection: section)
+        let item = info?[kind, index]
+        let frame = { _ -> CGRect in
+            switch (self.measuringSupplement, item) {
+            case (.Some(let (mKind, ip, rect)), _) where mKind == kind && ip == indexPath:
+                return rect
+            case (_, .Some(let item)):
+                return item.frame
+            default:
+                return CGRect.zeroRect
             }
-            
-            return attributes
+        }()
+        
+        let attributes = layoutAttributesType(forSupplementaryViewOfKind: kind, withIndexPath: indexPath)
+        
+        attributes.hidden = flags.preparingLayout
+        attributes.frame = frame
+        attributes.zIndex = ZIndex.Supplement.rawValue
+        attributes.padding = item?.metrics.padding ?? UIEdgeInsetsZero
+        attributes.backgroundColor = item?.metrics.backgroundColor ?? info?.metrics.backgroundColor
+        attributes.selectedBackgroundColor = item?.metrics.selectedBackgroundColor ?? info?.metrics.selectedBackgroundColor
+        attributes.tintColor = item?.metrics.tintColor ?? info?.metrics.tintColor
+        attributes.selectedTintColor = item?.metrics.selectedTintColor ?? info?.metrics.selectedTintColor
+        
+        if !flags.preparingLayout {
+            supplementaryAttributesCache[key] = attributes
         }
-        return nil
+        
+        return attributes
     }
     
     public override func layoutAttributesForDecorationViewOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
@@ -669,9 +679,10 @@ public class GridLayout: UICollectionViewLayout {
         var start = layoutRect.origin
         
         var shouldInvalidate = false
-        let measureSupplement = { (kind: String, indexPath: NSIndexPath, targetSize: CGSize) -> CGSize in
+        let measureSupplement = { (kind: String, indexPath: NSIndexPath, measuringFrame: CGRect) -> CGSize in
             shouldInvalidate |= true
-            return self.dataSource?.sizeFittingSize(targetSize, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? targetSize
+            self.measuringSupplement = (kind, indexPath, measuringFrame)
+            return self.dataSource?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
         }
         
         // build global section
@@ -685,14 +696,14 @@ public class GridLayout: UICollectionViewLayout {
         
         // build all sections
         sections = sections.mapWithIndex { (sectionIndex, var section) -> SectionInfo in
-            layoutRect.size.height = max(CGFloat(0), layoutRect.height - start.y + layoutRect.minY)
+            layoutRect.size.height = max(0, layoutRect.height - start.y + layoutRect.minY)
             layoutRect.origin = start
             
             section.layout(rect: layoutRect, nextStart: &start, measureSupplement: {
                 measureSupplement($0, NSIndexPath(sectionIndex, $1), $2)
             }, measureItem: {
                 let indexPath = NSIndexPath(sectionIndex, $0)
-                self.measuringItemFrame = (indexPath, $1)
+                self.measuringItem = (indexPath, $1)
                 return self.dataSource?.sizeFittingSize($1.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? $1.size
             })
             

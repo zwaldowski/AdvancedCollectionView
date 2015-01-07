@@ -208,8 +208,8 @@ extension SectionInfo {
 
 extension SectionInfo {
     
-    typealias MeasureSupplement = ( kind: String, index: Int, fittingSize: CGSize) -> CGSize
     typealias MeasureItem = (index: Int, measuringFrame: CGRect) -> CGSize
+    typealias MeasureSupplement = ( kind: String, index: Int, measuringFrame: CGRect) -> CGSize
     
     mutating func layout(rect viewport: CGRect, inout nextStart: CGPoint, measureSupplement: MeasureSupplement, measureItem: MeasureItem? = nil) {
         rows.removeAll(keepCapacity: true)
@@ -237,9 +237,9 @@ extension SectionInfo {
                 length = value
             case (.None, .Estimate(let estimate)):
                 // This header needs to be measured!
+                let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: viewport.width, height: UILayoutFittingExpandedSize.height))
                 let fittingSize = CGSize(width: viewport.width, height: UILayoutFittingExpandedSize.height)
-                headerInfo.frame = CGRect(origin: CGPoint.zeroPoint, size: fittingSize)
-                length = measureSupplement(kind: headerKey, index: headerIndex, fittingSize: fittingSize).height
+                length = measureSupplement(kind: headerKey, index: headerIndex, measuringFrame: frame).height
                 headerInfo.measurement = .Static(length)
             default: break
             }
