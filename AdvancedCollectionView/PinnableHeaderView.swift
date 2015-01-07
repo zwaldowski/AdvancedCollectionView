@@ -13,7 +13,7 @@ func defaultPinnableBorderColor() -> UIColor {
 }
 
 // A subclass-ready section header view for pinnable headers.
-public class PinnableHeaderView: CollectionViewCell {
+public class PinnableHeaderView: GridCell {
     
     private weak var borderView: HairlineView!
     private var backgroundColorBeforePinning: UIColor?

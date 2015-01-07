@@ -139,8 +139,8 @@
 		DBAF93881A567D3D003293E9 /* SegmentedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */; };
 		DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */; };
 		DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938B1A56874D003293E9 /* HairlineView.swift */; };
-		DBAF938E1A5689C8003293E9 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938D1A5689C8003293E9 /* CollectionViewCell.swift */; };
-		DBAF93901A568B56003293E9 /* PlaceholderViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938F1A568B56003293E9 /* PlaceholderViews.swift */; };
+		DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938D1A5689C8003293E9 /* GridCell.swift */; };
+		DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938F1A568B56003293E9 /* Placeholder.swift */; };
 		DBAF93921A569147003293E9 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93911A569147003293E9 /* SectionHeaderView.swift */; };
 		DBAF93941A56917C003293E9 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93931A56917C003293E9 /* BasicCell.swift */; };
 		DBAF93971A569834003293E9 /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93961A569834003293E9 /* UIKit.swift */; };
@@ -333,8 +333,8 @@
 		DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedHeaderView.swift; sourceTree = "<group>"; };
 		DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnableHeaderView.swift; sourceTree = "<group>"; };
 		DBAF938B1A56874D003293E9 /* HairlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HairlineView.swift; sourceTree = "<group>"; };
-		DBAF938D1A5689C8003293E9 /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
-		DBAF938F1A568B56003293E9 /* PlaceholderViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderViews.swift; sourceTree = "<group>"; };
+		DBAF938D1A5689C8003293E9 /* GridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridCell.swift; sourceTree = "<group>"; };
+		DBAF938F1A568B56003293E9 /* Placeholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		DBAF93911A569147003293E9 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		DBAF93931A56917C003293E9 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		DBAF93961A569834003293E9 /* UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
@@ -697,14 +697,14 @@
 		DBAF93951A569247003293E9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DBAF93841A567BF7003293E9 /* ColorView.swift */,
-				DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */,
-				DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */,
-				DBAF938B1A56874D003293E9 /* HairlineView.swift */,
-				DBAF938D1A5689C8003293E9 /* CollectionViewCell.swift */,
-				DBAF938F1A568B56003293E9 /* PlaceholderViews.swift */,
-				DBAF93911A569147003293E9 /* SectionHeaderView.swift */,
 				DBAF93931A56917C003293E9 /* BasicCell.swift */,
+				DBAF93841A567BF7003293E9 /* ColorView.swift */,
+				DBAF938D1A5689C8003293E9 /* GridCell.swift */,
+				DBAF938B1A56874D003293E9 /* HairlineView.swift */,
+				DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */,
+				DBAF938F1A568B56003293E9 /* Placeholder.swift */,
+				DBAF93911A569147003293E9 /* SectionHeaderView.swift */,
+				DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -994,7 +994,7 @@
 				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
-				DBAF938E1A5689C8003293E9 /* CollectionViewCell.swift in Sources */,
+				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
 				DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */,
 				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
 				DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */,
@@ -1021,7 +1021,7 @@
 				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
 				DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Utilities.swift in Sources */,
-				DBAF93901A568B56003293E9 /* PlaceholderViews.swift in Sources */,
+				DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */,
 				DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */,
 				DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */,
 				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,

@@ -9,7 +9,7 @@
 import UIKit
 import AdvancedCollectionView
 
-class TextValueCell: AdvancedCollectionView.CollectionViewCell {
+class TextValueCell: GridCell {
     
     private weak var label: UILabel!
     

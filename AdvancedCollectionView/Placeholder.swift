@@ -1,5 +1,5 @@
 //
-//  PlaceholderViews.swift
+//  Placeholder.swift
 //  AdvancedCollectionView
 //
 //  Created by Zachary Waldowski on 1/2/15.
@@ -279,7 +279,7 @@ public class PlaceholderView: UIView {
 }
 
 /// A placeholder view for use in a collection view. This placeholder includes the loading indicator.
-public class CollectionPlaceholderView: CollectionViewCell {
+public class CollectionPlaceholderView: GridCell {
     
     private(set) public weak var activityIndicatorView: UIActivityIndicatorView!
     private(set) public var placeholderView: PlaceholderView?

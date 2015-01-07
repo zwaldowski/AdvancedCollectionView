@@ -17,7 +17,7 @@ private func secondaryFont() -> UIFont {
 }
 
 /// A basic collection view cell with a primary and secondary label.
-public class BasicCell: CollectionViewCell {
+public class BasicCell: GridCell {
     
     public enum Style {
         /// Primary and secondary labels are the same size with the primary label left aligned and the secondary right aligned

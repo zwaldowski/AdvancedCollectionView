@@ -1,5 +1,5 @@
 //
-//  CollectionViewCell.swift
+//  GridCell.swift
 //  AdvancedCollectionView
 //
 //  Created by Zachary Waldowski on 1/2/15.
@@ -9,8 +9,7 @@
 import UIKit
 
 /// The base collection view cell used by the grid layout code.
-/// TODO: rename, conflicts with some ObjC namespacing
-public class CollectionViewCell: UICollectionViewCell {
+public class GridCell: UICollectionViewCell {
     
     public override class func requiresConstraintBasedLayout() -> Bool {
         return true

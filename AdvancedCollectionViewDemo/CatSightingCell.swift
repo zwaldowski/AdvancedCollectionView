@@ -9,7 +9,7 @@
 import UIKit
 import AdvancedCollectionView
 
-class CatSightingCell: AdvancedCollectionView.CollectionViewCell {
+class CatSightingCell: GridCell {
     
     private weak var dateLabel: UILabel!
     private weak var fancierLabel: UILabel!
