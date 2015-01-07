@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TODO: get rid of proxy!
+
 struct ComposedMapping {
     
     private var globalToLocal = [Int: Int]()

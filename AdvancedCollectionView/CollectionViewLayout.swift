@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-// TODO: get rid of proxy!
-
 extension UICollectionView {
     
     public func dequeue<V: UICollectionViewCell>(cellOfType type: V.Type, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {
@@ -34,7 +32,7 @@ extension UICollectionView {
         registerClass(type, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
     }
     
-    public func register<T: RawRepresentable, V: UICollectionReusableView where T.RawValue == String>(typeForSupplement type: V.Type, ofKind kind: T, reuseIdentifier: String? = nil) {
+    public func register<T: RawRepresentable where T.RawValue == String>(typeForSupplement type: UICollectionReusableView.Type, ofKind kind: T, reuseIdentifier: String? = nil) {
         register(typeForSupplement: type, ofRawKind: kind.rawValue, reuseIdentifier: reuseIdentifier)
     }
     
@@ -42,12 +40,12 @@ extension UICollectionView {
 
 extension UICollectionViewLayout {
     
-    func registerClass<T: RawRepresentable where T.RawValue == String>(viewClass: UICollectionReusableView.Type?, forDecorationView kind: T) {
-        registerClass(viewClass, forDecorationViewOfKind: kind.rawValue)
+    func register(typeForDecoration type: UICollectionReusableView.Type, ofRawKind kind: String) {
+        registerClass(type, forDecorationViewOfKind: kind)
     }
     
-    func registerNib<T: RawRepresentable where T.RawValue == String>(nib: UINib?, forDecorationView kind: T) {
-        registerNib(nib, forDecorationViewOfKind: kind.rawValue)
+    public func register<T: RawRepresentable where T.RawValue == String>(typeForDecoration type: UICollectionReusableView.Type, ofKind kind: T) {
+        register(typeForDecoration: type, ofRawKind: kind.rawValue)
     }
     
 }
