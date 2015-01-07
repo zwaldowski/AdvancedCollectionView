@@ -60,6 +60,7 @@ class CatDetailViewController: CollectionViewController {
                 view.configure(cat: cat)
             }
         }
+        segmented.addHeader(globalHeader, forKey: "globalHeader")
         
         collectionView?.dataSource = segmented
         segmentedDataSource = segmented

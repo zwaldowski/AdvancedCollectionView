@@ -123,6 +123,10 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
     }
     
     private func map(globalIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> (UICollectionView!, DataSource, NSIndexPath) {
+        if indexPath.length == 1 {
+            return (collectionView, self, indexPath)
+        }
+        
         let dataSource = sectionDataSources[indexPath[0]]
         let mapping = mappings[dataSource]!
         let wrapper = unsafeBitCast(ComposedViewWrapper(collectionView: collectionView, mapping: mapping), UICollectionView.self)

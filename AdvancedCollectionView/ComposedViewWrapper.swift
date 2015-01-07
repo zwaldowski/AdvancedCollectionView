@@ -41,12 +41,12 @@ extension ComposedMapping {
     
     func localIndexPath(forGlobalIndexPath indexPath: NSIndexPath) -> NSIndexPath {
         let section = localSection(forGlobalSection: indexPath.section)
-        return NSIndexPath(forItem: indexPath.item, inSection: section)
+        return NSIndexPath(section, indexPath.item)
     }
     
     func globalIndexPath(forLocalIndexPath indexPath: NSIndexPath) -> NSIndexPath {
         let section = globalSection(forLocalSection: indexPath.section)
-        return NSIndexPath(forItem: indexPath.item, inSection: section)
+        return NSIndexPath(section, indexPath.item)
     }
     
     func localIndexPaths(forGlobalIndexPaths indexPaths: [NSIndexPath]) -> [NSIndexPath] {
