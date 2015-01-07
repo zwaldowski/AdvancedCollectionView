@@ -27,7 +27,7 @@ class TextValueDataSource<T>: BasicDataSource {
         defaultMetrics.selectedBackgroundColor = UIColor.clearColor()
         
         // Create a section header that will pull the text of the header from the label of the item.
-        var header = SupplementaryMetrics(kind: UICollectionElementKindSectionHeader)
+        var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(40)
         header.viewType = SectionHeaderView.self
         header.configure { (view: SectionHeaderView, dataSource: TextValueDataSource<T>, indexPath) in
@@ -57,7 +57,8 @@ class TextValueDataSource<T>: BasicDataSource {
     
     override func registerReusableViews(#collectionView: UICollectionView) {
         super.registerReusableViews(collectionView: collectionView)
-        register(typeForCell: TextValueCell.self, collectionView: collectionView)
+        
+        collectionView.register(typeForCell: TextValueCell.self)
     }
     
     // MARK: UICollectionViewDataSource
@@ -72,7 +73,7 @@ class TextValueDataSource<T>: BasicDataSource {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = dequeue(cellOfType: TextValueCell.self, collectionView: collectionView, indexPath: indexPath)
+        let cell = collectionView.dequeue(cellOfType: TextValueCell.self, indexPath: indexPath)
         let value = items[indexPath[0]]
         cell.configure(value.getValue(source))
         return cell

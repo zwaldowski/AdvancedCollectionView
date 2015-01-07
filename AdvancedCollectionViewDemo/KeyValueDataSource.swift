@@ -61,7 +61,8 @@ final class KeyValueDataSource<T>: BasicDataSource {
     
     override func registerReusableViews(#collectionView: UICollectionView) {
         super.registerReusableViews(collectionView: collectionView)
-        register(typeForCell: BasicCell.self, collectionView: collectionView)
+        
+        collectionView.register(typeForCell: BasicCell.self)
     }
     
     // MARK: UICollectionViewDataSource
@@ -71,7 +72,7 @@ final class KeyValueDataSource<T>: BasicDataSource {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = dequeue(cellOfType: BasicCell.self, collectionView: collectionView, indexPath: indexPath)
+        let cell = collectionView.dequeue(cellOfType: BasicCell.self, indexPath: indexPath)
         let value = items[indexPath[1]]
         cell.primaryLabel.text = value.label
         cell.secondaryLabel.text = value.getValue(source)

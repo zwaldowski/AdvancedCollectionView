@@ -39,19 +39,17 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     public func registerReusableViews(#collectionView: UICollectionView) {
         for supplMetrics in snapshotMetrics(section: .Global).supplementaryViews {
-            if supplMetrics.kind != UICollectionElementKindSectionHeader { continue }
-            collectionView.registerClass(supplMetrics.viewType, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: supplMetrics.reuseIdentifier)
+            if supplMetrics.kind != SupplementKind.Header.rawValue { continue }
+            collectionView.register(typeForSupplement: supplMetrics.viewType, ofKind: SupplementKind.Header)
         }
         
         for idx in 0..<numberOfSections {
             for supplMetrics in snapshotMetrics(section: .Index(idx)).supplementaryViews {
-                collectionView.registerClass(supplMetrics.viewType, forSupplementaryViewOfKind: supplMetrics.kind, withReuseIdentifier: supplMetrics.reuseIdentifier)
+                collectionView.register(typeForSupplement: supplMetrics.viewType, ofRawKind: supplMetrics.kind, reuseIdentifier: supplMetrics.reuseIdentifier)
             }
         }
         
-        
-        
-        collectionView.registerClass(AAPLCollectionPlaceholderView.self, forSupplement: GridLayout.SupplementKind.Placeholder)
+        collectionView.register(typeForSupplement: AAPLCollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder)
     }
     
     // MARK: Loading
@@ -159,10 +157,10 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     private var headers = [SupplementaryMetrics]()
     private var headersIndexesByKey = [String: (Int, SupplementaryMetrics)]()
     
-    public var defaultMetrics: SectionMetrics! = SectionMetrics(defaultMetrics: ()) {
+    public var defaultMetrics: SectionMetrics! = SectionMetrics.defaultMetrics {
         didSet {
             if defaultMetrics == nil {
-                defaultMetrics = SectionMetrics(defaultMetrics: ())
+                defaultMetrics = SectionMetrics.defaultMetrics
             }
         }
     }
@@ -234,7 +232,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     public func addSupplement(header: SupplementaryMetrics, forSection section: Section) {
         var metrics = sectionMetrics[section] ?? SectionMetrics()
-        metrics.addSupplement(header)
+        metrics.supplementaryViews.append(header)
         sectionMetrics[section] = metrics
     }
     
@@ -289,7 +287,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> AAPLCollectionPlaceholderView {
         if placeholderView == nil {
-            placeholderView = collectionView.dequeueReusableSupplement(kind: GridLayout.SupplementKind.Placeholder, indexPath: indexPath, type: AAPLCollectionPlaceholderView.self)
+            placeholderView = collectionView.dequeue(supplementOfType: AAPLCollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
         }
         updatePlaceholder(placeholderView, notifyVisibility: false)
         return placeholderView!
@@ -441,12 +439,12 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     }
     
     public final func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        if kind == ElementKindPlaceholder {
+        if kind == SupplementKind.Placeholder.rawValue {
             return dequeuePlaceholderView(collectionView: collectionView, indexPath: indexPath)
         }
         
-        
         // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
+
         var section: Section
         var dataSource: DataSource
         var localIndexPath: NSIndexPath
@@ -479,7 +477,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             }
         }
         
-        let view = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: metrics.reuseIdentifier, forIndexPath: indexPath) as UICollectionReusableView
+        let view = collectionView.dequeue(supplementOfType: UICollectionReusableView.self, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
         
         if let configure = metrics.configureView {
             configure(view: view, dataSource: dataSource, indexPath: localIndexPath)

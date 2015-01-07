@@ -8,8 +8,6 @@
 
 import UIKit
 
-public let ElementKindPlaceholder = "placeholder"
-
 public enum LayoutOrder {
     case Natural
     case NaturalReverse
@@ -35,11 +33,10 @@ public struct SeparatorOptions: RawOptionSetType {
 
 public struct SupplementaryMetrics {
     
-    /// The class to use when dequeuing an instance of this supplementary view
-    public var viewType: UICollectionReusableView.Type = UICollectionReusableView.self
-
     /// The kind of supplementary view these metrics describe
     public let kind: String
+    /// The class to use when dequeuing an instance of this supplementary view
+    public var viewType: UICollectionReusableView.Type = UICollectionReusableView.self
     /// Should this supplementary view be displayed while the placeholder is visible?
     public var isVisibleWhileShowingPlaceholder = false
     /// Should this supplementary view be pinned to the edges of the view when
@@ -56,18 +53,8 @@ public struct SupplementaryMetrics {
     /// How is this affected by other coinciding views?
     public var zIndex = GridLayout.ZIndex.Supplement.rawValue
     /// Optional reuse identifier. If not specified, it will be inferred from the
-    /// class of the supplementary view.
-    public var reuseIdentifier: String {
-        set { __reuseIdentifier = newValue }
-        get {
-            if let value = __reuseIdentifier {
-                return value
-            }
-            return NSStringFromClass(viewType)
-        }
-    }
-    private var __reuseIdentifier: String? = nil
-    
+    /// type of the supplementary view.
+    public var reuseIdentifier: String? = nil
     /// The background color that should be used for this element. On an item,
     /// if not set, this will be inherited from the section.
     public var backgroundColor: UIColor? = nil
@@ -85,8 +72,8 @@ public struct SupplementaryMetrics {
     
     var configureView: ((view: UICollectionReusableView, dataSource: DataSource, indexPath: NSIndexPath) -> ())?
     
-    public init(kind: String) {
-        self.kind = kind
+    public init<KindType: RawRepresentable where KindType.RawValue == String>(kind: KindType) {
+        self.kind = kind.rawValue
     }
     
     /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
@@ -110,12 +97,12 @@ public struct SupplementaryMetrics {
 
 public struct SectionMetrics {
     
-    public init() { }
-    
-    public init(defaultMetrics: ()) {
-        measurement = .Default
-        numberOfColumns = 1
-        separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns | SeparatorOptions.AfterSections
+    public static var defaultMetrics: SectionMetrics {
+        var metrics = SectionMetrics()
+        metrics.measurement = .Default
+        metrics.numberOfColumns = 1
+        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns | SeparatorOptions.AfterSections
+        return metrics
     }
     
     /// The size of each row in the section.
@@ -129,54 +116,31 @@ public struct SectionMetrics {
     public var padding: UIEdgeInsets? = nil
     /// How the cells should be laid out when there are multiple columns.
     public var itemLayout: LayoutOrder? = nil
-    
     /// Determines where, if any, separators are drawn.
     public var separators: SeparatorOptions? = nil
     /// Insets for the separators drawn between rows (left & right) and
     /// columns (top & bottom).
     public var separatorInsets: UIEdgeInsets? = nil
-    
-    private var setSeparatorColor = false
-    private var setBackgroundColor = false
-    private var setSelectedBackgroundColor = false
-    private var setTintColor = false
-    private var setSelectedTintColor = false
-    
     /// The color to use when drawing row, column, and section separators.
-    public var separatorColor: UIColor? = nil {
-        didSet { setSeparatorColor = true }
-    }
+    public var separatorColor: UIColor? = nil
     /// The background color that should be used for this element. On an item,
     /// if not set, this will be inherited from the section.
-    public var backgroundColor: UIColor? = nil {
-        didSet { setBackgroundColor = true }
-    }
+    public var backgroundColor: UIColor? = nil
     /// The background color shown when this element is selected. On an item, if
     /// not set, this will be inherited from the section. Use the clear color
     /// to override a selection color from the section.
-    public var selectedBackgroundColor: UIColor? = nil {
-        didSet { setSelectedBackgroundColor = true }
-    }
+    public var selectedBackgroundColor: UIColor? = nil
     /// The preferred tint color used for this element. On an item, if not set,
     /// not set, it will be inherited from the section.
-    public var tintColor: UIColor? = nil {
-        didSet { setTintColor = true }
-    }
+    public var tintColor: UIColor? = nil
     /// The preferred tint color used for this element when selected. On an
     /// item, if not set, it will be inherited from the section. Use the clear
     /// color to override the inherited color.
-    public var selectedTintColor: UIColor? = nil {
-        didSet { setSelectedTintColor = true }
-    }
-    
-    var hasPlaceholder = false
-    
+    public var selectedTintColor: UIColor? = nil
     /// Supplementary view metrics for this section
     public var supplementaryViews = [SupplementaryMetrics]()
     
-    public mutating func addSupplement(supplement: SupplementaryMetrics) {
-        supplementaryViews.append(supplement)
-    }
+    var hasPlaceholder = false
     
     public mutating func apply(metrics other: SectionMetrics) {
         if other.measurement != ElementLength.None { measurement = other.measurement }

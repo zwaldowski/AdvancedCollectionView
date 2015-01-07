@@ -53,7 +53,8 @@ class CatListDataSource: BasicDataSource {
     
     override func registerReusableViews(#collectionView: UICollectionView) {
         super.registerReusableViews(collectionView: collectionView)
-        register(typeForCell: BasicCell.self, collectionView: collectionView)
+        
+        collectionView.register(typeForCell: BasicCell.self)
     }
     
     override func loadContent() {
@@ -93,7 +94,7 @@ class CatListDataSource: BasicDataSource {
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cat = self[indexPath]!
-        let cell = dequeue(cellOfType: BasicCell.self, collectionView: collectionView, indexPath: indexPath)
+        let cell = collectionView.dequeue(cellOfType: BasicCell.self, indexPath: indexPath)
         cell.style = .Subtitle
         cell.primaryLabel.text = cat.name
         cell.primaryLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)

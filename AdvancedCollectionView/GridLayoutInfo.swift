@@ -8,40 +8,25 @@
 
 import UIKit
 
-struct GridLayoutCacheKey<Kind: RawRepresentable where Kind.RawValue == String> {
-    let kind: Kind
+struct GridCacheKey {
+    let kind: String
     let indexPath: NSIndexPath
     
-    init(kind: Kind, indexPath: NSIndexPath) {
-        self.kind = kind
-        self.indexPath = indexPath
-    }
-    
-    init!(representedElementKind: String, indexPath: NSIndexPath) {
-        if let kind = Kind(rawValue: representedElementKind) {
-            self.init(kind: kind, indexPath: indexPath)
-        } else {
-            return nil
-        }
-    }
-    
 }
 
-func ==<Kind: RawRepresentable where Kind.RawValue == String>(lhs: GridLayoutCacheKey<Kind>, rhs: GridLayoutCacheKey<Kind>) -> Bool {
-    return lhs.indexPath === rhs.indexPath ||
-        lhs.kind.rawValue == rhs.kind.rawValue ||
-        lhs.indexPath == rhs.indexPath
+func ==(lhs: GridCacheKey, rhs: GridCacheKey) -> Bool {
+    return lhs.indexPath === rhs.indexPath || lhs.kind == rhs.kind || lhs.indexPath == rhs.indexPath
 }
 
-extension GridLayoutCacheKey: Hashable {
+extension GridCacheKey: Hashable {
     
     var hashValue: Int {
-        return 31 &* indexPath.hashValue &+ kind.rawValue.hashValue
+        return 31 &* indexPath.hashValue &+ kind.hashValue
     }
     
 }
 
-extension GridLayoutCacheKey: DebugPrintable {
+extension GridCacheKey: DebugPrintable {
     
     var debugDescription: String {
         let commaSeparated = join(", ", map(indexPath) { String($0) })
@@ -137,7 +122,7 @@ struct SectionInfo {
 
 extension SectionInfo {
     
-    enum Supplement {
+    enum SupplementIndex {
         case Header
         case Footer
         case Named(String)
@@ -146,16 +131,16 @@ extension SectionInfo {
     
     private var notNamed: SequenceOf<SupplementalItemsMap.Group> {
         return supplementalItems.groups { (key, _) in
-            key != UICollectionElementKindSectionHeader && key != UICollectionElementKindSectionFooter
+            key != SupplementKind.Header.rawValue && key != SupplementKind.Footer.rawValue
         }
     }
     
-    func count(#supplements: Supplement) -> Int {
+    func count(#supplements: SupplementIndex) -> Int {
         switch supplements {
         case .Header:
-            return supplementalItems[UICollectionElementKindSectionHeader].count
+            return supplementalItems[SupplementKind.Header.rawValue].count
         case .Footer:
-            return supplementalItems[UICollectionElementKindSectionFooter].count
+            return supplementalItems[SupplementKind.Footer.rawValue].count
         case .Named(let kind):
             return supplementalItems[kind].count
         case .AllOther:
@@ -165,12 +150,12 @@ extension SectionInfo {
         }
     }
     
-    subscript(supplement: Supplement) -> SupplementalItemsMap.Sequence {
+    subscript(supplement: SupplementIndex) -> SupplementalItemsMap.Sequence {
         switch supplement {
         case .Header:
-            return supplementalItems.enumerate(forKey: UICollectionElementKindSectionHeader)
+            return supplementalItems.enumerate(forKey: SupplementKind.Header.rawValue)
         case .Footer:
-            return supplementalItems.enumerate(forKey: UICollectionElementKindSectionFooter)
+            return supplementalItems.enumerate(forKey: SupplementKind.Footer.rawValue)
         case .Named(let kind):
             return supplementalItems.enumerate(forKey: kind)
         case .AllOther:
@@ -180,20 +165,20 @@ extension SectionInfo {
     
     var placeholder: SupplementInfo? {
         get {
-            return supplementalItems[ElementKindPlaceholder].first
+            return supplementalItems[SupplementKind.Placeholder.rawValue].first
         }
         set {
             if let info = newValue {
-                supplementalItems.update(CollectionOfOne(info), forKey: ElementKindPlaceholder)
+                supplementalItems.update(CollectionOfOne(info), forKey: SupplementKind.Placeholder.rawValue)
             } else {
-                supplementalItems.remove(valuesForKey: ElementKindPlaceholder)
+                supplementalItems.remove(valuesForKey: SupplementKind.Placeholder.rawValue)
             }
         }
     }
     
     mutating func addSupplementalItem(metrics: SupplementaryMetrics) {
         let info = SupplementInfo(metrics: metrics)
-        if metrics.kind == ElementKindPlaceholder {
+        if metrics.kind == SupplementKind.Placeholder.rawValue {
             placeholder = info
         } else {
             supplementalItems.append(info, forKey: metrics.kind)
@@ -237,7 +222,8 @@ extension SectionInfo {
         
         // First, lay out headers
         let headerBeginY = layoutRect.minY
-        supplementalItems.updateMapWithIndex(groupForKey: UICollectionElementKindSectionHeader) { (headerIndex, var headerInfo) -> SupplementInfo in
+        let headerKey = SupplementKind.Header.rawValue
+        supplementalItems.updateMapWithIndex(groupForKey: headerKey) { (headerIndex, var headerInfo) -> SupplementInfo in
             // skip headers if there are no items and the header isn't a global header
             if numberOfItems == 0 && !headerInfo.metrics.isVisibleWhileShowingPlaceholder { return headerInfo }
             
@@ -253,7 +239,7 @@ extension SectionInfo {
                 // This header needs to be measured!
                 let fittingSize = CGSize(width: viewport.width, height: UILayoutFittingExpandedSize.height)
                 headerInfo.frame = CGRect(origin: CGPoint.zeroPoint, size: fittingSize)
-                length = measureSupplement(kind: UICollectionElementKindSectionHeader, index: headerIndex, fittingSize: fittingSize).height
+                length = measureSupplement(kind: headerKey, index: headerIndex, fittingSize: fittingSize).height
                 headerInfo.measurement = .Static(length)
             default: break
             }

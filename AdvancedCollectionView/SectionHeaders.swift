@@ -18,7 +18,7 @@ extension DataSource {
             return cached
         }
         
-        var header = SupplementaryMetrics(kind: UICollectionElementKindSectionHeader)
+        var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(44)
         header.viewType = SectionHeaderView.self
         header.configure { (view: AAPLSectionHeaderView, dataSource: DataSource, indexPath) -> () in

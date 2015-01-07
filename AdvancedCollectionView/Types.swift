@@ -92,3 +92,14 @@ public func ==(lhs: ElementLength, rhs: ElementLength) -> Bool {
         return false
     }
 }
+
+// MARK: -
+
+public enum SupplementKind: String {
+    case Header = "UICollectionElementKindSectionHeader"
+    case Footer = "UICollectionElementKindSectionFooter"
+    case SectionGap = "sectionGap"
+    case AtopHeaders = "atopHeaders"
+    case AtopItems = "atopItems"
+    case Placeholder = "placeholder"
+}

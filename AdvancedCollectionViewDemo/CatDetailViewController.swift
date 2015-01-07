@@ -49,7 +49,7 @@ class CatDetailViewController: CollectionViewController {
         segmented.add(dataSource: detailDataSource)
         segmented.add(dataSource: sightingsDataSource)
         
-        var globalHeader = SupplementaryMetrics(kind: UICollectionElementKindSectionHeader)
+        var globalHeader = SupplementaryMetrics(kind: SupplementKind.Header)
         globalHeader.isVisibleWhileShowingPlaceholder = true
         globalHeader.measurement = .Static(110)
         globalHeader.viewType = CatDetailHeader.self

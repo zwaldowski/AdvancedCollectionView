@@ -52,7 +52,8 @@ class CatSightingsDataSource: BasicDataSource {
     
     override func registerReusableViews(#collectionView: UICollectionView) {
         super.registerReusableViews(collectionView: collectionView)
-        register(typeForCell: CatSightingCell.self, collectionView: collectionView)
+        
+        collectionView.register(typeForCell: CatSightingCell.self)
     }
     
     override func loadContent() {
@@ -88,7 +89,7 @@ class CatSightingsDataSource: BasicDataSource {
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let sighting = self[indexPath]!
-        let cell = dequeue(cellOfType: CatSightingCell.self, collectionView: collectionView, indexPath: indexPath)
+        let cell = collectionView.dequeue(cellOfType: CatSightingCell.self, indexPath: indexPath)
         cell.configure(sighting, dateFormatter: dateFormatter)
         return cell
     }
