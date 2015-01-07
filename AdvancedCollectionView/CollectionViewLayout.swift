@@ -11,12 +11,12 @@
 extension UICollectionView {
     
     public func dequeue<V: UICollectionViewCell>(cellOfType type: V.Type, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {
-        let identifier = reuseIdentifier ?? NSStringFromClass(V)!
+        let identifier = reuseIdentifier ?? NSStringFromClass(type)!
         return dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as V
     }
     
     func dequeue<V: UICollectionReusableView>(supplementOfType type: V.Type, ofRawKind kind: String, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {
-        let identifier = reuseIdentifier ?? NSStringFromClass(V)!
+        let identifier = reuseIdentifier ?? NSStringFromClass(type)!
         return dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: identifier, forIndexPath: indexPath) as V
     }
     
@@ -24,13 +24,13 @@ extension UICollectionView {
         return dequeue(supplementOfType: type, ofRawKind: kind.rawValue, indexPath: indexPath, reuseIdentifier: reuseIdentifier)
     }
     
-    public func register<V: UICollectionViewCell>(typeForCell type: V.Type, reuseIdentifier: String? = nil) {
-        let identifier = reuseIdentifier ?? NSStringFromClass(V)!
+    public func register(typeForCell type: UICollectionViewCell.Type, reuseIdentifier: String? = nil) {
+        let identifier = reuseIdentifier ?? NSStringFromClass(type)!
         registerClass(type, forCellWithReuseIdentifier: identifier)
     }
     
-    func register<V: UICollectionReusableView>(typeForSupplement type: V.Type, ofRawKind kind: String, reuseIdentifier: String? = nil) {
-        let identifier = reuseIdentifier ?? NSStringFromClass(V)!
+    func register(typeForSupplement type: UICollectionReusableView.Type, ofRawKind kind: String, reuseIdentifier: String? = nil) {
+        let identifier = reuseIdentifier ?? NSStringFromClass(type)!
         registerClass(type, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
     }
     

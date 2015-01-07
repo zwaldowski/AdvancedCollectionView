@@ -40,7 +40,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     public func registerReusableViews(#collectionView: UICollectionView) {
         for supplMetrics in snapshotMetrics(section: .Global).supplementaryViews {
             if supplMetrics.kind != SupplementKind.Header.rawValue { continue }
-            collectionView.register(typeForSupplement: supplMetrics.viewType, ofKind: SupplementKind.Header)
+            collectionView.register(typeForSupplement: supplMetrics.viewType, ofKind: SupplementKind.Header, reuseIdentifier: supplMetrics.reuseIdentifier)
         }
         
         for idx in 0..<numberOfSections {
@@ -477,7 +477,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             }
         }
         
-        let view = collectionView.dequeue(supplementOfType: UICollectionReusableView.self, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
+        let view = collectionView.dequeue(supplementOfType: metrics.viewType, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
         
         if let configure = metrics.configureView {
             configure(view: view, dataSource: dataSource, indexPath: localIndexPath)
