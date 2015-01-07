@@ -265,6 +265,9 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
     }
     
     public override func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
+        if isRootDataSource && indexPath.length == 1 {
+            return super.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: collectionView)
+        }
         return selectedDataSource?.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: collectionView) ?? size
     }
 
