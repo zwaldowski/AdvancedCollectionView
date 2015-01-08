@@ -1,0 +1,13 @@
+//
+//  CatSighting.swift
+//  AdvancedCollectionView
+//
+//  Created by Zachary Waldowski on 1/8/15.
+//  Copyright (c) 2015 Apple. All rights reserved.
+//
+
+struct CatSighting {
+    let date: NSDate
+    let catFancier: String
+    let shortDescription: String
+}

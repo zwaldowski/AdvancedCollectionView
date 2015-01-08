@@ -51,6 +51,10 @@
 		1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */; };
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
+		DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */; };
+		DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */; };
+		DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */; };
+		DB1F1B411A5E6BE7005A48A5 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B401A5E6BE7005A48A5 /* Result.swift */; };
 		DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */; };
 		DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */; };
 		DB22A1DB1A5946A800B8B883 /* CatSightingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */; };
@@ -60,6 +64,7 @@
 		DB24FC231A3F7E9E00C5D0B4 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC221A3F7E9E00C5D0B4 /* Utilities.swift */; };
 		DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */; };
 		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
+		DB262F001A5E3EBA00E3D905 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB262EFF1A5E3EBA00E3D905 /* JSON.swift */; };
 		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
 		DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */; };
 		DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* SetType.swift */; };
@@ -290,6 +295,10 @@
 		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSighting.swift; sourceTree = "<group>"; };
+		DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
+		DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataAccessManager.swift; sourceTree = "<group>"; };
+		DB1F1B401A5E6BE7005A48A5 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSightingCell.swift; sourceTree = "<group>"; };
@@ -299,6 +308,7 @@
 		DB24FC221A3F7E9E00C5D0B4 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		DB262EFF1A5E3EBA00E3D905 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
 		DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedDataSource.swift; sourceTree = "<group>"; };
 		DB5FB6A21A4F527C0041062F /* SetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetType.swift; sourceTree = "<group>"; };
@@ -458,6 +468,11 @@
 		DB22A2101A5950A700B8B883 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				DB262EFF1A5E3EBA00E3D905 /* JSON.swift */,
+				DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */,
+				DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */,
+				DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */,
+				DB1F1B401A5E6BE7005A48A5 /* Result.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -947,6 +962,7 @@
 				DB9DC7371A57E49D005DE6C2 /* CatListDataSource.swift in Sources */,
 				DBB401A31A592CA5001DDE72 /* CatDetailViewController.swift in Sources */,
 				DB22A1DF1A594A2600B8B883 /* CatDetailDataSource.swift in Sources */,
+				DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */,
 				1FE17C0B192FEAEC00620DC3 /* AAPLTextValueCell.m in Sources */,
 				1FA42AF9192A910C00F673A0 /* AAPLDataAccessManager.m in Sources */,
 				DB22A20F1A59504400B8B883 /* AppDelegate.swift in Sources */,
@@ -956,12 +972,16 @@
 				DBB401A51A592DBB001DDE72 /* CatDetailHeader.swift in Sources */,
 				1FE17C0F1931885100620DC3 /* AAPLCatSighting.m in Sources */,
 				DB9DC7351A57E43E005DE6C2 /* CatListViewController.swift in Sources */,
+				DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */,
 				1FA42B03192A9D2200F673A0 /* AAPLCat.m in Sources */,
 				1FE17BD9192E875900620DC3 /* AAPLCatDetailHeader.m in Sources */,
 				DB22A1DB1A5946A800B8B883 /* CatSightingCell.swift in Sources */,
 				1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */,
+				DB262F001A5E3EBA00E3D905 /* JSON.swift in Sources */,
 				DB22A1DD1A59491500B8B883 /* CatSightingsDataSource.swift in Sources */,
 				DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */,
+				DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */,
+				DB1F1B411A5E6BE7005A48A5 /* Result.swift in Sources */,
 				1FE17BFB192E942600620DC3 /* AAPLCatDetailDataSource.m in Sources */,
 				1FE17BD5192E80D100620DC3 /* AAPLCatDetailViewController.m in Sources */,
 				DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */,
