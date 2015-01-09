@@ -101,15 +101,6 @@ public func &<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generato
     }
 }
 
-/// Returns the intersection of `set` and `other`.
-//public func &<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(lhs: S1, rhs: S2) -> SequenceOf<S1.Generator.Element> {
-//    if lhs.count <= rhs.count {
-//        return SequenceOf(lazy(lhs).filter { rhs.contains($0) })
-//    } else {
-//        return SequenceOf(lazy(rhs).filter { lhs.contains($0) })
-//    }
-//}
-
 /// Itersects with `set` with `other`.
 public func &=<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(inout lhs: S1, rhs: S2) {
     lhs.intersect(rhs)

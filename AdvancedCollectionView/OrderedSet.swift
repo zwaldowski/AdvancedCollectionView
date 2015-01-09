@@ -116,8 +116,10 @@ extension OrderedSet: RangeReplaceableCollectionType {
     
     /// Replace the given `subRange` of elements with `newElements`.
     public mutating func replaceRange<C : CollectionType where C.Generator.Element == Element>(subRange: Range<Ordered.Index>, with newElements: C) {
-        removeRange(subRange)
-        splice(newElements, atIndex: subRange.startIndex)
+        let oldOrdered = ordered[subRange]
+        ordered.replaceRange(subRange, with: newElements)
+        elements -= oldOrdered
+        elements.extend(newElements)
     }
     
     /// Insert `newElement` at index `i`.
