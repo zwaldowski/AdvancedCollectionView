@@ -11,3 +11,15 @@ struct CatSighting {
     let catFancier: String
     let shortDescription: String
 }
+
+func ==(lhs: CatSighting, rhs: CatSighting) -> Bool {
+    return lhs.date.isEqualToDate(rhs.date) && lhs.catFancier == rhs.catFancier
+}
+
+extension CatSighting: Hashable {
+    
+    var hashValue: Int {
+        return 31 &* date.hashValue &+ catFancier.hashValue
+    }
+    
+}
