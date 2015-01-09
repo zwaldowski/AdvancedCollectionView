@@ -44,13 +44,13 @@
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
+		DB63FBF11A5F94640095BB03 /* OrderedDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */; };
 		DB71E6561A489D9C00AFC472 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6541A489D9C00AFC472 /* Set.swift */; };
 		DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6551A489D9C00AFC472 /* Unit.swift */; };
 		DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */; };
 		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 		DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB81006E1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; };
-		DB8100771A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DB8100761A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m */; };
 		DB81007A1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; };
 		DB81007B1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB8A78BC1A3E70BE008A79A6 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */; };
@@ -162,6 +162,7 @@
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
+		DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionaryTests.swift; sourceTree = "<group>"; };
 		DB71E6541A489D9C00AFC472 /* Set.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		DB71E6551A489D9C00AFC472 /* Unit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Unit.swift; sourceTree = "<group>"; };
 		DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewLayout.swift; sourceTree = "<group>"; };
@@ -171,7 +172,6 @@
 		DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdvancedCollectionView.h; sourceTree = "<group>"; };
 		DB81006D1A3CD2AE00E758F6 /* AdvancedCollectionViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdvancedCollectionViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8100751A3CD2AE00E758F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB8100761A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdvancedCollectionViewTests.m; sourceTree = "<group>"; };
 		DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayout.swift; sourceTree = "<group>"; };
 		DB8A78F41A3E79F2008A79A6 /* Metrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
 		DB8A78F71A3E8252008A79A6 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
@@ -355,7 +355,7 @@
 		DB8100731A3CD2AE00E758F6 /* AdvancedCollectionViewTests */ = {
 			isa = PBXGroup;
 			children = (
-				DB8100761A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m */,
+				DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */,
 				DB8100741A3CD2AE00E758F6 /* Supporting Files */,
 			);
 			path = AdvancedCollectionViewTests;
@@ -662,7 +662,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8100771A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m in Sources */,
+				DB63FBF11A5F94640095BB03 /* OrderedDictionaryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,6 +892,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdvancedCollectionViewDemo.app/AdvancedCollectionViewDemo";
 			};
 			name = Debug;

@@ -36,9 +36,8 @@ public struct OrderedDictionary<Key: Hashable, Value> {
 extension OrderedDictionary {
     
     public init(minimumCapacity: Int) {
-        var keys = Keys()
-        keys.reserveCapacity(minimumCapacity)
-        self.init(keys: keys, elements: Hash(minimumCapacity: minimumCapacity))
+        self.init(keys: Keys(), elements: Dictionary(minimumCapacity: minimumCapacity))
+        reserveCapacity(minimumCapacity)
     }
     
     public init() {
@@ -64,12 +63,12 @@ extension OrderedDictionary: SequenceType {
     public typealias Element = Hash.Element
     
     public func generate() -> GeneratorOf<Element> {
-        let elements = self.elements
+        let dictionary = self.elements
         var keysGenerator = keys.generate()
         return GeneratorOf {
             if let nextKey = keysGenerator.next() {
-                let value = elements[nextKey]!
-                return (nextKey, value)
+                let index = dictionary.indexForKey(nextKey)!
+                return dictionary[index]
             }
             return nil
         }
@@ -87,10 +86,9 @@ extension OrderedDictionary: CollectionType {
     public var endIndex: Index { return keys.endIndex }
     
     /// Gets or sets existing entries in an ordered dictionary by index. If the key exists, its entry will be deleted before the new entry is inserted; the insertion compensates for the deleted key.
-    public subscript(index: Index) -> Element {
-        let key = keys[index]
-        let value = elements[key]!
-        return (key, value)
+    public subscript(i: Index) -> Element {
+        let dictIndex = elements.indexForKey(keys[i])!
+        return elements[dictIndex]
     }
     
     public subscript(key: Key) -> Value? {
@@ -108,7 +106,7 @@ extension OrderedDictionary: CollectionType {
     }
     
     /// Gets a subrange of existing keys in an ordered dictionary using square bracket subscripting with an integer range.*/
-    public subscript(#keyRange: Range<Index>) -> Slice<Key> {
+    public subscript(keyRange: Range<Index>) -> Slice<Key> {
         return keys[keyRange]
     }
     
@@ -133,9 +131,7 @@ extension OrderedDictionary: ExtensibleCollectionType {
     }
     
     public mutating func append(element: Element) {
-        if elements.updateValue(element.1, forKey: element.0) == nil {
-            keys.append(element.0)
-        }
+        _ = updateValue(element.1, forKey: element.0)
     }
     
 }
@@ -144,21 +140,36 @@ extension OrderedDictionary: ExtensibleCollectionType {
 
 extension OrderedDictionary: RangeReplaceableCollectionType {
     
-    /// Replace the given `subRange` of elements with `newElements`.
-    public mutating func replaceRange<C : CollectionType where C.Generator.Element == Element>(subRange: Range<Index>, with newElements: C) {
-        removeRange(subRange)
-        splice(newElements, atIndex: subRange.startIndex)
+    // Replace the given `subRange` of elements with `newElements`.
+    public mutating func replaceRange<C: CollectionType where C.Generator.Element == Hash.Element>(subRange: Range<Keys.Index>, with newElements: C) {
+        let oldKeys = keys[subRange]
+        
+        // The noise here is necessary
+        let newKeys = map(newElements, { (key: Key, value: Value) -> Key in
+            return key
+        })
+        
+        keys.replaceRange(subRange, with: newKeys)
+        
+        for oldKey in oldKeys {
+            elements.removeValueForKey(oldKey)
+        }
+        
+        for (newKey, value) in SequenceOf<Element>(newElements) {
+            elements.updateValue(value, forKey: newKey)
+        }
     }
     
     /// Inserts an entry into the collection at a given index. If the key exists, its entry will be deleted before the new entry is inserted; the insertion compensates for the deleted key.
     public mutating func insert(newElement: Element, atIndex i: Index) {
-        if let oldValue = elements[newElement.0] {
-            if let keyIndex = find(keys, newElement.0) {
-                let idx = i > keyIndex ? i - 1 : i
-                keys.removeAtIndex(keyIndex)
-                elements[newElement.0] = newElement.1
-                keys.insert(newElement.0, atIndex: idx)
-            }
+        if let indexInDict = elements.indexForKey(newElement.0) {
+            let indexInKeys = find(keys, newElement.0)!
+            keys.removeAtIndex(indexInKeys)
+            
+            let offsetIdx = i > indexInKeys ? i.predecessor() : i
+            keys.insert(newElement.0, atIndex: offsetIdx)
+            
+            elements[newElement.0] = newElement.1
         } else {
             keys.insert(newElement.0, atIndex: i)
             elements[newElement.0] = newElement.1
@@ -208,7 +219,7 @@ extension OrderedDictionary {
     
     // MARK: Convenience
     
-    public var values: LazyBidirectionalCollection<MapCollectionView<OrderedDictionary<Key, Value>, Value>> {
+    public var values: LazyRandomAccessCollection<MapCollectionView<OrderedDictionary<Key, Value>, Value>> {
         return lazy(self).map { $0.1 }
     }
     
@@ -216,7 +227,7 @@ extension OrderedDictionary {
     // MARK: Updating
     
     /// Inserts at the end or updates a value for a given key and returns the previous value for that key if one existed, or nil if a previous value did not exist.
-    mutating func updateValue(value: Value, forKey key: Key) -> Value? {
+    public mutating func updateValue(value: Value, forKey key: Key) -> Value? {
         let ret = elements.updateValue(value, forKey: key)
         if ret == nil {
             keys.append(key)
@@ -227,7 +238,7 @@ extension OrderedDictionary {
     // MARK: Removing
     
     /// Removes the key-value pair for the specified key and returns its value, or nil if a value for that key did not previously exist.*/
-    mutating func removeValueForKey(key: Key) -> Value? {
+    public mutating func removeValueForKey(key: Key) -> Value? {
         if let ret = elements.removeValueForKey(key) {
             removeValue(&keys, key)
             return ret
@@ -238,12 +249,22 @@ extension OrderedDictionary {
     // MARK: Sorting
 
     /// Sorts the receiver in place using a given closure to determine the order of a provided pair of elements.
-    mutating func sort(isOrderedBefore sortFunction: (Element, Element) -> Bool) {
-        keys = Keys(Swift.sorted(self, sortFunction).map { $0.0 })
+    public mutating func sort(isOrderedBefore sortFunction: (Element, Element) -> Bool) {
+        let dictionary = self.elements
+        keys.sort { (key1, key2) -> Bool in
+            switch (dictionary.indexForKey(key1), dictionary.indexForKey(key2)) {
+            case (.Some(let el1), .Some(let el2)):
+                return sortFunction(dictionary[el1], dictionary[el2])
+            case (.None, .Some):
+                return true
+            default:
+                return false
+            }
+        }
     }
-    
+
     /// Sorts the receiver in place using a given closure to determine the order of a provided pair of elements by their keys.
-    mutating func sortKeys(keyIsOrderedBefore sortFunction: (Key, Key) -> Bool) {
+    public mutating func sortKeys(keyIsOrderedBefore sortFunction: (Key, Key) -> Bool) {
         keys.sort(sortFunction)
     }
     
