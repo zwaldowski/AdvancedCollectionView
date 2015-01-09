@@ -15,9 +15,14 @@ class TextValueDataSource<T>: BasicDataSource {
     typealias Item = KeyValue<T>
     typealias Items = [Item]
     
-    private let _source: [T]
-    private var source: T {
-        return _source[0]
+    private var _source: [T]
+    var source: T {
+        get {
+            return _source[0]
+        }
+        set {
+            _source[0] = newValue
+        }
     }
     
     init(source: T) {
@@ -68,8 +73,9 @@ class TextValueDataSource<T>: BasicDataSource {
         
         let value = items[section]
         let text = value.getValue(source)
+        let empty = text?.isEmpty ?? false
         
-        return text.isEmpty ? 0 : 1
+        return empty ? 0 : 1
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {

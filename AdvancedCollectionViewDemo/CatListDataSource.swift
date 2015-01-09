@@ -21,7 +21,7 @@ class CatListDataSource: BasicDataSource {
     
     // MARK: Boilerplate
     
-    typealias Item = AAPLCat
+    typealias Item = Cat
     typealias Items = [Item]
     
     private var _items = Items()
@@ -59,30 +59,22 @@ class CatListDataSource: BasicDataSource {
     
     override func loadContent() {
         startLoadingContent { (loading) -> () in
-            AAPLDataAccessManager.shared().fetchCatListReversed(self.reversed) {
-                [weak self]
-                (array, error) in
+            DataAccessManager.shared.fetchCatList(reversed: self.reversed) {
+                [weak self] (array) in
                 
-                if self == nil { return }
-                
-                if !loading.isCurrent {
-                    loading.ignore()
-                    return
-                }
-                
-                if error != nil {
-                    loading.error(error)
-                    return
-                }
-                
-                let list = array as Items
-                if list.isEmpty {
-                    loading.noContent { self!.items = list }
-                } else {
-                    loading.update { self!.items = list }
+                switch (self, loading.isCurrent, array) {
+                case (.None, _, _): return
+                case (_, false, _): return loading.ignore()
+                case (_, _, .None): return loading.error()
+                case (.Some(let me), true, .Some(let arr)):
+                    if arr.isEmpty {
+                        loading.noContent { me.items = arr }
+                    } else {
+                        loading.update { me.items = arr }
+                    }
+                default: break
                 }
             }
-            
         }
     }
     

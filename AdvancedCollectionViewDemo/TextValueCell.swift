@@ -44,7 +44,7 @@ class TextValueCell: GridCell {
 
 extension TextValueCell {
     
-    func configure(text: String) {
+    func configure(text: String?) {
         label.text = text
     }
     

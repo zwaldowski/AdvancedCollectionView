@@ -11,7 +11,7 @@ import AdvancedCollectionView
 
 struct KeyValue<T> {
     let label: String
-    let getValue: T -> String
+    let getValue: T -> String?
 }
 
 /// A data source that populates its cells based on key/value information from a source object. Any items for which the object does not have a value will not be displayed.
@@ -20,9 +20,14 @@ final class KeyValueDataSource<T>: BasicDataSource {
     typealias Item = KeyValue<T>
     typealias Items = [Item]
     
-    private let _source: [T]
-    private var source: T {
-        return _source[0]
+    private var _source: [T]
+    var source: T {
+        get {
+            return _source[0]
+        }
+        set {
+            _source[0] = newValue
+        }
     }
     
     init(source: T) {
@@ -43,7 +48,8 @@ final class KeyValueDataSource<T>: BasicDataSource {
         set {
             // Filter out any items that don't have a value, because it looks sloppy when rows have a label but no value
             _items = newValue.filter {
-                !$0.getValue(self.source).isEmpty
+                let empty = $0.getValue(self.source)?.isEmpty ?? true
+                return !empty
             }
         }
     }

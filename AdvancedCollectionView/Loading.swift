@@ -21,7 +21,7 @@ public enum LoadingState {
     /// No content is available.
     case NoContent
     /// An error occurred while loading content.
-    case Error(NSError)
+    case Error(NSError?)
     
     var error: NSError? {
         switch self {
@@ -65,7 +65,7 @@ public final class Loader {
         done(newState: .Loaded, update: update)
     }
     
-    public func error(error: NSError) {
+    public func error(_ error: NSError? = nil) {
         done(newState: .Error(error), update: nil)
     }
     

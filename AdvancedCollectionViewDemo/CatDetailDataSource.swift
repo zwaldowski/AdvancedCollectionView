@@ -11,11 +11,11 @@ import AdvancedCollectionView
 
 class CatDetailDataSource: ComposedDataSource {
     
-    private let cat: AAPLCat
-    private let classificationDataSource: KeyValueDataSource<AAPLCat>
-    private let descriptionDataSource: TextValueDataSource<AAPLCat>
+    private var cat: Cat
+    private let classificationDataSource: KeyValueDataSource<Cat>
+    private let descriptionDataSource: TextValueDataSource<Cat>
     
-    init(cat: AAPLCat) {
+    init(cat: Cat) {
         self.cat = cat
         
         classificationDataSource = KeyValueDataSource(source: cat)
@@ -35,16 +35,18 @@ class CatDetailDataSource: ComposedDataSource {
     // MARK: DataSource
     
     private func updateChildDataSources() {
+        classificationDataSource.source = cat
         classificationDataSource.items = [
-            KeyValue(label: NSLocalizedString("Kingdom", comment: "label for kingdom cell"), getValue: { $0.classificationKingdom }),
-            KeyValue(label: NSLocalizedString("Phylum", comment: "label for the phylum cell"), getValue: { $0.classificationPhylum }),
-            KeyValue(label: NSLocalizedString("Class", comment: "label for the class cell"), getValue: { $0.classificationClass }),
-            KeyValue(label: NSLocalizedString("Order", comment: "label for the order cell"), getValue: { $0.classificationOrder }),
-            KeyValue(label: NSLocalizedString("Family", comment: "label for the family cell"), getValue: { $0.classificationFamily }),
-            KeyValue(label: NSLocalizedString("Genus", comment: "label for the genus cell"), getValue: { $0.classificationGenus }),
-            KeyValue(label: NSLocalizedString("Species", comment: "label for the species cell"), getValue: { $0.classificationSpecies }),
+            KeyValue(label: NSLocalizedString("Kingdom", comment: "label for kingdom cell"), getValue: { $0.classification?.kingdom }),
+            KeyValue(label: NSLocalizedString("Phylum", comment: "label for the phylum cell"), getValue: { $0.classification?.phylum }),
+            KeyValue(label: NSLocalizedString("Class", comment: "label for the class cell"), getValue: { $0.classification?.subclass }),
+            KeyValue(label: NSLocalizedString("Order", comment: "label for the order cell"), getValue: { $0.classification?.order }),
+            KeyValue(label: NSLocalizedString("Family", comment: "label for the family cell"), getValue: { $0.classification?.family }),
+            KeyValue(label: NSLocalizedString("Genus", comment: "label for the genus cell"), getValue: { $0.classification?.genus }),
+            KeyValue(label: NSLocalizedString("Species", comment: "label for the species cell"), getValue: { $0.classification?.species }),
         ]
         
+        descriptionDataSource.source = cat
         descriptionDataSource.items = [
             KeyValue(label: NSLocalizedString("Description", comment: "Title of the description data section"), getValue: { $0.longDescription }),
             KeyValue(label: NSLocalizedString("Habitat", comment: "Title of the habitat data section"), getValue: { $0.habitat }),
@@ -53,25 +55,19 @@ class CatDetailDataSource: ComposedDataSource {
     
     override func loadContent() {
         startLoadingContent { (loading) -> () in
-            AAPLDataAccessManager.shared().fetchDetailForCat(self.cat) {
-                [weak self]
-                (cat, error) in
+            DataAccessManager.shared.fetchDetail(cat: self.cat) {
+                [weak self] (cat) in
                 
-                if self == nil { return }
-                
-                if !loading.isCurrent {
-                    loading.ignore()
-                    return
+                switch (self, loading.isCurrent, cat) {
+                case (.None, _, _): return
+                case (_, false, _): return loading.ignore()
+                case (_, _, .None): return loading.error()
+                case (.Some(let me), true, .Some(let cat)):
+                    me.cat = cat
+                    loading.update { self!.updateChildDataSources() }
+                default: break
                 }
-                
-                if error != nil {
-                    loading.error(error)
-                    return
-                }
-                
-                loading.update { self!.updateChildDataSources() }
             }
-            
         }
     }
     

@@ -11,8 +11,8 @@ import AdvancedCollectionView
 
 class CatSightingsDataSource: BasicDataSource {
     
-    private let cat: AAPLCat
-    init(cat: AAPLCat) {
+    private let cat: Cat
+    init(cat: Cat) {
         self.cat = cat
         super.init()
     }
@@ -26,7 +26,7 @@ class CatSightingsDataSource: BasicDataSource {
     
     // MARK: Boilerplate
     
-    typealias Item = AAPLCatSighting
+    typealias Item = CatSighting
     typealias Items = [Item]
     
     private var items: Items = Items() {
@@ -58,26 +58,18 @@ class CatSightingsDataSource: BasicDataSource {
     
     override func loadContent() {
         startLoadingContent { (loading) -> () in
-            AAPLDataAccessManager.shared().fetchSightingsForCat(self.cat) {
-                [weak self]
-                (array, error) in
+            DataAccessManager.shared.fetchSightings(cat: self.cat) {
+                [weak self] (array) in
                 
-                if self == nil { return }
-                
-                if !loading.isCurrent {
-                    loading.ignore()
-                    return
+                switch (self, loading.isCurrent, array) {
+                case (.None, _, _): return
+                case (_, false, _): return loading.ignore()
+                case (_, _, .None): return loading.error()
+                case (.Some(let me), true, .Some(let list)):
+                    loading.update { me.items = list }
+                default: break
                 }
-                
-                if error != nil {
-                    loading.error(error)
-                    return
-                }
-                
-                let list = array as Items
-                loading.update { self!.items = list }
             }
-            
         }
     }
     

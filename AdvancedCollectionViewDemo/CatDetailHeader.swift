@@ -73,7 +73,7 @@ class CatDetailHeader: PinnableHeaderView {
 
 extension CatDetailHeader {
     
-    func configure(#cat: AAPLCat) {
+    func configure(#cat: Cat) {
         nameLabel.text = cat.name
         descriptionLabel.text = cat.shortDescription
         if let status = cat.conservationStatus {

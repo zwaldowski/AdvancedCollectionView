@@ -20,7 +20,7 @@ class CatDetailViewController: CollectionViewController {
         super.init()
     }
     
-    var cat: AAPLCat!
+    var cat: Cat!
     
     private var segmentedDataSource: SegmentedDataSource!
     private lazy var detailDataSource: CatDetailDataSource = {

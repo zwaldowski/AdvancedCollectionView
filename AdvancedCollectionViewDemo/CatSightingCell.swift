@@ -57,7 +57,7 @@ class CatSightingCell: GridCell {
 
 extension CatSightingCell {
     
-    func configure(catSighting: AAPLCatSighting, dateFormatter: NSDateFormatter) {
+    func configure(catSighting: CatSighting, dateFormatter: NSDateFormatter) {
         dateLabel.text = dateFormatter.stringFromDate(catSighting.date)
         fancierLabel.text = catSighting.catFancier
         descriptionLabel.text = catSighting.shortDescription

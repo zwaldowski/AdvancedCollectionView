@@ -99,7 +99,7 @@ public class PlaceholderView: UIView {
     private lazy var actionButton = UIButton.buttonWithType(.System) as UIButton
 
     private func commonInit() {
-        autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        setTranslatesAutoresizingMaskIntoConstraints(false)
         
         let container = UIView()
         container.setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -172,7 +172,9 @@ public class PlaceholderView: UIView {
     private var bigWidthConstraints = [NSLayoutConstraint]()
     
     private func invalidateConstraints() {
-        containerView.removeConstraints(contentConstraints)
+        for constraint in contentConstraints {
+            constraint.active = false
+        }
         contentConstraints.removeAll()
         setNeedsUpdateConstraints()
     }
@@ -243,7 +245,10 @@ public class PlaceholderView: UIView {
             contentConstraints.append(NSLayoutConstraint(item: last, attribute: .Bottom, relatedBy: .Equal, toItem: containerView, attribute: .Bottom, multiplier: 1, constant: 0))
         }
         
-        containerView.addConstraints(contentConstraints)
+        for constraint in contentConstraints {
+            constraint.active = true
+        }
+        
         super.updateConstraints()
     }
     
@@ -321,6 +326,7 @@ public class CollectionPlaceholderView: GridCell {
         let newPlaceholder = PlaceholderView()
         newPlaceholder.setTranslatesAutoresizingMaskIntoConstraints(false)
         newPlaceholder.alpha = 0
+        newPlaceholder.content = content
         insertSubview(newPlaceholder, atIndex: 0)
         placeholderView = newPlaceholder
         
@@ -328,7 +334,7 @@ public class CollectionPlaceholderView: GridCell {
         
         var constraints = [NSLayoutConstraint]()
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|[placeholder|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
         addConstraints(constraints)
 
         let animation: () -> () = { _ in
