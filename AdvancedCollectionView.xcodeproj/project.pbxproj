@@ -44,9 +44,6 @@
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
-		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
-		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB71E6561A489D9C00AFC472 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6541A489D9C00AFC472 /* Set.swift */; };
 		DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6551A489D9C00AFC472 /* Unit.swift */; };
 		DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */; };
@@ -56,54 +53,6 @@
 		DB8100771A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DB8100761A3CD2AE00E758F6 /* AdvancedCollectionViewTests.m */; };
 		DB81007A1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; };
 		DB81007B1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */; };
-		DB8100891A3CD40100E758F6 /* AAPLDataSource+Headers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */; };
-		DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */; };
-		DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A56192A7E1200F673A0 /* UIView+Helpers.m */; };
-		DB81008D1A3CD40100E758F6 /* AAPLBasicDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */; };
-		DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */; };
-		DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A5F192A7E1200F673A0 /* AAPLComposedDataSource_Private.m */; };
-		DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */; };
-		DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */; };
-		DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */; };
-		DB8100931A3CD40100E758F6 /* AAPLCollectionViewGridLayout_Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */; };
-		DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */; };
-		DB8100951A3CD40100E758F6 /* AAPLLayoutMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */; };
-		DB8100961A3CD40100E758F6 /* AAPLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */; };
-		DB8100981A3CD40100E758F6 /* AAPLBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */; };
-		DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */; };
-		DB81009A1A3CD40100E758F6 /* AAPLHairlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */; };
-		DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */; };
-		DB81009C1A3CD40100E758F6 /* AAPLPlaceholderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */; };
-		DB81009D1A3CD40100E758F6 /* AAPLSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */; };
-		DB81009E1A3CD40100E758F6 /* AAPLSegmentedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */; };
-		DB81009F1A3CD44300E758F6 /* AAPLContentLoading.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */; };
-		DB8100A21A3CD45200E758F6 /* AAPLContentLoading.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A31A3CD45200E758F6 /* AAPLStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A41A3CD45A00E758F6 /* AAPLDataSource+Headers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A61A3CD45A00E758F6 /* UICollectionView+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A71A3CD45A00E758F6 /* UIView+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A81A3CD46200E758F6 /* AAPLBasicDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100A91A3CD46200E758F6 /* AAPLComposedDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A5C192A7E1200F673A0 /* AAPLComposedDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100AA1A3CD46200E758F6 /* AAPLComposedDataSource_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A5E192A7E1200F673A0 /* AAPLComposedDataSource_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DB8100AB1A3CD46200E758F6 /* AAPLDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100AC1A3CD46200E758F6 /* AAPLDataSource_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DB8100AD1A3CD46200E758F6 /* AAPLSegmentedDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100AE1A3CD48E00E758F6 /* AAPLCollectionViewGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100AF1A3CD48E00E758F6 /* AAPLCollectionViewGridLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B01A3CD48E00E758F6 /* AAPLLayoutMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B11A3CD49200E758F6 /* AAPLCollectionViewGridLayout_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */; };
-		DB8100B21A3CD49600E758F6 /* AAPLCollectionViewGridLayout_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6C192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DB8100B31A3CD49600E758F6 /* AAPLCollectionViewGridLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DB8100B41A3CD49600E758F6 /* AAPLLayoutMetrics_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DB8100B51A3CD49C00E758F6 /* AAPLCollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B71A3CD4A500E758F6 /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B81A3CD4A500E758F6 /* AAPLCollectionViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100B91A3CD4A500E758F6 /* AAPLHairlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100BA1A3CD4A500E758F6 /* AAPLPinnableHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100BB1A3CD4A500E758F6 /* AAPLPlaceholderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8100BD1A3CD4A500E758F6 /* AAPLSegmentedHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB8A78BC1A3E70BE008A79A6 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */; };
 		DB8A78F51A3E79F2008A79A6 /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78F41A3E79F2008A79A6 /* Metrics.swift */; };
 		DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8A78F71A3E8252008A79A6 /* DataSource.swift */; };
@@ -176,54 +125,6 @@
 		1FA42969192A798300F673A0 /* AdvancedCollectionViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdvancedCollectionViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FA4296D192A798300F673A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FA4297E192A798300F673A0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLContentLoading.h; sourceTree = "<group>"; };
-		1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLContentLoading.m; sourceTree = "<group>"; };
-		1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLStateMachine.h; sourceTree = "<group>"; };
-		1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLStateMachine.m; sourceTree = "<group>"; };
-		1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "AAPLDataSource+Headers.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "AAPLDataSource+Headers.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionView+Helpers.h"; sourceTree = "<group>"; };
-		1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionView+Helpers.m"; sourceTree = "<group>"; };
-		1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Helpers.h"; sourceTree = "<group>"; };
-		1FA42A56192A7E1200F673A0 /* UIView+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Helpers.m"; sourceTree = "<group>"; };
-		1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLBasicDataSource.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLBasicDataSource.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A5C192A7E1200F673A0 /* AAPLComposedDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLComposedDataSource.h; sourceTree = "<group>"; };
-		1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLComposedDataSource.m; sourceTree = "<group>"; };
-		1FA42A5E192A7E1200F673A0 /* AAPLComposedDataSource_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLComposedDataSource_Private.h; sourceTree = "<group>"; };
-		1FA42A5F192A7E1200F673A0 /* AAPLComposedDataSource_Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLComposedDataSource_Private.m; sourceTree = "<group>"; };
-		1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLDataSource.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLDataSource.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLDataSource_Private.h; sourceTree = "<group>"; };
-		1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLSegmentedDataSource.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSegmentedDataSource.m; sourceTree = "<group>"; };
-		1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewGridLayout.h; sourceTree = "<group>"; };
-		1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewGridLayout.m; sourceTree = "<group>"; };
-		1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewGridLayout_Internal.h; sourceTree = "<group>"; };
-		1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewGridLayout_Internal.m; sourceTree = "<group>"; };
-		1FA42A6C192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewGridLayout_Private.h; sourceTree = "<group>"; };
-		1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewGridLayoutAttributes.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewGridLayoutAttributes.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewGridLayoutAttributes_Private.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLLayoutMetrics.h; sourceTree = "<group>"; };
-		1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLLayoutMetrics.m; sourceTree = "<group>"; };
-		1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLLayoutMetrics_Private.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLCollectionViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLCollectionViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLBasicCell.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLBasicCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewCell.h; sourceTree = "<group>"; };
-		1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewCell.m; sourceTree = "<group>"; };
-		1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLHairlineView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLHairlineView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPinnableHeaderView.h; sourceTree = "<group>"; };
-		1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLPinnableHeaderView.m; sourceTree = "<group>"; };
-		1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLPlaceholderView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLPlaceholderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLSectionHeaderView.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLSectionHeaderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLSegmentedHeaderView.h; sourceTree = "<group>"; };
-		1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSegmentedHeaderView.m; sourceTree = "<group>"; };
 		1FA42AFC192A937400F673A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1FA42AFE192A93C800F673A0 /* CatList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CatList.json; sourceTree = "<group>"; };
 		1FE17BDA192E8BC900620DC3 /* detail-bobcat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-bobcat.json"; sourceTree = "<group>"; };
@@ -261,9 +162,6 @@
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
-		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
-		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
-		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
 		DB71E6541A489D9C00AFC472 /* Set.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		DB71E6551A489D9C00AFC472 /* Unit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Unit.swift; sourceTree = "<group>"; };
 		DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewLayout.swift; sourceTree = "<group>"; };
@@ -301,7 +199,6 @@
 		DBC3F93E1A45E9F40029B49D /* Multimap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multimap.swift; sourceTree = "<group>"; };
 		DBCD173D1A5490BA0072D6CB /* SectionHeaders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaders.swift; sourceTree = "<group>"; };
 		DBCD17421A5493090072D6CB /* Measurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Measurement.swift; sourceTree = "<group>"; };
-		DBCF8FAA1A3D18990053B77A /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
 		DBE9D0BD1A3EC1A40040353A /* Foundation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Foundation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -419,19 +316,6 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
-		DB24FC281A3F845B00C5D0B4 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */,
-				1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */,
-				DBCF8FAA1A3D18990053B77A /* AAPLMath.h */,
-				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
-				1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */,
-				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
-			);
-			name = Base;
-			sourceTree = "<group>";
-		};
 		DB71E6581A489DA000AFC472 /* Collections */ = {
 			isa = PBXGroup;
 			children = (
@@ -450,12 +334,11 @@
 			children = (
 				DB9DC72F1A57E3C2005DE6C2 /* Base */,
 				DB71E6581A489DA000AFC472 /* Collections */,
-				DB9DC72C1A57E35D005DE6C2 /* Converted */,
 				DB9DC72E1A57E3B6005DE6C2 /* Data Sources */,
 				DB9DC72D1A57E37E005DE6C2 /* Extensions */,
 				DB9DC7301A57E3CE005DE6C2 /* Layout */,
-				DB8100651A3CD2AE00E758F6 /* Supporting Files */,
 				DBAF93951A569247003293E9 /* Views */,
+				DB8100651A3CD2AE00E758F6 /* Supporting Files */,
 			);
 			path = AdvancedCollectionView;
 			sourceTree = "<group>";
@@ -463,6 +346,7 @@
 		DB8100651A3CD2AE00E758F6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */,
 				DB8100661A3CD2AE00E758F6 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -483,101 +367,6 @@
 				DB8100751A3CD2AE00E758F6 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		DB8100831A3CD34600E758F6 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				1FA42A53192A7E1200F673A0 /* UICollectionView+Helpers.h */,
-				1FA42A54192A7E1200F673A0 /* UICollectionView+Helpers.m */,
-				1FA42A47192A7E1200F673A0 /* AAPLDataSource+Headers.h */,
-				1FA42A48192A7E1200F673A0 /* AAPLDataSource+Headers.m */,
-				1FA42A55192A7E1200F673A0 /* UIView+Helpers.h */,
-				1FA42A56192A7E1200F673A0 /* UIView+Helpers.m */,
-			);
-			name = Categories;
-			sourceTree = "<group>";
-		};
-		DB8100841A3CD39500E758F6 /* Data Sources */ = {
-			isa = PBXGroup;
-			children = (
-				1FA42A5A192A7E1200F673A0 /* AAPLBasicDataSource.h */,
-				1FA42A5B192A7E1200F673A0 /* AAPLBasicDataSource.m */,
-				1FA42A5E192A7E1200F673A0 /* AAPLComposedDataSource_Private.h */,
-				1FA42A5F192A7E1200F673A0 /* AAPLComposedDataSource_Private.m */,
-				1FA42A5C192A7E1200F673A0 /* AAPLComposedDataSource.h */,
-				1FA42A5D192A7E1200F673A0 /* AAPLComposedDataSource.m */,
-				1FA42A62192A7E1200F673A0 /* AAPLDataSource_Private.h */,
-				1FA42A60192A7E1200F673A0 /* AAPLDataSource.h */,
-				1FA42A61192A7E1200F673A0 /* AAPLDataSource.m */,
-				1FA42A63192A7E1200F673A0 /* AAPLSegmentedDataSource.h */,
-				1FA42A64192A7E1200F673A0 /* AAPLSegmentedDataSource.m */,
-			);
-			name = "Data Sources";
-			sourceTree = "<group>";
-		};
-		DB8100851A3CD3A700E758F6 /* Layouts */ = {
-			isa = PBXGroup;
-			children = (
-				DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */,
-				1FA42A6A192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.h */,
-				1FA42A6B192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Internal.m */,
-				1FA42A6C192A7E1200F673A0 /* AAPLCollectionViewGridLayout_Private.h */,
-				1FA42A68192A7E1200F673A0 /* AAPLCollectionViewGridLayout.h */,
-				1FA42A69192A7E1200F673A0 /* AAPLCollectionViewGridLayout.m */,
-				1FA42A6F192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes_Private.h */,
-				1FA42A6D192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.h */,
-				1FA42A6E192A7E1200F673A0 /* AAPLCollectionViewGridLayoutAttributes.m */,
-				1FA42A72192A7E1200F673A0 /* AAPLLayoutMetrics_Private.h */,
-				1FA42A70192A7E1200F673A0 /* AAPLLayoutMetrics.h */,
-				1FA42A71192A7E1200F673A0 /* AAPLLayoutMetrics.m */,
-			);
-			name = Layouts;
-			sourceTree = "<group>";
-		};
-		DB8100861A3CD3B100E758F6 /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */,
-				1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */,
-			);
-			name = "View Controllers";
-			sourceTree = "<group>";
-		};
-		DB8100871A3CD3BD00E758F6 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				1FA42A8B192A7E1200F673A0 /* AAPLPlaceholderView.h */,
-				1FA42A8C192A7E1200F673A0 /* AAPLPlaceholderView.m */,
-				1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */,
-				1FA42A81192A7E1200F673A0 /* AAPLBasicCell.m */,
-				1FA42A82192A7E1200F673A0 /* AAPLCollectionViewCell.h */,
-				1FA42A83192A7E1200F673A0 /* AAPLCollectionViewCell.m */,
-				DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */,
-				DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */,
-				1FA42A85192A7E1200F673A0 /* AAPLHairlineView.h */,
-				1FA42A86192A7E1200F673A0 /* AAPLHairlineView.m */,
-				1FA42A89192A7E1200F673A0 /* AAPLPinnableHeaderView.h */,
-				1FA42A8A192A7E1200F673A0 /* AAPLPinnableHeaderView.m */,
-				1FA42A8F192A7E1200F673A0 /* AAPLSectionHeaderView.h */,
-				1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */,
-				1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */,
-				1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */,
-			);
-			name = Views;
-			sourceTree = "<group>";
-		};
-		DB9DC72C1A57E35D005DE6C2 /* Converted */ = {
-			isa = PBXGroup;
-			children = (
-				DB24FC281A3F845B00C5D0B4 /* Base */,
-				DB8100831A3CD34600E758F6 /* Categories */,
-				DB8100841A3CD39500E758F6 /* Data Sources */,
-				DB8100851A3CD3A700E758F6 /* Layouts */,
-				DB8100861A3CD3B100E758F6 /* View Controllers */,
-				DB8100871A3CD3BD00E758F6 /* Views */,
-			);
-			name = Converted;
 			sourceTree = "<group>";
 		};
 		DB9DC72D1A57E37E005DE6C2 /* Extensions */ = {
@@ -658,35 +447,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8100A31A3CD45200E758F6 /* AAPLStateMachine.h in Headers */,
-				DB8100B41A3CD49600E758F6 /* AAPLLayoutMetrics_Private.h in Headers */,
-				DB8100AD1A3CD46200E758F6 /* AAPLSegmentedDataSource.h in Headers */,
-				DB8100B81A3CD4A500E758F6 /* AAPLCollectionViewCell.h in Headers */,
-				DB8100B21A3CD49600E758F6 /* AAPLCollectionViewGridLayout_Private.h in Headers */,
-				DB8100B71A3CD4A500E758F6 /* AAPLBasicCell.h in Headers */,
-				DB8100AC1A3CD46200E758F6 /* AAPLDataSource_Private.h in Headers */,
-				DB8100AA1A3CD46200E758F6 /* AAPLComposedDataSource_Private.h in Headers */,
-				DB8100AB1A3CD46200E758F6 /* AAPLDataSource.h in Headers */,
-				DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */,
-				DB8100BB1A3CD4A500E758F6 /* AAPLPlaceholderView.h in Headers */,
-				DB8100A21A3CD45200E758F6 /* AAPLContentLoading.h in Headers */,
-				DB8100A91A3CD46200E758F6 /* AAPLComposedDataSource.h in Headers */,
-				DB8100A41A3CD45A00E758F6 /* AAPLDataSource+Headers.h in Headers */,
-				DB8100A81A3CD46200E758F6 /* AAPLBasicDataSource.h in Headers */,
-				DB8100A61A3CD45A00E758F6 /* UICollectionView+Helpers.h in Headers */,
-				DB8100B51A3CD49C00E758F6 /* AAPLCollectionViewController.h in Headers */,
-				DB8100A71A3CD45A00E758F6 /* UIView+Helpers.h in Headers */,
 				DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */,
-				DB8100B01A3CD48E00E758F6 /* AAPLLayoutMetrics.h in Headers */,
-				DB8100BA1A3CD4A500E758F6 /* AAPLPinnableHeaderView.h in Headers */,
-				DB8100BC1A3CD4A500E758F6 /* AAPLSectionHeaderView.h in Headers */,
-				DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */,
-				DB8100B31A3CD49600E758F6 /* AAPLCollectionViewGridLayoutAttributes_Private.h in Headers */,
-				DB8100AF1A3CD48E00E758F6 /* AAPLCollectionViewGridLayoutAttributes.h in Headers */,
-				DB8100B11A3CD49200E758F6 /* AAPLCollectionViewGridLayout_Internal.h in Headers */,
-				DB8100AE1A3CD48E00E758F6 /* AAPLCollectionViewGridLayout.h in Headers */,
-				DB8100B91A3CD4A500E758F6 /* AAPLHairlineView.h in Headers */,
-				DB8100BD1A3CD4A500E758F6 /* AAPLSegmentedHeaderView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,49 +623,29 @@
 				DB71E6561A489D9C00AFC472 /* Set.swift in Sources */,
 				DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */,
 				DBAF93881A567D3D003293E9 /* SegmentedHeaderView.swift in Sources */,
-				DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */,
-				DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */,
 				DBE9D0BE1A3EC1A40040353A /* Foundation.swift in Sources */,
 				DBAF93991A569CCE003293E9 /* Types.swift in Sources */,
-				DB81008D1A3CD40100E758F6 /* AAPLBasicDataSource.m in Sources */,
 				DB8A78F51A3E79F2008A79A6 /* Metrics.swift in Sources */,
 				DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */,
 				DB9E05E01A510F4C004CF47F /* CollectionViewController.swift in Sources */,
 				DBAF93921A569147003293E9 /* SectionHeaderView.swift in Sources */,
 				DBCD173C1A5129C30072D6CB /* OrderedDictionary.swift in Sources */,
-				DB8100881A3CD40100E758F6 /* AAPLStateMachine.m in Sources */,
 				DBCD17431A5493090072D6CB /* Measurement.swift in Sources */,
 				DBC3F93F1A45E9F40029B49D /* Multimap.swift in Sources */,
 				DBAF93851A567BF7003293E9 /* ColorView.swift in Sources */,
-				DB8100921A3CD40100E758F6 /* AAPLCollectionViewGridLayout.m in Sources */,
-				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
 				DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */,
 				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
-				DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */,
 				DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */,
 				DBAF93971A569834003293E9 /* UIKit.swift in Sources */,
-				DB81009C1A3CD40100E758F6 /* AAPLPlaceholderView.m in Sources */,
-				DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */,
-				DB8100951A3CD40100E758F6 /* AAPLLayoutMetrics.m in Sources */,
-				DB8100961A3CD40100E758F6 /* AAPLCollectionViewController.m in Sources */,
 				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
 				DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */,
-				DB81009E1A3CD40100E758F6 /* AAPLSegmentedHeaderView.m in Sources */,
 				DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */,
-				DB8100981A3CD40100E758F6 /* AAPLBasicCell.m in Sources */,
-				DB8100891A3CD40100E758F6 /* AAPLDataSource+Headers.m in Sources */,
-				DB81009F1A3CD44300E758F6 /* AAPLContentLoading.m in Sources */,
-				DB8100931A3CD40100E758F6 /* AAPLCollectionViewGridLayout_Internal.m in Sources */,
-				DB81009A1A3CD40100E758F6 /* AAPLHairlineView.m in Sources */,
 				DBCD173E1A5490BA0072D6CB /* SectionHeaders.swift in Sources */,
 				DBAF93941A56917C003293E9 /* BasicCell.swift in Sources */,
-				DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */,
 				DB8A78BC1A3E70BE008A79A6 /* GridLayout.swift in Sources */,
-				DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */,
-				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
 				DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Utilities.swift in Sources */,
 				DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */,
@@ -913,10 +654,7 @@
 				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,
 				DB9E05E21A511DB3004CF47F /* ComposedDataSource.swift in Sources */,
 				DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */,
-				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
-				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
 				DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */,
-				DB81009D1A3CD40100E758F6 /* AAPLSectionHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
