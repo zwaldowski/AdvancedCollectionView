@@ -54,7 +54,6 @@
 		DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */; };
 		DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */; };
 		DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */; };
-		DB1F1B411A5E6BE7005A48A5 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B401A5E6BE7005A48A5 /* Result.swift */; };
 		DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */; };
 		DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */; };
 		DB22A1DB1A5946A800B8B883 /* CatSightingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */; };
@@ -298,7 +297,6 @@
 		DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSighting.swift; sourceTree = "<group>"; };
 		DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
 		DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataAccessManager.swift; sourceTree = "<group>"; };
-		DB1F1B401A5E6BE7005A48A5 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSightingCell.swift; sourceTree = "<group>"; };
@@ -472,7 +470,6 @@
 				DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */,
 				DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */,
 				DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */,
-				DB1F1B401A5E6BE7005A48A5 /* Result.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -981,7 +978,6 @@
 				DB22A1DD1A59491500B8B883 /* CatSightingsDataSource.swift in Sources */,
 				DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */,
 				DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */,
-				DB1F1B411A5E6BE7005A48A5 /* Result.swift in Sources */,
 				1FE17BFB192E942600620DC3 /* AAPLCatDetailDataSource.m in Sources */,
 				1FE17BD5192E80D100620DC3 /* AAPLCatDetailViewController.m in Sources */,
 				DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */,
