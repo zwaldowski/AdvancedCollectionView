@@ -306,12 +306,12 @@ public class CollectionPlaceholderView: GridCell {
         let indicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
         indicator.setTranslatesAutoresizingMaskIntoConstraints(false)
         indicator.color = UIColor.lightGrayColor()
-        addSubview(indicator)
+        contentView.addSubview(indicator)
         activityIndicatorView = indicator
         
-        addConstraints([
-            NSLayoutConstraint(item: indicator, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: indicator, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0),
+        contentView.addConstraints([
+            NSLayoutConstraint(item: indicator, attribute: .CenterX, relatedBy: .Equal, toItem: contentView, attribute: .CenterX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: indicator, attribute: .CenterY, relatedBy: .Equal, toItem: contentView, attribute: .CenterY, multiplier: 1, constant: 0),
         ])
     }
     
@@ -327,7 +327,7 @@ public class CollectionPlaceholderView: GridCell {
         newPlaceholder.setTranslatesAutoresizingMaskIntoConstraints(false)
         newPlaceholder.alpha = 0
         newPlaceholder.content = content
-        insertSubview(newPlaceholder, atIndex: 0)
+        contentView.insertSubview(newPlaceholder, atIndex: 0)
         placeholderView = newPlaceholder
         
         let views = [ "placeholder": newPlaceholder ]
@@ -335,7 +335,7 @@ public class CollectionPlaceholderView: GridCell {
         var constraints = [NSLayoutConstraint]()
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
-        addConstraints(constraints)
+        contentView.addConstraints(constraints)
 
         let animation: () -> () = { _ in
             newPlaceholder.alpha = 1
