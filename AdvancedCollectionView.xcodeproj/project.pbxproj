@@ -8,20 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1FA4297F192A798300F673A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FA4297E192A798300F673A0 /* Images.xcassets */; };
-		1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */; };
-		1FA42AF1192A873200F673A0 /* AAPLCatListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */; };
-		1FA42AF4192A90C600F673A0 /* AAPLCatListDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AF2192A90C600F673A0 /* AAPLCatListDataSource.h */; };
-		1FA42AF5192A90C600F673A0 /* AAPLCatListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AF3192A90C600F673A0 /* AAPLCatListDataSource.m */; };
-		1FA42AF8192A910C00F673A0 /* AAPLDataAccessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42AF6192A910C00F673A0 /* AAPLDataAccessManager.h */; };
-		1FA42AF9192A910C00F673A0 /* AAPLDataAccessManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42AF7192A910C00F673A0 /* AAPLDataAccessManager.m */; };
 		1FA42AFD192A937400F673A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA42AFB192A937400F673A0 /* Main.storyboard */; };
 		1FA42AFF192A93C800F673A0 /* CatList.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FA42AFE192A93C800F673A0 /* CatList.json */; };
-		1FA42B02192A9D2200F673A0 /* AAPLCat.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42B00192A9D2200F673A0 /* AAPLCat.h */; };
-		1FA42B03192A9D2200F673A0 /* AAPLCat.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA42B01192A9D2200F673A0 /* AAPLCat.m */; };
-		1FE17BD4192E80D100620DC3 /* AAPLCatDetailViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17BD2192E80D100620DC3 /* AAPLCatDetailViewController.h */; };
-		1FE17BD5192E80D100620DC3 /* AAPLCatDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17BD3192E80D100620DC3 /* AAPLCatDetailViewController.m */; };
-		1FE17BD8192E875900620DC3 /* AAPLCatDetailHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17BD6192E875900620DC3 /* AAPLCatDetailHeader.h */; };
-		1FE17BD9192E875900620DC3 /* AAPLCatDetailHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17BD7192E875900620DC3 /* AAPLCatDetailHeader.m */; };
 		1FE17BE9192E8BC900620DC3 /* detail-bobcat.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BDA192E8BC900620DC3 /* detail-bobcat.json */; };
 		1FE17BEA192E8BC900620DC3 /* detail-caracal.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BDB192E8BC900620DC3 /* detail-caracal.json */; };
 		1FE17BEB192E8BC900620DC3 /* detail-cheetah.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BDC192E8BC900620DC3 /* detail-cheetah.json */; };
@@ -37,20 +25,6 @@
 		1FE17BF5192E8BC900620DC3 /* detail-serval.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BE6192E8BC900620DC3 /* detail-serval.json */; };
 		1FE17BF6192E8BC900620DC3 /* detail-snow-leopard.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BE7192E8BC900620DC3 /* detail-snow-leopard.json */; };
 		1FE17BF7192E8BC900620DC3 /* detail-tiger.json in Resources */ = {isa = PBXBuildFile; fileRef = 1FE17BE8192E8BC900620DC3 /* detail-tiger.json */; };
-		1FE17BFA192E942600620DC3 /* AAPLCatDetailDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17BF8192E942600620DC3 /* AAPLCatDetailDataSource.h */; };
-		1FE17BFB192E942600620DC3 /* AAPLCatDetailDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17BF9192E942600620DC3 /* AAPLCatDetailDataSource.m */; };
-		1FE17C02192E991600620DC3 /* AAPLKeyValueDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C00192E991600620DC3 /* AAPLKeyValueDataSource.h */; };
-		1FE17C03192E991600620DC3 /* AAPLKeyValueDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C01192E991600620DC3 /* AAPLKeyValueDataSource.m */; };
-		1FE17C06192FEA2800620DC3 /* AAPLTextValueDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C04192FEA2800620DC3 /* AAPLTextValueDataSource.h */; };
-		1FE17C07192FEA2800620DC3 /* AAPLTextValueDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C05192FEA2800620DC3 /* AAPLTextValueDataSource.m */; };
-		1FE17C0A192FEAEC00620DC3 /* AAPLTextValueCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C08192FEAEC00620DC3 /* AAPLTextValueCell.h */; };
-		1FE17C0B192FEAEC00620DC3 /* AAPLTextValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C09192FEAEC00620DC3 /* AAPLTextValueCell.m */; };
-		1FE17C0E1931885100620DC3 /* AAPLCatSighting.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C0C1931885100620DC3 /* AAPLCatSighting.h */; };
-		1FE17C0F1931885100620DC3 /* AAPLCatSighting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C0D1931885100620DC3 /* AAPLCatSighting.m */; };
-		1FE17C12193192FD00620DC3 /* AAPLCatSightingsDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C10193192FD00620DC3 /* AAPLCatSightingsDataSource.h */; };
-		1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */; };
-		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
-		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
 		DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */; };
 		DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */; };
 		DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */; };
@@ -250,20 +224,8 @@
 		1FA42A90192A7E1200F673A0 /* AAPLSectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLSectionHeaderView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42A91192A7E1200F673A0 /* AAPLSegmentedHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLSegmentedHeaderView.h; sourceTree = "<group>"; };
 		1FA42A92192A7E1200F673A0 /* AAPLSegmentedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLSegmentedHeaderView.m; sourceTree = "<group>"; };
-		1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatListViewController.h; sourceTree = "<group>"; };
-		1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatListViewController.m; sourceTree = "<group>"; };
-		1FA42AF2192A90C600F673A0 /* AAPLCatListDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatListDataSource.h; sourceTree = "<group>"; };
-		1FA42AF3192A90C600F673A0 /* AAPLCatListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatListDataSource.m; sourceTree = "<group>"; };
-		1FA42AF6192A910C00F673A0 /* AAPLDataAccessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLDataAccessManager.h; sourceTree = "<group>"; };
-		1FA42AF7192A910C00F673A0 /* AAPLDataAccessManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLDataAccessManager.m; sourceTree = "<group>"; };
 		1FA42AFC192A937400F673A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1FA42AFE192A93C800F673A0 /* CatList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CatList.json; sourceTree = "<group>"; };
-		1FA42B00192A9D2200F673A0 /* AAPLCat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCat.h; sourceTree = "<group>"; };
-		1FA42B01192A9D2200F673A0 /* AAPLCat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCat.m; sourceTree = "<group>"; };
-		1FE17BD2192E80D100620DC3 /* AAPLCatDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatDetailViewController.h; sourceTree = "<group>"; };
-		1FE17BD3192E80D100620DC3 /* AAPLCatDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatDetailViewController.m; sourceTree = "<group>"; };
-		1FE17BD6192E875900620DC3 /* AAPLCatDetailHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatDetailHeader.h; sourceTree = "<group>"; };
-		1FE17BD7192E875900620DC3 /* AAPLCatDetailHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatDetailHeader.m; sourceTree = "<group>"; };
 		1FE17BDA192E8BC900620DC3 /* detail-bobcat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-bobcat.json"; sourceTree = "<group>"; };
 		1FE17BDB192E8BC900620DC3 /* detail-caracal.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-caracal.json"; sourceTree = "<group>"; };
 		1FE17BDC192E8BC900620DC3 /* detail-cheetah.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-cheetah.json"; sourceTree = "<group>"; };
@@ -279,20 +241,6 @@
 		1FE17BE6192E8BC900620DC3 /* detail-serval.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-serval.json"; sourceTree = "<group>"; };
 		1FE17BE7192E8BC900620DC3 /* detail-snow-leopard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-snow-leopard.json"; sourceTree = "<group>"; };
 		1FE17BE8192E8BC900620DC3 /* detail-tiger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "detail-tiger.json"; sourceTree = "<group>"; };
-		1FE17BF8192E942600620DC3 /* AAPLCatDetailDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatDetailDataSource.h; sourceTree = "<group>"; };
-		1FE17BF9192E942600620DC3 /* AAPLCatDetailDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatDetailDataSource.m; sourceTree = "<group>"; };
-		1FE17C00192E991600620DC3 /* AAPLKeyValueDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLKeyValueDataSource.h; sourceTree = "<group>"; };
-		1FE17C01192E991600620DC3 /* AAPLKeyValueDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLKeyValueDataSource.m; sourceTree = "<group>"; };
-		1FE17C04192FEA2800620DC3 /* AAPLTextValueDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLTextValueDataSource.h; sourceTree = "<group>"; };
-		1FE17C05192FEA2800620DC3 /* AAPLTextValueDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLTextValueDataSource.m; sourceTree = "<group>"; };
-		1FE17C08192FEAEC00620DC3 /* AAPLTextValueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLTextValueCell.h; sourceTree = "<group>"; };
-		1FE17C09192FEAEC00620DC3 /* AAPLTextValueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLTextValueCell.m; sourceTree = "<group>"; };
-		1FE17C0C1931885100620DC3 /* AAPLCatSighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSighting.h; sourceTree = "<group>"; };
-		1FE17C0D1931885100620DC3 /* AAPLCatSighting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSighting.m; sourceTree = "<group>"; };
-		1FE17C10193192FD00620DC3 /* AAPLCatSightingsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingsDataSource.h; sourceTree = "<group>"; };
-		1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingsDataSource.m; sourceTree = "<group>"; };
-		1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCatSightingCell.h; sourceTree = "<group>"; };
-		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSighting.swift; sourceTree = "<group>"; };
 		DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
@@ -331,7 +279,6 @@
 		DB8A78F71A3E8252008A79A6 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DB8A79091A3E8479008A79A6 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		DB8A79121A3EA12B008A79A6 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
-		DB9DC7331A57E43D005DE6C2 /* AdvancedCollectionViewDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AdvancedCollectionViewDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		DB9DC7341A57E43E005DE6C2 /* CatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatListViewController.swift; sourceTree = "<group>"; };
 		DB9DC7361A57E49D005DE6C2 /* CatListDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatListDataSource.swift; sourceTree = "<group>"; };
 		DB9E05DF1A510F4C004CF47F /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
@@ -409,7 +356,10 @@
 		1FA4296C192A798300F673A0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1FA4297E192A798300F673A0 /* Images.xcassets */,
 				1FA4296D192A798300F673A0 /* Info.plist */,
+				DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */,
+				1FA42AFB192A937400F673A0 /* Main.storyboard */,
 				1FA42AFA192A91D800F673A0 /* Resources */,
 			);
 			name = "Supporting Files";
@@ -418,24 +368,19 @@
 		1FA42AEC192A825800F673A0 /* AdvancedCollectionViewDemo */ = {
 			isa = PBXGroup;
 			children = (
-				DB22A2101A5950A700B8B883 /* Model */,
 				DB22A20E1A59504400B8B883 /* AppDelegate.swift */,
-				DB9DC7341A57E43E005DE6C2 /* CatListViewController.swift */,
-				DB9DC7361A57E49D005DE6C2 /* CatListDataSource.swift */,
-				DBB401A21A592CA5001DDE72 /* CatDetailViewController.swift */,
-				DBB401A41A592DBB001DDE72 /* CatDetailHeader.swift */,
 				DB22A1DE1A594A2600B8B883 /* CatDetailDataSource.swift */,
-				DBB401A61A5932A5001DDE72 /* TextValueCell.swift */,
-				DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */,
-				DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */,
+				DBB401A41A592DBB001DDE72 /* CatDetailHeader.swift */,
+				DBB401A21A592CA5001DDE72 /* CatDetailViewController.swift */,
+				DB9DC7361A57E49D005DE6C2 /* CatListDataSource.swift */,
+				DB9DC7341A57E43E005DE6C2 /* CatListViewController.swift */,
 				DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */,
 				DB22A1DC1A59491500B8B883 /* CatSightingsDataSource.swift */,
-				DB9DC7311A57E40B005DE6C2 /* Old */,
-				1FA42AFB192A937400F673A0 /* Main.storyboard */,
-				1FA4297E192A798300F673A0 /* Images.xcassets */,
-				DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */,
+				DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */,
+				DB22A2101A5950A700B8B883 /* Model */,
 				1FA4296C192A798300F673A0 /* Supporting Files */,
-				DB9DC7331A57E43D005DE6C2 /* AdvancedCollectionViewDemo-Bridging-Header.h */,
+				DBB401A61A5932A5001DDE72 /* TextValueCell.swift */,
+				DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */,
 			);
 			path = AdvancedCollectionViewDemo;
 			sourceTree = "<group>";
@@ -466,10 +411,10 @@
 		DB22A2101A5950A700B8B883 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DB262EFF1A5E3EBA00E3D905 /* JSON.swift */,
-				DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */,
 				DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */,
+				DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */,
 				DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */,
+				DB262EFF1A5E3EBA00E3D905 /* JSON.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -684,28 +629,6 @@
 			name = Layout;
 			sourceTree = "<group>";
 		};
-		DB9DC7311A57E40B005DE6C2 /* Old */ = {
-			isa = PBXGroup;
-			children = (
-				DB9DC7321A57E42B005DE6C2 /* Fine for now */,
-				DBB401A11A592C96001DDE72 /* Converted */,
-			);
-			name = Old;
-			sourceTree = "<group>";
-		};
-		DB9DC7321A57E42B005DE6C2 /* Fine for now */ = {
-			isa = PBXGroup;
-			children = (
-				1FE17C0C1931885100620DC3 /* AAPLCatSighting.h */,
-				1FE17C0D1931885100620DC3 /* AAPLCatSighting.m */,
-				1FA42B00192A9D2200F673A0 /* AAPLCat.h */,
-				1FA42B01192A9D2200F673A0 /* AAPLCat.m */,
-				1FA42AF6192A910C00F673A0 /* AAPLDataAccessManager.h */,
-				1FA42AF7192A910C00F673A0 /* AAPLDataAccessManager.m */,
-			);
-			name = "Fine for now";
-			sourceTree = "<group>";
-		};
 		DBAF93951A569247003293E9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -721,33 +644,6 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		DBB401A11A592C96001DDE72 /* Converted */ = {
-			isa = PBXGroup;
-			children = (
-				1FE17BF8192E942600620DC3 /* AAPLCatDetailDataSource.h */,
-				1FE17BF9192E942600620DC3 /* AAPLCatDetailDataSource.m */,
-				1FE17BD6192E875900620DC3 /* AAPLCatDetailHeader.h */,
-				1FE17BD7192E875900620DC3 /* AAPLCatDetailHeader.m */,
-				1FA42AF2192A90C600F673A0 /* AAPLCatListDataSource.h */,
-				1FA42AF3192A90C600F673A0 /* AAPLCatListDataSource.m */,
-				1FA42AEE192A873200F673A0 /* AAPLCatListViewController.h */,
-				1FA42AEF192A873200F673A0 /* AAPLCatListViewController.m */,
-				1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */,
-				1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */,
-				1FE17C10193192FD00620DC3 /* AAPLCatSightingsDataSource.h */,
-				1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */,
-				1FE17C00192E991600620DC3 /* AAPLKeyValueDataSource.h */,
-				1FE17C01192E991600620DC3 /* AAPLKeyValueDataSource.m */,
-				1FE17C08192FEAEC00620DC3 /* AAPLTextValueCell.h */,
-				1FE17C09192FEAEC00620DC3 /* AAPLTextValueCell.m */,
-				1FE17C04192FEA2800620DC3 /* AAPLTextValueDataSource.h */,
-				1FE17C05192FEA2800620DC3 /* AAPLTextValueDataSource.m */,
-				1FE17BD2192E80D100620DC3 /* AAPLCatDetailViewController.h */,
-				1FE17BD3192E80D100620DC3 /* AAPLCatDetailViewController.m */,
-			);
-			name = Converted;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -755,19 +651,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FA42AF4192A90C600F673A0 /* AAPLCatListDataSource.h in Headers */,
-				1FE17C06192FEA2800620DC3 /* AAPLTextValueDataSource.h in Headers */,
-				1FE17C02192E991600620DC3 /* AAPLKeyValueDataSource.h in Headers */,
-				1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */,
-				1FA42AF0192A873200F673A0 /* AAPLCatListViewController.h in Headers */,
-				1FE17BD4192E80D100620DC3 /* AAPLCatDetailViewController.h in Headers */,
-				1FE17BD8192E875900620DC3 /* AAPLCatDetailHeader.h in Headers */,
-				1FE17C12193192FD00620DC3 /* AAPLCatSightingsDataSource.h in Headers */,
-				1FA42B02192A9D2200F673A0 /* AAPLCat.h in Headers */,
-				1FE17C0A192FEAEC00620DC3 /* AAPLTextValueCell.h in Headers */,
-				1FA42AF8192A910C00F673A0 /* AAPLDataAccessManager.h in Headers */,
-				1FE17C0E1931885100620DC3 /* AAPLCatSighting.h in Headers */,
-				1FE17BFA192E942600620DC3 /* AAPLCatDetailDataSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,33 +838,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBB401A71A5932A5001DDE72 /* TextValueCell.swift in Sources */,
-				1FA42AF5192A90C600F673A0 /* AAPLCatListDataSource.m in Sources */,
 				DB9DC7371A57E49D005DE6C2 /* CatListDataSource.swift in Sources */,
 				DBB401A31A592CA5001DDE72 /* CatDetailViewController.swift in Sources */,
 				DB22A1DF1A594A2600B8B883 /* CatDetailDataSource.swift in Sources */,
 				DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */,
-				1FE17C0B192FEAEC00620DC3 /* AAPLTextValueCell.m in Sources */,
-				1FA42AF9192A910C00F673A0 /* AAPLDataAccessManager.m in Sources */,
 				DB22A20F1A59504400B8B883 /* AppDelegate.swift in Sources */,
-				1FE17C07192FEA2800620DC3 /* AAPLTextValueDataSource.m in Sources */,
-				1FA42AF1192A873200F673A0 /* AAPLCatListViewController.m in Sources */,
-				1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */,
 				DBB401A51A592DBB001DDE72 /* CatDetailHeader.swift in Sources */,
-				1FE17C0F1931885100620DC3 /* AAPLCatSighting.m in Sources */,
 				DB9DC7351A57E43E005DE6C2 /* CatListViewController.swift in Sources */,
 				DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */,
-				1FA42B03192A9D2200F673A0 /* AAPLCat.m in Sources */,
-				1FE17BD9192E875900620DC3 /* AAPLCatDetailHeader.m in Sources */,
 				DB22A1DB1A5946A800B8B883 /* CatSightingCell.swift in Sources */,
-				1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */,
 				DB262F001A5E3EBA00E3D905 /* JSON.swift in Sources */,
 				DB22A1DD1A59491500B8B883 /* CatSightingsDataSource.swift in Sources */,
 				DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */,
 				DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */,
-				1FE17BFB192E942600620DC3 /* AAPLCatDetailDataSource.m in Sources */,
-				1FE17BD5192E80D100620DC3 /* AAPLCatDetailViewController.m in Sources */,
 				DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */,
-				1FE17C03192E991600620DC3 /* AAPLKeyValueDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,11 +1074,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = AdvancedCollectionViewDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "AdvancedCollectionViewDemo/AdvancedCollectionViewDemo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1218,18 +1086,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = AdvancedCollectionViewDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "AdvancedCollectionViewDemo/AdvancedCollectionViewDemo-Bridging-Header.h";
 			};
 			name = Release;
 		};
 		DB81007D1A3CD2AE00E758F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1256,7 +1121,6 @@
 		DB81007E1A3CD2AE00E758F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

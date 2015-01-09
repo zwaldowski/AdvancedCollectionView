@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Apple. All rights reserved.
 //
 
+import Foundation
+
 struct CatSighting {
     let date: NSDate
     let catFancier: String
