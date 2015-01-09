@@ -595,10 +595,7 @@ public class GridLayout: UICollectionViewLayout {
             return color
         }
         
-        let build = { (section: Section, inMetrics: SectionMetrics?) -> SectionInfo? in
-            if inMetrics == nil { return nil }
-            
-            var metrics = inMetrics!
+        let build = { (section: Section, var metrics: SectionMetrics) -> SectionInfo in
             metrics.backgroundColor = fromMetrics(metrics.backgroundColor)
             metrics.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor)
             metrics.tintColor = fromMetrics(metrics.tintColor)
@@ -647,10 +644,10 @@ public class GridLayout: UICollectionViewLayout {
         
         log("number of sections = \(numberOfSections)")
         
-        globalSection = build(.Global, metricsBySection[.Global])
+        globalSection = metricsBySection[.Global].map { build(.Global, $0) }
         sections = map(0..<numberOfSections) { idx in
             let section = Section.Index(idx)
-            return build(section, metricsBySection[section])!
+            return build(section, metricsBySection[section]!)
         }
     }
     

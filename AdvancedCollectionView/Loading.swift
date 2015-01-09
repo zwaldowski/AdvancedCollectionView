@@ -39,7 +39,7 @@ public final class Loader {
     public typealias Update = () -> ()
     public typealias CompletionHandler = (LoadingState?, Update?) -> ()
 
-    private var completionHandler: CompletionHandler!
+    private var completionHandler: CompletionHandler?
     init(completionHandler: CompletionHandler) {
         self.completionHandler = completionHandler
     }
@@ -47,14 +47,12 @@ public final class Loader {
     public var isCurrent = true
     
     private func done(newState state: LoadingState?, update: Update? = nil) {
-        if completionHandler == nil { return }
-        let block = completionHandler
-        
-        async(Queue.mainQueue) {
-            block(state, update)
+        if let block = completionHandler {
+            async(Queue.mainQueue) {
+                block(state, update)
+            }
+            completionHandler = nil
         }
-        
-        completionHandler = nil
     }
     
     public func ignore() {

@@ -80,8 +80,9 @@ class CatSightingsDataSource: BasicDataSource {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let sighting = self[indexPath]!
+        let sighting = self[indexPath]
         let cell = collectionView.dequeue(cellOfType: CatSightingCell.self, indexPath: indexPath)
+        
         cell.configure(sighting, dateFormatter: dateFormatter)
         return cell
     }

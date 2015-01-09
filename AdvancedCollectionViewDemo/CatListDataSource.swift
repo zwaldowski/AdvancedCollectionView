@@ -85,12 +85,13 @@ class CatListDataSource: BasicDataSource {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cat = self[indexPath]!
+        let cat = self[indexPath]
         let cell = collectionView.dequeue(cellOfType: BasicCell.self, indexPath: indexPath)
+        
         cell.style = .Subtitle
-        cell.primaryLabel.text = cat.name
+        cell.primaryLabel.text = cat?.name
         cell.primaryLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
-        cell.secondaryLabel.text = cat.shortDescription
+        cell.secondaryLabel.text = cat?.shortDescription
         cell.secondaryLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleCaption2)
         return cell
     }

@@ -27,9 +27,10 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     public override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let dataSource = collectionView?.dataSource as? DataSource {
-            dataSource.registerReusableViews(collectionView: collectionView!)
-            dataSource.setNeedsLoadContent()
+        if let view = collectionView {
+            let dataSource = view.dataSource as? DataSource
+            dataSource?.registerReusableViews(collectionView: view)
+            dataSource?.setNeedsLoadContent()
         }
     }
     

@@ -67,8 +67,7 @@ extension OrderedDictionary: SequenceType {
         var keysGenerator = keys.generate()
         return GeneratorOf {
             if let nextKey = keysGenerator.next() {
-                let index = dictionary.indexForKey(nextKey)!
-                return dictionary[index]
+                return dictionary.indexForKey(nextKey).map { dictionary[$0] }
             }
             return nil
         }
@@ -161,19 +160,18 @@ extension OrderedDictionary: RangeReplaceableCollectionType {
     }
     
     /// Inserts an entry into the collection at a given index. If the key exists, its entry will be deleted before the new entry is inserted; the insertion compensates for the deleted key.
-    public mutating func insert(newElement: Element, atIndex i: Index) {
+    public mutating func insert(newElement: Element, var atIndex i: Index) {
         if let indexInDict = elements.indexForKey(newElement.0) {
-            let indexInKeys = find(keys, newElement.0)!
-            keys.removeAtIndex(indexInKeys)
-            
-            let offsetIdx = i > indexInKeys ? i.predecessor() : i
-            keys.insert(newElement.0, atIndex: offsetIdx)
-            
-            elements[newElement.0] = newElement.1
-        } else {
-            keys.insert(newElement.0, atIndex: i)
-            elements[newElement.0] = newElement.1
+            if let indexInKeys = find(keys, newElement.0) {
+                keys.removeAtIndex(indexInKeys)
+                if i > indexInKeys {
+                    i = i.predecessor()
+                }
+            }
         }
+        
+        keys.insert(newElement.0, atIndex: i)
+        elements[newElement.0] = newElement.1
     }
     
     /// Insert `newElements` at index `i`
@@ -183,9 +181,8 @@ extension OrderedDictionary: RangeReplaceableCollectionType {
     
     /// Removes the entry at the given index and returns it.
     public mutating func removeAtIndex(i: Index) -> Element {
-        let key = keys[i]
+        let key = keys.removeAtIndex(i)
         let value = elements.removeValueForKey(key)!
-        keys.removeAtIndex(i)
         return (key, value)
     }
     

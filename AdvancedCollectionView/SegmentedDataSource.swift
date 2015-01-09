@@ -77,9 +77,14 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         let newSectionsCount = newDataSource?.numberOfSections ?? 0
         
         let direction = animated ? { _ -> SectionOperationDirection in
-            let oldIndex = self._selectedDataSource.map { find(self.dataSources, $0)! } ?? Int.max
-            let newIndex = newDataSource.map { find(self.dataSources, $0)! } ?? Int.max
-            return oldIndex < newIndex ? .Right : .Left
+            let oldIndex = self._selectedDataSource.map { find(self.dataSources, $0) }
+            let newIndex = newDataSource.map { find(self.dataSources, $0) }
+            switch (oldIndex, newIndex) {
+            case (.Some(let left), .Some(let right)):
+                return left < right ? .Right : .Left
+            default:
+                return .Default
+            }
         }() : .Default
         
         willChangeValueForKey("selectedDataSource")
@@ -254,8 +259,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
     }
     
     public override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = selectedDataSource?.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
-        return cell!
+        return selectedDataSource!.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
     }
     
     // MARK: CollectionViewDataSourceGridLayout

@@ -128,11 +128,11 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         beginLoading()
         
         let newLoading = Loader{ (newState, update) in
-            if newState == nil { return }
-            self.endLoading(state: newState!) {
-                
-                update?()
-                return
+            if let state = newState {
+                self.endLoading(state: state) {
+                    update?()
+                    return
+                }
             }
         }
         
@@ -238,7 +238,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     // MARK: Placeholders
     
-    private(set) public var placeholderView: CollectionPlaceholderView? = nil
+    private var placeholderView: CollectionPlaceholderView!
     
     public var emptyContent = PlaceholderContent(title: nil, message: nil, image: nil)
     public var errorContent = PlaceholderContent(title: nil, message: nil, image: nil)
@@ -285,12 +285,12 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         }
     }
     
-    func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> CollectionPlaceholderView {
+    public func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> CollectionPlaceholderView {
         if placeholderView == nil {
             placeholderView = collectionView.dequeue(supplementOfType: CollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
         }
         updatePlaceholder(placeholderView, notifyVisibility: false)
-        return placeholderView!
+        return placeholderView
     }
     
     // MARK: Notifications

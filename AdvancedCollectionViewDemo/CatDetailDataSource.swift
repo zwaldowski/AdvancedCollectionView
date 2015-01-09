@@ -64,7 +64,7 @@ class CatDetailDataSource: ComposedDataSource {
                 case (_, _, .None): return loading.error()
                 case (.Some(let me), true, .Some(let cat)):
                     me.cat = cat
-                    loading.update { self!.updateChildDataSources() }
+                    loading.update { me.updateChildDataSources() }
                 default: break
                 }
             }

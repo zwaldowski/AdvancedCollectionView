@@ -415,19 +415,6 @@ extension JSON: StringLiteralConvertible {
         self = value.encode()
     }
     
-    public var string: String! {
-        get {
-            return String.decode(self)
-        }
-        set {
-            if newValue != nil {
-                self = .JSONString(newValue)
-            } else {
-                self = .JSONNull
-            }
-        }
-    }
-    
 }
 
 // MARK: Array
