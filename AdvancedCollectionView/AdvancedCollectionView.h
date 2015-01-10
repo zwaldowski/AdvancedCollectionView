@@ -17,6 +17,4 @@ FOUNDATION_EXPORT double AdvancedCollectionViewVersionNumber;
 //! Project version string for AdvancedCollectionView.
 FOUNDATION_EXPORT const unsigned char AdvancedCollectionViewVersionString[];
 
-#import <AdvancedCollectionView/AdvancedCollectionView-Swift.h>
-
 #pragma clang diagnostic pop
