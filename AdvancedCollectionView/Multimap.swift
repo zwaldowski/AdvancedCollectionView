@@ -13,9 +13,8 @@ public struct Multimap<Key: Hashable, Value> {
     private typealias Groups = [Key: Values]
     private typealias GroupIndex = DictionaryIndex<Key, Values>
     
-    private var map = Groups()
-    
-    private init(map: Groups) {
+    private var map: Groups
+    private init(_ map: Groups) {
         self.map = map
     }
     
@@ -25,12 +24,13 @@ public struct Multimap<Key: Hashable, Value> {
 
 extension Multimap: DictionaryLiteralConvertible {
     
-    public init(){}
+    public init() {
+        self.init([:])
+    }
     
     public init<S: SequenceType where S.Generator.Element == Group>(groups: S) {
-        for entry in [Group](groups) {
-            map[entry.key] = entry.array
-        }
+        self.init()
+        extend(groups: groups)
     }
     
     public init(dictionaryLiteral elements: (Key, Values)...) {
@@ -48,12 +48,23 @@ extension Multimap {
     }
     
     public var isEmpty: Bool {
-        return map.count == 0 || self.count == 0
+        for (_, array) in map {
+            if !array.isEmpty {
+                return false
+            }
+        }
+        return true
     }
     
     public subscript(i: Key) -> Values {
         get { return map[i] ?? [] }
-        set(newValue) { map[i] = newValue }
+        set(newValue) {
+            if newValue.isEmpty {
+                map.removeValueForKey(i)
+            } else {
+                map[i] = newValue
+            }
+        }
     }
     
     public subscript(key: Key, index: Values.Index) -> Value? {
@@ -71,19 +82,11 @@ extension Multimap {
 extension Multimap {
     
     private mutating func mutate(arrayForKey key: Key, transform: (inout array: Values) -> (), replace: (() -> Values)? = nil) {
-        func update(#array: Values) {
-            if array.count > 0 {
-                map[key] = array
-            } else {
-                map.removeValueForKey(key)
-            }
-        }
-        
         if var newArr = map[key] {
             transform(array: &newArr)
-            update(array: newArr)
+            self[key] = newArr
         } else if let replace = replace {
-            update(array: replace())
+            self[key] = replace()
         }
     }
     
@@ -102,7 +105,20 @@ extension Multimap {
     }
     
     public mutating func update<S: SequenceType where S.Generator.Element == Value>(values: S, forKey key: Key) -> Values? {
-        return map.updateValue(Array(values), forKey: key)
+        var generator = values.generate()
+        if let first: Value = generator.next() {
+            var array = [ first ]
+            array.extend(SequenceOf { generator })
+            return map.updateValue(array, forKey: key)
+        } else {
+            if let index = map.indexForKey(key) {
+                let ret = map[index].1
+                map.removeAtIndex(index)
+                return ret
+            } else {
+                return nil
+            }
+        }
     }
     
     public mutating func append(newElement: Value, forKey key: Key) {
@@ -158,7 +174,7 @@ public struct MultimapGenerator<K: Hashable, V>: GeneratorType {
             self.outerKey = el.key
             self.innerGenerator = enumerate(el.array).generate()
         }
-        
+
         if let filter = filter {
             self.filter = filter
         } else {
@@ -240,35 +256,35 @@ public struct MultimapSequence<K: Hashable, V>: SequenceType {
 }
 
 extension Multimap: SequenceType {
-    
+
     public typealias Sequence = MultimapSequence<Key, Value>
     typealias Element = (key: Key, index: Values.Index, value: Value)
     typealias ElementFilter = Element -> Bool
-    
+
     public func generate() -> MultimapGenerator<Key, Value> {
         return MultimapGenerator(SequenceOf(map))
     }
-    
+
     public func enumerate(forKey key: Key) -> MultimapSequence<Key, Value> {
         if let b = map.indexForKey(key) {
             return MultimapSequence(group: map[b])
         }
         return MultimapSequence()
     }
-    
+
     public func groups(includeGroup fn: (Group -> Bool)? = nil) -> SequenceOf<Group> {
         if let fn = fn {
             return SequenceOf(lazy(map).filter(fn))
         }
         return SequenceOf(map)
     }
-    
+
     public mutating func updateMap(groupForKey key: Key, transform: Value -> Value) {
         mutate(arrayForKey: key) { (inout array: Values) in
             array = array.map(transform)
         }
     }
-    
+
     public mutating func updateMap(transform fn: Element -> Value) {
         map = map.map { (key, array) in
             return (key, array.mapWithIndex {
@@ -276,23 +292,23 @@ extension Multimap: SequenceType {
             })
         }
     }
-    
+
     public mutating func updateMapWithIndex(groupForKey key: Key, transform: (Values.Index, Value) -> Value) {
         mutate(arrayForKey: key) { (inout array: Values) in
             array = array.mapWithIndex(transform)
         }
     }
-    
+
     public func filter(includeGroup fn: Group -> Bool) -> MultimapSequence<Key, Value> {
         return MultimapSequence(groups(includeGroup: fn))
     }
-    
+
     public func filter(includeElement fn: Element -> Bool) -> MultimapSequence<Key, Value> {
         return MultimapSequence(groups(), fn)
     }
-    
+
     public func reduce<U>(initial: U, combine: (U, Element) -> U) -> U {
         return MultimapSequence(groups()).reduce(initial, combine: combine)
     }
-    
+
 }
