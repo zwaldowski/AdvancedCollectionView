@@ -28,6 +28,7 @@
 		DB1F1B3B1A5E69AA005A48A5 /* CatSighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */; };
 		DB1F1B3D1A5E69E8005A48A5 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */; };
 		DB1F1B3F1A5E6A7B005A48A5 /* DataAccessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */; };
+		DB1F1B431A610209005A48A5 /* SetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1F1B421A610209005A48A5 /* SetTests.swift */; };
 		DB22A1D71A5933EE00B8B883 /* TextValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */; };
 		DB22A1D91A5938C200B8B883 /* KeyValueDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */; };
 		DB22A1DB1A5946A800B8B883 /* CatSightingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */; };
@@ -40,7 +41,7 @@
 		DB262F001A5E3EBA00E3D905 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB262EFF1A5E3EBA00E3D905 /* JSON.swift */; };
 		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
 		DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */; };
-		DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* SetType.swift */; };
+		DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */; };
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
@@ -146,6 +147,7 @@
 		DB1F1B3A1A5E69AA005A48A5 /* CatSighting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSighting.swift; sourceTree = "<group>"; };
 		DB1F1B3C1A5E69E8005A48A5 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
 		DB1F1B3E1A5E6A7B005A48A5 /* DataAccessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataAccessManager.swift; sourceTree = "<group>"; };
+		DB1F1B421A610209005A48A5 /* SetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetTests.swift; sourceTree = "<group>"; };
 		DB22A1D61A5933EE00B8B883 /* TextValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1D81A5938C200B8B883 /* KeyValueDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueDataSource.swift; sourceTree = "<group>"; };
 		DB22A1DA1A5946A800B8B883 /* CatSightingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatSightingCell.swift; sourceTree = "<group>"; };
@@ -158,7 +160,7 @@
 		DB262EFF1A5E3EBA00E3D905 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
 		DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedDataSource.swift; sourceTree = "<group>"; };
-		DB5FB6A21A4F527C0041062F /* SetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetType.swift; sourceTree = "<group>"; };
+		DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnorderedCollectionType.swift; sourceTree = "<group>"; };
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
@@ -320,7 +322,7 @@
 			isa = PBXGroup;
 			children = (
 				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
-				DB5FB6A21A4F527C0041062F /* SetType.swift */,
+				DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */,
 				DB71E6551A489D9C00AFC472 /* Unit.swift */,
 				DB71E6541A489D9C00AFC472 /* Set.swift */,
 				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
@@ -356,6 +358,7 @@
 			isa = PBXGroup;
 			children = (
 				DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */,
+				DB1F1B421A610209005A48A5 /* SetTests.swift */,
 				DB8100741A3CD2AE00E758F6 /* Supporting Files */,
 			);
 			path = AdvancedCollectionViewTests;
@@ -638,7 +641,7 @@
 				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
 				DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */,
 				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
-				DB5FB6A31A4F527C0041062F /* SetType.swift in Sources */,
+				DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */,
 				DBAF93971A569834003293E9 /* UIKit.swift in Sources */,
 				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
 				DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */,
@@ -662,6 +665,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB1F1B431A610209005A48A5 /* SetTests.swift in Sources */,
 				DB63FBF11A5F94640095BB03 /* OrderedDictionaryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

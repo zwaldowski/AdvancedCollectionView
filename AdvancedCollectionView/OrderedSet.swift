@@ -50,15 +50,8 @@ extension OrderedSet {
         extend(sequence)
     }
     
-    public init(element: Element) {
-        self.init()
-        append(element)
-    }
-    
-    public init(_ array: [Element]) {
-        var set = Set<Element>(minimumCapacity: array.count)
-        set.extend(array)
-        self.init(elements: set, ordered: array)
+    public init(_ elements: Element...) {
+        self.init(elements)
     }
     
 }
@@ -173,9 +166,9 @@ extension OrderedSet: ArrayLiteralConvertible {
     
 }
 
-// MARK: SetType
+// MARK: UnorderedCollectionType
 
-extension OrderedSet: SetType {
+extension OrderedSet: UnorderedCollectionType {
     
     public func contains(element: Element) -> Bool {
         return elements.contains(element)
@@ -201,7 +194,7 @@ extension OrderedSet: SetType {
         return false
     }
     
-    public mutating func intersect<S: SetType where S.Generator.Element == Element>(set: S) {
+    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == Element>(set: S) {
         for element in self {
             if !set.contains(element) {
                 remove(element)

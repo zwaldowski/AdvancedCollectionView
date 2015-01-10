@@ -40,8 +40,8 @@ extension Set {
         extend(sequence)
     }
     
-    public init(element: Element) {
-        self.init(values: [ element: Unit() ])
+    public init(_ elements: Element...) {
+        self.init(elements)
     }
     
 }
@@ -114,9 +114,9 @@ extension Set: ArrayLiteralConvertible {
     
 }
 
-// MARK: SetType
+// MARK: UnorderedCollectionType
 
-extension Set: SetType {
+extension Set: UnorderedCollectionType {
     
     public func contains(element: Element) -> Bool {
         return values[element] != nil
@@ -130,7 +130,7 @@ extension Set: SetType {
         return values.removeValueForKey(element) != nil
     }
     
-    public mutating func intersect<S: SetType where S.Generator.Element == Element>(set: S) {
+    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == Element>(set: S) {
         for element in self {
             if !set.contains(element) {
                 remove(element)
@@ -164,6 +164,11 @@ extension Set {
     /// Removes all elements from the receiver.
     public mutating func removeAll(keepCapacity: Bool = false) {
         values.removeAll(keepCapacity: keepCapacity)
+    }
+    
+    /// Returns a new set including only those elements `x` where `includeElement(x)` is true.
+    public func filter(includeElement: (Element) -> Bool) -> Set<Element> {
+        return Set(Swift.filter(self, includeElement))
     }
     
     /// Returns a new set with the result of applying `transform` to each element.

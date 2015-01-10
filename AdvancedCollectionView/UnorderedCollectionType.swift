@@ -1,12 +1,12 @@
 //
-//  SetType.swift
+//  UnorderedCollectionType.swift
 //  AdvancedCollectionView
 //
 //  Created by Zachary Waldowski on 12/27/14.
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-public protocol SetType: ExtensibleCollectionType, Equatable, ArrayLiteralConvertible {
+public protocol UnorderedCollectionType: ExtensibleCollectionType, Equatable, ArrayLiteralConvertible {
     
     // MARK: Properties
     
@@ -27,8 +27,8 @@ public protocol SetType: ExtensibleCollectionType, Equatable, ArrayLiteralConver
     /// Constructs a set with the elements of `sequence`.
     init<S: SequenceType where S.Generator.Element == Self.Generator.Element>(_ sequence: S)
     
-    /// Constructs a set with a given `element`.
-    init(element: Self.Generator.Element)
+    /// Constructs a set with given `element`.
+    init(_ element: Self.Generator.Element...)
     
     // MARK: Primitives
     
@@ -44,7 +44,7 @@ public protocol SetType: ExtensibleCollectionType, Equatable, ArrayLiteralConver
     // MARK: Algebraic operations
     
     /// Remove all elements from the receiver which are not contained in `set`.
-    mutating func intersect<S: SetType where S.Generator.Element == Self.Generator.Element>(set: S)
+    mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == Self.Generator.Element>(set: S)
     
     /// Remove all elements from the receiver which are contained in `set`.
     mutating func difference<Seq: SequenceType where Seq.Generator.Element == Self.Generator.Element>(sequence: Seq)
@@ -54,7 +54,7 @@ public protocol SetType: ExtensibleCollectionType, Equatable, ArrayLiteralConver
 // MARK: - Free functions
 
 /// True iff the receiver is a subset of (is included in) `set`.
-public func subset<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(a1: S1, a2: S2) -> Bool {
+public func subset<S1: UnorderedCollectionType, S2: UnorderedCollectionType where S1.Generator.Element == S2.Generator.Element>(a1: S1, a2: S2) -> Bool {
     for el in a1 {
         if !a2.contains(el) { return false }
     }
@@ -62,38 +62,38 @@ public func subset<S1: SetType, S2: SetType where S1.Generator.Element == S2.Gen
 }
 
 /// True iff the receiver is a superset of (includes) `set`.
-public func superset<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(a1: S1, a2: S2) -> Bool {
+public func superset<S1: UnorderedCollectionType, S2: UnorderedCollectionType where S1.Generator.Element == S2.Generator.Element>(a1: S1, a2: S2) -> Bool {
     return subset(a2, a1)
 }
 
 // MARK: - Operators
 
 // Extends a `set` with the elements of a `sequence`.
-public func +=<Set: SetType, Seq: SequenceType where Set.Generator.Element == Seq.Generator.Element>(inout set: Set, sequence: Seq) {
+public func +=<Set: UnorderedCollectionType, Seq: SequenceType where Set.Generator.Element == Seq.Generator.Element>(inout set: Set, sequence: Seq) {
     set.extend(sequence)
 }
 
 /// Returns a new set with all elements from the left-hand set which are not contained in the right-hand set.
-public func -<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(lhs: S1, rhs: S2) -> S1 {
+public func -<S1: UnorderedCollectionType, S2: UnorderedCollectionType where S1.Generator.Element == S2.Generator.Element>(lhs: S1, rhs: S2) -> S1 {
     return S1(filter(lhs) {
         !rhs.contains($0)
     })
 }
 
 /// Returns a new set with all elements from the left-hand set which are not contained in the right-hand sequence.
-public func -<S: SetType, Seq: SequenceType where S.Generator.Element == Seq.Generator.Element>(lhs: S, rhs: Seq) -> S {
+public func -<S: UnorderedCollectionType, Seq: SequenceType where S.Generator.Element == Seq.Generator.Element>(lhs: S, rhs: Seq) -> S {
     var ret = lhs
     ret.difference(rhs)
     return ret
 }
 
 /// Remove all elements on the right-hand side from the set on the left-hand side.
-public func -=<S: SetType, Seq: SequenceType where Seq.Generator.Element == S.Generator.Element>(inout lhs: S, rhs: Seq) {
+public func -=<S: UnorderedCollectionType, Seq: SequenceType where Seq.Generator.Element == S.Generator.Element>(inout lhs: S, rhs: Seq) {
     lhs.difference(rhs)
 }
 
 /// Returns the intersection of `set` and `other`.
-public func &<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(lhs: S1, rhs: S2) -> S1 {
+public func &<S1: UnorderedCollectionType, S2: UnorderedCollectionType where S1.Generator.Element == S2.Generator.Element>(lhs: S1, rhs: S2) -> S1 {
     if lhs.count <= rhs.count {
         return S1(lazy(lhs).filter { rhs.contains($0) })
     } else {
@@ -102,6 +102,6 @@ public func &<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generato
 }
 
 /// Itersects with `set` with `other`.
-public func &=<S1: SetType, S2: SetType where S1.Generator.Element == S2.Generator.Element>(inout lhs: S1, rhs: S2) {
+public func &=<S1: UnorderedCollectionType, S2: UnorderedCollectionType where S1.Generator.Element == S2.Generator.Element>(inout lhs: S1, rhs: S2) {
     lhs.intersect(rhs)
 }
