@@ -6,15 +6,15 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-public struct OrderedSet<Element: Hashable> {
+public struct OrderedSet<T: Hashable> {
     
-    typealias Unordered = Set<Element>
-    typealias Ordered = [Element]
+    public typealias Unordered = Set<T>
+    public typealias Ordered = [T]
     
-    private(set) public var elements: Set<Element>
-    private(set) public var ordered: [Element]
+    private(set) public var elements: Unordered
+    private(set) public var ordered: Ordered
     
-    private init(elements: Set<Element>, ordered: [Element]) {
+    private init(elements: Unordered, ordered: Ordered) {
         self.elements = elements
         self.ordered = ordered
     }
@@ -36,7 +36,7 @@ public struct OrderedSet<Element: Hashable> {
 extension OrderedSet {
     
     public init(minimumCapacity: Int) {
-        var array = [Element]()
+        var array = [T]()
         array.reserveCapacity(minimumCapacity)
         self.init(elements: Set(minimumCapacity: minimumCapacity), ordered: array)
     }
@@ -45,12 +45,12 @@ extension OrderedSet {
         self.init(minimumCapacity: 2)
     }
     
-    public init<S: SequenceType where S.Generator.Element == Element>(_ sequence: S) {
+    public init<S: SequenceType where S.Generator.Element == T>(_ sequence: S) {
         self.init()
         extend(sequence)
     }
     
-    public init(_ elements: Element...) {
+    public init(_ elements: T...) {
         self.init(elements)
     }
     
@@ -60,7 +60,7 @@ extension OrderedSet {
 
 extension OrderedSet: SequenceType {
     
-    public func generate() -> GeneratorOf<Element> {
+    public func generate() -> GeneratorOf<T> {
         return GeneratorOf(ordered.generate())
     }
     
@@ -70,10 +70,12 @@ extension OrderedSet: SequenceType {
 
 extension OrderedSet: CollectionType {
     
-    public var startIndex: Ordered.Index { return ordered.startIndex }
-    public var endIndex: Ordered.Index { return ordered.endIndex }
+    public typealias Index = Ordered.Index
     
-    public subscript(index: Ordered.Index) -> Element {
+    public var startIndex: Index { return ordered.startIndex }
+    public var endIndex: Index { return ordered.endIndex }
+    
+    public subscript(index: Index) -> T {
         return ordered[index]
     }
     
@@ -83,12 +85,12 @@ extension OrderedSet: CollectionType {
 
 extension OrderedSet: ExtensibleCollectionType {
     
-    public mutating func reserveCapacity(n: Ordered.Index.Distance) {
+    public mutating func reserveCapacity(n: Index.Distance) {
         ordered.reserveCapacity(n)
     }
     
-    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(newElements: S) {
-        let asSeq = SequenceOf<Element>(newElements)
+    public mutating func extend<S: SequenceType where S.Generator.Element == T>(newElements: S) {
+        let asSeq = SequenceOf<T>(newElements)
         
         ordered.reserveCapacity(countElements(ordered) + underestimateCount(asSeq))
         
@@ -97,7 +99,7 @@ extension OrderedSet: ExtensibleCollectionType {
         }
     }
     
-    public mutating func append(element: Element) {
+    public mutating func append(element: T) {
         insert(element)
     }
     
@@ -108,7 +110,7 @@ extension OrderedSet: ExtensibleCollectionType {
 extension OrderedSet: RangeReplaceableCollectionType {
     
     /// Replace the given `subRange` of elements with `newElements`.
-    public mutating func replaceRange<C : CollectionType where C.Generator.Element == Element>(subRange: Range<Ordered.Index>, with newElements: C) {
+    public mutating func replaceRange<C : CollectionType where C.Generator.Element == T>(subRange: Range<Index>, with newElements: C) {
         let oldOrdered = ordered[subRange]
         ordered.replaceRange(subRange, with: newElements)
         elements -= oldOrdered
@@ -116,27 +118,27 @@ extension OrderedSet: RangeReplaceableCollectionType {
     }
     
     /// Insert `newElement` at index `i`.
-    public mutating func insert(newElement: Element, atIndex i: Ordered.Index) {
+    public mutating func insert(newElement: T, atIndex i: Index) {
         if elements.insert(newElement) {
             ordered.insert(newElement, atIndex: i)
         }
     }
     
     /// Insert `newElements` at index `i`
-    public mutating func splice<S : CollectionType where S.Generator.Element == Element>(newElements: S, atIndex i: Ordered.Index) {
+    public mutating func splice<S: CollectionType where S.Generator.Element == T>(newElements: S, atIndex i: Index) {
         ordered.splice(newElements, atIndex: i)
         elements += newElements
     }
     
     /// Remove the element at index `i`.
-    public mutating func removeAtIndex(i: Ordered.Index) -> Element {
+    public mutating func removeAtIndex(i: Index) -> T {
         let el = ordered.removeAtIndex(i)
         elements.remove(el)
         return el
     }
     
     /// Remove the indicated `subRange` of elements
-    public mutating func removeRange(subRange: Range<Ordered.Index>) {
+    public mutating func removeRange(subRange: Range<Index>) {
         Swift.removeRange(&self, subRange)
     }
     
@@ -150,7 +152,7 @@ extension OrderedSet: RangeReplaceableCollectionType {
 
 // MARK: Equatable
 
-public func ==<Element: Hashable>(a: OrderedSet<Element>, b: OrderedSet<Element>) -> Bool {
+public func ==<T>(a: OrderedSet<T>, b: OrderedSet<T>) -> Bool {
     return a.ordered == b.ordered
 }
 
@@ -160,7 +162,7 @@ extension OrderedSet: Equatable { }
 
 extension OrderedSet: ArrayLiteralConvertible {
     
-    public init(arrayLiteral elements: Element...) {
+    public init(arrayLiteral elements: T...) {
         self.init(elements)
     }
     
@@ -170,11 +172,11 @@ extension OrderedSet: ArrayLiteralConvertible {
 
 extension OrderedSet: UnorderedCollectionType {
     
-    public func contains(element: Element) -> Bool {
+    public func contains(element: T) -> Bool {
         return elements.contains(element)
     }
     
-    public mutating func insert(element: Element) -> Bool {
+    public mutating func insert(element: T) -> Bool {
         if elements.insert(element) {
             ordered.append(element)
             return true
@@ -182,7 +184,7 @@ extension OrderedSet: UnorderedCollectionType {
         return false
     }
     
-    public mutating func remove(element: Element) -> Bool {
+    public mutating func remove(element: T) -> Bool {
         if elements.remove(element) {
             for (idx, value) in enumerate(ordered) {
                 if value != element { continue }
@@ -194,7 +196,7 @@ extension OrderedSet: UnorderedCollectionType {
         return false
     }
     
-    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == Element>(set: S) {
+    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == T>(set: S) {
         for element in self {
             if !set.contains(element) {
                 remove(element)
@@ -202,8 +204,8 @@ extension OrderedSet: UnorderedCollectionType {
         }
     }
     
-    public mutating func difference<Seq: SequenceType where Seq.Generator.Element == Element>(sequence: Seq) {
-        for element in SequenceOf<Element>(sequence) {
+    public mutating func difference<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
+        for element in SequenceOf<T>(sequence) {
             remove(element)
         }
     }
@@ -212,21 +214,66 @@ extension OrderedSet: UnorderedCollectionType {
 
 // MARK: Printable
 
-extension OrderedSet: Printable {
+extension OrderedSet: Printable, DebugPrintable {
     
     public var description: String {
         return ordered.description
     }
     
+    public var debugDescription: String {
+        return ordered.debugDescription
+    }
+    
 }
 
-// MARK: Sorting
+// MARK: Reflectable
 
+extension OrderedSet: Reflectable {
+    
+    public func getMirror() -> MirrorType {
+        return ordered.getMirror()
+    }
+}
+
+// MARK: Functional
 
 extension OrderedSet {
     
-    public mutating func sort(isOrderedBefore function: (Element, Element) -> Bool) {
+    public func reduce<U>(initial: U, combine: (U, T) -> U) -> U {
+        return elements.reduce(initial, combine: combine)
+    }
+    
+    public mutating func sort(isOrderedBefore function: (T, T) -> Bool) {
         ordered.sort(function)
+    }
+    
+    public mutating func sorted(isOrderedBefore function: (T, T) -> Bool) -> OrderedSet<T> {
+        let newArray = ordered.sorted(function)
+        return OrderedSet(elements: elements, ordered: newArray)
+    }
+    
+    public func map<U>(transform: T -> U) -> OrderedSet<U> {
+        let newArray = ordered.map(transform)
+        return OrderedSet<U>(elements: Set(newArray), ordered: newArray)
+    }
+
+    public func reverse() -> OrderedSet<T> {
+        return OrderedSet(elements: elements, ordered: ordered.reverse())
+    }
+    
+    public func filter(includeElement: T -> Bool) -> OrderedSet<T> {
+        let newArray = ordered.filter(includeElement)
+        return OrderedSet(elements: Set(newArray), ordered: newArray)
+    }
+    
+}
+
+// MARK: Unsafe access
+
+extension OrderedSet {
+    
+    public func withUnsafeBufferPointer<R>(body: (UnsafeBufferPointer<T>) -> R) -> R {
+        return ordered.withUnsafeBufferPointer(body)
     }
     
 }
