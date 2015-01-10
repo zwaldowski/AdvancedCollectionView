@@ -1,13 +1,13 @@
-//  Copyright (c) 2014 Rob Rix. All rights reserved.
-
 /// A set of unique elements as determined by `hashValue` and `==`.
-public struct Set<Element: Hashable> {
+public struct Set<T: Hashable> {
+    
+    private typealias Dictionary = [T: Unit]
     
     /// The underlying dictionary.
-    private var values: [Element: Unit]
+    private var values: Dictionary
     
     /// Constructs a `Set` with a dictionary of `values`.
-    private init(values: [Element: Unit]) {
+    private init(values: Dictionary) {
         self.values = values
     }
     
@@ -32,15 +32,15 @@ extension Set {
     }
     
     public init(minimumCapacity: Int) {
-        self.init(values: [Element:Unit](minimumCapacity: minimumCapacity))
+        self.init(values: Dictionary(minimumCapacity: minimumCapacity))
     }
     
-    public init<S: SequenceType where S.Generator.Element == Element>(_ sequence: S) {
+    public init<S: SequenceType where S.Generator.Element == T>(_ sequence: S) {
         self.init()
         extend(sequence)
     }
     
-    public init(_ elements: Element...) {
+    public init(_ elements: T...) {
         self.init(elements)
     }
     
@@ -50,7 +50,7 @@ extension Set {
 
 extension Set: SequenceType {
     
-    public func generate() -> GeneratorOf<Element> {
+    public func generate() -> GeneratorOf<T> {
         return GeneratorOf(values.keys.generate())
     }
     
@@ -60,18 +60,16 @@ extension Set: SequenceType {
 
 extension Set: CollectionType {
     
-    typealias Index = DictionaryIndex<Element, Unit>
+    public var startIndex: SetIndex<T> { return SetIndex(values.startIndex) }
+    public var endIndex: SetIndex<T> { return SetIndex(values.endIndex) }
     
-    public var startIndex: Index { return values.startIndex }
-    public var endIndex: Index { return values.endIndex }
-    
-    public subscript(v: ()) -> Element {
+    public subscript(v: ()) -> T {
         get { return values[values.startIndex].0 }
         set { insert(newValue) }
     }
     
-    public subscript(index: Index) -> Element {
-        return values[index].0
+    public subscript(index: SetIndex<T>) -> T {
+        return values[index.base].0
     }
     
 }
@@ -81,16 +79,16 @@ extension Set: CollectionType {
 extension Set: ExtensibleCollectionType {
     
     /// In theory, reserve capacity for `n` elements. However, Dictionary does not implement reserveCapacity(), so we just silently ignore it.
-    public func reserveCapacity(n: Set<Element>.Index.Distance) {}
+    public func reserveCapacity(n: Int) {}
     
-    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(sequence: S) {
+    public mutating func extend<S: SequenceType where S.Generator.Element == T>(sequence: S) {
         // Note that this should just be for each in sequence; this is working around a compiler crasher.
-        for each in SequenceOf<Element>(sequence) {
+        for each in SequenceOf<T>(sequence) {
             insert(each)
         }
     }
     
-    public mutating func append(element: Element) {
+    public mutating func append(element: T) {
         insert(element)
     }
     
@@ -98,7 +96,7 @@ extension Set: ExtensibleCollectionType {
 
 // MARK: - Hashable
 
-public func ==<Element: Hashable>(a: Set<Element>, b: Set<Element>) -> Bool {
+public func ==<T>(a: Set<T>, b: Set<T>) -> Bool {
     return a.values == b.values
 }
 
@@ -108,7 +106,7 @@ extension Set: Equatable { }
 
 extension Set: ArrayLiteralConvertible {
     
-    public init(arrayLiteral elements: Element...) {
+    public init(arrayLiteral elements: T...) {
         self.init(elements)
     }
     
@@ -118,19 +116,19 @@ extension Set: ArrayLiteralConvertible {
 
 extension Set: UnorderedCollectionType {
     
-    public func contains(element: Element) -> Bool {
+    public func contains(element: T) -> Bool {
         return values[element] != nil
     }
     
-    public mutating func insert(element: Element) -> Bool {
-        return values.updateValue(Unit(), forKey: element) == nil
+    public mutating func insert(element: T) -> Bool {
+        return values.updateValue(.Some, forKey: element) == nil
     }
     
-    public mutating func remove(element: Element) -> Bool {
+    public mutating func remove(element: T) -> Bool {
         return values.removeValueForKey(element) != nil
     }
     
-    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == Element>(set: S) {
+    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == T>(set: S) {
         for element in self {
             if !set.contains(element) {
                 remove(element)
@@ -138,8 +136,8 @@ extension Set: UnorderedCollectionType {
         }
     }
 
-    public mutating func difference<Seq: SequenceType where Seq.Generator.Element == Element>(sequence: Seq) {
-        for element in SequenceOf<Element>(sequence) {
+    public mutating func difference<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
+        for element in SequenceOf<T>(sequence) {
             remove(element)
         }
     }
@@ -148,11 +146,15 @@ extension Set: UnorderedCollectionType {
 
 // MARK: - Printable
 
-extension Set: Printable {
+extension Set: Printable, DebugPrintable {
     
     public var description: String {
         let list = join(", ", map(toString))
         return "{\(list)}"
+    }
+    
+    public var debugDescription: String {
+        return description
     }
     
 }
@@ -167,23 +169,60 @@ extension Set {
     }
     
     /// Returns a new set including only those elements `x` where `includeElement(x)` is true.
-    public func filter(includeElement: (Element) -> Bool) -> Set<Element> {
+    public func filter(includeElement: T -> Bool) -> Set<T> {
         return Set(Swift.filter(self, includeElement))
     }
     
     /// Returns a new set with the result of applying `transform` to each element.
-    public func map<Result>(transform: Element -> Result) -> Set<Result> {
+    public func map<Result>(transform: T -> Result) -> Set<Result> {
         return flatMap { [transform($0)] }
     }
     
     /// Applies `transform` to each element and returns a new set which is the union of each resulting set.
-    public func flatMap<Result, S: SequenceType where S.Generator.Element == Result>(transform: Element -> S) -> Set<Result> {
-        return reduce(Set<Result>()) { $0 + transform($1) }
+    public func flatMap<R, S: SequenceType where S.Generator.Element == R>(transform: T -> S) -> Set<R> {
+        return reduce(Set<R>()) { $0 + transform($1) }
     }
     
     /// Combines each element of the receiver with an accumulator value using `combine`, starting with `initial`.
-    public func reduce<Into>(initial: Into, combine: (Into, Element) -> Into) -> Into {
+    public func reduce<U>(initial: U, combine: (U, T) -> U) -> U {
         return Swift.reduce(self, initial, combine)
     }
     
 }
+
+// MARK: SetIndex
+
+public struct SetIndex<T : Hashable>: BidirectionalIndexType, Comparable {
+    
+    private typealias Base = DictionaryIndex<T, Unit>
+    private let base: Base
+    
+    private init(_ base: Base) {
+        self.base = base
+    }
+    
+    public func predecessor() -> SetIndex<T> {
+        return SetIndex(base.predecessor())
+    }
+    
+    public func successor() -> SetIndex<T> {
+        return SetIndex(base.successor())
+    }
+    
+}
+
+public func ==<T>(lhs: SetIndex<T>, rhs: SetIndex<T>) -> Bool {
+    return lhs.base == rhs.base
+}
+
+public func <<T>(lhs: SetIndex<T>, rhs: SetIndex<T>) -> Bool {
+    return lhs.base < rhs.base
+}
+
+// MARK: Unit
+
+/// A singleton type.
+private enum Unit {
+    case Some
+}
+

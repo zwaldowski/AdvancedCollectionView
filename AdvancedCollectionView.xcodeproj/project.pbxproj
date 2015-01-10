@@ -47,7 +47,6 @@
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
 		DB63FBF11A5F94640095BB03 /* OrderedDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */; };
 		DB71E6561A489D9C00AFC472 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6541A489D9C00AFC472 /* Set.swift */; };
-		DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6551A489D9C00AFC472 /* Unit.swift */; };
 		DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */; };
 		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 		DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -166,7 +165,6 @@
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
 		DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionaryTests.swift; sourceTree = "<group>"; };
 		DB71E6541A489D9C00AFC472 /* Set.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
-		DB71E6551A489D9C00AFC472 /* Unit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Unit.swift; sourceTree = "<group>"; };
 		DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewLayout.swift; sourceTree = "<group>"; };
 		DB81005C1A3CD0E600E758F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AdvancedCollectionView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -322,11 +320,10 @@
 			isa = PBXGroup;
 			children = (
 				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
-				DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */,
-				DB71E6551A489D9C00AFC472 /* Unit.swift */,
-				DB71E6541A489D9C00AFC472 /* Set.swift */,
-				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
 				DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */,
+				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
+				DB71E6541A489D9C00AFC472 /* Set.swift */,
+				DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */,
 			);
 			name = Collections;
 			sourceTree = "<group>";
@@ -640,7 +637,6 @@
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
 				DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */,
-				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
 				DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */,
 				DBAF93971A569834003293E9 /* UIKit.swift in Sources */,
 				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
