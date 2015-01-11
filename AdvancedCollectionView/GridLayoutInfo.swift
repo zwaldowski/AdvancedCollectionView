@@ -101,7 +101,6 @@ struct RowInfo {
 struct SectionInfo {
     
     typealias Attributes = GridLayoutAttributes
-    typealias SupplementalItemsMap = Multimap<String, SupplementInfo>
     
     let metrics: SectionMetrics
 
@@ -111,7 +110,7 @@ struct SectionInfo {
     
     private var items = [ItemInfo]()
     private(set) var rows = [RowInfo]() // ephemeral
-    private var supplementalItems = SupplementalItemsMap()
+    private var supplementalItems = Multimap<String, SupplementInfo>()
     
     private(set) var frame = CGRect.zeroRect
     private(set) var headersRect = CGRect.zeroRect
@@ -129,7 +128,7 @@ extension SectionInfo {
         case AllOther
     }
     
-    private var notNamed: SequenceOf<SupplementalItemsMap.Group> {
+    private var notNamed: SequenceOf<(String, [SupplementInfo]) > {
         return supplementalItems.groups { (key, _) in
             key != SupplementKind.Header.rawValue && key != SupplementKind.Footer.rawValue
         }
@@ -150,16 +149,16 @@ extension SectionInfo {
         }
     }
     
-    subscript(supplement: SupplementIndex) -> SupplementalItemsMap.Sequence {
+    subscript(supplement: SupplementIndex) -> SequenceOf<(String, Int, SupplementInfo)> {
         switch supplement {
         case .Header:
-            return supplementalItems.enumerate(forKey: SupplementKind.Header.rawValue)
+            return SequenceOf(supplementalItems.enumerate(forKey: SupplementKind.Header.rawValue))
         case .Footer:
-            return supplementalItems.enumerate(forKey: SupplementKind.Footer.rawValue)
+            return SequenceOf(supplementalItems.enumerate(forKey: SupplementKind.Footer.rawValue))
         case .Named(let kind):
-            return supplementalItems.enumerate(forKey: kind)
+            return SequenceOf(supplementalItems.enumerate(forKey: kind))
         case .AllOther:
-            return MultimapSequence(notNamed)
+            return SequenceOf { MultimapEnumerateGenerator(self.notNamed) }
         }
     }
     

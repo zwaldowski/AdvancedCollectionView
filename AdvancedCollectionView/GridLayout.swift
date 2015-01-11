@@ -984,33 +984,28 @@ public class GridLayout: UICollectionViewLayout {
             background.frame.size.height = fmax(lastGlobalRect.maxY, lastRegularRect.maxY) - background.frame.origin.y
         }
         
-        // Reset pinnable attributes for all supplements
-        let notGlobal = pinnableAttributes.filter { (key, _) in key != .Global }
-        for (_, _, attr) in notGlobal {
-            resetPinnable(attr)
-        }
-        
         // Pin attributes in a pinned section
+        // Reset pinnable attributes for all others
         var foundSection = false
-        let overlaps = notGlobal.filter { (key, _) in
-            switch key {
-            case .Index(let idx):
-                let frame = self.sections[idx].frame
+        for (section, values) in pinnableAttributes.groups() {
+            for attr in values {
+                resetPinnable(attr)
+            }
+            
+            switch (section, foundSection) {
+            case (.Index(let idx), false):
+                let frame = sections[idx].frame
                 if !foundSection && frame.minY <= pinnableY && pinnableY <= frame.maxY {
                     foundSection = true
-                    return true
+                    
+                    for (idx, attr) in enumerate(values) {
+                        applyTopPinning(attr)
+                        finalizePinning(attr, .OverlapPinned, idx)
+                    }
                 }
-                break
             default: break
             }
-            return false
         }
-        
-        for (_, idx, attr) in overlaps {
-            applyTopPinning(attr)
-            finalizePinning(attr, .OverlapPinned, idx)
-        }
-        
     }
     
     // MARK: Helpers

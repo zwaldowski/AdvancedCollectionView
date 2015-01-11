@@ -6,16 +6,14 @@
 //  Copyright (c) 2014 Apple. All rights reserved.
 //
 
-public struct Multimap<Key: Hashable, Value> {
+public struct Multimap<K: Hashable, V> {
     
-    typealias Values = [Value]
-    typealias Group = (key: Key, array: Values)
-    private typealias Groups = [Key: Values]
-    private typealias GroupIndex = DictionaryIndex<Key, Values>
+    private typealias Hash = [K: [V]]
+    private typealias Group = Hash.Element
     
-    private var map: Groups
-    private init(_ map: Groups) {
-        self.map = map
+    private var elements: Hash
+    private init(_ elements: Hash) {
+        self.elements = elements
     }
     
 }
@@ -23,6 +21,9 @@ public struct Multimap<Key: Hashable, Value> {
 // MARK: Initializers
 
 extension Multimap: DictionaryLiteralConvertible {
+    
+    public typealias Key = K
+    public typealias Value = [V]
     
     public init() {
         self.init([:])
@@ -33,7 +34,7 @@ extension Multimap: DictionaryLiteralConvertible {
         extend(groups: groups)
     }
     
-    public init(dictionaryLiteral elements: (Key, Values)...) {
+    public init(dictionaryLiteral elements: (Key, Value)...) {
         self.init(groups: elements)
     }
     
@@ -44,11 +45,11 @@ extension Multimap: DictionaryLiteralConvertible {
 extension Multimap {
     
     public var count: Int {
-        return Swift.reduce(lazy(map).map { $0.1.count }, 0, +)
+        return Swift.reduce(lazy(elements).map { $0.1.count }, 0, +)
     }
     
     public var isEmpty: Bool {
-        for (_, array) in map {
+        for (_, array) in elements {
             if !array.isEmpty {
                 return false
             }
@@ -56,23 +57,23 @@ extension Multimap {
         return true
     }
     
-    public subscript(i: Key) -> Values {
-        get { return map[i] ?? [] }
+    public subscript(i: K) -> [V] {
+        get { return elements[i] ?? [] }
         set(newValue) {
             if newValue.isEmpty {
-                map.removeValueForKey(i)
+                elements.removeValueForKey(i)
             } else {
-                map[i] = newValue
+                elements[i] = newValue
             }
         }
     }
     
-    public subscript(key: Key, index: Values.Index) -> Value? {
-        return map[key]?[index]
+    public subscript(key: K, index: Value.Index) -> V? {
+        return elements[key]?[index]
     }
     
-    public func contains(key: Key) -> Bool {
-        return map.indexForKey(key) != nil
+    public func contains(key: K) -> Bool {
+        return elements.indexForKey(key) != nil
     }
     
 }
@@ -81,8 +82,8 @@ extension Multimap {
 
 extension Multimap {
     
-    private mutating func mutate(arrayForKey key: Key, transform: (inout array: Values) -> (), replace: (() -> Values)? = nil) {
-        if var newArr = map[key] {
+    private mutating func mutate(arrayForKey key: K, transform: (inout array: Value) -> (), replace: (() -> Value)? = nil) {
+        if var newArr = elements[key] {
             transform(array: &newArr)
             self[key] = newArr
         } else if let replace = replace {
@@ -90,30 +91,30 @@ extension Multimap {
         }
     }
     
-    public mutating func remove(fromKey key: Key, atIndex index: Values.Index) {
-        mutate(arrayForKey: key) { (inout array: Values) in
+    public mutating func remove(fromKey key: K, atIndex index: Value.Index) {
+        mutate(arrayForKey: key) { (inout array: Value) in
             _ = array.removeAtIndex(index)
         }
     }
     
-    public mutating func remove(valuesForKey key: Key) -> Values? {
-        return map.removeValueForKey(key)
+    public mutating func remove(valuesForKey key: K) -> Value? {
+        return elements.removeValueForKey(key)
     }
     
     public mutating func removeAll(keepCapacity: Bool = false) {
-        map.removeAll(keepCapacity: keepCapacity)
+        elements.removeAll(keepCapacity: keepCapacity)
     }
     
-    public mutating func update<S: SequenceType where S.Generator.Element == Value>(values: S, forKey key: Key) -> Values? {
+    public mutating func update<S: SequenceType where S.Generator.Element == V>(values: S, forKey key: K) -> Value? {
         var generator = values.generate()
-        if let first: Value = generator.next() {
+        if let first: V = generator.next() {
             var array = [ first ]
             array.extend(SequenceOf { generator })
-            return map.updateValue(array, forKey: key)
+            return elements.updateValue(array, forKey: key)
         } else {
-            if let index = map.indexForKey(key) {
-                let ret = map[index].1
-                map.removeAtIndex(index)
+            if let index = elements.indexForKey(key) {
+                let ret = elements[index].1
+                elements.removeAtIndex(index)
                 return ret
             } else {
                 return nil
@@ -121,24 +122,24 @@ extension Multimap {
         }
     }
     
-    public mutating func append(newElement: Value, forKey key: Key) {
-        mutate(arrayForKey: key, transform: { (inout array: Values) in
+    public mutating func append(newElement: V, forKey key: K) {
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             array.append(newElement)
         }, replace: {
             [ newElement ]
         })
     }
     
-    public mutating func insert(newElement: Value, forKey key: Key, atIndex index: Values.Index) {
-        mutate(arrayForKey: key, transform: { (inout array: Values) in
+    public mutating func insert(newElement: V, forKey key: K, atIndex index: Value.Index) {
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             array.insert(newElement, atIndex: index)
         }, replace: {
             [ newElement ]
         })
     }
     
-    public mutating func extend<Seq: SequenceType where Seq.Generator.Element == Value>(#values: Seq, forKey key: Key) {
-        mutate(arrayForKey: key, transform: { (inout array: Values) in
+    public mutating func extend<Seq: SequenceType where Seq.Generator.Element == K>(#values: Seq, forKey key: K) {
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             array.extend(values)
         }, replace: {
             Array(values)
@@ -147,168 +148,111 @@ extension Multimap {
     
     public mutating func extend<S: SequenceType where S.Generator.Element == Group>(groups newElements: S) {
         for entry in SequenceOf<Group>(newElements) {
-            mutate(arrayForKey: entry.key, transform: { (inout array: Values) in
-                array.extend(entry.array)
+            mutate(arrayForKey: entry.0, transform: { (inout array: Value) in
+                array.extend(entry.1)
             }, replace: {
-                entry.array
+                entry.1
             })
         }
     }
     
 }
 
-// MARK: Generators
-
-public struct MultimapGenerator<K: Hashable, V>: GeneratorType {
-    
-    private typealias Parent = Multimap<K, V>
-    private var outerGenerator: GeneratorOf<Parent.Group>?
-    private var outerKey: K!
-    private var innerGenerator: EnumerateGenerator<IndexingGenerator<Parent.Values>>?
-    private let filter: Parent.ElementFilter
-    
-    private init(_ seq: SequenceOf<Parent.Group>, filter: Parent.ElementFilter? = nil) {
-        var outer = seq.generate()
-        if let el: Parent.Group = outer.next() {
-            self.outerGenerator = outer
-            self.outerKey = el.key
-            self.innerGenerator = enumerate(el.array).generate()
-        }
-
-        if let filter = filter {
-            self.filter = filter
-        } else {
-            self.filter = { _ in true }
-        }
-    }
-    
-    private mutating func _next() -> Parent.Element? {
-        if let (index, value) = innerGenerator?.next() {
-            return (outerKey, index, value)
-        }
-        
-        if let (key, array) = outerGenerator?.next() {
-            outerKey = key
-            innerGenerator = enumerate(array).generate()
-            return _next()
-        }
-        
-        return nil
-    }
-    
-    public mutating func next() -> Parent.Element? {
-        while let next = _next() {
-            if filter(next) { return next }
-        }
-        return nil
-    }
-    
-}
-
-public struct MultimapSequence<K: Hashable, V>: SequenceType {
-    
-    private typealias Parent = Multimap<K, V>
-    private let base: SequenceOf<Parent.Group>
-    private let filter: Parent.ElementFilter?
-    
-    private init(_ seq: SequenceOf<Parent.Group>, filter: Parent.ElementFilter?) {
-        self.base = seq
-        self.filter = filter
-    }
-    
-    private init() {
-        self.init(SequenceOf { GeneratorOf { nil } })
-    }
-    
-    public init(group: Parent.Group) {
-        self.init(SequenceOf(CollectionOfOne(group)))
-    }
-
-    public init<S: SequenceType where S.Generator.Element == Parent.Group>(_ seq: S) {
-        self.init(SequenceOf(seq), filter: nil)
-    }
-    
-    public func generate() -> MultimapGenerator<K, V> {
-        return MultimapGenerator(base, filter)
-    }
-
-    public func map<U>(transform: Parent.Element -> U) -> [U] {
-        return Swift.map(self, transform)
-    }
-    
-    public func filter(includeGroup fn: Parent.Group -> Bool) -> MultimapSequence<K, V> {
-        return MultimapSequence(lazy(base).filter(fn))
-    }
-    
-    public func filter(includeElement fn: Parent.Element -> Bool) -> MultimapSequence<K, V> {
-        if let filter = filter {
-            return MultimapSequence(base, {
-                filter($0) && fn($0)
-            })
-        }
-        return MultimapSequence(base, fn)
-    }
-    
-    public func reduce<U>(initial: U, combine: (U, Parent.Element) -> U) -> U {
-        return Swift.reduce(self, initial, combine)
-    }
-    
-}
+// MARK: SequenceType
 
 extension Multimap: SequenceType {
-
-    public typealias Sequence = MultimapSequence<Key, Value>
-    typealias Element = (key: Key, index: Values.Index, value: Value)
-    typealias ElementFilter = Element -> Bool
-
-    public func generate() -> MultimapGenerator<Key, Value> {
-        return MultimapGenerator(SequenceOf(map))
+    
+    public func generate() -> MultimapGenerator<K, V> {
+        return MultimapGenerator(elements)
     }
-
-    public func enumerate(forKey key: Key) -> MultimapSequence<Key, Value> {
-        if let b = map.indexForKey(key) {
-            return MultimapSequence(group: map[b])
+    
+    public func enumerate(forKey key: K) -> SequenceOf<(K, Int, V)> {
+        if let index = elements.indexForKey(key) {
+            let gen = MultimapEnumerateGenerator(CollectionOfOne(elements[index]))
+            return SequenceOf { gen }
+        } else {
+            return SequenceOf(EmptyCollection())
         }
-        return MultimapSequence()
     }
-
+    
     public func groups(includeGroup fn: (Group -> Bool)? = nil) -> SequenceOf<Group> {
         if let fn = fn {
-            return SequenceOf(lazy(map).filter(fn))
+            return SequenceOf(lazy(elements).filter(fn))
         }
-        return SequenceOf(map)
+        return SequenceOf(elements)
     }
-
-    public mutating func updateMap(groupForKey key: Key, transform: Value -> Value) {
-        mutate(arrayForKey: key) { (inout array: Values) in
+    
+    public mutating func updateMap(groupForKey key: K, transform: V -> V) {
+        mutate(arrayForKey: key) { (inout array: Value) in
             array = array.map(transform)
         }
     }
-
-    public mutating func updateMap(transform fn: Element -> Value) {
-        map = map.map { (key, array) in
-            return (key, array.mapWithIndex {
-                fn((key, $0, $1))
-            })
-        }
-    }
-
-    public mutating func updateMapWithIndex(groupForKey key: Key, transform: (Values.Index, Value) -> Value) {
-        mutate(arrayForKey: key) { (inout array: Values) in
+    
+    public mutating func updateMapWithIndex(groupForKey key: K, transform: (Int, V) -> V) {
+        mutate(arrayForKey: key) { (inout array: Value) in
             array = array.mapWithIndex(transform)
         }
     }
+    
+}
 
-    public func filter(includeGroup fn: Group -> Bool) -> MultimapSequence<Key, Value> {
-        return MultimapSequence(groups(includeGroup: fn))
+
+// MARK: Generators
+
+public struct MultimapEnumerateGenerator<K: Hashable, V>: GeneratorType {
+    
+    public typealias Element = (K, Int, V)
+    public typealias Group = (K, [V])
+    
+    private var outerGenerator: GeneratorOf<Group>
+    private var outerKey: K?
+    private var innerGenerator: EnumerateGenerator<IndexingGenerator<[V]>>?
+    
+    public init<S: SequenceType where S.Generator.Element == Group>(_ seq: S) {
+        self.outerGenerator = GeneratorOf(seq.generate())
     }
-
-    public func filter(includeElement fn: Element -> Bool) -> MultimapSequence<Key, Value> {
-        return MultimapSequence(groups(), fn)
+    
+    public mutating func next() -> Element? {
+        if let (index, value) = innerGenerator?.next() {
+            return (outerKey!, index, value)
+        }
+        
+        if let (key, array) = outerGenerator.next() {
+            outerKey = key
+            innerGenerator = enumerate(array).generate()
+            return next()
+        }
+        
+        return nil
     }
+    
+}
 
-    public func reduce<U>(initial: U, combine: (U, Element) -> U) -> U {
-        return MultimapSequence(groups()).reduce(initial, combine: combine)
+public struct MultimapGenerator<K: Hashable, V>: GeneratorType {
+    
+    public typealias Element = (K, V)
+    public typealias Group = (K, [V])
+    
+    private var outerGenerator: GeneratorOf<Group>
+    private var outerKey: K?
+    private var innerGenerator: IndexingGenerator<[V]>?
+    
+    private init<S: SequenceType where S.Generator.Element == Group>(_ seq: S) {
+        self.outerGenerator = GeneratorOf(seq.generate())
     }
-
+    
+    public mutating func next() -> Element? {
+        if let value = innerGenerator?.next() {
+            return (outerKey!,  value)
+        }
+        
+        if let (key, array) = outerGenerator.next() {
+            outerKey = key
+            innerGenerator = array.generate()
+            return next()
+        }
+        
+        return nil
+    }
+    
 }
