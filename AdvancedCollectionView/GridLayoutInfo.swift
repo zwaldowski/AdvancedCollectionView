@@ -285,7 +285,7 @@ extension SectionInfo {
                 var rowLayoutRect = rowRect
                 
                 let finalPass = measurePass.map { (var item) -> ItemInfo in
-                    item.frame = rowLayoutRect.divide(columnWidth, edge: divideFrom)
+                    item.frame = rowLayoutRect.divide(columnWidth, fromEdge: divideFrom)
                     return item
                 }
                 

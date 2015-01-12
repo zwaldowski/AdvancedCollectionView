@@ -127,19 +127,10 @@ extension CGRect {
         }
     }
     
-    mutating func divide(amount: CGFloat, edge: CGRectEdge = .MinYEdge) -> CGRect {
-        var slice = CGRect.zeroRect
-        var remainder = CGRect.zeroRect
-        CGRectDivide(self, &slice, &remainder, amount, edge)
+    mutating func divide(atDistance: CGFloat, fromEdge edge: CGRectEdge = .MinYEdge) -> CGRect {
+        let (slice, remainder) = rectsByDividing(atDistance, fromEdge: edge)
         self = remainder
         return slice
-    }
-    
-    func rectsByDividing(#amount: CGFloat, edge: CGRectEdge = .MinYEdge) -> (slice: CGRect, remainder: CGRect) {
-        var slice = CGRect.zeroRect
-        var remainder = CGRect.zeroRect
-        CGRectDivide(self, &slice, &remainder, amount, edge)
-        return (slice, remainder)
     }
     
 }
