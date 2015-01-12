@@ -63,9 +63,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
     /// Set the selected data source with animation. By default, setting the selected data source is not animated.
     public func setSelectedDataSource(newDataSource: DataSource?, animated: Bool, onCompletion completion: ((Bool) -> ())? = nil) {
         if _selectedDataSource == newDataSource {
-            if let completion = completion {
-                completion(true)
-            }
+            completion?(true)
             return
         }
         
@@ -281,9 +279,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
             notify(itemAction: itemAction)
         case (_, .BatchUpdate(let update, let completion)):
             update();
-            if let completion = completion {
-                completion(true)
-            }
+            completion?(true)
         default: break
         }
     }

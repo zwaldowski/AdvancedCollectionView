@@ -343,9 +343,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             }
         case (.BatchUpdate(let update, let completion), _, .None):
             update()
-            if let completion = completion {
-                completion(true)
-            }
+            completion?(true)
         default:
             container?.dataSourceWillPerform(self, itemAction: itemAction)
         }
