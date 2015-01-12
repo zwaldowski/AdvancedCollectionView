@@ -444,24 +444,16 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         
         // Need to map the global index path to an index path relative to the target data source, because we're handling this method at the root of the data source tree. If I allowed subclasses to handle this, this wouldn't be necessary. But because of the way headers layer, it's more efficient to snapshot the section and find the metrics once.
 
-        var section: Section
-        var dataSource: DataSource
-        var localIndexPath: NSIndexPath
-        var localItem: Int
-        
-        if indexPath.length == 1 {
-            section = .Global
-            dataSource = self
-            localIndexPath = indexPath
-            localItem = indexPath[0]
-        } else {
-            (dataSource, localIndexPath) = childDataSource(forGlobalIndexPath: indexPath)
-            section = .Index(indexPath.section)
-            let info = childDataSource(forGlobalIndexPath: indexPath)
-            localIndexPath = info.1
-            section = Section.Index(localIndexPath[0])
-            localItem = localIndexPath[1]
-        }
+        let (section, localItem, dataSource, localIndexPath) = { () -> (Section, Int, DataSource, NSIndexPath) in
+            if indexPath.length == 1 {
+                return (.Global, indexPath[0], self, indexPath)
+            }
+            
+            let section = indexPath[0]
+            let item = indexPath[1]
+            let (dataSource, localIndexPath) = self.childDataSource(forGlobalIndexPath: indexPath)
+            return (.Index(section), item, dataSource, localIndexPath)
+        }()
         
         let sectionMetrics = snapshotMetrics(section: section)
         let supplements = lazy(sectionMetrics.supplementaryViews).filter {
