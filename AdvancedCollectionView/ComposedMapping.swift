@@ -19,42 +19,38 @@ struct ComposedMapping {
 
 extension ComposedMapping {
     
-    func localSection(forGlobalSection globalSection: Int) -> Int {
+    func localSection(global globalSection: Int) -> Int {
         return globalToLocal[globalSection]!
     }
     
-    func globalSection(forLocalSection localSection: Int) -> Int {
+    func globalSection(local localSection: Int) -> Int {
         return localToGlobal[localSection]!
     }
     
-    func localSections(forGlobalSections sections: NSIndexSet) -> NSIndexSet {
-        return sections.map { self.localSection(forGlobalSection: $0) }
+    func localSections(global sections: NSIndexSet) -> NSIndexSet {
+        return sections.map { self.localSection(global: $0) }
     }
     
-    func globalSections<S: SequenceType where S.Generator.Element == Int>(forLocalSections sequence: S) -> NSIndexSet {
-        return NSIndexSet(indexes: lazy(sequence).map({ self.globalSection(forLocalSection: $0) }))
+    func globalSections<S: SequenceType where S.Generator.Element == Int>(local sequence: S) -> NSIndexSet {
+        return NSIndexSet(indexes: lazy(sequence).map({ self.globalSection(local: $0) }))
     }
     
-    func globalSections(forNumberOfSections sections: Int) -> NSIndexSet {
-        return globalSections(forLocalSections: 0..<sections)
-    }
-    
-    func localIndexPath(forGlobalIndexPath indexPath: NSIndexPath) -> NSIndexPath {
-        let section = localSection(forGlobalSection: indexPath.section)
+    func localIndexPath(global indexPath: NSIndexPath) -> NSIndexPath {
+        let section = localSection(global: indexPath.section)
         return NSIndexPath(section, indexPath.item)
     }
     
-    func globalIndexPath(forLocalIndexPath indexPath: NSIndexPath) -> NSIndexPath {
-        let section = globalSection(forLocalSection: indexPath.section)
+    func globalIndexPath(local indexPath: NSIndexPath) -> NSIndexPath {
+        let section = globalSection(local: indexPath.section)
         return NSIndexPath(section, indexPath.item)
     }
     
-    func localIndexPaths(forGlobalIndexPaths indexPaths: [NSIndexPath]) -> [NSIndexPath] {
-        return indexPaths.map { self.localIndexPath(forGlobalIndexPath: $0) }
+    func localIndexPaths(global indexPaths: [NSIndexPath]) -> [NSIndexPath] {
+        return indexPaths.map { self.localIndexPath(global: $0) }
     }
     
-    func globalIndexPaths(forLocalIndexPaths indexPaths: [NSIndexPath]) -> [NSIndexPath] {
-        return indexPaths.map { self.globalIndexPath(forLocalIndexPath: $0) }
+    func globalIndexPaths(local indexPaths: [NSIndexPath]) -> [NSIndexPath] {
+        return indexPaths.map { self.globalIndexPath(local: $0) }
     }
     
     mutating func addMapping(fromGlobalSection globalSection: Int, toLocalSection localSection: Int) {
@@ -64,7 +60,7 @@ extension ComposedMapping {
         localToGlobal[localSection] = globalSection
     }
     
-    mutating func updateMappings(startingWithGlobalSection globalSection: Int, dataSource: DataSource) -> Int {
+    mutating func updateMappings(startingGlobalSection globalSection: Int, dataSource: DataSource) -> Int {
         globalToLocal.removeAll(keepCapacity: true)
         localToGlobal.removeAll(keepCapacity: true)
         
