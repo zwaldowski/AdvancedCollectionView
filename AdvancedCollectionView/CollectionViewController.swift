@@ -21,7 +21,7 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
         super.loadView()
         
         //  We need to know when the data source changes on the collection view so we can become the delegate for any data source subclasses.
-        collectionView?.addObserver(self, forKeyPath: "dataSource", options: NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, context: &dataSourceContext)
+        collectionView?.addObserver(self, forKeyPath: "dataSource", options: .Initial | .New, context: &dataSourceContext)
     }
     
     public override func viewWillAppear(animated: Bool) {
