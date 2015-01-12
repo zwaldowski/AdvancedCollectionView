@@ -988,12 +988,12 @@ public class GridLayout: UICollectionViewLayout {
         // Reset pinnable attributes for all others
         var foundSection = false
         for (section, values) in pinnableAttributes.groups() {
-            for attr in values {
-                resetPinnable(attr)
-            }
-            
-            switch (section, foundSection) {
-            case (.Index(let idx), false):
+            switch section {
+            case .Index(let idx):
+                for attr in values {
+                    resetPinnable(attr)
+                }
+                
                 let frame = sections[idx].frame
                 if !foundSection && frame.minY <= pinnableY && pinnableY <= frame.maxY {
                     foundSection = true
@@ -1003,7 +1003,7 @@ public class GridLayout: UICollectionViewLayout {
                         finalizePinning(attr, .OverlapPinned, idx)
                     }
                 }
-            default: break
+            case .Global: break
             }
         }
     }
