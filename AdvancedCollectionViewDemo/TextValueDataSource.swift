@@ -70,8 +70,10 @@ class TextValueDataSource<T>: BasicDataSource {
     
     // MARK: UICollectionViewDataSource
     
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection globalSection: Int) -> Int {
         if isObscuredByPlaceholder { return 0 }
+        
+        let section = localSection(global: globalSection)
         
         let value = items[section]
         let text = value.getValue(source)
@@ -81,8 +83,10 @@ class TextValueDataSource<T>: BasicDataSource {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let section = localSection(global: indexPath[0])
+        
         let cell = collectionView.dequeue(cellOfType: TextValueCell.self, indexPath: indexPath)
-        let value = items[indexPath[0]]
+        let value = items[section]
         cell.configure(value.getValue(source))
         return cell
     }
