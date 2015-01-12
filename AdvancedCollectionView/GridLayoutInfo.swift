@@ -240,6 +240,8 @@ extension SectionInfo {
                 let measure = measureSupplement(kind: headerKey, index: headerIndex, measuringFrame: frame)
                 headerInfo.measurement = .Static(measure.height)
                 length = measure.height
+            case (.Static(let value), _):
+                length = value
             default: break
             }
             
