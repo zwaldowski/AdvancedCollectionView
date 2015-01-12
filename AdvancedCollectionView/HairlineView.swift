@@ -15,13 +15,19 @@ private func hairlineColor() -> UIColor {
 /// A simple view that is ALWAYS a hairline thickness, either in width or height. By default the background color is a medium grey.
 class HairlineView: UIView {
     
-    private var axis = UILayoutConstraintAxis.Horizontal
+    private var axis: UILayoutConstraintAxis = .Horizontal {
+        didSet {
+            setContentHuggingPriority(250, forAxis: axis)
+            setContentHuggingPriority(1000, forAxis: axis)
+            invalidateIntrinsicContentSize()
+        }
+    }
     
     func commonInit() {
         backgroundColor = hairlineColor()
     }
     
-    override init(frame: CGRect) {
+    override init(frame: CGRect = CGRect.zeroRect) {
         super.init(frame: frame)
         commonInit()
     }
@@ -35,19 +41,8 @@ class HairlineView: UIView {
     }
     
     override var frame: CGRect {
-        get { return super.frame }
-        set {
-            axis = frame.width > frame.height ? .Horizontal : .Vertical
-            setContentHuggingPriority(250, forAxis: axis)
-            
-            switch axis {
-            case .Horizontal:
-                setContentHuggingPriority(1000, forAxis: .Vertical)
-                super.frame = CGRect(x: newValue.minX, y: newValue.minY, width: newValue.width, height: hairline)
-            case .Vertical:
-                setContentHuggingPriority(1000, forAxis: .Horizontal)
-                super.frame = CGRect(x: newValue.minX, y: newValue.minY, width: hairline, height: frame.height)
-            }
+        didSet {
+            axis = frame.width >= frame.height ? .Horizontal : .Vertical
         }
     }
     

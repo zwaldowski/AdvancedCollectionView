@@ -23,17 +23,17 @@ public class PinnableHeaderView: GridCell {
         
         backgroundColor = UIColor.whiteColor()
         
-        let border = HairlineView(frame: CGRect.zeroRect)
+        let border = HairlineView()
         border.setTranslatesAutoresizingMaskIntoConstraints(false)
-        addSubview(border)
+        contentView.addSubview(border)
         borderView = border
         
         let views = [ "borderView": border ]
         
         var constraints = [NSLayoutConstraint]()
         constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[borderView]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
-        constraints.append(NSLayoutConstraint(item: border, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 0))
-        addConstraints(constraints)
+        constraints.append(NSLayoutConstraint(item: border, attribute: .Bottom, relatedBy: .Equal, toItem: contentView, attribute: .Bottom, multiplier: 1, constant: 0))
+        contentView.addConstraints(constraints)
     }
     
     /// Property updated by the collection view grid layout when the header is pinned to the top of the collection view.
