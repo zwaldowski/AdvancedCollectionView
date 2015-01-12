@@ -39,6 +39,9 @@ final class KeyValueDataSource<T>: BasicDataSource {
     
     private var _items: Items = Items() {
         didSet {
+            let newEmpty = isEmpty(_items)
+            
+            updateLoadingState(newEmpty)
             notifyUpdateSimple(oldItems: oldValue, newItems: _items)
         }
     }

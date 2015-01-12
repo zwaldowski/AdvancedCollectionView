@@ -391,9 +391,9 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func prepareForCollectionViewUpdates(updateItems: [AnyObject]!) {
+        trace()
+
         for updateItem in updateItems as [UICollectionViewUpdateItem] {
-            trace()
-            
             switch (updateItem.updateAction, updateItem.indexPathBeforeUpdate, updateItem.indexPathAfterUpdate) {
             case (.Insert, _, let indexPath) where indexPath.item == NSNotFound:
                 insertedSections.addIndex(indexPath.section)

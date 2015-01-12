@@ -32,7 +32,7 @@ public func diff<New: CollectionType, Old: SequenceType where New.Generator.Elem
     return (deletedIndexes, insertedIndexes, movedIndexes)
 }
 
-public func diff<New: CollectionType, Old: CollectionType where Old.Generator.Element == New.Generator.Element>(#oldItems: Old, #newItems: New) -> (reloaded: Range<Int>, deleted: Range<Int>, inserted: Range<Int>) {
+public func simpleDiff<New: CollectionType, Old: CollectionType where Old.Generator.Element == New.Generator.Element>(#oldItems: Old, #newItems: New) -> (reloaded: Range<Int>, deleted: Range<Int>, inserted: Range<Int>) {
     func emptyRange(start: Int) -> Range<Int> {
         return start..<start
     }
@@ -53,10 +53,11 @@ public func diff<New: CollectionType, Old: CollectionType where Old.Generator.El
 /// A data source that manages a single section of items backed by an array.
 public class BasicDataSource: DataSource {
     
-    public func notifyUpdate<New: CollectionType, Old: SequenceType where New.Generator.Element: Hashable, Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New, animated: Bool) {
+    public func notifyUpdate<New: CollectionType, Old: CollectionType where New.Generator.Element: Hashable, Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New, animated: Bool) {
+        let oldEmpty = isEmpty(oldItems)
         let newEmpty = isEmpty(newItems)
         
-        if !animated {
+        if !animated || oldEmpty && !newEmpty {
             updateLoadingState(newEmpty)
             notifySectionsReloaded(NSIndexSet(index: 0))
             return
@@ -71,10 +72,15 @@ public class BasicDataSource: DataSource {
     }
     
     public func notifyUpdateSimple<New: CollectionType, Old: CollectionType where Old.Generator.Element == New.Generator.Element>(#oldItems: Old, newItems: New) {
+        let oldEmpty = isEmpty(oldItems)
         let newEmpty = isEmpty(newItems)
-        let (reloaded, deleted, inserted) = diff(oldItems: oldItems, newItems: newItems)
+
+        let (reloaded, deleted, inserted) = simpleDiff(oldItems: oldItems, newItems: newItems)
         
         updateLoadingState(newEmpty)
+        if oldEmpty && !newEmpty || !oldEmpty && newEmpty {
+            notifySectionsReloaded(NSIndexSet(index: 0))
+        }
         notifyItemsReloaded(reloaded, inSection: 0)
         notifyItemsRemoved(deleted, inSection: 0)
         notifyItemsInserted(inserted, inSection: 0)

@@ -45,9 +45,11 @@ class TextValueDataSource<T>: BasicDataSource {
     var items: Items = Items() {
         didSet {
             let newEmpty = isEmpty(items)
-            let (reloaded, deleted, inserted) = diff(oldItems: oldValue, newItems: items)
+            
+            let (reloaded, deleted, inserted) = simpleDiff(oldItems: oldValue, newItems: items)
             
             updateLoadingState(newEmpty)
+            
             notifySectionsReloaded(reloaded)
             notifySectionsInserted(inserted)
             notifySectionsRemoved(deleted)
