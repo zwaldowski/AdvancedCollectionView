@@ -23,20 +23,23 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         
         mappings.append(dataSource, ComposedMapping())
         updateMappings()
-        
-        let addedSections = mappings[dataSource]?.globalSections(forNumberOfSections: dataSource.numberOfSections) ?? NSIndexSet()
-        notifySectionsInserted(addedSections)
+        if let sections = mappings[dataSource]?.globalSections(forNumberOfSections: dataSource.numberOfSections) {
+            notifySectionsInserted(sections)
+        }
     }
     
     /// Remove the specified data source from this data source.
     public func remove(#dataSource: DataSource) {
         let mapping = mappings.removeValueForKey(dataSource)
-        let removedSections = mapping?.globalSections(forNumberOfSections: dataSource.numberOfSections) ?? NSIndexSet()
-        
+        assert(mappings[dataSource] != nil, "tried to remove data source not contained: \(dataSource)")
+
         dataSource.container = nil
         
+        let removedSections = mapping?.globalSections(forNumberOfSections: dataSource.numberOfSections)
         updateMappings()
-        notifySectionsRemoved(removedSections)
+        if let sections = removedSections {
+            notifySectionsRemoved(sections)
+        }
     }
     
     /// Clear the collection of data sources.
