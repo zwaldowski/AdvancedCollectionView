@@ -65,22 +65,6 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         }
     }
     
-    private func firstSection(forDataSource dataSource: DataSource) -> Int {
-        return mappings[dataSource]?.globalSection(forLocalSection: 0) ?? 0
-    }
-    
-    private func globalSections(forLocalSections local: NSIndexSet, dataSource: DataSource) -> NSIndexSet {
-        if let mapping = mappings[dataSource] {
-            return NSIndexSet(indexes: mapping.globalSections(forLocalSections: local))
-        } else {
-            return local
-        }
-    }
-    
-    private func globalIndexPaths(forLocalIndexPaths local: [NSIndexPath], dataSource: DataSource) -> [NSIndexPath] {
-        return mappings[dataSource]?.globalIndexPaths(forLocalIndexPaths: local) ?? local
-    }
-    
     // MARK: Overrides
     
     public override var numberOfSections: Int {

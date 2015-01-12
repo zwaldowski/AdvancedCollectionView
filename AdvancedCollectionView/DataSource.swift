@@ -187,7 +187,6 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             metrics.apply(metrics: submetrics)
         }
         
-        let isRoot = isRootDataSource
         switch (isRootDataSource, section) {
         case (true, .Global):
             metrics.supplementaryViews = headers

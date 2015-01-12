@@ -79,9 +79,9 @@ final class KeyValueDataSource<T>: BasicDataSource {
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(cellOfType: BasicCell.self, indexPath: indexPath)
-        let value = items[indexPath[1]]
-        cell.primaryLabel.text = value.label
-        cell.secondaryLabel.text = value.getValue(source)
+        let value = self[indexPath]
+        cell.primaryLabel.text = value?.label
+        cell.secondaryLabel.text = value?.getValue(source)
         return cell
     }
 
