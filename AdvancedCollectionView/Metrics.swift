@@ -101,7 +101,7 @@ public struct SectionMetrics {
         var metrics = SectionMetrics()
         metrics.measurement = .Default
         metrics.numberOfColumns = 1
-        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns | SeparatorOptions.AfterSections
+        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
         return metrics
     }
     

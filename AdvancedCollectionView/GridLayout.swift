@@ -735,7 +735,7 @@ public class GridLayout: UICollectionViewLayout {
     
     private func addSeparator(kind: DecorationKind = .RowSeparator, bit: SeparatorOptions = .Supplements, toRect getRect: @autoclosure () ->  CGRect, edge: CGRectEdge = .MaxYEdge, indexPath getIndexPath: @autoclosure () -> NSIndexPath, metrics: SectionMetrics) -> Attributes? {
         let color = metrics.separatorColor
-        if color == nil && !contains(metrics.separators, bit) { return nil }
+        if color == nil || !contains(metrics.separators, bit) { return nil }
         
         let ip = getIndexPath()
         let frame = getRect().separatorRect(edge: edge, thickness: hairline)

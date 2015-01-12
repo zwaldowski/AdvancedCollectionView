@@ -32,10 +32,9 @@ class CatListViewController: CollectionViewController {
         
         let segmented = SegmentedDataSource()
         
-        var metrics = segmented.defaultMetrics
-        metrics.measurement = .Static(44)
-        metrics.separatorColor = UIColor(white: 0.88, alpha: 1)
-        metrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0)
+        segmented.defaultMetrics.measurement = .Static(44)
+        segmented.defaultMetrics.separatorColor = UIColor(white: 0.88, alpha: 1)
+        segmented.defaultMetrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0)
         
         segmented.shouldDisplayDefaultHeader = false
         segmented.add(dataSource: catsDataSource)
