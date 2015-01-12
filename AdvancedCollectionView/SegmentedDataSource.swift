@@ -160,8 +160,8 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         return selectedDataSource?.numberOfSections ?? 1
     }
     
-    public override func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
-        return selectedDataSource?.childDataSource(forGlobalIndexPath: indexPath) ?? (self, indexPath)
+    public override func containedDataSource(forSection section: Int) -> DataSource {
+        return selectedDataSource?.containedDataSource(forSection: section) ?? self
     }
     
     public override func snapshotMetrics(#section: Section) -> SectionMetrics {

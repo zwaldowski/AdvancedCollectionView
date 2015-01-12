@@ -75,10 +75,20 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         return sectionDataSources.count
     }
     
-    public override func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
-        let dataSource = sectionDataSources[indexPath[0]]
-        let localIndexPath = mappings[dataSource]?.localIndexPath(forGlobalIndexPath: indexPath)
-        return (dataSource, localIndexPath ?? indexPath)
+    public override func localSection(global section: Int) -> Int {
+        let orig = super.localSection(global: section)
+        let dataSource = sectionDataSources[orig]
+        return mappings[dataSource]?.localSection(forGlobalSection: orig) ?? orig
+    }
+    
+    public override func globalSection(local section: Int) -> Int {
+        let dataSource = sectionDataSources[section]
+        let localIndex =  mappings[dataSource]?.globalSection(forLocalSection: section) ?? section
+        return super.globalSection(local: localIndex)
+    }
+    
+    public override func containedDataSource(forSection section: Int) -> DataSource {
+        return sectionDataSources[section]
     }
     
     public override func snapshotMetrics(#section: Section) -> SectionMetrics {
@@ -107,29 +117,27 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         }
     }
     
-    private func map(globalIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> (UICollectionView!, DataSource, NSIndexPath) {
+    private func map(globalIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> (DataSource, NSIndexPath) {
         if indexPath.length == 1 {
-            return (collectionView, self, indexPath)
+            return (self, indexPath)
         }
         
         let dataSource = sectionDataSources[indexPath[0]]
         if let mapping = mappings[dataSource] {
-            let wrapper = unsafeBitCast(ComposedViewWrapper(collectionView: collectionView, mapping: mapping), UICollectionView.self)
             let localIndexPath = mapping.localIndexPath(forGlobalIndexPath: indexPath)
-            return (wrapper, dataSource, localIndexPath)
+            return (dataSource, localIndexPath)
         } else {
-            return (collectionView, self, indexPath)
+            return (self, indexPath)
         }
     }
     
-    private func map(globalSection index: Int, collectionView: UICollectionView) -> (UICollectionView!, DataSource, Int) {
+    private func map(globalSection index: Int, collectionView: UICollectionView) -> (DataSource, Int) {
         let dataSource = sectionDataSources[index]
         if let mapping = mappings[dataSource] {
-            let wrapper = unsafeBitCast(ComposedViewWrapper(collectionView: collectionView, mapping: mapping), UICollectionView.self)
             let localSection = mapping.localSection(forGlobalSection: index)
-            return (wrapper, dataSource, localSection)
+            return (dataSource, localSection)
         } else {
-            return (collectionView, self, index)
+            return (self, index)
         }
     }
     
@@ -293,32 +301,32 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
 
         updateMappings()
         
-        let (wrapper, dataSource, localSection) = map(globalSection: section, collectionView: collectionView)
+        let (dataSource, localSection) = map(globalSection: section, collectionView: collectionView)
         
-        let numberOfSections = dataSource.numberOfSectionsInCollectionView(wrapper)
+        let numberOfSections = dataSource.numberOfSectionsInCollectionView(collectionView)
         assert(localSection < numberOfSections, "local section is out of bounds for composed data source")
         
-        return dataSource.collectionView(wrapper, numberOfItemsInSection: localSection)
+        return dataSource.collectionView(collectionView, numberOfItemsInSection: localSection)
     }
     
     public override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath globalIndexPath: NSIndexPath) -> UICollectionViewCell {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+        let (dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
 
-        return dataSource.collectionView(wrapper, cellForItemAtIndexPath: indexPath)
+        return dataSource.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
     }
     
     // MARK: CollectionViewDataSourceGridLayout
     
     public override func sizeFittingSize(size: CGSize, itemAtIndexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+        let (dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
         
-        return dataSource.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: wrapper)
+        return dataSource.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: collectionView)
     }
     
     public override func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath globalIndexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
-        let (wrapper, dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
+        let (dataSource, indexPath) = map(globalIndexPath: globalIndexPath, collectionView: collectionView)
         
-        return dataSource.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: wrapper)
+        return dataSource.sizeFittingSize(size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: collectionView)
     }
     
 }

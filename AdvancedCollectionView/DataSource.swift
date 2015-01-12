@@ -19,9 +19,18 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         return 1
     }
     
-    public func childDataSource(forGlobalIndexPath indexPath: NSIndexPath) -> (DataSource, NSIndexPath) {
-        return (self, indexPath)
+    public func localSection(global section: Int) -> Int {
+        return container?.localSection(global: section) ?? section
     }
+    
+    public func globalSection(local section: Int) -> Int {
+        return container?.globalSection(local: section) ?? section
+    }
+    
+    public func containedDataSource(forSection section: Int) -> DataSource {
+        return self
+    }
+
     
     // MARK: Parent-child utilities
     
@@ -451,7 +460,9 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             
             let section = indexPath[0]
             let item = indexPath[1]
-            let (dataSource, localIndexPath) = self.childDataSource(forGlobalIndexPath: indexPath)
+            let dataSource = self.containedDataSource(forSection: section)
+            let localSection = dataSource.localSection(global: section)
+            let localIndexPath = NSIndexPath(localSection, item)
             return (.Index(section), item, dataSource, localIndexPath)
         }()
         

@@ -65,6 +65,18 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     
     public let isObscuredByPlaceholder: Bool = false
     
+    public func localSection(global section: Int) -> Int {
+        return section
+    }
+    
+    public func globalSection(local section: Int) -> Int {
+        return section
+    }
+    
+    public func containedDataSource(forSection section: Int) -> DataSource {
+        return collectionView?.dataSource as DataSource
+    }
+    
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
         let gridLayout = collectionView?.collectionViewLayout as? GridLayout
         

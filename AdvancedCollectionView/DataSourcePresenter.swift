@@ -41,7 +41,7 @@ extension SectionAction: DebugPrintable {
     
 }
 
-public protocol DataSourcePresenter: NSObjectProtocol {
+public protocol DataSourcePresenter: class {
     
     func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction)
     
@@ -104,5 +104,10 @@ public protocol DataSourceContainer: DataSourcePresenter {
     var isObscuredByPlaceholder: Bool { get }
 
     func dataSourceWillPerform(dataSource: DataSource, itemAction: ItemAction)
+    
+    func containedDataSource(forSection section: Int) -> DataSource
+    
+    func localSection(#global: Int) -> Int
+    func globalSection(#local: Int) -> Int
     
 }

@@ -45,7 +45,7 @@
 		DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */; };
 		DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */; };
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
-		DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */; };
+		DB61BFF91A493C1700D79655 /* ComposedMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedMapping.swift */; };
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
 		DB63FBF11A5F94640095BB03 /* OrderedDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */; };
 		DB71E6561A489D9C00AFC472 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6541A489D9C00AFC472 /* Set.swift */; };
@@ -165,7 +165,7 @@
 		DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedDataSource.swift; sourceTree = "<group>"; };
 		DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnorderedCollectionType.swift; sourceTree = "<group>"; };
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
-		DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedViewWrapper.swift; sourceTree = "<group>"; };
+		DB61BFF81A493C1700D79655 /* ComposedMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedMapping.swift; sourceTree = "<group>"; };
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
 		DB63FBF01A5F94640095BB03 /* OrderedDictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionaryTests.swift; sourceTree = "<group>"; };
 		DB71E6541A489D9C00AFC472 /* Set.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
@@ -394,7 +394,7 @@
 			children = (
 				DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */,
 				DB9E05E11A511DB3004CF47F /* ComposedDataSource.swift */,
-				DB61BFF81A493C1700D79655 /* ComposedViewWrapper.swift */,
+				DB61BFF81A493C1700D79655 /* ComposedMapping.swift */,
 				DB8A78F71A3E8252008A79A6 /* DataSource.swift */,
 				DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */,
 				DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */,
@@ -654,7 +654,7 @@
 				DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Utilities.swift in Sources */,
 				DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */,
-				DB61BFF91A493C1700D79655 /* ComposedViewWrapper.swift in Sources */,
+				DB61BFF91A493C1700D79655 /* ComposedMapping.swift in Sources */,
 				DBB805A31A4F52280009C6CF /* OrderedSet.swift in Sources */,
 				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,
 				DB9E05E21A511DB3004CF47F /* ComposedDataSource.swift in Sources */,
