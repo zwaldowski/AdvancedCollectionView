@@ -15,7 +15,7 @@ struct GridCacheKey {
 }
 
 func ==(lhs: GridCacheKey, rhs: GridCacheKey) -> Bool {
-    return lhs.indexPath === rhs.indexPath || lhs.kind == rhs.kind || lhs.indexPath == rhs.indexPath
+    return (lhs.indexPath === rhs.indexPath || lhs.indexPath == rhs.indexPath) && lhs.kind == rhs.kind
 }
 
 extension GridCacheKey: Hashable {
