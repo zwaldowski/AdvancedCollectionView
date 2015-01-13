@@ -179,13 +179,36 @@ extension JSON: Printable {
 
 // MARK: CollectionType
 
-public enum JSONIndex: BidirectionalIndexType, Comparable {
+private enum JSONIndexStorage {
     case Array(JSON.Array.Index)
     case Object(JSON.Object.Index)
     case Identity
+}
+
+public struct JSONIndex: BidirectionalIndexType, Comparable {
+    
+    private let storage: JSONIndexStorage
+    private init(_ storage: JSONIndexStorage) {
+        self.storage = storage
+    }
+    
+    private func predecessorStorage() -> JSONIndexStorage {
+        switch storage {
+        case .Array(let idx):
+            return .Array(idx.predecessor())
+        case .Object(let idx):
+            return .Object(idx.predecessor())
+        case .Identity:
+            return .Identity
+        }
+    }
     
     public func predecessor() -> JSONIndex {
-        switch self {
+        return JSONIndex(predecessorStorage())
+    }
+    
+    private func successorStorage() -> JSONIndexStorage {
+        switch storage {
         case .Array(let idx):
             return .Array(idx.predecessor())
         case .Object(let idx):
@@ -196,20 +219,13 @@ public enum JSONIndex: BidirectionalIndexType, Comparable {
     }
     
     public func successor() -> JSONIndex {
-        switch self {
-        case .Array(let idx):
-            return .Array(idx.predecessor())
-        case .Object(let idx):
-            return .Object(idx.predecessor())
-        case .Identity:
-            return .Identity
-        }
+        return JSONIndex(successorStorage())
     }
     
 }
 
 public func <(lhs: JSONIndex, rhs: JSONIndex) -> Bool {
-    switch (lhs, rhs) {
+    switch (lhs.storage, rhs.storage) {
     case (.Array(let lidx), .Array(let ridx)):
         return lidx < ridx
     case (.Object(let lidx), .Object(let ridx)):
@@ -220,7 +236,7 @@ public func <(lhs: JSONIndex, rhs: JSONIndex) -> Bool {
 }
 
 public func ==(lhs: JSONIndex, rhs: JSONIndex) -> Bool {
-    switch (lhs, rhs) {
+    switch (lhs.storage, rhs.storage) {
     case (.Array(let lidx), .Array(let ridx)):
         return lidx == ridx
     case (.Object(let lidx), .Object(let ridx)):
@@ -260,7 +276,7 @@ extension JSON: CollectionType {
         }
     }
     
-    public var startIndex: JSONIndex {
+    private var startIndexStorage: JSONIndexStorage {
         switch self {
         case .JSONArray(let arr):
             return .Array(arr.startIndex)
@@ -271,7 +287,11 @@ extension JSON: CollectionType {
         }
     }
     
-    public var endIndex: JSONIndex {
+    public var startIndex: JSONIndex {
+        return JSONIndex(startIndexStorage)
+    }
+    
+    private var endIndexStorage: JSONIndexStorage {
         switch self {
         case .JSONArray(let arr):
             return .Array(arr.endIndex)
@@ -282,9 +302,13 @@ extension JSON: CollectionType {
         }
     }
     
+    public var endIndex: JSONIndex {
+        return JSONIndex(endIndexStorage)
+    }
+    
     public subscript(index: JSONIndex) -> JSON {
         get {
-            switch (self, index) {
+            switch (self, index.storage) {
             case (.JSONArray(let arr), .Array(let idx)):
                 if idx != arr.endIndex {
                     return JSON(rawValue: arr[idx])
@@ -300,7 +324,7 @@ extension JSON: CollectionType {
             }
         }
         set {
-            switch (self, index) {
+            switch (self, index.storage) {
             case (.JSONArray(var arr), .Array(let idx)):
                 if idx != arr.endIndex {
                     arr[idx] = newValue.rawValue
@@ -342,10 +366,10 @@ extension JSON: CollectionType {
     
     public subscript(index: Int) -> JSON {
         get {
-            return self[.Array(index)]
+            return self[JSONIndex(.Array(index))]
         }
         set {
-            self[.Array(index)] = newValue
+            self[JSONIndex(.Array(index))] = newValue
         }
     }
     
