@@ -21,7 +21,11 @@ func ==(lhs: GridCacheKey, rhs: GridCacheKey) -> Bool {
 extension GridCacheKey: Hashable {
     
     var hashValue: Int {
-        return 31 &* indexPath.hashValue &+ kind.hashValue
+        let prime = 31
+        var result = 1
+        result = prime &* result &+ indexPath.hashValue
+        result = prime &* result &+ kind.hashValue
+        return result
     }
     
 }

@@ -21,7 +21,11 @@ func ==(lhs: CatSighting, rhs: CatSighting) -> Bool {
 extension CatSighting: Hashable {
     
     var hashValue: Int {
-        return 31 &* date.hashValue &+ catFancier.hashValue
+        let prime = 31
+        var result = 1
+        result = prime &* result &+ date.hashValue
+        result = prime &* result &+ catFancier.hashValue
+        return result
     }
     
 }
