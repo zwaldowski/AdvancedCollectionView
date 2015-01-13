@@ -54,7 +54,7 @@ extension CGFloat: ApproximatelyEquatable {
 infix operator ~== { associativity none precedence 130 }
 infix operator !~== { associativity none precedence 130 }
 
-@transparent public func ~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
+public func ~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
     return T.abs(rhs - lhs) <= T.accuracy
 }
 
@@ -64,7 +64,7 @@ public func !~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
 
 // MARK: Edge insets
 
-@transparent public func ==(lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> Bool {
+public func ==(lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> Bool {
     return UIEdgeInsetsEqualToEdgeInsets(lhs, rhs)
 }
 

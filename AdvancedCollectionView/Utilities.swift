@@ -14,7 +14,7 @@ func assertMainThread(file: StaticString = __FILE__, line: UWord = __LINE__) {
 
 // MARK: Bitmasks
 
-@transparent func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T?, bit: T) -> Bool {
+func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T?, bit: T) -> Bool {
     if let mask = mask {
         return (mask & bit) != nil
     }
