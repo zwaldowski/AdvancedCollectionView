@@ -918,8 +918,8 @@ public class GridLayout: UICollectionViewLayout {
                 attribute.zIndex = ZIndex.Item.rawValue
                 attribute.backgroundColor = info.metrics.backgroundColor
                 attribute.selectedBackgroundColor = info.metrics.selectedBackgroundColor
-                attribute.backgroundColor = info.metrics.tintColor
-                attribute.selectedBackgroundColor = info.metrics.selectedTintColor
+                attribute.tintColor = info.metrics.tintColor
+                attribute.selectedTintColor = info.metrics.selectedTintColor
                 attribute.columnIndex = columnIndex
                 layoutAttributes.append(attribute)
                                 
