@@ -37,11 +37,35 @@ private enum DecorationKind: String {
 public class GridLayout: UICollectionViewLayout {
     
     public enum ZIndex: Int {
+        
         case Item = 1
         case Supplement = 100
         case Decoration = 1000
-        case OverlapPinned = 9900
+        case ItemPinned = 9900
         case SupplementPinned = 10000
+        case DecorationPinned = 11000
+        
+        init(category: UICollectionElementCategory, pinned: Bool = false) {
+            switch (category, pinned) {
+            case (.SupplementaryView, false):
+                self = .Supplement
+            case (.DecorationView, false):
+                self = .Decoration
+            case (.Cell, true):
+                self = .ItemPinned
+            case (.SupplementaryView, true):
+                self = .SupplementPinned
+            case (.DecorationView, true):
+                self = .DecorationPinned
+            default:
+                self = .Item
+            }
+        }
+        
+    }
+    
+    private class func defaultPinnableBorderColor() -> UIColor {
+        return UIColor(white: 0.8, alpha: 1)
     }
     
     typealias Attributes = GridLayoutAttributes
@@ -733,17 +757,22 @@ public class GridLayout: UICollectionViewLayout {
         }
     }
     
-    private func addSeparator(kind: DecorationKind = .RowSeparator, bit: SeparatorOptions = .Supplements, toRect getRect: @autoclosure () ->  CGRect, edge: CGRectEdge = .MaxYEdge, indexPath getIndexPath: @autoclosure () -> NSIndexPath, metrics: SectionMetrics) -> Attributes? {
-        let color = metrics.separatorColor
-        if color == nil || !contains(metrics.separators, bit) { return nil }
+    private func addSeparator(_ predicate: @autoclosure () -> Bool = true, kind: DecorationKind, bit: SeparatorOptions, indexPath getIndexPath: @autoclosure () -> NSIndexPath, toRect getRect: @autoclosure () ->  CGRect, edge: CGRectEdge = .MaxYEdge, metrics: SectionMetrics, force: Bool = false) -> Attributes? {
+        if !predicate() { return nil }
         
+        let skipped = metrics.separatorColor == nil || !contains(metrics.separators, bit)
+        if !force && skipped { return nil }
+        
+        let color = metrics.separatorColor ?? self.dynamicType.defaultPinnableBorderColor()
         let ip = getIndexPath()
         let frame = getRect().separatorRect(edge: edge, thickness: hairline)
         
         let separatorAttributes = layoutAttributesType(forDecorationViewOfKind: kind.rawValue, withIndexPath: ip)
         separatorAttributes.frame = frame
-        separatorAttributes.backgroundColor = color
         separatorAttributes.zIndex = ZIndex.Decoration.rawValue
+        separatorAttributes.hidden = skipped
+        separatorAttributes.backgroundColor = color
+        separatorAttributes.pinning = (false, skipped, frame.minY)
         layoutAttributes.append(separatorAttributes)
         
         let cacheKey = GridCacheKey(kind: kind.rawValue, indexPath: ip)
@@ -760,13 +789,13 @@ public class GridLayout: UICollectionViewLayout {
         
         let attribute = layoutAttributesType(forSupplementaryViewOfKind: kind, withIndexPath: ip)
         attribute.frame = item.frame
-        attribute.unpinned = item.frame.minY
         attribute.zIndex = ZIndex.Supplement.rawValue
         attribute.backgroundColor = item.metrics.backgroundColor ?? section.backgroundColor
         attribute.selectedBackgroundColor = item.metrics.selectedBackgroundColor ?? section.selectedBackgroundColor
         attribute.tintColor = item.metrics.tintColor ?? section.tintColor
         attribute.selectedTintColor = item.metrics.selectedTintColor ?? section.selectedTintColor
         attribute.padding = item.metrics.padding
+        attribute.pinning = (false, false, item.frame.minY)
         layoutAttributes.append(attribute)
         
         let key = GridCacheKey(kind: kind, indexPath: ip)
@@ -775,8 +804,13 @@ public class GridLayout: UICollectionViewLayout {
         return attribute
     }
     
-    private func addSupplementAttributes<T: RawRepresentable where T.RawValue == String>(kind: SupplementKind = .Header, indexPath getIndexPath: @autoclosure () -> NSIndexPath, info item: SupplementInfo, metrics section: SectionMetrics) -> Attributes? {
-        return addSupplementAttributes(kind: kind.rawValue, indexPath: getIndexPath, info: item, metrics: section)
+    // Helper for laying out supplements
+    private func appendPinned(attribute: Attributes, section: Section, shouldPin: Bool = false) {
+        if shouldPin {
+            pinnableAttributes.append(attribute, forKey: section)
+        } else if section == .Global {
+            nonPinnableGlobalAttributes.append(attribute)
+        }
     }
     
     private func addLayoutAttributes(forSection section: Section, withInfo info: SectionInfo) {
@@ -790,6 +824,8 @@ public class GridLayout: UICollectionViewLayout {
                 return .AfterSections
             }
         }()
+        
+        let isGlobal = section == .Global
         
         let indexPath = { (idx: Int) -> NSIndexPath in
             switch section {
@@ -809,9 +845,9 @@ public class GridLayout: UICollectionViewLayout {
             
             let attribute = layoutAttributesType(forDecorationViewOfKind: kind, withIndexPath: ip)
             attribute.frame = frame
-            attribute.unpinned = frame.minY
             attribute.zIndex = ZIndex.Item.rawValue
             attribute.backgroundColor = color
+            attribute.pinning = (false, false, frame.minY)
             
             layoutAttributes.append(attribute)
             globalSectionBackground = attribute
@@ -822,27 +858,16 @@ public class GridLayout: UICollectionViewLayout {
             globalSectionBackground = nil
         }
         
-        // Helper for laying out supplements
-        func appendPinned(attribute: Attributes, shouldPin: Bool) {
-            if shouldPin {
-                pinnableAttributes.append(attribute, forKey: section)
-            } else if section == .Global {
-                nonPinnableGlobalAttributes.append(attribute)
-            }
-        }
-        
         // Lay out headers
         for (kind, idx, item) in info[.Header] {
             if info.numberOfItems == 0 && !item.metrics.isVisibleWhileShowingPlaceholder { continue }
             
             if let attribute = addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics) {
-                appendPinned(attribute, item.metrics.shouldPin)
+                appendPinned(attribute, section: section, shouldPin: item.metrics.shouldPin)
                 
                 // Separators after global headers, before regular headers
-                if idx > 0 {
-                    if let separator = addSeparator(kind: .HeaderSeparator, toRect: attribute.frame, indexPath: attribute.indexPath, metrics: info.metrics) {
-                        appendPinned(separator, item.metrics.shouldPin)
-                    }
+                addSeparator(idx > 0, kind: .HeaderSeparator, bit: .Supplements, indexPath: attribute.indexPath, toRect: attribute.frame, metrics: info.metrics, force: isGlobal).map {
+                    self.appendPinned($0, section: section, shouldPin: item.metrics.shouldPin)
                 }
             }
         }
@@ -853,13 +878,14 @@ public class GridLayout: UICollectionViewLayout {
         case (0, 0):
             break
         case (0, let items) where items != 0:
-            addSeparator(kind: .HeaderSeparator, bit: .BeforeSections, toRect: info.headersRect, indexPath: indexPath(0), metrics: info.metrics)
+            addSeparator(kind: .HeaderSeparator, bit: .BeforeSections, indexPath: indexPath(0), toRect: info.headersRect, metrics: info.metrics)
         case (let headers, 0) where headers != 0:
-            addSeparator(kind: .HeaderSeparator, bit: afterSectionBit, toRect: info.headersRect, indexPath: indexPath(numberOfHeaders), metrics: info.metrics)
+            addSeparator(kind: .HeaderSeparator, bit: afterSectionBit, indexPath: indexPath(numberOfHeaders), toRect: info.headersRect, metrics: info.metrics)
         default:
             addSeparator(kind: .HeaderSeparator, bit: .Supplements,
+                indexPath: indexPath(numberOfHeaders),
                 toRect: info.headersRect.rectByInsetting(insets: info.metrics.groupPadding),
-                indexPath: indexPath(numberOfHeaders), metrics: info.metrics)
+                metrics: info.metrics)
         }
         
         // Lay out rows
@@ -872,8 +898,9 @@ public class GridLayout: UICollectionViewLayout {
             if rowIndex > 0 {
                 // If there's a separator, add it above the current row…
                 addSeparator(kind: .RowSeparator, bit: .Rows,
+                    indexPath: indexPath(rowIndex * numberOfColumns),
                     toRect: row.frame.rectByInsetting(insets: sepInsets.without(.Top | .Bottom)), edge: .MinYEdge,
-                    indexPath: indexPath(rowIndex * numberOfColumns), metrics: info.metrics)
+                    metrics: info.metrics)
             }
             
             for (columnIndex, item) in enumerate(row.items) {
@@ -881,8 +908,9 @@ public class GridLayout: UICollectionViewLayout {
                 
                 if columnIndex > 0 {
                     addSeparator(kind: .ColumnSeparator, bit: .Columns,
+                        indexPath: ip,
                         toRect: item.frame.rectByInsetting(insets: sepInsets.without(.Left | .Right)), edge: .MinXEdge,
-                    indexPath: ip, metrics: info.metrics)
+                        metrics: info.metrics)
                 }
                 
                 let attribute = layoutAttributesType(forCellWithIndexPath: ip)
@@ -901,8 +929,8 @@ public class GridLayout: UICollectionViewLayout {
         
         // Lay out other supplements
         for (kind, idx, item) in info[.Footer] {
-            if let attribute = addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics) {
-                addSeparator(kind: .FooterSeparator, bit: .Supplements, toRect: item.frame, edge: .MinYEdge, indexPath: attribute.indexPath, metrics: info.metrics)
+            addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics).map {
+                self.addSeparator(kind: .FooterSeparator, bit: .Supplements, indexPath: $0.indexPath, toRect: item.frame, edge: .MinYEdge, metrics: info.metrics)
             }
         }
         
@@ -914,8 +942,19 @@ public class GridLayout: UICollectionViewLayout {
         // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
         switch (section, info.numberOfItems) {
         case (.Index, let items) where items != 0:
-            addSeparator(bit: afterSectionBit, toRect: info.frame, indexPath: indexPath(items), metrics: info.metrics)
+            addSeparator(kind: .RowSeparator, bit: afterSectionBit, indexPath: indexPath(items), toRect: info.frame, metrics: info.metrics)
         default: break
+        }
+    }
+    
+    private func finalizePinning(#attributes: Attributes, offset: Int, pinned: Bool = false) {
+        let zIndex = ZIndex(category: attributes.representedElementCategory, pinned: pinned)
+        attributes.zIndex = zIndex.rawValue - offset - 1
+        
+        let isPinned = attributes.frame.minY !~== attributes.pinning.unpinnedY
+        attributes.pinning.isPinned = isPinned
+        if attributes.hidden {
+            attributes.hidden = !isPinned
         }
     }
     
@@ -924,8 +963,11 @@ public class GridLayout: UICollectionViewLayout {
         if countSections < 1 { return }
         
         let resetPinnable = { (attributes: Attributes) -> () in
-            attributes.pinned = false
-            if let unpinned = attributes.unpinned {
+            attributes.pinning.isPinned = false
+            if attributes.pinning.isHiddenNormally {
+                attributes.hidden = true
+            }
+            if let unpinned = attributes.pinning.unpinnedY {
                 attributes.frame.origin.y = unpinned
             }
         }
@@ -952,26 +994,17 @@ public class GridLayout: UICollectionViewLayout {
             }
         }
         
-        let finalizePinning = { (attributes: Attributes, zIndex: ZIndex, offset: Int) -> () in
-            attributes.zIndex = zIndex.rawValue - offset - 1
-            if let unpinned = attributes.unpinned {
-                attributes.pinned = attributes.frame.minY !~== unpinned
-            } else {
-                attributes.pinned = false
-            }
-        }
-        
         // Pin the headers as appropriate
         for (idx, info) in enumerate(pinnableAttributes[.Global]) {
             resetPinnable(info)
             applyTopPinning(info)
-            finalizePinning(info, .SupplementPinned, idx)
+            finalizePinning(attributes: info, offset: idx, pinned: true)
         }
         
         nonPinnableGlobalAttributes = nonPinnableGlobalAttributes.mapWithIndexReversed {
             resetPinnable($1)
             applyBottomPinning($1)
-            finalizePinning($1, .SupplementPinned, $0)
+            self.finalizePinning(attributes: $1, offset: $0)
             return $1
         }
         
@@ -1000,7 +1033,7 @@ public class GridLayout: UICollectionViewLayout {
                     
                     for (idx, attr) in enumerate(values) {
                         applyTopPinning(attr)
-                        finalizePinning(attr, .OverlapPinned, idx)
+                        finalizePinning(attributes: attr, offset: idx, pinned: true)
                     }
                 }
             case .Global: break
@@ -1056,9 +1089,9 @@ public class GridLayout: UICollectionViewLayout {
             endAlpha = 0
         }
         
-        if attributes.pinned {
+        if attributes.pinning.isPinned {
             endFrame.origin.x += contentOffsetAdjustment.x
-            endFrame.origin.y = max(attributes.unpinned ?? CGFloat.min, endFrame.minY + contentOffsetAdjustment.y)
+            endFrame.origin.y = max(attributes.pinning.unpinnedY ?? CGFloat.min, endFrame.minY + contentOffsetAdjustment.y)
         } else {
             endFrame.offset(dx: contentOffsetAdjustment.x, dy: contentOffsetAdjustment.y)
         }

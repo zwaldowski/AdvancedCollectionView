@@ -54,7 +54,6 @@ class CatDetailViewController: CollectionViewController {
         globalHeader.viewType = CatDetailHeader.self
         globalHeader.configure {
             [weak self] (view: CatDetailHeader, dataSource, indexPath) in
-            view.bottomBorderColor = nil
             if let cat = self?.cat {
                 view.configure(cat: cat)
             }

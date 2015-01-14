@@ -66,8 +66,6 @@
 		DB9E05E21A511DB3004CF47F /* ComposedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9E05E11A511DB3004CF47F /* ComposedDataSource.swift */; };
 		DBAF93851A567BF7003293E9 /* ColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93841A567BF7003293E9 /* ColorView.swift */; };
 		DBAF93881A567D3D003293E9 /* SegmentedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */; };
-		DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */; };
-		DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938B1A56874D003293E9 /* HairlineView.swift */; };
 		DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938D1A5689C8003293E9 /* GridCell.swift */; };
 		DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF938F1A568B56003293E9 /* Placeholder.swift */; };
 		DBAF93921A569147003293E9 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAF93911A569147003293E9 /* SectionHeaderView.swift */; };
@@ -188,8 +186,6 @@
 		DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionary.swift; sourceTree = "<group>"; };
 		DBAF93841A567BF7003293E9 /* ColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorView.swift; sourceTree = "<group>"; };
 		DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedHeaderView.swift; sourceTree = "<group>"; };
-		DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnableHeaderView.swift; sourceTree = "<group>"; };
-		DBAF938B1A56874D003293E9 /* HairlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HairlineView.swift; sourceTree = "<group>"; };
 		DBAF938D1A5689C8003293E9 /* GridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridCell.swift; sourceTree = "<group>"; };
 		DBAF938F1A568B56003293E9 /* Placeholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		DBAF93911A569147003293E9 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
@@ -430,8 +426,6 @@
 				DBAF93931A56917C003293E9 /* BasicCell.swift */,
 				DBAF93841A567BF7003293E9 /* ColorView.swift */,
 				DBAF938D1A5689C8003293E9 /* GridCell.swift */,
-				DBAF938B1A56874D003293E9 /* HairlineView.swift */,
-				DBAF93891A567D4A003293E9 /* PinnableHeaderView.swift */,
 				DBAF938F1A568B56003293E9 /* Placeholder.swift */,
 				DBAF93911A569147003293E9 /* SectionHeaderView.swift */,
 				DBAF93871A567D3D003293E9 /* SegmentedHeaderView.swift */,
@@ -642,7 +636,6 @@
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
-				DBAF938A1A567D4A003293E9 /* PinnableHeaderView.swift in Sources */,
 				DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */,
 				DBAF93971A569834003293E9 /* UIKit.swift in Sources */,
 				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
@@ -651,7 +644,6 @@
 				DBCD173E1A5490BA0072D6CB /* SectionHeaders.swift in Sources */,
 				DBAF93941A56917C003293E9 /* BasicCell.swift in Sources */,
 				DB8A78BC1A3E70BE008A79A6 /* GridLayout.swift in Sources */,
-				DBAF938C1A56874D003293E9 /* HairlineView.swift in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Utilities.swift in Sources */,
 				DBAF93901A568B56003293E9 /* Placeholder.swift in Sources */,
 				DB61BFF91A493C1700D79655 /* ComposedMapping.swift in Sources */,

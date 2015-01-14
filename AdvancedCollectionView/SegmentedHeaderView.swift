@@ -9,7 +9,7 @@
 import UIKit
 
 /// A header view with a segmented control for displaying titles of child data sources in a segmented data source.
-public class SegmentedHeaderView: PinnableHeaderView {
+public class SegmentedHeaderView: GridCell {
     
     private(set) public weak var segmentedControl: UISegmentedControl!
     private var segmentedControlConstraints = [NSLayoutConstraint]()

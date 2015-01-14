@@ -17,7 +17,7 @@ private func secondaryFont() -> UIFont {
 }
 
 /// A header view with a text label on the left or right with an optional button on the right.
-public class SectionHeaderView: PinnableHeaderView {
+public class SectionHeaderView: GridCell {
     
     private(set) public weak var leadingLabel: UILabel!
     private(set) public weak var trailingLabel: UILabel!
@@ -45,10 +45,6 @@ public class SectionHeaderView: PinnableHeaderView {
     public override func commonInit() {
         super.commonInit()
         
-        // default section header views don't have bottom borders
-        bottomBorderColor = nil
-        bottomBorderColorWhenPinned = nil
-        
         let left = UILabel()
         left.setTranslatesAutoresizingMaskIntoConstraints(false)
         left.font = primaryFont()
@@ -71,8 +67,6 @@ public class SectionHeaderView: PinnableHeaderView {
         leadingLabel.text = nil
         trailingLabel.font = secondaryFont()
         trailingLabel.text = nil
-        bottomBorderColor = nil
-        bottomBorderColorWhenPinned = nil
     }
     
     // MARK:

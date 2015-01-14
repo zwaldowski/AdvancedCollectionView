@@ -10,7 +10,7 @@ import UIKit
 import AdvancedCollectionView
 
 /// The header view shown in the cat detail screen. This view shows the name of the cat and its conservation status.
-class CatDetailHeader: PinnableHeaderView {
+class CatDetailHeader: GridCell {
     
     private weak var nameLabel: UILabel!
     private weak var descriptionLabel: UILabel!

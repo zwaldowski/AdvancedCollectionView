@@ -58,7 +58,20 @@ public func ~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
     return T.abs(rhs - lhs) <= T.accuracy
 }
 
+public func ~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case (.Some(let l), .Some(let r)):
+        return l ~== r
+    default:
+        return false
+    }
+}
+
 public func !~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
+    return !(lhs ~== rhs)
+}
+
+public func !~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
     return !(lhs ~== rhs)
 }
 
