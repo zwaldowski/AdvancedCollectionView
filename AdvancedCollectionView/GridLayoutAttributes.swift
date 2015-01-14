@@ -42,6 +42,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
         update(padding.top.hashValue)
         update(padding.left.hashValue)
         update(padding.bottom.hashValue)
+        update(padding.right.hashValue)
         update(columnIndex.hashValue)
         return hash
     }
