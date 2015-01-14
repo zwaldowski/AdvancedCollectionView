@@ -607,7 +607,7 @@ public class GridLayout: UICollectionViewLayout {
             
             for inSuplMetric in metrics.supplementaryViews {
                 switch (inSuplMetric.measurement, inSuplMetric.kind) {
-                case (.None, UICollectionElementKindSectionFooter):
+                case (.None, SupplementKind.Footer.rawValue):
                     continue
                 default:
                     break

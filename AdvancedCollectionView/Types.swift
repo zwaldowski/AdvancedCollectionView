@@ -96,10 +96,12 @@ public func ==(lhs: ElementLength, rhs: ElementLength) -> Bool {
 // MARK: -
 
 public enum SupplementKind: String {
-    case Header = "UICollectionElementKindSectionHeader"
-    case Footer = "UICollectionElementKindSectionFooter"
+    
+    case Header = "header"
+    case Footer = "footer"
     case SectionGap = "sectionGap"
     case AtopHeaders = "atopHeaders"
     case AtopItems = "atopItems"
     case Placeholder = "placeholder"
+    
 }

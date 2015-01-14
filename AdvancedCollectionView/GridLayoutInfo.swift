@@ -303,7 +303,7 @@ extension SectionInfo {
             let itemsRect = layoutRect.divide(itemsHeight)
             
             // Lay out footers as well
-            supplementalItems.updateMapWithIndex(groupForKey: UICollectionElementKindSectionFooter) { (footerInfex, var footerInfo) -> SupplementInfo in
+            supplementalItems.updateMapWithIndex(groupForKey: SupplementKind.Footer.rawValue) { (footerInfex, var footerInfo) -> SupplementInfo in
                 // skip hidden footers
                 if (footerInfo.metrics.isHidden) { return footerInfo }
                 
