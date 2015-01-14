@@ -28,6 +28,8 @@ class CatDetailDataSource: ComposedDataSource {
         
         super.init()
         
+        defaultMetrics.separators = nil
+        
         add(dataSource: classificationDataSource)
         add(dataSource: descriptionDataSource)
     }

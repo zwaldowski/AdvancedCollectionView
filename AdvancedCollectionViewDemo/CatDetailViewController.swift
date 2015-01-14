@@ -35,7 +35,6 @@ class CatDetailViewController: CollectionViewController {
         dataSource.title = NSLocalizedString("Sightings", comment: "Title of cat sightings section");
         dataSource.emptyContent = PlaceholderContent(title: NSLocalizedString("No Sightings", comment: "Title of the no sightings placeholder message"), message: NSLocalizedString("This cat has not been sighted recently.", comment: "The message to show when the cat has not been sighted recently"))
         
-        dataSource.defaultMetrics.separatorColor = UIColor(white: 0.88, alpha: 1)
         dataSource.defaultMetrics.separatorInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         dataSource.defaultMetrics.measurement = .Estimate(44)
         return dataSource

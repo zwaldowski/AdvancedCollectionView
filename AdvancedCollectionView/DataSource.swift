@@ -166,13 +166,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     private var headers = [SupplementaryMetrics]()
     private var headersIndexesByKey = [String: (Int, SupplementaryMetrics)]()
     
-    public var defaultMetrics: SectionMetrics! = SectionMetrics.defaultMetrics {
-        didSet {
-            if defaultMetrics == nil {
-                defaultMetrics = SectionMetrics.defaultMetrics
-            }
-        }
-    }
+    public var defaultMetrics: SectionMetrics = SectionMetrics()
     
     public subscript(section: Section) -> SectionMetrics? {
         get {
@@ -191,7 +185,9 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     }
     
     public func snapshotMetrics(#section: Section) -> SectionMetrics {
-        var metrics = defaultMetrics
+        var metrics = isRootDataSource ? SectionMetrics.defaultMetrics : SectionMetrics()
+        metrics.apply(metrics: defaultMetrics)
+        
         if let submetrics = sectionMetrics[section] {
             metrics.apply(metrics: submetrics)
         }

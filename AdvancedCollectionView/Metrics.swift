@@ -102,6 +102,7 @@ public struct SectionMetrics {
         metrics.measurement = .Default
         metrics.numberOfColumns = 1
         metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
+        metrics.separatorColor = UIColor(white: 0.8, alpha: 1)
         return metrics
     }
     
@@ -117,7 +118,10 @@ public struct SectionMetrics {
     /// How the cells should be laid out when there are multiple columns.
     public var itemLayout: LayoutOrder? = nil
     /// Determines where, if any, separators are drawn.
-    public var separators: SeparatorOptions? = nil
+    private var didSetSeparators: Bool = false
+    public var separators: SeparatorOptions = nil {
+        didSet { didSetSeparators = true }
+    }
     /// Insets for the separators drawn between rows (left & right) and
     /// columns (top & bottom).
     public var separatorInsets: UIEdgeInsets? = nil
@@ -147,7 +151,7 @@ public struct SectionMetrics {
         if let otherColumns = other.numberOfColumns { numberOfColumns = otherColumns }
         if let otherPadding = other.padding { padding = otherPadding }
         if let otherOrder = other.itemLayout { itemLayout = otherOrder }
-        if let otherSeparators = other.separators { separators = otherSeparators }
+        if other.didSetSeparators { separators = other.separators }
         if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }
         if let otherSeparatorColor = other.separatorColor { separatorColor = otherSeparatorColor }
         if let otherBackgroundColor = other.backgroundColor { backgroundColor = otherBackgroundColor }
