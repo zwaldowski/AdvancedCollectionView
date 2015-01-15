@@ -38,6 +38,7 @@ public class GridLayout: UICollectionViewLayout {
     
     public enum ZIndex: Int {
         
+        case Background = -100
         case Item = 1
         case Supplement = 100
         case Decoration = 1000
@@ -76,20 +77,14 @@ public class GridLayout: UICollectionViewLayout {
     private var layoutSize = CGSize.zeroSize
     private var oldLayoutSize = CGSize.zeroSize
     
-    private var layoutAttributes = [Attributes]()
     private var sections = [SectionInfo]()
     private var globalSection: SectionInfo?
     
-    private var globalSectionBackground: Attributes?
+    private var attributesCache = [ElementKey:Attributes]()
+    private var attributesCacheOld = [ElementKey:Attributes]()
+    
     private var nonPinnableGlobalAttributes = [Attributes]()
     private var pinnableAttributes = Multimap<Section, Attributes>()
-    
-    private var supplementaryAttributesCache = [GridCacheKey:Attributes]()
-    private var supplementaryAttributesCacheOld = [GridCacheKey:Attributes]()
-    private var decorationAttributesCache = [GridCacheKey:Attributes]()
-    private var decorationAttributesCacheOld = [GridCacheKey:Attributes]()
-    private var itemAttributesCache = [NSIndexPath:Attributes]()
-    private var itemAttributesCacheOld = [NSIndexPath:Attributes]()
     
     private var updateSectionDirections = [Section: SectionOperationDirection]()
     private var insertedIndexPaths = Set<NSIndexPath>()
@@ -98,8 +93,12 @@ public class GridLayout: UICollectionViewLayout {
     private var removedSections = NSMutableIndexSet()
     private var reloadedSections = NSMutableIndexSet()
     
-    private var measuringItem: (NSIndexPath, CGRect)?
-    private var measuringSupplement: (String, NSIndexPath, CGRect)?
+    private var measuringElement: (ElementKey, CGRect)?
+    
+    private var globalSectionBackground: Attributes? {
+        let key = ElementKey(decoration: DecorationKind.GlobalHeaderBackground.rawValue, NSIndexPath(0))
+        return attributesCache[key]
+    }
     
     private struct Flags {
         /// layout data becomes invalid if the data source changes
@@ -163,8 +162,10 @@ public class GridLayout: UICollectionViewLayout {
         
         var section = sections[indexPath.section]
         section.remeasureItem(atIndex: indexPath.item) { (index, measuringRect) in
-            self.measuringItem = (indexPath, measuringRect)
-            return self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize.zeroSize
+            self.measuringElement = (ElementKey(indexPath), measuringRect)
+            let ret = self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize.zeroSize
+            self.measuringElement = nil
+            return ret
         }
         sections[indexPath.section] = section
         
@@ -265,9 +266,9 @@ public class GridLayout: UICollectionViewLayout {
     public override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
         trace()
         updateSpecialAttributes()
-        let ret = layoutAttributes.filter {
+        let ret = attributesCache.values.filter {
             $0.frame.intersects(rect)
-        }
+        }.array
         log("Requested layout attributes:\n\(layoutAttributesDescription(ret))")
         return ret
     }
@@ -275,94 +276,72 @@ public class GridLayout: UICollectionViewLayout {
     public override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
         trace()
         
-        if let existing = itemAttributesCache[indexPath] {
+        let key = ElementKey(indexPath)
+        if let existing = attributesCache[key] {
             log("Found attributes for \(indexPath.stringValue): \(existing.frame)")
             return existing
         }
         
-        let (section, index) = unpack(indexPath: indexPath)
+        let (section, index) = key.components
         if let info = sectionInfo(forSection: section) {
-            let frame = { _ -> CGRect in
-                switch (self.measuringItem, info[index]) {
-                case (.Some(let (ip, rect)), _) where ip == indexPath:
-                    return rect
-                case (_, .Some(let item)):
-                    return item.frame
-                default:
-                    return CGRect.zeroRect
-                }
-            }()
-            
-            let attributes = layoutAttributesType(forCellWithIndexPath: indexPath)
-            attributes.hidden = flags.preparingLayout
-            attributes.frame = frame
-            attributes.zIndex = ZIndex.Item.rawValue
-            attributes.backgroundColor = info.metrics.backgroundColor
-            attributes.selectedBackgroundColor = info.metrics.selectedBackgroundColor
-            attributes.tintColor = info.metrics.tintColor
-            attributes.selectedTintColor = info.metrics.selectedTintColor
-            
-            log("Synthesized attributes for \(indexPath.stringValue): \(attributes.frame) (preparing layout \(flags.preparingLayout))")
-            
-            if !flags.preparingLayout {
-                itemAttributesCache[indexPath] = attributes
+            let attribute = createItemAttributes(element: key, section: info.metrics, item: info[index])
+            log("Synthesized attributes for \(indexPath.stringValue): \(attribute.frame) (preparing layout \(flags.preparingLayout))")
+            if flags.preparingLayout {
+                attribute.hidden = true
+            } else {
+                attributesCache[key] = attribute
             }
-            
-            return attributes
+            return attribute
         }
+
         return nil
     }
     
     public override func layoutAttributesForSupplementaryViewOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
         trace()
         
-        let key = GridCacheKey(kind: kind, indexPath: indexPath)
-        if let existing = supplementaryAttributesCache[key] {
+        let key = ElementKey(supplement: kind, indexPath)
+        if let existing = attributesCache[key] {
+            log("Found attributes for \(key): \(existing.frame)")
             return existing
         }
         
-        let (section, index) = unpack(indexPath: indexPath)
-        let info = sectionInfo(forSection: section)
-        let item = info?[kind, index]
-        let frame = { _ -> CGRect in
-            switch (self.measuringSupplement, item) {
-            case (.Some(let (mKind, ip, rect)), _) where mKind == kind && ip == indexPath:
-                return rect
-            case (_, .Some(let item)):
-                return item.frame
-            default:
-                return CGRect.zeroRect
+        let (section, index) = key.components
+        if let info = sectionInfo(forSection: section) {
+            let attribute = createSupplementAttributes(element: key, section: info, item: info[kind, index])
+            if flags.preparingLayout {
+                attribute.hidden = true
+            } else {
+                attributesCache[key] = attribute
             }
-        }()
-        
-        let attributes = layoutAttributesType(forSupplementaryViewOfKind: kind, withIndexPath: indexPath)
-        
-        attributes.hidden = flags.preparingLayout
-        attributes.frame = frame
-        attributes.zIndex = ZIndex.Supplement.rawValue
-        attributes.padding = item?.metrics.padding ?? UIEdgeInsetsZero
-        attributes.backgroundColor = item?.metrics.backgroundColor ?? info?.metrics.backgroundColor
-        attributes.selectedBackgroundColor = item?.metrics.selectedBackgroundColor ?? info?.metrics.selectedBackgroundColor
-        attributes.tintColor = item?.metrics.tintColor ?? info?.metrics.tintColor
-        attributes.selectedTintColor = item?.metrics.selectedTintColor ?? info?.metrics.selectedTintColor
-        
-        if !flags.preparingLayout {
-            supplementaryAttributesCache[key] = attributes
+            return attribute
         }
         
-        return attributes
+        return nil
     }
     
     public override func layoutAttributesForDecorationViewOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
         trace()
         
-        let key = GridCacheKey(kind: kind, indexPath: indexPath)
-        if let existing = decorationAttributesCache[key] {
+        let key = ElementKey(decoration: kind, indexPath)
+        if let existing = attributesCache[key] {
+            log("Found attributes for \(kind)@\(indexPath.stringValue): \(existing.frame)")
             return existing
         }
         
-        // FIXME: don't know… but returning nil crashes.
-        return nil
+        let (section, _) = key.components
+        switch (DecorationKind(rawValue: kind), sectionInfo(forSection: section)) {
+        case (.Some(let decoration), .Some(let info)):
+            let attribute = createDecorationAttributes(element: key, decoration: decoration, section: info)
+            if flags.preparingLayout {
+                attribute.hidden = true
+            } else {
+                attributesCache[key] = attribute
+            }
+            return attribute
+        default:
+            return nil
+        }
     }
     
     public override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
@@ -452,23 +431,27 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func indexPathsToDeleteForDecorationViewOfKind(kind: String) -> [AnyObject] {
-        return map(lazy(decorationAttributesCacheOld).filter {
-            $0.0.kind == kind && self.decorationAttributesCache[$0.0] != nil
-        }, { $0.0.indexPath })
+        return attributesCacheOld.keys.filter { key in
+            switch key {
+            case .Decoration(_, let dKind) where dKind == kind:
+                return self.attributesCache[key] != nil
+            default:
+                return false
+            }
+        }.map { $0.indexPath }.array
     }
     
-    public override func initialLayoutAttributesForAppearingDecorationElementOfKind(kind: String, atIndexPath decorationIndexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
-        log("initial decoration:\(kind) indexPath:\(decorationIndexPath.stringValue)")
+    public override func initialLayoutAttributesForAppearingDecorationElementOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("initial decoration:\(kind) indexPath:\(indexPath.stringValue)")
         
-        let key = GridCacheKey(kind: kind, indexPath: decorationIndexPath)
-        let (section, _) = unpack(indexPath: decorationIndexPath)
+        let key = ElementKey(decoration: kind, indexPath)
+        let (section, _) = key.components
         
-        if var result = decorationAttributesCache[key]?.copy() as? Attributes {
+        if var result = attributesCache[key]?.copy() as? Attributes {
             let direction = updateSectionDirections[section] ?? .Default
             
-            configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn: {
-                contains(self.insertedSections, section) || (contains(self.reloadedSections, section) && self.decorationAttributesCacheOld[key] == nil)
-            })
+            configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
+                contains(insertedSections, section) || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -476,18 +459,17 @@ public class GridLayout: UICollectionViewLayout {
         return nil
     }
     
-    public override func finalLayoutAttributesForDisappearingDecorationElementOfKind(kind: String, atIndexPath decorationIndexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
-        log("final decoration:\(kind) indexPath:\(decorationIndexPath.stringValue)")
+    public override func finalLayoutAttributesForDisappearingDecorationElementOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        log("final decoration:\(kind) indexPath:\(indexPath.stringValue)")
         
-        let key = GridCacheKey(kind: kind, indexPath: decorationIndexPath)
-        let (section, _) = unpack(indexPath: decorationIndexPath)
+        let key = ElementKey(decoration: kind, indexPath)
+        let (section, _) = key.components
         
-        if var result = decorationAttributesCacheOld[key]?.copy() as? Attributes {
+        if var result = attributesCacheOld[key]?.copy() as? Attributes {
             let direction = updateSectionDirections[section] ?? .Default
             
-            configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut: {
-                contains(self.removedSections, section) || (contains(self.reloadedSections, section) && self.decorationAttributesCache[key] == nil)
-            })
+            configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
+                contains(removedSections, section) || (contains(reloadedSections, section) && attributesCache[key] == nil))
             
             return result
         }
@@ -498,20 +480,19 @@ public class GridLayout: UICollectionViewLayout {
     public override func initialLayoutAttributesForAppearingSupplementaryElementOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         log("initial supplement:\(kind) indexPath:\(indexPath.stringValue)")
         
-        let key = GridCacheKey(kind: kind, indexPath: indexPath)
-        let (section, _) = unpack(indexPath: indexPath)
+        let key = ElementKey(supplement: kind, indexPath)
+        let (section, _) = key.components
         
-        if var result = supplementaryAttributesCache[key]?.copy() as? Attributes {
+        if var result = attributesCache[key]?.copy() as? Attributes {
             if kind == SupplementKind.Placeholder.rawValue {
-                configureInitial(attributes: &result, inFromDirection: .Default, shouldFadeIn: { true })
+                configureInitial(attributes: &result, inFromDirection: .Default)
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
                 let inserted = contains(insertedSections, section)
                 let offsets = direction != .Default && inserted
                 
-                configureInitial(attributes: &result, inFromDirection: direction, makeFrameAdjustments: offsets, shouldFadeIn: {
-                    inserted || (contains(self.reloadedSections, section) && self.supplementaryAttributesCacheOld[key] == nil)
-                })
+                configureInitial(attributes: &result, inFromDirection: direction, makeFrameAdjustments: offsets, shouldFadeIn:
+                    inserted || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
             }
             
             return result
@@ -523,17 +504,16 @@ public class GridLayout: UICollectionViewLayout {
     public override func finalLayoutAttributesForDisappearingSupplementaryElementOfKind(kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         log("final supplement:\(kind) indexPath:\(indexPath.stringValue)")
         
-        let key = GridCacheKey(kind: kind, indexPath: indexPath)
-        let (section, _) = unpack(indexPath: indexPath)
+        let key = ElementKey(supplement: kind, indexPath)
+        let (section, _) = key.components
         
-        if var result = supplementaryAttributesCacheOld[key]?.copy() as? Attributes {
+        if var result = attributesCacheOld[key]?.copy() as? Attributes {
             if kind == SupplementKind.Placeholder.rawValue {
-                configureFinal(attributes: &result, outToDirection: .Default, shouldFadeOut: { true })
+                configureFinal(attributes: &result, outToDirection: .Default)
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
-                configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut: {
-                    contains(self.removedSections, section) || contains(self.reloadedSections, section)
-                })
+                configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
+                    contains(removedSections, section) || contains(reloadedSections, section))
             }
             
             return result
@@ -545,14 +525,14 @@ public class GridLayout: UICollectionViewLayout {
     public override func initialLayoutAttributesForAppearingItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         log("initial indexPath:\(indexPath.stringValue)")
         
-        let (section, _) = unpack(indexPath: indexPath)
+        let key = ElementKey(indexPath)
+        let (section, _) = key.components
         
-        if var result = itemAttributesCache[indexPath]?.copy() as? Attributes {
+        if var result = attributesCache[key]?.copy() as? Attributes {
             let direction = updateSectionDirections[section] ?? .Default
             
-            configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn: {
-                contains(self.insertedSections, section) || self.insertedIndexPaths.contains(indexPath) || (contains(self.reloadedSections, section) && self.itemAttributesCacheOld[indexPath] == nil)
-            })
+            configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
+                contains(insertedSections, section) || insertedIndexPaths.contains(indexPath) || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -563,14 +543,14 @@ public class GridLayout: UICollectionViewLayout {
     public override func finalLayoutAttributesForDisappearingItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         log("final indexPath:\(indexPath.stringValue)")
         
-        let (section, _) = unpack(indexPath: indexPath)
+        let key = ElementKey(indexPath)
+        let (section, _) = key.components
         
-        if var result = itemAttributesCacheOld[indexPath]?.copy() as? Attributes {
+        if var result = attributesCacheOld[key]?.copy() as? Attributes {
             let direction = updateSectionDirections[section] ?? .Default
             
-            configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut: {
-                self.removedIndexPaths.contains(indexPath) || contains(self.removedSections, section) || (contains(self.reloadedSections, section) && self.itemAttributesCache[indexPath] == nil)
-            })
+            configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
+                removedIndexPaths.contains(indexPath) || contains(removedSections, section) || (contains(reloadedSections, section) && attributesCache[key] == nil))
             
             return result
         }
@@ -588,18 +568,11 @@ public class GridLayout: UICollectionViewLayout {
         sections.removeAll(keepCapacity: true)
         globalSection = nil
         
-        globalSectionBackground = nil
-        nonPinnableGlobalAttributes.removeAll()
+        attributesCacheOld.removeAll()
+        swap(&attributesCache, &attributesCacheOld)
+        
         pinnableAttributes.removeAll()
-        
-        itemAttributesCacheOld.removeAll()
-        swap(&itemAttributesCache, &itemAttributesCacheOld)
-        
-        supplementaryAttributesCacheOld.removeAll()
-        swap(&supplementaryAttributesCache, &supplementaryAttributesCacheOld)
-        
-        decorationAttributesCacheOld.removeAll()
-        swap(&decorationAttributesCache, &decorationAttributesCacheOld)
+        nonPinnableGlobalAttributes.removeAll()
     }
     
     private func createLayoutInfoFromDataSource() {
@@ -688,7 +661,6 @@ public class GridLayout: UICollectionViewLayout {
         
         oldLayoutSize = layoutSize
         layoutSize = CGSize.zeroSize
-        layoutAttributes.removeAll()
         
         let contentInset = collectionView?.contentInset ?? UIEdgeInsetsZero
         let contentOffsetY = collectionView.map { $0.contentOffset.y + contentInset.top } ?? 0
@@ -700,8 +672,10 @@ public class GridLayout: UICollectionViewLayout {
         var shouldInvalidate = false
         let measureSupplement = { (kind: String, indexPath: NSIndexPath, measuringFrame: CGRect) -> CGSize in
             shouldInvalidate |= true
-            self.measuringSupplement = (kind, indexPath, measuringFrame)
-            return self.dataSource?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
+            self.measuringElement = (ElementKey(supplement: kind, indexPath), measuringFrame)
+            let ret = self.dataSource?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
+            self.measuringElement = nil
+            return ret
         }
         
         // build global section
@@ -720,10 +694,12 @@ public class GridLayout: UICollectionViewLayout {
             
             section.layout(rect: layoutRect, nextStart: &start, measureSupplement: {
                 measureSupplement($0, NSIndexPath(sectionIndex, $1), $2)
-            }, measureItem: {
-                let indexPath = NSIndexPath(sectionIndex, $0)
-                self.measuringItem = (indexPath, $1)
-                return self.dataSource?.sizeFittingSize($1.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? $1.size
+            }, measureItem: { (index, measuringRect) in
+                let indexPath = NSIndexPath(sectionIndex, index)
+                self.measuringElement = (ElementKey(indexPath), measuringRect)
+                let ret = self.dataSource?.sizeFittingSize(measuringRect.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? measuringRect.size
+                self.measuringElement = nil
+                return ret
             })
             
             self.addLayoutAttributes(forSection: .Index(sectionIndex), withInfo: section)
@@ -749,7 +725,7 @@ public class GridLayout: UICollectionViewLayout {
         flags.layoutMetricsAreValid = true
         flags.preparingLayout = false
         
-        log("prepared layout attributes:\n\(layoutAttributesDescription(layoutAttributes))")
+        log("prepared layout attributes:\n\(layoutAttributesDescription(attributesCache.values))")
         
         // But if the headers changed, we need to invalidate…
         if (shouldInvalidate) {
@@ -757,76 +733,8 @@ public class GridLayout: UICollectionViewLayout {
         }
     }
     
-    private func addSeparator(_ predicate: @autoclosure () -> Bool = true, kind: DecorationKind, bit: SeparatorOptions, indexPath getIndexPath: @autoclosure () -> NSIndexPath, toRect getRect: @autoclosure () ->  CGRect, edge: CGRectEdge = .MaxYEdge, metrics: SectionMetrics, force: Bool = false) -> Attributes? {
-        if !predicate() { return nil }
-        
-        let skipped = metrics.separatorColor == nil || !contains(metrics.separators, bit)
-        if !force && skipped { return nil }
-        
-        let color = metrics.separatorColor ?? self.dynamicType.defaultPinnableBorderColor()
-        let ip = getIndexPath()
-        let frame = getRect().separatorRect(edge: edge, thickness: hairline)
-        
-        let separatorAttributes = layoutAttributesType(forDecorationViewOfKind: kind.rawValue, withIndexPath: ip)
-        separatorAttributes.frame = frame
-        separatorAttributes.zIndex = ZIndex.Decoration.rawValue
-        separatorAttributes.hidden = skipped
-        separatorAttributes.backgroundColor = color
-        separatorAttributes.pinning = (false, skipped, frame.minY)
-        layoutAttributes.append(separatorAttributes)
-        
-        let cacheKey = GridCacheKey(kind: kind.rawValue, indexPath: ip)
-        decorationAttributesCache[cacheKey] = separatorAttributes
-        
-        return separatorAttributes
-    }
-    
-    private func addSupplementAttributes(#kind: String, indexPath getIndexPath: @autoclosure () -> NSIndexPath, info item: SupplementInfo, metrics section: SectionMetrics) -> Attributes? {
-        // ignore headers if there are no items and the header isn't a global header
-        if item.metrics.isHidden || item.frame.isEmpty { return nil }
-        
-        let ip = getIndexPath()
-        
-        let attribute = layoutAttributesType(forSupplementaryViewOfKind: kind, withIndexPath: ip)
-        attribute.frame = item.frame
-        attribute.zIndex = ZIndex.Supplement.rawValue
-        attribute.backgroundColor = item.metrics.backgroundColor ?? section.backgroundColor
-        attribute.selectedBackgroundColor = item.metrics.selectedBackgroundColor ?? section.selectedBackgroundColor
-        attribute.tintColor = item.metrics.tintColor ?? section.tintColor
-        attribute.selectedTintColor = item.metrics.selectedTintColor ?? section.selectedTintColor
-        attribute.padding = item.metrics.padding
-        attribute.pinning = (false, false, item.frame.minY)
-        layoutAttributes.append(attribute)
-        
-        let key = GridCacheKey(kind: kind, indexPath: ip)
-        supplementaryAttributesCache[key] = attribute
-        
-        return attribute
-    }
-    
-    // Helper for laying out supplements
-    private func appendPinned(attribute: Attributes, section: Section, shouldPin: Bool = false) {
-        if shouldPin {
-            pinnableAttributes.append(attribute, forKey: section)
-        } else if section == .Global {
-            nonPinnableGlobalAttributes.append(attribute)
-        }
-    }
-    
     private func addLayoutAttributes(forSection section: Section, withInfo info: SectionInfo) {
-        let numberOfSections = collectionView?.numberOfSections() ?? 0
-        
-        let afterSectionBit = { () -> SeparatorOptions in
-            switch section {
-            case .Index(let idx):
-                return idx + 1 < numberOfSections ? .AfterSections : .AfterLastSection
-            case .Global:
-                return .AfterSections
-            }
-        }()
-        
         let isGlobal = section == .Global
-        
         let indexPath = { (idx: Int) -> NSIndexPath in
             switch section {
             case .Global:
@@ -837,115 +745,66 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         // Add the background decoration attribute
-        switch (section, info.metrics.backgroundColor) {
-        case (.Global, .Some(let color)):
-            let ip = indexPath(0)
-            let kind = DecorationKind.GlobalHeaderBackground.rawValue
-            let frame = info.frame
-            
-            let attribute = layoutAttributesType(forDecorationViewOfKind: kind, withIndexPath: ip)
-            attribute.frame = frame
-            attribute.zIndex = ZIndex.Item.rawValue
-            attribute.backgroundColor = color
-            attribute.pinning = (false, false, frame.minY)
-            
-            layoutAttributes.append(attribute)
-            globalSectionBackground = attribute
-            
-            let cacheKey = GridCacheKey(kind: kind, indexPath: ip)
-            decorationAttributesCache[cacheKey] = attribute
-        default:
-            globalSectionBackground = nil
+        if isGlobal {
+            let key = ElementKey(decoration: DecorationKind.GlobalHeaderBackground.rawValue, indexPath(0))
+            attributesCache[key] = createDecorationAttributes(element: key, decoration: .GlobalHeaderBackground, section: info)
         }
         
         // Lay out headers
         for (kind, idx, item) in info[.Header] {
             if info.numberOfItems == 0 && !item.metrics.isVisibleWhileShowingPlaceholder { continue }
+            let ip = indexPath(idx)
             
-            if let attribute = addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics) {
+            if let attribute = addSupplementAttributes(kind: kind, indexPath: ip, section: info, item: item) {
                 appendPinned(attribute, section: section, shouldPin: item.metrics.shouldPin)
                 
                 // Separators after global headers, before regular headers
-                addSeparator(idx > 0, kind: .HeaderSeparator, bit: .Supplements, indexPath: attribute.indexPath, toRect: attribute.frame, metrics: info.metrics, force: isGlobal).map {
-                    self.appendPinned($0, section: section, shouldPin: item.metrics.shouldPin)
+                if let separator = addSeparator(idx > 0, kind: .HeaderSeparator, indexPath: ip, section: info, force: isGlobal) {
+                    appendPinned(separator, section: section, shouldPin: item.metrics.shouldPin)
                 }
             }
         }
         
         // Separator after non-global headers
         let numberOfHeaders = info.count(supplements: .Header) ?? 0
-        switch (numberOfHeaders, info.numberOfItems) {
-        case (0, 0):
-            break
-        case (0, let items) where items != 0:
-            addSeparator(kind: .HeaderSeparator, bit: .BeforeSections, indexPath: indexPath(0), toRect: info.headersRect, metrics: info.metrics)
-        case (let headers, 0) where headers != 0:
-            addSeparator(kind: .HeaderSeparator, bit: afterSectionBit, indexPath: indexPath(numberOfHeaders), toRect: info.headersRect, metrics: info.metrics)
-        default:
-            addSeparator(kind: .HeaderSeparator, bit: .Supplements,
-                indexPath: indexPath(numberOfHeaders),
-                toRect: info.headersRect.rectByInsetting(insets: info.metrics.groupPadding),
-                metrics: info.metrics)
-        }
+        let numberOfItems = info.numberOfItems
+        addSeparator((numberOfHeaders != 0) ^ (numberOfItems != 0), kind: .HeaderSeparator, indexPath: indexPath(numberOfHeaders), section: info)
         
         // Lay out rows
         let numberOfColumns = info.metrics.numberOfColumns ?? 1
         for (rowIndex, row) in enumerate(info.rows) {
             if row.items.isEmpty { continue }
             
-            let sepInsets = info.metrics.separatorInsets ?? UIEdgeInsetsZero
-            
-            if rowIndex > 0 {
-                // If there's a separator, add it above the current row…
-                addSeparator(kind: .RowSeparator, bit: .Rows,
-                    indexPath: indexPath(rowIndex * numberOfColumns),
-                    toRect: row.frame.rectByInsetting(insets: sepInsets.without(.Top | .Bottom)), edge: .MinYEdge,
-                    metrics: info.metrics)
-            }
-            
             for (columnIndex, item) in enumerate(row.items) {
                 let ip = indexPath(rowIndex * numberOfColumns + columnIndex)
+                let key = ElementKey(ip)
                 
-                if columnIndex > 0 {
-                    addSeparator(kind: .ColumnSeparator, bit: .Columns,
-                        indexPath: ip,
-                        toRect: item.frame.rectByInsetting(insets: sepInsets.without(.Left | .Right)), edge: .MinXEdge,
-                        metrics: info.metrics)
-                }
-                
-                let attribute = layoutAttributesType(forCellWithIndexPath: ip)
-                attribute.frame = item.frame
-                attribute.zIndex = ZIndex.Item.rawValue
-                attribute.backgroundColor = info.metrics.backgroundColor
-                attribute.selectedBackgroundColor = info.metrics.selectedBackgroundColor
-                attribute.tintColor = info.metrics.tintColor
-                attribute.selectedTintColor = info.metrics.selectedTintColor
-                attribute.columnIndex = columnIndex
-                layoutAttributes.append(attribute)
-                                
-                itemAttributesCache[ip] = attribute
+                attributesCache[key] = createItemAttributes(element: key, section: info.metrics, item: item, columnIndex: columnIndex)
+
+                addSeparator(columnIndex > 0, kind: .ColumnSeparator, indexPath: ip, section: info)
             }
+            
+            // If there's a separator, add it above the current row…
+            addSeparator(rowIndex > 0, kind: .RowSeparator, indexPath: indexPath(rowIndex * numberOfColumns), section: info)
         }
         
         // Lay out other supplements
         for (kind, idx, item) in info[.Footer] {
-            addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics).map {
-                self.addSeparator(kind: .FooterSeparator, bit: .Supplements, indexPath: $0.indexPath, toRect: item.frame, edge: .MinYEdge, metrics: info.metrics)
+            let ip = indexPath(idx)
+            if let attribute = addSupplementAttributes(kind: kind, indexPath: ip, section: info, item: item) {
+                addSeparator(kind: .FooterSeparator, indexPath: ip, section: info)
             }
         }
         
         for (kind, idx, item) in info[.AllOther] {
-            addSupplementAttributes(kind: kind, indexPath: indexPath(idx), info: item, metrics: info.metrics)
+            addSupplementAttributes(kind: kind, indexPath: indexPath(idx), section: info, item: item)
         }
-        
         
         // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
-        switch (section, info.numberOfItems) {
-        case (.Index, let items) where items != 0:
-            addSeparator(kind: .RowSeparator, bit: afterSectionBit, indexPath: indexPath(items), toRect: info.frame, metrics: info.metrics)
-        default: break
-        }
+        addSeparator(!isGlobal && numberOfItems != 0, kind: .RowSeparator, indexPath: indexPath(numberOfItems), section: info)
     }
+    
+    // MARK: Pinning
     
     private func finalizePinning(#attributes: Attributes, offset: Int, pinned: Bool = false) {
         let zIndex = ZIndex(category: attributes.representedElementCategory, pinned: pinned)
@@ -1043,19 +902,172 @@ public class GridLayout: UICollectionViewLayout {
     
     // MARK: Helpers
     
-    private func configureInitial(inout #attributes: Attributes, inFromDirection direction: SectionOperationDirection = .Default, makeFrameAdjustments: Bool = true, shouldFadeIn shouldFade: (() -> Bool)? = nil) {
+    private func appendPinned(attribute: Attributes, section: Section, shouldPin: Bool = false) {
+        if shouldPin {
+            pinnableAttributes.append(attribute, forKey: section)
+        } else if section == .Global {
+            nonPinnableGlobalAttributes.append(attribute)
+        }
+    }
+    
+    private func afterSectionSeparatorBit(#section: Section) -> SeparatorOptions {
+        switch section {
+        case .Index(let idx):
+            let numberOfSections = collectionView?.numberOfSections() ?? 0
+            return idx + 1 < numberOfSections ? .AfterSections : .AfterLastSection
+        case .Global:
+            return .AfterSections
+        }
+    }
+    
+    private func createItemAttributes(element key: ElementKey, section: SectionMetrics, item: ItemInfo?, columnIndex columnIn: Int? = nil) -> Attributes {
+        let attribute = layoutAttributesType(forElement: key)
+
+        attribute.frame = { _ -> CGRect in
+            switch (self.measuringElement, item) {
+            case (.Some(let (mKey, rect)), _) where mKey == key:
+                return rect
+            case (_, .Some(let item)):
+                return item.frame
+            default:
+                return CGRect.zeroRect
+            }
+        }()
+        attribute.zIndex = ZIndex.Item.rawValue
+        attribute.backgroundColor = section.backgroundColor
+        attribute.selectedBackgroundColor = section.selectedBackgroundColor
+        attribute.tintColor = section.tintColor
+        attribute.selectedTintColor = section.selectedTintColor
+        attribute.columnIndex = columnIn ?? (key.indexPath.item % (section.numberOfColumns ?? 1))
+
+        return attribute
+    }
+    
+    private func createSupplementAttributes(element key: ElementKey, section: SectionInfo, item: SupplementInfo?) -> Attributes {
+        let attribute = layoutAttributesType(forElement: key)
+        let frame = { _ -> CGRect in
+            switch (self.measuringElement, item) {
+            case (.Some(let mKey, let rect), _) where mKey == key:
+                return rect
+            case (_, .Some(let item)):
+                return item.frame
+            default:
+                return CGRect.zeroRect
+            }
+        }()
+        let hidden = item?.metrics.isHidden ?? false
+        
+        attribute.frame = frame
+        attribute.hidden = hidden || frame.isEmpty
+        attribute.zIndex = ZIndex.Supplement.rawValue
+        attribute.backgroundColor = item?.metrics.backgroundColor ?? section.metrics.backgroundColor
+        attribute.selectedBackgroundColor = item?.metrics.selectedBackgroundColor ?? section.metrics.selectedBackgroundColor
+        attribute.tintColor = item?.metrics.tintColor ?? section.metrics.tintColor
+        attribute.selectedTintColor = item?.metrics.selectedTintColor ?? section.metrics.selectedTintColor
+        attribute.padding = item?.metrics.padding ?? UIEdgeInsetsZero
+        attribute.pinning = (false, false, frame.minY)
+        
+        return attribute
+    }
+    
+    private func createDecorationAttributes(element key: ElementKey, decoration: DecorationKind, section: SectionInfo /*, item: SupplementInfo?*/) -> Attributes {
+        var attribute = layoutAttributesType(forElement: key)
+        
+        switch decoration {
+        case .GlobalHeaderBackground:
+            let frame = section.frame ?? CGRect.zeroRect
+            let color = section.metrics.backgroundColor
+            
+            attribute.frame = frame
+            attribute.zIndex = ZIndex.Background.rawValue
+            attribute.hidden = color == nil
+            attribute.backgroundColor = color
+            attribute.pinning = (false, false, frame.minY)
+        case .RowSeparator:
+            let itemKey = key.correspondingItem
+            let item = attributesCache[itemKey]
+            let rect = map(item?.frame) {
+                let sepInsets = section.metrics.separatorInsets ?? UIEdgeInsetsZero
+                return $0.rectByInsetting(insets: sepInsets.without(.Top | .Bottom))
+            } ?? CGRect.zeroRect
+            configureSeparator(attributes: &attribute, bit: .Rows, toRect: rect, edge: .MinYEdge, section: section)
+        case .ColumnSeparator:
+            let itemKey = key.correspondingItem
+            let item = attributesCache[itemKey]
+            let rect = map(item?.frame) {
+                let sepInsets = section.metrics.separatorInsets ?? UIEdgeInsetsZero
+                return $0.rectByInsetting(insets: sepInsets.without(.Left | .Right))
+            } ?? CGRect.zeroRect
+            configureSeparator(attributes: &attribute, bit: .Columns, toRect: rect, edge: .MinXEdge, section: section)
+        case .HeaderSeparator:
+            let headerKey = key.correspondingSupplement(SupplementKind.Header.rawValue)
+            let header = attributesCache[headerKey]
+            let (bit, rect, edge) = { () -> (SeparatorOptions, CGRect, CGRectEdge) in
+                let numberOfHeaders = section.count(supplements: .Header) ?? 0
+                let numberOfItems = section.numberOfItems
+                switch (header, numberOfHeaders, numberOfItems) {
+                case (.Some(let item), _, _):
+                    return (.Supplements, item.frame, .MaxYEdge)
+                case (_, let headers, 0) where headers != 0:
+                    return (self.afterSectionSeparatorBit(section: key.components.0), section.frame, .MaxYEdge)
+                default:
+                    return (.BeforeSections, section.frame, .MinYEdge)
+                }
+            }()
+            configureSeparator(attributes: &attribute, bit: bit, toRect: rect, edge: edge, section: section)
+        case .FooterSeparator:
+            let footerKey = key.correspondingSupplement(SupplementKind.Footer.rawValue)
+            if let footer = attributesCache[footerKey] {
+                configureSeparator(attributes: &attribute, bit: .Supplements, toRect: footer.frame, edge: .MinYEdge, section: section)
+            } else {
+                let bit = afterSectionSeparatorBit(section: key.components.0)
+                configureSeparator(attributes: &attribute, bit: bit, toRect: section.frame, edge: .MaxYEdge, section: section)
+            }
+        }
+        
+        return attribute
+    }
+    
+    private func configureSeparator(inout #attributes: Attributes, bit: SeparatorOptions, toRect rect: CGRect, edge: CGRectEdge, section: SectionInfo) {
+        let frame = rect.separatorRect(edge: edge, thickness: hairline)
+        let skipped = rect.isEmpty || !contains(section.metrics.separators, bit) || section.metrics.separatorColor == nil
+        let color = section.metrics.separatorColor ?? self.dynamicType.defaultPinnableBorderColor()
+        
+        attributes.frame = frame
+        attributes.zIndex = ZIndex.Decoration.rawValue
+        attributes.hidden = skipped
+        attributes.backgroundColor = color
+        attributes.pinning = (false, skipped, frame.minY)
+    }
+    
+    private func addSeparator(_ predicate: @autoclosure () -> Bool = true, kind: DecorationKind, indexPath getIndexPath: @autoclosure () -> NSIndexPath, section: SectionInfo, force: Bool = false) -> Attributes? {
+        if !predicate() { return nil }
+        
+        let ip = getIndexPath()
+        let key = ElementKey(decoration: kind.rawValue, ip)
+        let attribute = createDecorationAttributes(element: key, decoration: kind, section: section)
+        
+        if attribute.hidden && !force { return nil }
+        
+        attributesCache[key] = attribute
+        return attribute
+    }
+    
+    private func addSupplementAttributes(#kind: String, indexPath: NSIndexPath, section: SectionInfo, item: SupplementInfo) -> Attributes? {
+        let key = ElementKey(supplement: kind, indexPath)
+        let attribute = createSupplementAttributes(element: key, section: section, item: item)
+        attributesCache[key] = attribute
+        return attribute
+    }
+    
+    private func configureInitial(inout #attributes: Attributes, inFromDirection direction: SectionOperationDirection = .Default, makeFrameAdjustments: Bool = true, shouldFadeIn shouldFade: @autoclosure () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
         let bounds = collectionView!.bounds
         
         switch direction {
         case .Default:
-            if let shouldFade = shouldFade {
-                if shouldFade() {
-                    endAlpha = 0
-                }
-            }
-            break
+            if shouldFade() { endAlpha = 0 }
         case .Left:
             endFrame.origin.x -= bounds.width
         case .Right:
@@ -1070,17 +1082,14 @@ public class GridLayout: UICollectionViewLayout {
         attributes.frame = endFrame
     }
     
-    private func configureFinal(inout #attributes: Attributes, outToDirection direction: SectionOperationDirection = .Default, shouldFadeOut shouldFade: (() -> Bool)? = nil) {
+    private func configureFinal(inout #attributes: Attributes, outToDirection direction: SectionOperationDirection = .Default, shouldFadeOut shouldFade: @autoclosure () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
         let bounds = collectionView!.bounds
         
         switch direction {
         case .Default:
-            if let shouldFade = shouldFade {
-                if shouldFade() { endAlpha = 0 }
-            }
-            break
+            if shouldFade() { endAlpha = 0 }
         case .Left:
             endFrame.origin.x += bounds.width
             endAlpha = 0
@@ -1109,37 +1118,12 @@ public class GridLayout: UICollectionViewLayout {
         }
     }
     
-    private func unpack(#indexPath: NSIndexPath) -> (Section, Int) {
-        if indexPath.length == 1 {
-            return (.Global, indexPath[0])
-        }
-        return (.Index(indexPath[0]), indexPath[1])
-    }
-    
 }
 
 extension GridLayout: DebugPrintable {
     
-    private func layoutAttributesDescription(attributes: [Attributes]) -> String {
+    private func layoutAttributesDescription<S: SequenceType where S.Generator.Element == Attributes>(attributes: S) -> String {
         return join("\n", lazy(attributes).map { attr in
-            let typeStr = { () -> String in
-                switch attr.representedElementCategory {
-                case .Cell: return "Cell"
-                case .DecorationView: return "Decoration \(attr.representedElementKind)"
-                case .SupplementaryView: return "Supplement \(attr.representedElementKind)"
-                }
-                }()
-            
-            var ret = "  \(typeStr) indexPath=\(attr.indexPath.stringValue) frame=\(attr.frame)"
-            if attr.hidden {
-                ret += " hidden=true"
-            }
-            return ret
-        })
-    }
-    
-    private var layoutAttributesDescription: String {
-        return join("\n", layoutAttributes.map { attr in
             let typeStr = { () -> String in
                 switch attr.representedElementCategory {
                 case .Cell: return "Cell"
@@ -1199,13 +1183,4 @@ extension GridLayout: DataSourcePresenter {
         }
     }
     
-}
-
-private func contains(indexSet: NSIndexSet, section: Section) -> Bool {
-    switch section {
-    case .Global:
-        return false
-    case .Index(let idx):
-        return indexSet.containsIndex(idx)
-    }
 }

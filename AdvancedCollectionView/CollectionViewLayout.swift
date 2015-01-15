@@ -50,6 +50,21 @@ extension UICollectionViewLayout {
     
 }
 
+extension UICollectionViewLayoutAttributes {
+    
+    convenience init(forElement element: ElementKey) {
+        switch element {
+        case .Cell(let indexPath):
+            self.init(forCellWithIndexPath: indexPath)
+        case .Supplement(let indexPath, let kind):
+            self.init(forSupplementaryViewOfKind: kind, withIndexPath: indexPath)
+        case .Decoration(let indexPath, let kind):
+            self.init(forDecorationViewOfKind: kind, withIndexPath: indexPath)
+        }
+    }
+    
+}
+
 func height<S: SequenceType where S.Generator.Element: UICollectionViewLayoutAttributes>(ofAttributes attributes: S) -> CGFloat {
     let (minY, maxY) = reduce(attributes, (nil, nil)) {
         (min($0.0 ?? CGFloat.max, $1.frame.minY), max($0.1 ?? CGFloat.min, $1.frame.maxY))

@@ -26,7 +26,7 @@ extension NSIndexPath: CollectionType {
 }
 
 public func ==(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
-    return lhs.compare(rhs) == .OrderedSame
+    return lhs.isEqual(rhs)
 }
 public func <(lhs: NSIndexPath, rhs: NSIndexPath) -> Bool {
     return lhs.compare(rhs) == .OrderedAscending

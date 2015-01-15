@@ -8,33 +8,116 @@
 
 import UIKit
 
-struct GridCacheKey {
-    let kind: String
-    let indexPath: NSIndexPath
+enum ElementKey: Hashable {
     
-}
-
-func ==(lhs: GridCacheKey, rhs: GridCacheKey) -> Bool {
-    return (lhs.indexPath === rhs.indexPath || lhs.indexPath == rhs.indexPath) && lhs.kind == rhs.kind
-}
-
-extension GridCacheKey: Hashable {
+    typealias IndexPathKind = (NSIndexPath, String)
     
-    var hashValue: Int {
-        let prime = 31
-        var result = 1
-        result = prime &* result &+ indexPath.hashValue
-        result = prime &* result &+ kind.hashValue
-        return result
+    case Cell(NSIndexPath)
+    case Supplement(IndexPathKind)
+    case Decoration(IndexPathKind)
+    
+    init(_ indexPath: NSIndexPath) {
+        self = .Cell(indexPath)
+    }
+    
+    init(supplement kind: String, _ indexPath: NSIndexPath) {
+        self = .Supplement(indexPath, kind)
+    }
+    
+    init(decoration kind: String, _ indexPath: NSIndexPath) {
+        self = .Decoration(indexPath, kind)
+    }
+    
+    var indexPath: NSIndexPath {
+        switch self {
+        case .Cell(let indexPath):
+            return indexPath
+        case .Supplement(let kind):
+            return kind.0
+        case .Decoration(let kind):
+            return kind.0
+        }
+    }
+    
+    var correspondingItem: ElementKey {
+        return ElementKey(indexPath)
+    }
+    
+    func correspondingSupplement(kind: String) -> ElementKey {
+        return ElementKey(supplement: kind, indexPath)
+    }
+    
+    var components: (Section, Int) {
+        let ip = indexPath
+        if ip.length == 1 {
+            return (.Global, ip[0])
+        }
+        return (.Index(ip[0]), ip[1])
     }
     
 }
 
-extension GridCacheKey: DebugPrintable {
+private func ==(lhs: ElementKey.IndexPathKind, rhs: ElementKey.IndexPathKind) -> Bool {
+    return (lhs.0 === rhs.0 || lhs.0 == rhs.0) && lhs.1 == rhs.1
+}
+
+func ==(lhs: ElementKey, rhs: ElementKey) -> Bool {
+    switch (lhs, rhs) {
+    case (.Cell(let lIndexPath), .Cell(let rIndexPath)):
+        return lIndexPath == rIndexPath
+    case (.Supplement(let lhsKey), .Supplement(let rhsKey)):
+        return lhsKey == rhsKey
+    case (.Decoration(let lhsKey), .Decoration(let rhsKey)):
+        return lhsKey == rhsKey
+    default:
+        return false
+    }
+}
+
+extension ElementKey: Hashable {
+    
+    var hashValue: Int {
+        var build = SimpleHash(37)
+        switch self {
+        case .Cell:
+            build.append(UICollectionElementCategory.Cell)
+        case .Supplement(let kind):
+            build.append(UICollectionElementCategory.SupplementaryView)
+            build.append(kind.1)
+        case .Decoration(let kind):
+            build.append(UICollectionElementCategory.DecorationView)
+            build.append(kind.1)
+        default: break
+        }
+        build.append(indexPath)
+        return build.result
+    }
+    
+}
+
+extension ElementKey: Printable, DebugPrintable {
+    
+    var description: String {
+        func describeIndexPath(indexPath: NSIndexPath) -> String {
+            return join(", ", map(indexPath) { String($0) })
+        }
+        
+        func describeKind(kind: IndexPathKind) -> String {
+            return "\(kind.1)@\(describeIndexPath(kind.0))"
+        }
+        
+        switch self {
+        case .Cell(let indexPath):
+            return describeIndexPath(indexPath)
+        case .Supplement(let kind):
+            return describeKind(kind)
+        case .Decoration(let kind):
+            return describeKind(kind)
+        }
+    }
     
     var debugDescription: String {
-        let commaSeparated = join(", ", map(indexPath) { String($0) })
-        return "\(kind)@{\(commaSeparated)}"
+        return description
     }
     
 }

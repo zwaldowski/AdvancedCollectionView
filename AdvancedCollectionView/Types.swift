@@ -58,6 +58,16 @@ extension Section {
     
 }
 
+func contains(indexSet: NSIndexSet, section: Section) -> Bool {
+    switch section {
+    case .Global:
+        return false
+    case .Index(let idx):
+        return indexSet.containsIndex(idx)
+    }
+}
+
+
 // MARK: -
 
 public enum ElementLength: Equatable {

@@ -21,6 +21,25 @@ func contains<T where T: RawOptionSetType, T: NilLiteralConvertible>(mask: T?, b
     return false
 }
 
+// MARK: Hashing
+
+struct SimpleHash {
+    
+    private let prime: Int
+    private(set) var result: Int
+    
+    init(_ prime: Int = 31) {
+        self.prime = prime
+        self.result = 1
+    }
+    
+    mutating func append<T: Hashable>(value: T) {
+        let next = value.hashValue
+        result = prime &* result &+ (next ^ (next >> 32))
+    }
+    
+}
+
 // MARK: Collections
 
 func take<I: Strideable>(range: Range<I>, eachSlice slice: I.Stride) -> LazySequence<MapSequenceView<StrideTo<I>, Range<I>>> {
