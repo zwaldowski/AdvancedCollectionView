@@ -28,23 +28,20 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     var columnIndex = 0
     
     public override var hash: Int {
-        var hash = super.hash
-        func update(value: Int?) {
-            hash = 31 &* hash &+ (value ?? 0)
-        }
-        update(backgroundColor?.hashValue)
-        update(selectedBackgroundColor?.hashValue)
-        update(tintColor?.hashValue)
-        update(selectedTintColor?.hashValue)
-        update(padding.top.hashValue)
-        update(padding.left.hashValue)
-        update(padding.bottom.hashValue)
-        update(padding.right.hashValue)
-        update(pinning.isPinned.hashValue)
-        update(pinning.isHiddenNormally.hashValue)
-        update(pinning.unpinnedY?.hashValue)
-        update(columnIndex.hashValue)
-        return hash
+        var hash = SimpleHash(super.hash)
+        hash.append(backgroundColor?.hashValue)
+        hash.append(selectedBackgroundColor?.hashValue)
+        hash.append(tintColor?.hashValue)
+        hash.append(selectedTintColor?.hashValue)
+        hash.append(padding.top.hashValue)
+        hash.append(padding.left.hashValue)
+        hash.append(padding.bottom.hashValue)
+        hash.append(padding.right.hashValue)
+        hash.append(pinning.isPinned.hashValue)
+        hash.append(pinning.isHiddenNormally.hashValue)
+        hash.append(pinning.unpinnedY?.hashValue)
+        hash.append(columnIndex.hashValue)
+        return hash.result
     }
     
     public override func isEqual(object: AnyObject?) -> Bool {

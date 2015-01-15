@@ -77,7 +77,7 @@ func ==(lhs: ElementKey, rhs: ElementKey) -> Bool {
 extension ElementKey: Hashable {
     
     var hashValue: Int {
-        var build = SimpleHash(37)
+        var build = SimpleHash(prime: 37)
         switch self {
         case .Cell:
             build.append(UICollectionElementCategory.Cell)

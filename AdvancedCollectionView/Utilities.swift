@@ -28,14 +28,23 @@ struct SimpleHash {
     private let prime: Int
     private(set) var result: Int
     
-    init(_ prime: Int = 31) {
+    init(_ initial: Int = 1, prime: Int = 31) {
         self.prime = prime
-        self.result = 1
+        self.result = initial
     }
     
     mutating func append<T: Hashable>(value: T) {
         let next = value.hashValue
         result = prime &* result &+ (next ^ (next >> 32))
+    }
+    
+    mutating func append<T: Hashable>(value: T?) {
+        switch value {
+        case .Some(let unbox):
+            append(unbox)
+        default:
+            append(0)
+        }
     }
     
 }
