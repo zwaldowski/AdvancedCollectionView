@@ -371,14 +371,12 @@ extension SectionInfo {
                 let rowRect = itemsLayoutRect.divide(rowHeight)
                 var rowLayoutRect = rowRect
                 
-                let finalPass = measurePass.map { (var item) -> ItemInfo in
+                items[range] = measurePass.map { (var item) -> ItemInfo in
                     item.frame = rowLayoutRect.divide(columnWidth, fromEdge: divideFrom)
                     return item
                 }
                 
-                rows.append(RowInfo(items: finalPass, frame: rowRect))
-                
-                items[range] = finalPass
+                rows.append(RowInfo(items: items[range], frame: rowRect))
             }
             
             let itemsEndRect = itemsLayoutRect.divide(metrics.groupPadding.bottom)
