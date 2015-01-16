@@ -127,11 +127,11 @@ extension ElementKey: Printable, DebugPrintable {
 extension SectionMetrics {
     
     var groupPadding: UIEdgeInsets {
-        return padding?.without(.Left | .Right) ?? UIEdgeInsetsZero
+        return padding?.verticalInsets ?? UIEdgeInsetsZero
     }
     
     var itemPadding: UIEdgeInsets? {
-        return padding?.without(.Top | .Bottom) ?? UIEdgeInsetsZero
+        return padding?.horizontalInsets ?? UIEdgeInsetsZero
     }
     
     var layoutSlicingEdge: CGRectEdge {

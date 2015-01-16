@@ -986,18 +986,30 @@ public class GridLayout: UICollectionViewLayout {
         case .RowSeparator:
             let itemKey = key.correspondingItem
             let item = attributesCache[itemKey]
-            let rect = map(item?.frame) {
-                let sepInsets = section.metrics.separatorInsets ?? UIEdgeInsetsZero
-                return $0.rectByInsetting(insets: sepInsets.without(.Top | .Bottom))
-            } ?? CGRect.zeroRect
+            let rect = { () -> CGRect in
+                switch (item?.frame, section.metrics.separatorInsets) {
+                case (.Some(let frame), .Some(let insets)):
+                    return frame.rectByInsetting(insets: insets.horizontalInsets)
+                case (.Some(let frame), _):
+                    return frame
+                default:
+                    return CGRect.zeroRect
+                }
+            }()
             configureSeparator(attributes: &attribute, bit: .Rows, toRect: rect, edge: .MinYEdge, section: section)
         case .ColumnSeparator:
             let itemKey = key.correspondingItem
             let item = attributesCache[itemKey]
-            let rect = map(item?.frame) {
-                let sepInsets = section.metrics.separatorInsets ?? UIEdgeInsetsZero
-                return $0.rectByInsetting(insets: sepInsets.without(.Left | .Right))
-            } ?? CGRect.zeroRect
+            let rect = { () -> CGRect in
+                switch (item?.frame, section.metrics.separatorInsets) {
+                case (.Some(let frame), .Some(let insets)):
+                    return frame.rectByInsetting(insets: insets.verticalInsets)
+                case (.Some(let frame), _):
+                    return frame
+                default:
+                    return CGRect.zeroRect
+                }
+            }()
             configureSeparator(attributes: &attribute, bit: .Columns, toRect: rect, edge: .MinXEdge, section: section)
         case .HeaderSeparator:
             let headerKey = key.correspondingSupplement(SupplementKind.Header.rawValue)

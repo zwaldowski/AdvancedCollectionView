@@ -83,26 +83,26 @@ public func ==(lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> Bool {
 
 extension UIEdgeInsets: Equatable {
     
-    mutating func remove(edges: UIRectEdge) {
-        if contains(edges, .Top) { top = 0 }
-        if contains(edges, .Left) { left = 0 }
-        if contains(edges, .Bottom) { bottom = 0 }
-        if contains(edges, .Right) { right = 0 }
+    private func insetsByRemoving(#edges: UIRectEdge) -> UIEdgeInsets {
+        var ret = self
+        if contains(edges, .Top) { ret.top = 0 }
+        if contains(edges, .Left) { ret.left = 0 }
+        if contains(edges, .Bottom) { ret.bottom = 0 }
+        if contains(edges, .Right) { ret.right = 0 }
+        return ret
     }
     
-    func without(edges: UIRectEdge) -> UIEdgeInsets {
-        var ret = self
-        ret.remove(edges)
-        return ret
+    var horizontalInsets: UIEdgeInsets {
+        return insetsByRemoving(edges: .Top | .Bottom)
+    }
+    
+    var verticalInsets: UIEdgeInsets {
+        return insetsByRemoving(edges: .Left | .Right)
     }
     
 }
 
-public extension CGRect {
-    
-    mutating func inset(#insets: UIEdgeInsets) {
-        self = UIEdgeInsetsInsetRect(self, insets)
-    }
+extension CGRect {
     
     func rectByInsetting(#insets: UIEdgeInsets) -> CGRect {
         return UIEdgeInsetsInsetRect(self, insets)
