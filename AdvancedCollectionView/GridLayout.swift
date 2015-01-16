@@ -265,7 +265,7 @@ public class GridLayout: UICollectionViewLayout {
     
     public override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
         trace()
-        updateSpecialAttributes()
+//        updateSpecialAttributes()
         let ret = attributesCache.values.filter {
             $0.frame.intersects(rect)
         }.array
@@ -719,7 +719,7 @@ public class GridLayout: UICollectionViewLayout {
         layoutSize = CGSize(width: layoutRect.width, height: layoutHeight)
         
         // Update pinning
-        updateSpecialAttributes()
+//        updateSpecialAttributes()
         
         // Done!
         flags.layoutMetricsAreValid = true
