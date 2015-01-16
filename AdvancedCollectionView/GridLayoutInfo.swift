@@ -187,20 +187,16 @@ struct RowInfo {
 
 struct SectionInfo {
     
-    typealias Attributes = GridLayoutAttributes
-    
     let metrics: SectionMetrics
-
+    private(set) var items = [ItemInfo]()
+    private(set) var rows = [RowInfo]() // ephemeral, only full once laid out
+    private(set) var supplementalItems = Multimap<String, SupplementInfo>()
+    private(set) var frame = CGRect.zeroRect
+    private var headersRect = CGRect.zeroRect
+    
     init(metrics: SectionMetrics) {
         self.metrics = metrics
     }
-    
-    private var items = [ItemInfo]()
-    private(set) var rows = [RowInfo]() // ephemeral
-    private var supplementalItems = Multimap<String, SupplementInfo>()
-    
-    private(set) var frame = CGRect.zeroRect
-    private(set) var headersRect = CGRect.zeroRect
     
 }
 
