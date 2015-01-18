@@ -592,13 +592,18 @@ public class GridLayout: UICollectionViewLayout {
             return color
         }
         
-        let build = { (section: Section, var metrics: SectionMetrics) -> SectionInfo in
+        let build = { (section: Section, var metrics: SectionMetrics, isGlobal: Bool) -> SectionInfo in
             metrics.backgroundColor = fromMetrics(metrics.backgroundColor)
             metrics.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor)
             metrics.tintColor = fromMetrics(metrics.tintColor)
             metrics.selectedTintColor = fromMetrics(metrics.selectedTintColor)
             metrics.separatorColor = fromMetrics(metrics.separatorColor)
             metrics.numberOfColumns = min(metrics.numberOfColumns ?? 0, 1)
+            switch (isGlobal, metrics.padding) {
+            case (true, .Some(let padding)):
+                metrics.padding = UIEdgeInsetsMake(0, padding.left, padding.bottom, padding.right)
+            default: break
+            }
             
             var info = SectionInfo(metrics: metrics)
             
@@ -641,10 +646,10 @@ public class GridLayout: UICollectionViewLayout {
         
         log("number of sections = \(numberOfSections)")
         
-        globalSection = metricsBySection[.Global].map { build(.Global, $0) }
+        globalSection = metricsBySection[.Global].map { build(.Global, $0, true) }
         sections = map(0..<numberOfSections) { idx in
             let section = Section.Index(idx)
-            return build(section, metricsBySection[section]!)
+            return build(section, metricsBySection[section]!, false)
         }
     }
     
