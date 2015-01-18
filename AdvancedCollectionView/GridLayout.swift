@@ -265,7 +265,7 @@ public class GridLayout: UICollectionViewLayout {
     
     public override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
         trace()
-//        updateSpecialAttributes()
+        updateSpecialAttributes()
         let ret = attributesCache.values.filter {
             $0.frame.intersects(rect)
         }.array
@@ -719,7 +719,7 @@ public class GridLayout: UICollectionViewLayout {
         layoutSize = CGSize(width: layoutRect.width, height: layoutHeight)
         
         // Update pinning
-//        updateSpecialAttributes()
+        updateSpecialAttributes()
         
         // Done!
         flags.layoutMetricsAreValid = true
@@ -851,7 +851,16 @@ public class GridLayout: UICollectionViewLayout {
         let contentOffset = flags.useCollectionViewContentOffset ? normalContentOffset : targetContentOffsetForProposedContentOffset(normalContentOffset)
         let minY = collectionView?.contentInset.top ?? 0
         
-        var pinnableY = minY + contentOffset.y
+        // Adjust a global background
+        if let background = globalSectionBackground {
+            background.frame.origin.y = minY + contentOffset.y
+
+            let lastGlobalRect = pinnableAttributes[.Global].last?.frame ?? CGRect.zeroRect
+            let lastRegularRect = nonPinnableGlobalAttributes.last?.frame ?? CGRect.zeroRect
+            background.frame.size.height = fmax(lastGlobalRect.maxY, lastRegularRect.maxY) - background.frame.origin.y
+        }
+
+        /*var pinnableY = minY + contentOffset.y
         var nonPinnableY = pinnableY
         
         // Pin the headers as appropriate
@@ -898,7 +907,7 @@ public class GridLayout: UICollectionViewLayout {
                 }
             case .Global: break
             }
-        }
+        }*/
     }
     
     // MARK: Helpers
