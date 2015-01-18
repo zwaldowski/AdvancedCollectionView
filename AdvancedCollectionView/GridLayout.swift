@@ -434,7 +434,7 @@ public class GridLayout: UICollectionViewLayout {
         return attributesCacheOld.keys.filter { key in
             switch key {
             case .Decoration(_, let dKind) where dKind == kind:
-                return self.attributesCache[key] != nil
+                return self.attributesCache[key] == nil
             default:
                 return false
             }
@@ -745,7 +745,7 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         // Add the background decoration attribute
-        if isGlobal {
+        if isGlobal && globalSectionBackground == nil {
             let key = ElementKey(decoration: DecorationKind.GlobalHeaderBackground.rawValue, indexPath(0))
             attributesCache[key] = createDecorationAttributes(element: key, decoration: .GlobalHeaderBackground, section: info)
         }
