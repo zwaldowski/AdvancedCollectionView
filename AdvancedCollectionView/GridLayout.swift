@@ -806,6 +806,17 @@ public class GridLayout: UICollectionViewLayout {
     
     // MARK: Pinning
     
+    private func resetPinnable(#attributes: Attributes) {
+        attributes.pinning.isPinned = false
+        if attributes.pinning.isHiddenNormally {
+            attributes.hidden = true
+        }
+
+        if let unpinned = attributes.pinning.unpinnedY {
+            attributes.frame.origin.y = unpinned
+        }
+    }
+
     private func finalizePinning(#attributes: Attributes, offset: Int, pinned: Bool = false) {
         let zIndex = ZIndex(category: attributes.representedElementCategory, pinned: pinned)
         attributes.zIndex = zIndex.rawValue - offset - 1
@@ -817,19 +828,24 @@ public class GridLayout: UICollectionViewLayout {
         }
     }
     
+    // pin the attributes starting at minY as long a they don't cross maxY and return the new minY
+    private func applyTopPinning(#attributes: Attributes, inout pinnableY: CGFloat) {
+        if attributes.frame.minY < pinnableY {
+            attributes.frame.origin.y = pinnableY
+            pinnableY = attributes.frame.maxY
+        }
+    }
+
+    private func applyBottomPinning(#attributes: Attributes, inout nonPinnableY: CGFloat) {
+        if attributes.frame.maxY < nonPinnableY {
+            attributes.frame.origin.y = nonPinnableY - attributes.frame.height
+            nonPinnableY = attributes.frame.minY
+        }
+    }
+
     private func updateSpecialAttributes() {
         let countSections = collectionView?.numberOfSections()
         if countSections < 1 { return }
-        
-        let resetPinnable = { (attributes: Attributes) -> () in
-            attributes.pinning.isPinned = false
-            if attributes.pinning.isHiddenNormally {
-                attributes.hidden = true
-            }
-            if let unpinned = attributes.pinning.unpinnedY {
-                attributes.frame.origin.y = unpinned
-            }
-        }
         
         let normalContentOffset = collectionView?.contentOffset ?? CGPoint.zeroPoint
         let contentOffset = flags.useCollectionViewContentOffset ? normalContentOffset : targetContentOffsetForProposedContentOffset(normalContentOffset)
@@ -838,31 +854,16 @@ public class GridLayout: UICollectionViewLayout {
         var pinnableY = minY + contentOffset.y
         var nonPinnableY = pinnableY
         
-        // pin the attributes starting at minY as long a they don't cross maxY and return the new minY
-        let applyTopPinning = { (attributes: Attributes) -> () in
-            if attributes.frame.minY < pinnableY {
-                attributes.frame.origin.y = pinnableY
-                pinnableY = attributes.frame.maxY
-            }
-        }
-        
-        let applyBottomPinning = { (attributes: Attributes) -> () in
-            if attributes.frame.maxY < nonPinnableY {
-                attributes.frame.origin.y = nonPinnableY - attributes.frame.height
-                nonPinnableY = attributes.frame.minY
-            }
-        }
-        
         // Pin the headers as appropriate
         for (idx, info) in enumerate(pinnableAttributes[.Global]) {
-            resetPinnable(info)
-            applyTopPinning(info)
+            resetPinnable(attributes: info)
+            applyTopPinning(attributes: info, pinnableY: &pinnableY)
             finalizePinning(attributes: info, offset: idx, pinned: true)
         }
         
         nonPinnableGlobalAttributes = nonPinnableGlobalAttributes.mapWithIndexReversed {
-            resetPinnable($1)
-            applyBottomPinning($1)
+            self.resetPinnable(attributes: $1)
+            self.applyBottomPinning(attributes: $1, nonPinnableY: &nonPinnableY)
             self.finalizePinning(attributes: $1, offset: $0)
             return $1
         }
@@ -883,7 +884,7 @@ public class GridLayout: UICollectionViewLayout {
             switch section {
             case .Index(let idx):
                 for attr in values {
-                    resetPinnable(attr)
+                    resetPinnable(attributes: attr)
                 }
                 
                 let frame = sections[idx].frame
@@ -891,7 +892,7 @@ public class GridLayout: UICollectionViewLayout {
                     foundSection = true
                     
                     for (idx, attr) in enumerate(values) {
-                        applyTopPinning(attr)
+                        applyTopPinning(attributes: attr, pinnableY: &pinnableY)
                         finalizePinning(attributes: attr, offset: idx, pinned: true)
                     }
                 }
