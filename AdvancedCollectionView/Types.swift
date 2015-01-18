@@ -109,9 +109,9 @@ public enum SupplementKind: String {
     
     case Header = "header"
     case Footer = "footer"
-    case SectionGap = "sectionGap"
-    case AtopHeaders = "atopHeaders"
-    case AtopItems = "atopItems"
+//    case SectionGap = "sectionGap"
+//    case AtopHeaders = "atopHeaders"
+//    case AtopItems = "atopItems"
     case Placeholder = "placeholder"
     
 }
