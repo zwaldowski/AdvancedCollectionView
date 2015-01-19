@@ -575,10 +575,6 @@ public class GridLayout: UICollectionViewLayout {
     
     // MARK: Internal
     
-    private func snapshotMetrics() -> [Section: SectionMetrics] {
-        return dataSource?.snapshotMetrics() ?? [:]
-    }
-    
     private func resetLayoutInfo() {
         sections.removeAll(keepCapacity: true)
         globalSection = nil
@@ -595,7 +591,7 @@ public class GridLayout: UICollectionViewLayout {
         
         resetLayoutInfo()
         
-        let metricsBySection = snapshotMetrics()
+        let metricsBySection = dataSource?.snapshotMetrics() ?? [:]
         
         let bounds = collectionView?.bounds
         let insets = collectionView?.contentInset ?? UIEdgeInsetsZero
@@ -607,30 +603,28 @@ public class GridLayout: UICollectionViewLayout {
             return color
         }
         
-        let build = { (section: Section, var metrics: SectionMetrics, isGlobal: Bool) -> SectionInfo in
+        func buildSection(section: Section, var metrics: SectionMetrics) -> SectionInfo {
             metrics.backgroundColor = fromMetrics(metrics.backgroundColor)
             metrics.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor)
             metrics.tintColor = fromMetrics(metrics.tintColor)
             metrics.selectedTintColor = fromMetrics(metrics.selectedTintColor)
             metrics.separatorColor = fromMetrics(metrics.separatorColor)
             metrics.numberOfColumns = min(metrics.numberOfColumns ?? 0, 1)
-            switch (isGlobal, metrics.padding) {
-            case (true, .Some(let padding)):
+            switch (section, metrics.padding) {
+            case (.Global, .Some(let padding)):
                 metrics.padding = UIEdgeInsetsMake(0, padding.left, padding.bottom, padding.right)
             default: break
             }
             
             var info = SectionInfo(metrics: metrics)
             
-            for inSuplMetric in metrics.supplementaryViews {
-                switch (inSuplMetric.measurement, inSuplMetric.kind) {
+            for (var suplMetric) in metrics.supplementaryViews {
+                switch (suplMetric.measurement, suplMetric.kind) {
                 case (.None, SupplementKind.Footer.rawValue):
                     continue
                 default:
                     break
                 }
-                
-                var suplMetric = inSuplMetric
                 
                 if suplMetric.kind == SupplementKind.Header.rawValue {
                     suplMetric.backgroundColor = fromMetrics(suplMetric.backgroundColor) ?? metrics.backgroundColor
@@ -645,12 +639,10 @@ public class GridLayout: UICollectionViewLayout {
                 info.addSupplementalItem(suplMetric)
             }
             
+            // A section can either have a placeholder or items. Arbitrarily deciding the placeholder takes precedence.
             switch (section, metrics.hasPlaceholder) {
             case (_, true):
-                // A section can either have a placeholder or items. Arbitrarily deciding the placeholder takes precedence.
-                var placeholder = SupplementaryMetrics(kind: SupplementKind.Placeholder)
-                placeholder.measurement = .Static(height)
-                info.addSupplementalItem(placeholder)
+                info.addPlaceholder()
             case (.Index(let idx), _):
                 info.addItems(self.collectionView?.numberOfItemsInSection(idx) ?? 0)
             default: break
@@ -661,11 +653,15 @@ public class GridLayout: UICollectionViewLayout {
         
         log("number of sections = \(numberOfSections)")
         
-        globalSection = metricsBySection[.Global].map { build(.Global, $0, true) }
-        sections = map(0..<numberOfSections) { idx in
-            let section = Section.Index(idx)
-            return build(section, metricsBySection[section]!, false)
+        if let metrics = metricsBySection[.Global] {
+            globalSection = buildSection(.Global, metrics)
+        } else {
+            globalSection = nil
         }
+        
+        var indexedSections = filter(metricsBySection) { $0.0 != .Global }
+        sort(&indexedSections) { $0.0 < $1.0 }
+        sections = indexedSections.map(buildSection)
     }
     
     private func buildLayout() {

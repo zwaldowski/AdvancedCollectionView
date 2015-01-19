@@ -170,22 +170,29 @@ private extension SectionMetrics {
 struct SupplementInfo {
     
     let metrics: SupplementaryMetrics
-    private(set) var frame = CGRect.zeroRect
-    private(set) var measurement = ElementLength.None
+    let measurement: ElementLength
+    let frame: CGRect
     
-    init(metrics: SupplementaryMetrics) {
+    private init(metrics: SupplementaryMetrics, measurement: ElementLength? = nil, frame: CGRect = CGRect.zeroRect) {
         self.metrics = metrics
+        self.measurement = measurement ?? metrics.measurement!
+        self.frame = frame
     }
     
 }
 
 struct ItemInfo {
     
-    private(set) var frame = CGRect.zeroRect
-    private(set) var measurement = ElementLength.None
-    private(set) var padding = UIEdgeInsetsZero
+    let measurement: ElementLength
+    let padding: UIEdgeInsets
+    let frame: CGRect
     
-    private init() {}
+    private init(measurement: ElementLength, padding: UIEdgeInsets = UIEdgeInsetsZero, frame: CGRect = CGRect.zeroRect) {
+        self.measurement = measurement
+        self.padding = padding
+        self.frame = frame
+    }
+    
     
 }
 
@@ -220,6 +227,8 @@ struct SectionInfo {
     init(metrics: SectionMetrics) {
         self.metrics = metrics
     }
+    
+//    init(metrics: SectionMetrics, supplements: [Supplement]
     
 }
 
@@ -283,15 +292,18 @@ extension SectionInfo {
     
     mutating func addSupplementalItem(metrics: SupplementaryMetrics) {
         let info = SupplementInfo(metrics: metrics)
-        if metrics.kind == SupplementKind.Placeholder.rawValue {
-            placeholder = info
-        } else {
-            supplementalItems.append(info, forKey: metrics.kind)
-        }
+        supplementalItems.append(info, forKey: metrics.kind)
+    }
+    
+    mutating func addPlaceholder() {
+        let metrics = SupplementaryMetrics(kind: SupplementKind.Placeholder)
+        let info = SupplementInfo(metrics: metrics, measurement: .Remainder)
+        placeholder = info
     }
     
     mutating func addItems(count: Int) {
-        items += Repeat(count: count, repeatedValue: ItemInfo())
+        let item = ItemInfo(measurement: metrics.measurement!)
+        items += Repeat(count: count, repeatedValue: item)
     }
     
     subscript (kind: String, supplementIndex: Int) -> SupplementInfo? {
@@ -328,32 +340,29 @@ extension SectionInfo {
         // First, lay out headers
         let headerBeginY = layoutRect.minY
         let headerKey = SupplementKind.Header.rawValue
-        supplementalItems.updateMapWithIndex(groupForKey: headerKey) { (headerIndex, var headerInfo) -> SupplementInfo in
+        supplementalItems.updateMapWithIndex(groupForKey: headerKey) { (headerIndex, headerInfo) in
             // skip headers if there are no items and the header isn't a global header
             if numberOfItems == 0 && !headerInfo.metrics.isVisibleWhileShowingPlaceholder { return headerInfo }
             
             // skip headers that are hidden
-            if (headerInfo.metrics.isHidden) { return headerInfo }
+            if headerInfo.metrics.isHidden { return headerInfo }
             
-            var length = CGFloat(0)
+            var measurement: ElementLength!
+            
             switch (headerInfo.measurement, headerInfo.metrics.measurement) {
-            case (_, .Static(let value)):
-                headerInfo.measurement = .Static(value)
-                length = value
-            case (.None, .Estimate(let estimate)):
+            case (_, .Some(let value)):
+                measurement = value
+            case (.Estimate(let estimate), _):
                 // This header needs to be measured!
                 let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: viewport.width, height: estimate))
                 let measure = measureSupplement(kind: headerKey, index: headerIndex, measuringFrame: frame)
-                headerInfo.measurement = .Static(measure.height)
-                length = measure.height
-            case (.Static(let value), _):
-                length = value
-            default: break
+                measurement = .Static(measure.height)
+            case (let value, _):
+                measurement = value
             }
             
-            headerInfo.frame = layoutRect.divide(length)
-
-            return headerInfo
+            let frame = layoutRect.divide(measurement.lengthValue)
+            return SupplementInfo(metrics: headerInfo.metrics, measurement: measurement, frame: frame)
         }
         
         headersRect = CGRect(x: viewport.minX, y: headerBeginY, width: viewport.width, height: layoutRect.minY - headerBeginY)
@@ -365,9 +374,7 @@ extension SectionInfo {
             
             // Height of the placeholder is equal to the height of the collection view minus the height of the headers
             let frame = layoutRect.rectByIntersecting(viewport)
-            info.measurement = .Static(frame.height)
-            info.frame = frame
-            placeholder = info
+            placeholder = SupplementInfo(metrics: info.metrics, measurement: .Static(frame.height), frame: frame)
             
             _ = layoutRect.divide(frame.height)
         case (_, .None) where numberOfItems != 0:
@@ -380,6 +387,7 @@ extension SectionInfo {
 
             let columnWidth = maxWidth / columnsPointsRatio
             let divideFrom = metrics.layoutSlicingEdge
+            let sectionMeasurement = metrics.measurement
             
             rows.reserveCapacity(numberOfRows + 1)
             
@@ -387,34 +395,35 @@ extension SectionInfo {
                 let original = items[range]
                 
                 // take a measurement pass through all items
-                let measurePass = original.mapWithIndex { (columnIndex, var item) -> ItemInfo in
+                let measurePass = original.mapWithIndex { (columnIndex, item) -> ItemInfo in
                     let rowIndex = self.rows.count
                     let padding = self.metrics.itemPadding(rows: rowIndex..<numberOfRows, columns: columnIndex..<numberOfColumns)
+                    let measurement = { () -> ElementLength in
+                        switch (item.measurement, sectionMeasurement, measureItem) {
+                        case (_, .Some(.Static(let value)), _):
+                            return .Static(value + padding.top + padding.bottom)
+                        case (.Estimate(let estimate), _, .Some(let measure)):
+                            let idx = range.startIndex.advancedBy(columnIndex)
+                            let width = columnWidth + padding.left + padding.right
+                            let height = estimate + padding.top + padding.bottom
+                            let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: width, height: height))
+                            let measured = measure(index: idx, measuringFrame: frame)
+                            return .Static(measured.height)
+                        case (let passthrough, _, _):
+                            return passthrough
+                        }
+                    }()
                     
-                    switch (item.measurement, self.metrics.measurement, measureItem) {
-                    case (_, .Static(let value), _):
-                        item.measurement = .Static(value + padding.top + padding.bottom)
-                    case (_, .Estimate(let estimate), .Some(let measure)):
-                        let idx = range.startIndex.advancedBy(columnIndex)
-                        let width = columnWidth + padding.left + padding.right
-                        let height = estimate + padding.top + padding.bottom
-                        let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: width, height: height))
-                        let measured = measure(index: idx, measuringFrame: frame)
-                        item.measurement = .Static(measured.height)
-                    default: break
-                    }
-                    
-                    item.padding = padding
-                    return item
+                    return ItemInfo(measurement: measurement, padding: padding, frame: item.frame)
                 }
                 
                 let rowHeight = maxElement(lazy(measurePass).map { $0.measurement.lengthValue })
                 let rowRect = layoutRect.divide(rowHeight)
                 var rowLayoutRect = rowRect
                 
-                items[range] = measurePass.map { (var item) -> ItemInfo in
-                    item.frame = rowLayoutRect.divide(columnWidth, fromEdge: divideFrom)
-                    return item
+                items[range] = measurePass.map {
+                    let frame = rowLayoutRect.divide(columnWidth, fromEdge: divideFrom)
+                    return ItemInfo(measurement: $0.measurement, padding: $0.padding, frame: frame)
                 }
                 
                 rows.append(RowInfo(items: items[range], frame: rowRect))
@@ -425,7 +434,7 @@ extension SectionInfo {
             // Lay out footers as well
             let footerBeginY = layoutRect.minY
             let headerKey = SupplementKind.Header.rawValue
-            supplementalItems.updateMapWithIndex(groupForKey: SupplementKind.Footer.rawValue) { (footerInfex, var footerInfo) -> SupplementInfo in
+            supplementalItems.updateMapWithIndex(groupForKey: SupplementKind.Footer.rawValue) { (footerInfex, footerInfo) in
                 // skip hidden footers
                 if (footerInfo.metrics.isHidden) { return footerInfo }
                 
@@ -433,15 +442,14 @@ extension SectionInfo {
                 var height = CGFloat(0)
                 
                 switch footerInfo.metrics.measurement {
-                case .Static(let value):
+                case .Some(.Static(let value)):
                     height = value
                 default:
                     return footerInfo
                 }
                 
-                footerInfo.frame = layoutRect.divide(height)
-                
-                return footerInfo
+                let frame = layoutRect.divide(height)
+                return SupplementInfo(metrics: footerInfo.metrics, measurement: footerInfo.measurement, frame: frame)
             }
             footersRect = CGRect(x: viewport.minX, y: footerBeginY, width: viewport.width, height: layoutRect.minY - footerBeginY)
         default: break
@@ -461,12 +469,13 @@ extension SectionInfo {
 extension SectionInfo {
     
     mutating func remeasureItem(atIndex index: Int, function: MeasureItem) {
-        var item = items[index]
+        let original = items[index]
         
-        let fittingSize = CGSize(width: item.frame.width, height: UILayoutFittingExpandedSize.height)
-        item.frame.size = function(index: index, measuringFrame: CGRect(origin: item.frame.origin, size: fittingSize))
+        var newFrame = CGRect(origin: original.frame.origin, size: CGSize(width: original.frame.width, height: UILayoutFittingExpandedSize.height))
+        newFrame.size = function(index: index, measuringFrame: newFrame)
+        let newMeasurement = ElementLength.Static(newFrame.height)
         
-        items[index] = item
+        items[index] = ItemInfo(measurement: newMeasurement, padding: original.padding, frame: newFrame)
     }
     
 }

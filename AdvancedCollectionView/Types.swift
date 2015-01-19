@@ -39,6 +39,19 @@ extension Section: Hashable {
     
 }
 
+public func <(lhs: Section, rhs: Section) -> Bool {
+    switch (lhs, rhs) {
+    case (.Index(let a), .Index(let b)):
+        return a < b
+    case (_, .Global):
+        return true
+    default:
+        return false
+    }
+}
+
+extension Section: Comparable {}
+
 extension Section {
     
     public static func all(#numberOfSections: Int) -> GeneratorOf<Section> {
@@ -72,9 +85,9 @@ func contains(indexSet: NSIndexSet, section: Section) -> Bool {
 
 public enum ElementLength: Equatable {
     
-    case None
     case Static(CGFloat)
     case Estimate(CGFloat)
+    case Remainder
     
     public static var Default: ElementLength {
         return .Static(44)
@@ -82,9 +95,9 @@ public enum ElementLength: Equatable {
     
     var lengthValue: CGFloat {
         switch self {
-        case .None: return 0
         case .Static(let x): return x
         case .Estimate(let x): return x
+        case .Remainder: return 0
         }
     }
     
@@ -92,12 +105,12 @@ public enum ElementLength: Equatable {
 
 public func ==(lhs: ElementLength, rhs: ElementLength) -> Bool {
     switch (lhs, rhs) {
-    case (.None, .None):
-        return true
     case (.Static(let x), .Static(let y)):
         return x ~== y
     case (.Estimate(let x), .Estimate(let y)):
         return x ~== y
+    case (.Remainder, .Remainder):
+        return true
     default:
         return false
     }

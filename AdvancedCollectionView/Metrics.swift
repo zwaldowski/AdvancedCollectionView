@@ -42,7 +42,7 @@ public struct SupplementaryMetrics {
     /// scrolling? Only valid for headers and footers.
     public var shouldPin = false
     /// The size of the supplementary view relative to the layout.
-    public var measurement = ElementLength.None
+    public var measurement: ElementLength? = nil
     /// Should the supplementary view be hidden?
     public var isHidden = false
     /// Use top & bottom padding to adjust spacing of header & footer elements.
@@ -106,7 +106,7 @@ public struct SectionMetrics {
     }
     
     /// The size of each row in the section.
-    public var measurement = ElementLength.None
+    public var measurement: ElementLength? = nil
     /// Number of columns in this section. Sections will inherit a default of
     /// 1 from the data source.
     public var numberOfColumns: Int? = nil
@@ -148,7 +148,7 @@ public struct SectionMetrics {
     var hasPlaceholder = false
     
     public mutating func apply(metrics other: SectionMetrics) {
-        if other.measurement != ElementLength.None { measurement = other.measurement }
+        if let otherMeasurement = other.measurement { measurement = otherMeasurement }
         if let otherColumns = other.numberOfColumns { numberOfColumns = otherColumns }
         if let otherPadding = other.padding { padding = otherPadding }
         if let otherMargin = other.margin { margin = otherMargin }
