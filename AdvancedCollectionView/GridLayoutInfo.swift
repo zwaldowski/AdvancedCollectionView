@@ -124,14 +124,29 @@ extension ElementKey: Printable, DebugPrintable {
 
 // MARK: -
 
-extension SectionMetrics {
+private extension SectionMetrics {
     
-    var groupPadding: UIEdgeInsets {
-        return padding?.verticalInsets ?? UIEdgeInsetsZero
-    }
-    
-    var itemPadding: UIEdgeInsets? {
-        return padding?.horizontalInsets ?? UIEdgeInsetsZero
+    func itemPadding(#rows: HalfOpenInterval<Int>, columns: HalfOpenInterval<Int>) -> UIEdgeInsets {
+        if var insets = padding {
+            if rows.start != 0 {
+                insets.top = 0
+            }
+            
+            if !rows.isEmpty {
+                insets.bottom = 0
+            }
+            
+            if columns.start > 0 {
+                insets.left = 0
+            }
+            
+            if !columns.isEmpty {
+                insets.right = 0
+            }
+            
+            return insets
+        }
+        return UIEdgeInsetsZero
     }
     
     var layoutSlicingEdge: CGRectEdge {
@@ -168,6 +183,7 @@ struct ItemInfo {
     
     private(set) var frame = CGRect.zeroRect
     private(set) var measurement = ElementLength.None
+    private(set) var padding = UIEdgeInsetsZero
     
     private init() {}
     
@@ -192,7 +208,14 @@ struct SectionInfo {
     private(set) var rows = [RowInfo]() // ephemeral, only full once laid out
     private(set) var supplementalItems = Multimap<String, SupplementInfo>()
     private(set) var frame = CGRect.zeroRect
+    
     private var headersRect = CGRect.zeroRect
+    private var itemsRect = CGRect.zeroRect
+    private var footersRect = CGRect.zeroRect
+    
+    var contentRect: CGRect {
+        return frame.rectByInsetting(insets: UIEdgeInsetsMake(0, 0, metrics.margin ?? 0, 0))
+    }
     
     init(metrics: SectionMetrics) {
         self.metrics = metrics
@@ -336,35 +359,57 @@ extension SectionInfo {
         headersRect = CGRect(x: viewport.minX, y: headerBeginY, width: viewport.width, height: layoutRect.minY - headerBeginY)
         
         switch (numberOfItems, placeholder) {
+        case (0, .Some(var info)):
+            itemsRect = CGRect.zeroRect
+            footersRect = CGRect.zeroRect
+            
+            // Height of the placeholder is equal to the height of the collection view minus the height of the headers
+            let frame = layoutRect.rectByIntersecting(viewport)
+            info.measurement = .Static(frame.height)
+            info.frame = frame
+            placeholder = info
+            
+            _ = layoutRect.divide(frame.height)
         case (_, .None) where numberOfItems != 0:
             // Lay out items and footers only if there actually ARE items.
-            var itemsLayoutRect = layoutRect.rectByInsetting(insets: metrics.groupPadding)
+            let itemsBeginY = layoutRect.minY
             
-            let columnWidth = itemsLayoutRect.width / CGFloat(numberOfColumns)
+            let columnsPointsRatio = CGFloat(numberOfColumns)
+            let maxWidth = metrics.padding.map { layoutRect.width - $0.left - $0.right } ?? layoutRect.width
+            let numberOfRows =  Int(ceil(CGFloat(items.count) / columnsPointsRatio))
+
+            let columnWidth = maxWidth / columnsPointsRatio
             let divideFrom = metrics.layoutSlicingEdge
             
-            rows.reserveCapacity(1 + items.count / numberOfColumns)
+            rows.reserveCapacity(numberOfRows + 1)
             
             for range in take(items.startIndex..<items.endIndex, eachSlice: numberOfColumns) {
                 let original = items[range]
                 
                 // take a measurement pass through all items
-                let measurePass = original.mapWithIndex { (sliceIdx, var item) -> ItemInfo in
+                let measurePass = original.mapWithIndex { (columnIndex, var item) -> ItemInfo in
+                    let rowIndex = self.rows.count
+                    let padding = self.metrics.itemPadding(rows: rowIndex..<numberOfRows, columns: columnIndex..<numberOfColumns)
+                    
                     switch (item.measurement, self.metrics.measurement, measureItem) {
                     case (_, .Static(let value), _):
-                        item.measurement = .Static(value)
+                        item.measurement = .Static(value + padding.top + padding.bottom)
                     case (_, .Estimate(let estimate), .Some(let measure)):
-                        let idx = range.startIndex.advancedBy(sliceIdx)
-                        let frame = CGRect(origin: itemsLayoutRect.origin, size: CGSize(width: columnWidth, height: estimate))
+                        let idx = range.startIndex.advancedBy(columnIndex)
+                        let width = columnWidth + padding.left + padding.right
+                        let height = estimate + padding.top + padding.bottom
+                        let frame = CGRect(origin: layoutRect.origin, size: CGSize(width: width, height: height))
                         let measured = measure(index: idx, measuringFrame: frame)
                         item.measurement = .Static(measured.height)
                     default: break
                     }
+                    
+                    item.padding = padding
                     return item
                 }
                 
                 let rowHeight = maxElement(lazy(measurePass).map { $0.measurement.lengthValue })
-                let rowRect = itemsLayoutRect.divide(rowHeight)
+                let rowRect = layoutRect.divide(rowHeight)
                 var rowLayoutRect = rowRect
                 
                 items[range] = measurePass.map { (var item) -> ItemInfo in
@@ -375,11 +420,11 @@ extension SectionInfo {
                 rows.append(RowInfo(items: items[range], frame: rowRect))
             }
             
-            let itemsEndRect = itemsLayoutRect.divide(metrics.groupPadding.bottom)
-            let itemsHeight = itemsLayoutRect.minY + metrics.groupPadding.bottom - layoutRect.minY
-            let itemsRect = layoutRect.divide(itemsHeight)
+            itemsRect = CGRect(x: viewport.minX, y: itemsBeginY, width: viewport.width, height: layoutRect.minY - itemsBeginY)
             
             // Lay out footers as well
+            let footerBeginY = layoutRect.minY
+            let headerKey = SupplementKind.Header.rawValue
             supplementalItems.updateMapWithIndex(groupForKey: SupplementKind.Footer.rawValue) { (footerInfex, var footerInfo) -> SupplementInfo in
                 // skip hidden footers
                 if (footerInfo.metrics.isHidden) { return footerInfo }
@@ -398,15 +443,13 @@ extension SectionInfo {
                 
                 return footerInfo
             }
-        case (_, .Some(var info)) where numberOfItems == 0:
-            // Height of the placeholder is equal to the height of the collection view minus the height of the headers
-            let frame = layoutRect.rectByIntersecting(viewport)
-            info.measurement = .Static(frame.height)
-            info.frame = frame
-            placeholder = info
-            
-            _ = layoutRect.divide(frame.height)
+            footersRect = CGRect(x: viewport.minX, y: footerBeginY, width: viewport.width, height: layoutRect.minY - footerBeginY)
         default: break
+        }
+        
+        // This is now the beginning of the section gap for the next section
+        if let bottom = metrics.margin {
+            _ = layoutRect.divide(bottom)
         }
         
         frame = CGRect(x: viewport.minX, y: viewport.minY, width: viewport.width, height: layoutRect.minY - viewport.minY)

@@ -28,7 +28,6 @@ public struct SeparatorOptions: RawOptionSetType {
     public static var Rows: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 2) }
     public static var Columns: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 3) }
     public static var AfterSections: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 4) }
-    public static var AfterLastSection: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 5) }
 }
 
 public struct SupplementaryMetrics {
@@ -115,6 +114,8 @@ public struct SectionMetrics {
     /// will be applied between the headers & footers and the cells. The left &
     /// right padding will be applied between the view edges and the cells.
     public var padding: UIEdgeInsets? = nil
+    /// Space between this and the next section
+    public var margin: CGFloat? = nil
     /// How the cells should be laid out when there are multiple columns.
     public var itemLayout: LayoutOrder? = nil
     /// Determines where, if any, separators are drawn.
@@ -150,6 +151,7 @@ public struct SectionMetrics {
         if other.measurement != ElementLength.None { measurement = other.measurement }
         if let otherColumns = other.numberOfColumns { numberOfColumns = otherColumns }
         if let otherPadding = other.padding { padding = otherPadding }
+        if let otherMargin = other.margin { margin = otherMargin }
         if let otherOrder = other.itemLayout { itemLayout = otherOrder }
         if other.didSetSeparators { separators = other.separators }
         if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }

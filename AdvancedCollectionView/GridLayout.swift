@@ -284,7 +284,8 @@ public class GridLayout: UICollectionViewLayout {
         
         let (section, index) = key.components
         if let info = sectionInfo(forSection: section) {
-            let attribute = createItemAttributes(element: key, section: info.metrics, item: info[index])
+            let columnIndex = info.metrics.numberOfColumns.map { key.indexPath.item % $0 } ?? 0
+            let attribute = createItemAttributes(element: key, section: info.metrics, item: info[index], columnIndex: columnIndex)
             log("Synthesized attributes for \(indexPath.stringValue): \(attribute.frame) (preparing layout \(flags.preparingLayout))")
             if flags.preparingLayout {
                 attribute.hidden = true
@@ -764,7 +765,7 @@ public class GridLayout: UICollectionViewLayout {
                 appendPinned(attribute, section: section, shouldPin: item.metrics.shouldPin)
                 
                 // Separators after global headers, before regular headers
-                if let separator = addSeparator(idx > 0, kind: .HeaderSeparator, indexPath: ip, section: info, force: isGlobal) {
+                if let separator = addSeparator(kind: .HeaderSeparator, indexPath: ip, section: info, force: isGlobal) {
                     appendPinned(separator, section: section, shouldPin: item.metrics.shouldPin)
                 }
             }
@@ -773,7 +774,7 @@ public class GridLayout: UICollectionViewLayout {
         // Separator after non-global headers
         let numberOfHeaders = info.count(supplements: .Header) ?? 0
         let numberOfItems = info.numberOfItems
-        addSeparator((numberOfHeaders != 0) ^ (numberOfItems != 0), kind: .HeaderSeparator, indexPath: indexPath(numberOfHeaders), section: info)
+        addSeparator(numberOfHeaders != 0 || numberOfItems != 0, kind: .HeaderSeparator, indexPath: indexPath(numberOfHeaders), section: info)
         
         // Lay out rows
         let numberOfColumns = info.metrics.numberOfColumns ?? 1
@@ -806,7 +807,7 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         // Add the section separator below this section provided it's not the last section (or if the section explicitly says to)
-        addSeparator(!isGlobal && numberOfItems != 0, kind: .RowSeparator, indexPath: indexPath(numberOfItems), section: info)
+        addSeparator(!isGlobal && numberOfItems != 0, kind: .FooterSeparator, indexPath: indexPath(numberOfItems), section: info)
     }
     
     // MARK: Pinning
@@ -925,17 +926,7 @@ public class GridLayout: UICollectionViewLayout {
         }
     }
     
-    private func afterSectionSeparatorBit(#section: Section) -> SeparatorOptions {
-        switch section {
-        case .Index(let idx):
-            let numberOfSections = collectionView?.numberOfSections() ?? 0
-            return idx + 1 < numberOfSections ? .AfterSections : .AfterLastSection
-        case .Global:
-            return .AfterSections
-        }
-    }
-    
-    private func createItemAttributes(element key: ElementKey, section: SectionMetrics, item: ItemInfo?, columnIndex columnIn: Int? = nil) -> Attributes {
+    private func createItemAttributes(element key: ElementKey, section: SectionMetrics, item: ItemInfo?, columnIndex: Int) -> Attributes {
         let attribute = layoutAttributesType(forElement: key)
 
         attribute.frame = { _ -> CGRect in
@@ -953,7 +944,9 @@ public class GridLayout: UICollectionViewLayout {
         attribute.selectedBackgroundColor = section.selectedBackgroundColor
         attribute.tintColor = section.tintColor
         attribute.selectedTintColor = section.selectedTintColor
-        attribute.columnIndex = columnIn ?? (key.indexPath.item % (section.numberOfColumns ?? 1))
+        attribute.padding = item?.padding ?? UIEdgeInsetsZero
+        attribute.columnIndex = columnIndex
+        
 
         return attribute
     }
@@ -1036,20 +1029,28 @@ public class GridLayout: UICollectionViewLayout {
                 case (.Some(let item), _, _):
                     return (.Supplements, item.frame, .MaxYEdge)
                 case (_, let headers, 0) where headers != 0:
-                    return (self.afterSectionSeparatorBit(section: key.components.0), section.frame, .MaxYEdge)
+                    return (.AfterSections, section.contentRect, .MaxYEdge)
                 default:
-                    return (.BeforeSections, section.frame, .MinYEdge)
+                    return (.BeforeSections, section.contentRect, .MinYEdge)
                 }
             }()
+
             configureSeparator(attributes: &attribute, bit: bit, toRect: rect, edge: edge, section: section)
         case .FooterSeparator:
             let footerKey = key.correspondingSupplement(SupplementKind.Footer.rawValue)
-            if let footer = attributesCache[footerKey] {
-                configureSeparator(attributes: &attribute, bit: .Supplements, toRect: footer.frame, edge: .MinYEdge, section: section)
-            } else {
-                let bit = afterSectionSeparatorBit(section: key.components.0)
-                configureSeparator(attributes: &attribute, bit: bit, toRect: section.frame, edge: .MaxYEdge, section: section)
-            }
+            let footer = attributesCache[footerKey]
+            let (bit, rect, edge) = { () -> (SeparatorOptions, CGRect, CGRectEdge) in
+                let numberOfFooters = section.count(supplements: .Footer) ?? 0
+                let numberOfItems = section.numberOfItems
+                switch (footer, numberOfFooters, numberOfItems) {
+                case (.Some(let item), _, _):
+                    return (.Supplements, item.frame, .MaxYEdge)
+                default:
+                    return (.AfterSections, section.contentRect, .MaxYEdge)
+                }
+            }()
+
+            configureSeparator(attributes: &attribute, bit: bit, toRect: rect, edge: edge, section: section)
         }
         
         return attribute
