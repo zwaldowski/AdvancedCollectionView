@@ -116,16 +116,26 @@ public prefix func -(p: CGPoint) -> CGPoint {
     return CGPoint(x: -p.x, y: -p.y)
 }
 
+public prefix func -(s: CGSize) -> CGSize {
+    return CGSize(width: -s.width, height: -s.height)
+}
+
 public func +(lhs:CGPoint, rhs:CGPoint) -> CGPoint {
     return CGPoint(x:lhs.x + rhs.x, y:lhs.y + rhs.y)
 }
 
-public func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-    return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+public func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint { return lhs + -rhs }
+
+public func +(lhs: CGSize, rhs: CGSize) -> CGSize {
+    return CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
 }
+
+public func -(lhs: CGSize, rhs: CGSize) -> CGSize { return lhs + -rhs }
 
 public func +=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs + rhs }
 public func -=(inout lhs: CGPoint, rhs: CGPoint) { lhs = lhs - rhs }
+public func +=(inout lhs: CGSize, rhs: CGSize) { lhs = lhs + rhs }
+public func -=(inout lhs: CGSize, rhs: CGSize) { lhs = lhs - rhs }
 
 // MARK: Rects
 

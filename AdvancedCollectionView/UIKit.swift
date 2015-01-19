@@ -9,7 +9,8 @@
 import UIKit
 
 struct Constants {
-    static let isiOS8 = floor(NSFoundationVersionNumber) > 1047.25
+    static let isiOS8 = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1
+    static let isiOS7 = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1 && !isiOS8
 }
 
 /// Extension-safe user layout direction

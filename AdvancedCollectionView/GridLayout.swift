@@ -235,6 +235,20 @@ public class GridLayout: UICollectionViewLayout {
         log("layoutDataIsValid \(flags.layoutDataIsValid), layoutMetricsAreValid \(flags.layoutMetricsAreValid)")
         
         super.invalidateLayoutWithContext(context)
+        
+        switch (Constants.isiOS7, collectionView) {
+        case (true, .Some(let cv)):
+            let offset = context.contentOffsetAdjustment
+            if offset != CGPoint.zeroPoint {
+                cv.contentOffset += offset
+            }
+            
+            let size = context.contentSizeAdjustment
+            if size != CGSize.zeroSize {
+                cv.contentSize += size
+            }
+        default: break
+        }
     }
     
     public override func prepareLayout() {

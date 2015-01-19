@@ -7,6 +7,10 @@
 //
 
 import UIKit
+import ObjectiveC.runtime
+
+private var contentOffsetAdjustmentLegacyKey = 0
+private var contentSizeAdjustmentLegacyKey = 0
 
 public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
@@ -78,6 +82,47 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
 
 public class GridLayoutInvalidationContext: UICollectionViewLayoutInvalidationContext {
 
+    public override var contentOffsetAdjustment: CGPoint {
+        get {
+            if Constants.isiOS8 {
+                return super.contentOffsetAdjustment
+            } else if let obj = objc_getAssociatedObject(self, &contentOffsetAdjustmentLegacyKey) as NSValue? {
+                return obj.CGPointValue()
+            } else {
+                return CGPoint.zeroPoint
+            }
+        }
+        set {
+            if Constants.isiOS8 {
+                super.contentOffsetAdjustment = newValue
+            } else {
+                let obj = NSValue(CGPoint: newValue)
+                objc_setAssociatedObject(self, &contentOffsetAdjustmentLegacyKey, obj, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            }
+        }
+    }
+    
+    public override var contentSizeAdjustment: CGSize {
+        get {
+            if Constants.isiOS8 {
+                return super.contentSizeAdjustment
+            } else if let obj = objc_getAssociatedObject(self, &contentSizeAdjustmentLegacyKey) as NSValue? {
+                return obj.CGSizeValue()
+            } else {
+                return CGSize.zeroSize
+            }
+        }
+        set {
+            if Constants.isiOS8 {
+                super.contentSizeAdjustment = newValue
+            } else {
+                let obj = NSValue(CGSize: newValue)
+                objc_setAssociatedObject(self, &contentOffsetAdjustmentLegacyKey, obj, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            }
+            
+        }
+    }
+    
     public var invalidateLayoutMetrics = true
     public var invalidateLayoutOrigin = false
     
