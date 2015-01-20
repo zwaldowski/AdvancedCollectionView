@@ -8,16 +8,19 @@
 
 import UIKit
 
-public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLayout {
+public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLegacy {
     
     /// The title of this data source. This value is used to populate section headers and the segmented control tab.
     public final var title: String?
     
-    // MARK: Parent-child primitives
-    
+    /// The logical number of sections presented by this data source.
     public var numberOfSections: Int {
         return 1
     }
+    
+    // MARK: Parent-child primitives
+    
+    public weak var container: DataSourceContainer?
     
     public func localSection(global section: Int) -> Int {
         return container?.localSection(global: section) ?? section
@@ -30,11 +33,6 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     public func containedDataSource(forSection section: Int) -> DataSource {
         return self
     }
-
-    
-    // MARK: Parent-child utilities
-    
-    public weak var container: DataSourceContainer?
     
     var isRootDataSource: Bool {
         if let container = container {
@@ -47,13 +45,13 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     // MARK: Collection view interface
     
     public func registerReusableViews(#collectionView: UICollectionView) {
-        for supplMetrics in snapshotMetrics(section: .Global).supplementaryViews {
+        for supplMetrics in snapshotSupplements(section: .Global) {
             if supplMetrics.kind != SupplementKind.Header.rawValue { continue }
             collectionView.register(typeForSupplement: supplMetrics.viewType, ofKind: SupplementKind.Header, reuseIdentifier: supplMetrics.reuseIdentifier)
         }
         
         for idx in 0..<numberOfSections {
-            for supplMetrics in snapshotMetrics(section: .Index(idx)).supplementaryViews {
+            for supplMetrics in snapshotSupplements(section: .Index(idx)) {
                 collectionView.register(typeForSupplement: supplMetrics.viewType, ofRawKind: supplMetrics.kind, reuseIdentifier: supplMetrics.reuseIdentifier)
             }
         }
@@ -162,82 +160,62 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     
     // MARK: Metrics
     
-    private var sectionMetrics = [Section: SectionMetrics]()
-    private var headers = [SupplementaryMetrics]()
-    private var headersIndexesByKey = [String: (Int, SupplementaryMetrics)]()
-    
+    /// Metrics common to everything contained by the data source
     public var defaultMetrics: SectionMetrics = SectionMetrics()
+
+    private typealias SectionEntry = (metrics: SectionMetrics, supplements: [SupplementaryMetrics])
+    private var perSectionAttributes = [Section: SectionEntry]()
     
-    public subscript(section: Section) -> SectionMetrics? {
-        get {
-            return sectionMetrics[section]
-        }
-        set(metrics) {
-            sectionMetrics[section] = metrics
-            
-            switch section {
-            case .Global:
-                notifyDidReloadGlobalSection()
-            case .Index(let sectionIndex):
-                notifySectionsReloaded(NSIndexSet(index: sectionIndex))
-            }
+    private func updateAttributes(entry: SectionEntry, forSection section: Section) {
+        perSectionAttributes[section] = entry
+        
+        switch section {
+        case .Global:
+            notifyDidReloadGlobalSection()
+        case .Index(let sectionIndex):
+            notifySectionsReloaded(NSIndexSet(index: sectionIndex))
         }
     }
     
-    public func snapshotMetrics(#section: Section) -> SectionMetrics {
-        var metrics = isRootDataSource ? SectionMetrics.defaultMetrics : SectionMetrics()
-        metrics.apply(metrics: defaultMetrics)
-        
-        if let submetrics = sectionMetrics[section] {
-            metrics.apply(metrics: submetrics)
+    public subscript(section: Section) -> SectionMetrics {
+        get {
+            return perSectionAttributes[section]?.metrics ?? SectionMetrics()
         }
-        
-        switch (isRootDataSource, section) {
-        case (true, .Global):
-            metrics.supplementaryViews = headers
-        case (false, .Index(0)):
-            // We need to handle global headers and the placeholder view for section 0
-            metrics.supplementaryViews = headers + metrics.supplementaryViews
-            metrics.hasPlaceholder = shouldDisplayPlaceholder
-        default: break
+        set(metrics) {
+            let currentSupplements = supplements(section)
+            let entry = (metrics, currentSupplements)
+            updateAttributes(entry, forSection: section)
         }
-        
-        return metrics
+    }
+    
+    public func supplements(section: Section) -> [SupplementaryMetrics] {
+        return perSectionAttributes[section]?.supplements ?? []
+    }
+    
+    public func setSupplements(supplements: [SupplementaryMetrics], forSection section: Section) {
+        let currentMetrics = self[section] ?? SectionMetrics()
+        let entry = (currentMetrics, supplements)
+        updateAttributes(entry, forSection: section)
     }
     
     // MARK: Headers
     
+    private var headers = OrderedDictionary<String, SupplementaryMetrics>()
+
     public func header(forKey key: String) -> SupplementaryMetrics? {
-        return headersIndexesByKey[key]?.1
+        return headers[key]
     }
     
     public func addHeader(header: SupplementaryMetrics, forKey key: String) {
-        headers.append(header)
-        let index = headers.endIndex.predecessor()
-        headersIndexesByKey[key] = (index, header)
+        headers[key] = header
     }
     
-    public func updateHeader(header: SupplementaryMetrics, forKey key: String) {
-        if let (idx, old) = headersIndexesByKey[key] {
-            headersIndexesByKey[key] = (idx, header)
-            headers[idx] = header
-        } else {
-            addHeader(header, forKey: key)
-        }
+    public func updateHeader(header: SupplementaryMetrics, forKey key: String) -> SupplementaryMetrics? {
+        return headers.updateValue(header, forKey: key)
     }
     
     public func removeHeader(forKey key: String) {
-        if let index = headersIndexesByKey.indexForKey(key) {
-            let (_, (arrayIdx, _)) = headersIndexesByKey[index]
-            headersIndexesByKey.removeAtIndex(index)
-            headers.removeAtIndex(arrayIdx)
-        }
-    }
-    
-    public func addSupplement(header: SupplementaryMetrics, forSection section: Section) {
-        var metrics = sectionMetrics[section] ?? SectionMetrics()
-        metrics.supplementaryViews.append(header)
-        sectionMetrics[section] = metrics
+        headers.removeValueForKey(key)
     }
     
     // MARK: Placeholders
@@ -340,8 +318,9 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         case (.BatchUpdate(let update, let completion), _, .None):
             update()
             completion?(true)
-        default:
-            container?.dataSourceWillPerform(self, itemAction: itemAction)
+        case let (_, _, .Some(container)):
+            container.dataSourceWillPerform(self, itemAction: itemAction)
+        default: break
         }
     }
     
@@ -419,12 +398,6 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     public func notifyContentLoaded(#error: NSError?) {
         notify(itemAction: .DidLoad(error))
     }
-        
-    // MARK: SequenceType
-    
-    public func generate() -> GeneratorOf<Section> {
-        return Section.all(numberOfSections: numberOfSections)
-    }
     
     // MARK: UICollectionViewDataSource
     
@@ -460,8 +433,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
             return (.Index(section), item, dataSource, localIndexPath)
         }()
         
-        let sectionMetrics = snapshotMetrics(section: section)
-        let supplements = lazy(sectionMetrics.supplementaryViews).filter {
+        let supplements = lazy(snapshotSupplements(section: section)).filter {
             $0.kind == kind
         }
         
@@ -483,6 +455,39 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     }
     
     // MARK: CollectionViewDataSourceGridLayout
+
+    public func snapshotMetrics(#section: Section) -> SectionMetrics {
+        var metrics = isRootDataSource ? SectionMetrics.defaultMetrics : SectionMetrics()
+        
+        metrics.apply(metrics: defaultMetrics)
+        metrics.apply(metrics: self[section])
+        
+        switch (isRootDataSource, section) {
+        case (false, .Index(0)):
+            metrics.hasPlaceholder = shouldDisplayPlaceholder
+        default: break
+        }
+        
+        if metrics.backgroundColor == nil {
+            metrics.backgroundColor = UIColor.whiteColor()
+        }
+        
+        return metrics
+    }
+    
+    public func snapshotSupplements(#section: Section) -> [SupplementaryMetrics] {
+        switch (isRootDataSource, section) {
+        case (true, .Global):
+            return map(headers) { $0.1 }
+        case (false, .Index(0)):
+            // We need to handle global headers for section 0
+            return map(headers) { $0.1 } + supplements(section)
+        default:
+            return supplements(section)
+        }
+    }
+    
+    // MARK: MetricsProviderLegacy
     
     public func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
         let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
@@ -496,18 +501,6 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
         let fittingSize = cell.preferredLayoutSize(fittingSize: size)
         cell.removeFromSuperview() // force it to get put in the reuse pool now
         return fittingSize
-    }
-    
-    public func snapshotMetrics() -> [Section : SectionMetrics] {
-        let defaultBackground = UIColor.whiteColor()
-        return reduce(self, [:]) { (var dict, section) in
-            var metrics = self.snapshotMetrics(section: section)
-            if metrics.backgroundColor == nil {
-                metrics.backgroundColor = defaultBackground
-            }
-            dict[section] = metrics
-            return dict
-        }
     }
     
 }

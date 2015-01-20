@@ -260,7 +260,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         return selectedDataSource!.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
     }
     
-    // MARK: CollectionViewDataSourceGridLayout
+    // MARK: MetricsProviderLegacy
     
     public override func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize {
         return selectedDataSource?.sizeFittingSize(size, itemAtIndexPath: indexPath, collectionView: collectionView) ?? size

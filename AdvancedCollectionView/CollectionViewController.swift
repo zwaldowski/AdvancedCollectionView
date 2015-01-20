@@ -13,6 +13,10 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     private var dataSourceContext = 0
     private let updateDebugging = true
     
+    private var gridLayout: GridLayout? {
+        return collectionView?.collectionViewLayout as? GridLayout
+    }
+    
     deinit {
         collectionView?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)
     }
@@ -54,6 +58,10 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
                 if dataSource.container == nil {
                     dataSource.container = self
                 }
+                
+                gridLayout?.metricsProvider = dataSource
+            } else {
+                gridLayout?.metricsProvider = nil
             }
         } else {
             // For change contexts that aren't the data source, pass them to super.
@@ -78,16 +86,12 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     }
     
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
-        let gridLayout = collectionView?.collectionViewLayout as? GridLayout
-        
-        if let layout = gridLayout {
-            layout.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
-        }
-        
         if updateDebugging {
             debugPrintln(sectionAction)
         }
         
+        gridLayout?.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
+
         switch (sectionAction, gridLayout) {
         case (.Insert(let indexSet, _), _):
             collectionView?.insertSections(indexSet)

@@ -33,9 +33,9 @@ public struct SeparatorOptions: RawOptionSetType {
 public struct SupplementaryMetrics {
     
     /// The kind of supplementary view these metrics describe
-    public let kind: String
+    let kind: String
     /// The class to use when dequeuing an instance of this supplementary view
-    public var viewType: UICollectionReusableView.Type = UICollectionReusableView.self
+    public var viewType = UICollectionReusableView.self
     /// Should this supplementary view be displayed while the placeholder is visible?
     public var isVisibleWhileShowingPlaceholder = false
     /// Should this supplementary view be pinned to the edges of the view when
@@ -100,8 +100,8 @@ public struct SectionMetrics {
         var metrics = SectionMetrics()
         metrics.measurement = .Default
         metrics.numberOfColumns = 1
-        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
         metrics.separatorColor = UIColor(white: 0.8, alpha: 1)
+        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
         return metrics
     }
     
@@ -118,16 +118,6 @@ public struct SectionMetrics {
     public var margin: CGFloat? = nil
     /// How the cells should be laid out when there are multiple columns.
     public var itemLayout: LayoutOrder? = nil
-    /// Determines where, if any, separators are drawn.
-    private var didSetSeparators: Bool = false
-    public var separators: SeparatorOptions = nil {
-        didSet { didSetSeparators = true }
-    }
-    /// Insets for the separators drawn between rows (left & right) and
-    /// columns (top & bottom).
-    public var separatorInsets: UIEdgeInsets? = nil
-    /// The color to use when drawing row, column, and section separators.
-    public var separatorColor: UIColor? = nil
     /// The background color that should be used for this element. On an item,
     /// if not set, this will be inherited from the section.
     public var backgroundColor: UIColor? = nil
@@ -142,8 +132,16 @@ public struct SectionMetrics {
     /// item, if not set, it will be inherited from the section. Use the clear
     /// color to override the inherited color.
     public var selectedTintColor: UIColor? = nil
-    /// Supplementary view metrics for this section
-    public var supplementaryViews = [SupplementaryMetrics]()
+    /// Insets for the separators drawn between rows (left & right) and
+    /// columns (top & bottom).
+    public var separatorInsets: UIEdgeInsets? = nil
+    /// The color to use when drawing row, column, and section separators.
+    public var separatorColor: UIColor? = nil
+    /// Determines where, if any, separators are drawn.
+    private var didSetSeparators: Bool = false
+    public var separators: SeparatorOptions = nil {
+        didSet { didSetSeparators = true }
+    }
     
     var hasPlaceholder = false
     
@@ -153,14 +151,13 @@ public struct SectionMetrics {
         if let otherPadding = other.padding { padding = otherPadding }
         if let otherMargin = other.margin { margin = otherMargin }
         if let otherOrder = other.itemLayout { itemLayout = otherOrder }
-        if other.didSetSeparators { separators = other.separators }
-        if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }
-        if let otherSeparatorColor = other.separatorColor { separatorColor = otherSeparatorColor }
         if let otherBackgroundColor = other.backgroundColor { backgroundColor = otherBackgroundColor }
         if let otherSelectedBackgroundColor = other.selectedBackgroundColor { selectedBackgroundColor = otherSelectedBackgroundColor }
         if let otherTintColor = other.tintColor { tintColor = otherTintColor }
         if let otherSelectedTintColor = other.selectedTintColor { selectedTintColor = otherSelectedTintColor }
-        supplementaryViews.extend(other.supplementaryViews)
+        if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }
+        if let otherSeparatorColor = other.separatorColor { separatorColor = otherSeparatorColor }
+        if other.didSetSeparators { separators = other.separators }
         hasPlaceholder |= other.hasPlaceholder
     }
     

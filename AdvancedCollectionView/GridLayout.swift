@@ -8,17 +8,23 @@
 
 import UIKit
 
+public protocol MetricsProvider: class {
+    
+    /// Compute a flattened snapshot of the layout metrics associated with this and any child data sources.
+    func snapshotMetrics(#section: Section) -> SectionMetrics
+    
+    /// Compute an ordered snapshot of the supplements associated with this and any child data sources.
+    func snapshotSupplements(#section: Section) -> [SupplementaryMetrics]
+    
+}
 
-public protocol CollectionViewDataSourceGridLayout: UICollectionViewDataSource {
+public protocol MetricsProviderLegacy: MetricsProvider {
     
     /// Measure variable height cells. The goal here is to do the minimal necessary configuration to get the correct size information.
     func sizeFittingSize(size: CGSize, itemAtIndexPath indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize
     
     /// Measure variable height supplements. The goal here is to do the minimal necessary configuration to get the correct size information.
     func sizeFittingSize(size: CGSize, supplementaryElementOfKind kind: String, indexPath: NSIndexPath, collectionView: UICollectionView) -> CGSize
-    
-    /// Compute a flattened snapshot of the layout metrics associated with this and any child data sources.
-    func snapshotMetrics() -> [Section : SectionMetrics]
     
 }
 
@@ -192,13 +198,7 @@ public class GridLayout: UICollectionViewLayout {
         return self.dynamicType.layoutAttributesClass() as InvalidationContext.Type
     }
     
-    private var dataSource: CollectionViewDataSourceGridLayout? {
-        // :-(
-        if let collectionView = collectionView {
-            return collectionView.dataSource as? DataSource
-        }
-        return nil
-    }
+    public weak var metricsProvider: MetricsProviderLegacy?
     
     // MARK: UICollectionViewLayout
     
@@ -586,12 +586,28 @@ public class GridLayout: UICollectionViewLayout {
         nonPinnableGlobalAttributes.removeAll()
     }
     
+    private func mapMetrics<T>(#provider: MetricsProviderLegacy?, transform: (Section, SectionMetrics, [SupplementaryMetrics]) -> T) -> (global: T?, sections: [T]) {
+        let global = provider.map { provider -> T in
+            let globalMetrics = provider.snapshotMetrics(section: .Global)
+            let globalSnapshots = provider.snapshotSupplements(section: .Global)
+            return transform(.Global, globalMetrics, globalSnapshots)
+        }
+        
+        let numberOfSections = collectionView?.numberOfSections() ?? 0
+        let sections = map(0..<numberOfSections) { idx -> T in
+            let section = Section.Index(idx)
+            let sectionMetrics = provider?.snapshotMetrics(section: section) ?? SectionMetrics.defaultMetrics
+            let sectionSupplements = provider?.snapshotSupplements(section: section) ?? []
+            return transform(section, sectionMetrics, sectionSupplements)
+        }
+        
+        return (global, sections)
+    }
+    
     private func createLayoutInfoFromDataSource() {
         trace()
         
         resetLayoutInfo()
-        
-        let metricsBySection = dataSource?.snapshotMetrics() ?? [:]
         
         let bounds = collectionView?.bounds
         let insets = collectionView?.contentInset ?? UIEdgeInsetsZero
@@ -599,11 +615,10 @@ public class GridLayout: UICollectionViewLayout {
         let numberOfSections = collectionView?.numberOfSections() ?? 0
         
         func fromMetrics(color: UIColor?) -> UIColor? {
-            if color == UIColor.clearColor() { return nil }
-            return color
+            return color == UIColor.clearColor() ? nil : color
         }
         
-        func buildSection(section: Section, var metrics: SectionMetrics) -> SectionInfo {
+        (globalSection, sections) = mapMetrics(provider: metricsProvider) { (section, var metrics, supplements) -> SectionInfo in
             metrics.backgroundColor = fromMetrics(metrics.backgroundColor)
             metrics.selectedBackgroundColor = fromMetrics(metrics.selectedBackgroundColor)
             metrics.tintColor = fromMetrics(metrics.tintColor)
@@ -618,14 +633,7 @@ public class GridLayout: UICollectionViewLayout {
             
             var info = SectionInfo(metrics: metrics)
             
-            for (var suplMetric) in metrics.supplementaryViews {
-                switch (suplMetric.measurement, suplMetric.kind) {
-                case (.None, SupplementKind.Footer.rawValue):
-                    continue
-                default:
-                    break
-                }
-                
+            for (var suplMetric) in supplements {
                 if suplMetric.kind == SupplementKind.Header.rawValue {
                     suplMetric.backgroundColor = fromMetrics(suplMetric.backgroundColor) ?? metrics.backgroundColor
                     suplMetric.selectedBackgroundColor = fromMetrics(suplMetric.selectedBackgroundColor) ?? metrics.selectedBackgroundColor
@@ -650,18 +658,6 @@ public class GridLayout: UICollectionViewLayout {
             
             return info
         }
-        
-        log("number of sections = \(numberOfSections)")
-        
-        if let metrics = metricsBySection[.Global] {
-            globalSection = buildSection(.Global, metrics)
-        } else {
-            globalSection = nil
-        }
-        
-        var indexedSections = filter(metricsBySection) { $0.0 != .Global }
-        sort(&indexedSections) { $0.0 < $1.0 }
-        sections = indexedSections.map(buildSection)
     }
     
     private func buildLayout() {
@@ -689,7 +685,7 @@ public class GridLayout: UICollectionViewLayout {
         let measureSupplement = { (kind: String, indexPath: NSIndexPath, measuringFrame: CGRect) -> CGSize in
             shouldInvalidate |= true
             self.measuringElement = (ElementKey(supplement: kind, indexPath), measuringFrame)
-            let ret = self.dataSource?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
+            let ret = self.metricsProvider?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
             self.measuringElement = nil
             return ret
         }
@@ -713,7 +709,7 @@ public class GridLayout: UICollectionViewLayout {
             }, measureItem: { (index, measuringRect) in
                 let indexPath = NSIndexPath(sectionIndex, index)
                 self.measuringElement = (ElementKey(indexPath), measuringRect)
-                let ret = self.dataSource?.sizeFittingSize(measuringRect.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? measuringRect.size
+                let ret = self.metricsProvider?.sizeFittingSize(measuringRect.size, itemAtIndexPath: indexPath, collectionView: self.collectionView!) ?? measuringRect.size
                 self.measuringElement = nil
                 return ret
             })
