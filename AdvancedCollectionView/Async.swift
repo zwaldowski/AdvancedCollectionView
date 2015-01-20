@@ -8,33 +8,12 @@
 
 import Foundation
 
-public typealias Queue = dispatch_queue_t
-public typealias Block = dispatch_block_t
-public typealias Group = dispatch_group_t
-public typealias QOS = qos_class_t
-
-public extension Queue {
-    
-    private class func globalQueue(#qos: QOS) -> Queue {
-        return dispatch_get_global_queue(qos, UInt(0))
-    }
-    
-    public class var mainQueue: Queue { return dispatch_get_main_queue() }
-    public class var userInteractiveQueue: Queue { return globalQueue(qos: QOS_CLASS_USER_INTERACTIVE) }
-    public class var userInitiatedQueue: Queue { return globalQueue(qos: QOS_CLASS_USER_INITIATED) }
-    public class var defaultQueue: Queue { return globalQueue(qos: QOS_CLASS_DEFAULT) }
-    public class var utilityQueue: Queue { return globalQueue(qos: QOS_CLASS_UTILITY) }
-    public class var backgroundQueue: Queue { return globalQueue(qos: QOS_CLASS_BACKGROUND) }
-    
-}
+public typealias Block = () -> ()
 
 public struct Async {
-    private static var nativeCancellation = {
-        floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1
-        }()
     
     private final class Wrapper {
-        let group = Group()
+        let group = dispatch_group_create()
         var isCancelled = false
         
         func cancellable(block: Block) -> Block {
@@ -45,15 +24,24 @@ public struct Async {
         }
     }
     
-    private enum BlockContainer {
+    private enum BlockStorage {
         case Native(Block)
         case Legacy(Wrapper)
     }
     
-    private let wrapped: BlockContainer
+    private let storage: BlockStorage
+    private init(storage: BlockStorage) {
+        self.storage = storage
+    }
     
+}
+
+// MARK: Continuation
+
+extension Async {
+
     public func cancel() {
-        switch wrapped {
+        switch storage {
         case .Native(let block):
             dispatch_block_cancel(block)
         case .Legacy(let wrapper):
@@ -61,12 +49,12 @@ public struct Async {
         }
     }
     
-    public func chain(queue: Queue, block chainingBlock: Block) -> Async {
-        switch wrapped {
+    public func chain(onQueue queue: dispatch_queue_t, block chainingBlock: Block) -> Async {
+        switch storage {
         case .Native(let block):
             let child = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS, chainingBlock)
             dispatch_block_notify(block, queue, child)
-            return Async(wrapped: .Native(child))
+            return Async(storage: .Native(child))
         case .Legacy(let wrapper):
             let childWrapper = Async.Wrapper()
             let group = childWrapper.group
@@ -76,21 +64,43 @@ public struct Async {
                 block()
                 dispatch_group_leave(group)
             }
-            return Async(wrapped: .Legacy(wrapper))
+            return Async(storage: .Legacy(wrapper))
         }
     }
     
 }
 
-public func async(queue: Queue, block originalBlock: Block) -> Async {
-    if Async.nativeCancellation {
+// MARK: Dispatching
+
+extension Async {
+    
+    public static func send(onQueue queue: dispatch_queue_t)(originalBlock: Block) -> Async {
+        if Constants.isiOS7 {
+            let wrapper = Async.Wrapper()
+            let block = wrapper.cancellable(originalBlock)
+            dispatch_group_async(wrapper.group, queue, block)
+            return Async(storage: .Legacy(wrapper))
+        }
+        
         let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS, originalBlock)
         dispatch_async(queue, block)
-        return Async(wrapped: .Native(block))
+        return Async(storage: .Native(block))
     }
     
-    let wrapper = Async.Wrapper()
-    let block = wrapper.cancellable(originalBlock)
-    dispatch_group_async(wrapper.group, queue, block)
-    return Async(wrapped: .Legacy(wrapper))
+    public typealias DispatchOnto = Block -> Async
+    
+    public static var main: DispatchOnto {
+        return send(onQueue: dispatch_get_main_queue())
+    }
+    
+    private static func globalQueue(#qos: qos_class_t) -> DispatchOnto {
+        return send(onQueue: dispatch_get_global_queue(qos, UInt(0)))
+    }
+    
+    public static var userInteractiveQueue: DispatchOnto { return globalQueue(qos: QOS_CLASS_USER_INTERACTIVE) }
+    public static var userInitiatedQueue: DispatchOnto { return globalQueue(qos: QOS_CLASS_USER_INITIATED) }
+    public static var defaultQueue: DispatchOnto { return globalQueue(qos: QOS_CLASS_DEFAULT) }
+    public static var utilityQueue: DispatchOnto { return globalQueue(qos: QOS_CLASS_UTILITY) }
+    public static var backgroundQueue: DispatchOnto { return globalQueue(qos: QOS_CLASS_BACKGROUND) }
+    
 }

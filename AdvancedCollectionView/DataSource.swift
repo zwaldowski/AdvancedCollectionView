@@ -79,7 +79,7 @@ public class DataSource: NSObject, SequenceType, CollectionViewDataSourceGridLay
     private var loadingDebounce: Async?
     public func setNeedsLoadContent() {
         loadingDebounce?.cancel()
-        loadingDebounce = async(Queue.mainQueue, loadContent)
+        loadingDebounce = Async.main(loadContent)
     }
     
     public final func beginLoading() {

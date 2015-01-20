@@ -48,7 +48,7 @@ public final class Loader {
     
     private func done(newState state: LoadingState?, update: Update? = nil) {
         if let block = completionHandler {
-            async(Queue.mainQueue) {
+            Async.main {
                 block(state, update)
             }
             completionHandler = nil
