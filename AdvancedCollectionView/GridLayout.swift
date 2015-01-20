@@ -116,7 +116,7 @@ public class GridLayout: UICollectionViewLayout {
     private var contentOffsetAdjustment = CGPoint.zeroPoint
     
     private var hairline: CGFloat = 1
-    private var lastPreparedCollectionView: UnsafePointer<Void> = nil
+    private var lastPreparedCollectionView: ObjectIdentifier? = nil
     
     public func prepare(forCollectionView collectionView: UICollectionView?) {
         hairline = collectionView?.hairline ?? 1
@@ -258,7 +258,7 @@ public class GridLayout: UICollectionViewLayout {
         contentSizeAdjustment = CGSize.zeroSize
         contentOffsetAdjustment = CGPoint.zeroPoint
         
-        let cvPtr = collectionView.map { unsafeAddressOf($0) } ?? UnsafePointer.null()
+        let cvPtr = collectionView.map { ObjectIdentifier($0) }
         if cvPtr != lastPreparedCollectionView {
             prepare(forCollectionView: collectionView)
             lastPreparedCollectionView = cvPtr
