@@ -132,10 +132,9 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         var loading = 0, refreshing = 0, error = 0, loaded = 0, noContent = 0
         var currentError: NSError!
 
-        var loadingStates = lazy(mappings).map { (dataSource, _) -> LoadingState in
+        let loadingStates = map(mappings) { (dataSource, _) -> LoadingState in
             dataSource.loadingState
-        }.array
-        loadingStates.append(super.loadingState)
+        } + [ super.loadingState ]
         
         for state in loadingStates {
             switch state {
