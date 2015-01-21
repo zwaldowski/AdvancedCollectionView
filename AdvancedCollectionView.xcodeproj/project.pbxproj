@@ -59,9 +59,13 @@
 		DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB24FC291A3F869F00C5D0B4 /* Geometry.swift */; };
 		DB3D6AFC1A41662300D48A92 /* DataSourcePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */; };
 		DB3D6AFE1A41666D00D48A92 /* DataSource+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */; };
+		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB6299CC1A3E438400044536 /* AAPLGridLayoutColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB6299CD1A3E438400044536 /* AAPLGridLayoutColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */; };
 		DB6299CF1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB71E6561A489D9C00AFC472 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6541A489D9C00AFC472 /* Set.swift */; };
+		DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6551A489D9C00AFC472 /* Unit.swift */; };
+		DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */; };
 		DB81005B1A3CD0E600E758F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB81005D1A3CD0E600E758F6 /* LaunchScreen.xib */; };
 		DB8100681A3CD2AE00E758F6 /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8100671A3CD2AE00E758F6 /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB81006E1A3CD2AE00E758F6 /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */; };
@@ -267,9 +271,13 @@
 		DB24FC291A3F869F00C5D0B4 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		DB3D6AFB1A41662300D48A92 /* DataSourcePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourcePresenter.swift; sourceTree = "<group>"; };
 		DB3D6AFD1A41666D00D48A92 /* DataSource+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+CollectionView.swift"; sourceTree = "<group>"; };
+		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB6299CA1A3E438400044536 /* AAPLGridLayoutColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLGridLayoutColorView.h; sourceTree = "<group>"; };
 		DB6299CB1A3E438400044536 /* AAPLGridLayoutColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLGridLayoutColorView.m; sourceTree = "<group>"; };
 		DB6299CE1A3E483000044536 /* AAPLCollectionViewDataSourceGridLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewDataSourceGridLayout.h; sourceTree = "<group>"; };
+		DB71E6541A489D9C00AFC472 /* Set.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		DB71E6551A489D9C00AFC472 /* Unit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Unit.swift; sourceTree = "<group>"; };
+		DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewLayout.swift; sourceTree = "<group>"; };
 		DB81005C1A3CD0E600E758F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		DB8100631A3CD2AE00E758F6 /* AdvancedCollectionView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AdvancedCollectionView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8100661A3CD2AE00E758F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -444,11 +452,24 @@
 			name = Base;
 			sourceTree = "<group>";
 		};
+		DB71E6581A489DA000AFC472 /* Collections */ = {
+			isa = PBXGroup;
+			children = (
+				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
+				DB71E6541A489D9C00AFC472 /* Set.swift */,
+				DB71E6551A489D9C00AFC472 /* Unit.swift */,
+			);
+			name = Collections;
+			sourceTree = "<group>";
+		};
 		DB8100641A3CD2AE00E758F6 /* AdvancedCollectionView */ = {
 			isa = PBXGroup;
 			children = (
+				DB71E6581A489DA000AFC472 /* Collections */,
 				DB8A79091A3E8479008A79A6 /* Loading.swift */,
 				DB8A78BB1A3E70BE008A79A6 /* GridLayout.swift */,
+				DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */,
+				DB71E6591A48A55200AFC472 /* CollectionViewLayout.swift */,
 				DB24FC241A3F83FD00C5D0B4 /* GridLayoutAttributes.swift */,
 				DB8A78F41A3E79F2008A79A6 /* Metrics.swift */,
 				DB8A78F71A3E8252008A79A6 /* DataSource.swift */,
@@ -458,7 +479,6 @@
 				DBE9D0BD1A3EC1A40040353A /* Foundation.swift */,
 				DB24FC221A3F7E9E00C5D0B4 /* Types.swift */,
 				DB24FC291A3F869F00C5D0B4 /* Geometry.swift */,
-				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
 				DB24FC281A3F845B00C5D0B4 /* Base */,
 				DB8100831A3CD34600E758F6 /* Categories */,
 				DB8100841A3CD39500E758F6 /* Data Sources */,
@@ -798,6 +818,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB71E6561A489D9C00AFC472 /* Set.swift in Sources */,
 				DB24FC251A3F83FD00C5D0B4 /* GridLayoutAttributes.swift in Sources */,
 				DB81008F1A3CD40100E758F6 /* AAPLComposedDataSource_Private.m in Sources */,
 				DB81008B1A3CD40100E758F6 /* UICollectionView+Helpers.m in Sources */,
@@ -812,11 +833,13 @@
 				DB81008E1A3CD40100E758F6 /* AAPLComposedDataSource.m in Sources */,
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
+				DB71E6571A489D9C00AFC472 /* Unit.swift in Sources */,
 				DB81009B1A3CD40100E758F6 /* AAPLPinnableHeaderView.m in Sources */,
 				DB81009C1A3CD40100E758F6 /* AAPLPlaceholderView.m in Sources */,
 				DB8100941A3CD40100E758F6 /* AAPLCollectionViewGridLayoutAttributes.m in Sources */,
 				DB8100951A3CD40100E758F6 /* AAPLLayoutMetrics.m in Sources */,
 				DB8100961A3CD40100E758F6 /* AAPLCollectionViewController.m in Sources */,
+				DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */,
 				DB81009E1A3CD40100E758F6 /* AAPLSegmentedHeaderView.m in Sources */,
 				DB8A78F81A3E8252008A79A6 /* DataSource.swift in Sources */,
 				DB8100981A3CD40100E758F6 /* AAPLBasicCell.m in Sources */,
@@ -829,6 +852,7 @@
 				DB81008C1A3CD40100E758F6 /* UIView+Helpers.m in Sources */,
 				DB8100911A3CD40100E758F6 /* AAPLSegmentedDataSource.m in Sources */,
 				DB24FC231A3F7E9E00C5D0B4 /* Types.swift in Sources */,
+				DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */,
 				DB8100901A3CD40100E758F6 /* AAPLDataSource.m in Sources */,
 				DB8100991A3CD40100E758F6 /* AAPLCollectionViewCell.m in Sources */,
 				DB8A790A1A3E8479008A79A6 /* Loading.swift in Sources */,

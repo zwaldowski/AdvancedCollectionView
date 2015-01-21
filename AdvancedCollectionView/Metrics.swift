@@ -98,7 +98,7 @@ public struct SupplementaryMetrics {
     /// Use top & bottom padding to adjust spacing of header & footer elements.
     /// Not all headers & footers adhere to padding. Default @c UIEdgeInsetsZero
     /// which is interpretted by supplementary items to be their default values.
-    public var isPadding = UIEdgeInsetsZero
+    public var padding = UIEdgeInsetsZero
     /// How is this affected by other coinciding views?
     public var zIndex = GridLayout.ZIndex.Supplement.rawValue
     /// Optional reuse identifier. If not specified, it will be inferred from the

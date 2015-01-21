@@ -8,10 +8,39 @@
 
 import Foundation
 
-public class GridLayoutAttributes: UICollectionViewLayoutAttributes {
+public enum PinningState {
+    case Pinned(CGFloat)
+    case Unpinned
+}
+
+public func ==(lhs: PinningState, rhs: PinningState) -> Bool {
+    switch (lhs, rhs) {
+    case (.Pinned(let a), .Pinned(let b)):
+        return a == b
+    case (.Unpinned, .Unpinned):
+        return true
+    default:
+        return false
+    }
+}
+
+extension PinningState: Hashable {
+    
+    public var hashValue: Int {
+        switch self {
+        case let .Pinned(unpinnedY):
+            return unpinnedY.hashValue
+        case .Unpinned:
+            return 0
+        }
+    }
+    
+}
+
+public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
     /// If this is a header, is it pinned to the top of the collection view?
-    public var isPinned = false
+    public var pinned: PinningState = .Unpinned
     /// The background color for the view
     public var backgroundColor: UIColor? = nil
     /// The background color when selected
@@ -25,17 +54,13 @@ public class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
     /// What is the column index for this item?
     var columnIndex = 0
-    /// Is the cell movable? Only @c true when @c editing.
-    var isMovable = false
-    /// Y offset when not pinned
-    var unpinnedY: CGFloat?
     
     public override var hash: Int {
         var hash = super.hash
         func update(value: Int?) {
             hash = 31 &* (value ?? 0) &+ hash
         }
-        update(isPinned.hashValue)
+        update(pinned.hashValue)
         update(backgroundColor?.hashValue)
         update(selectedBackgroundColor?.hashValue)
         update(tintColor?.hashValue)
@@ -44,23 +69,19 @@ public class GridLayoutAttributes: UICollectionViewLayoutAttributes {
         update(padding.left.hashValue)
         update(padding.bottom.hashValue)
         update(columnIndex.hashValue)
-        update(isMovable.hashValue)
-        update(unpinnedY?.hashValue)
         return hash
     }
     
     public override func isEqual(object: AnyObject?) -> Bool {
         if !super.isEqual(object) { return false }
         if let other = object as? GridLayoutAttributes {
-            if isPinned != other.isPinned { return false }
+            if pinned != other.pinned { return false }
             if backgroundColor != other.backgroundColor { return false }
             if selectedBackgroundColor != other.selectedBackgroundColor { return false }
             if tintColor != other.tintColor { return false }
             if selectedTintColor != other.selectedTintColor { return false }
             if padding != other.padding { return false }
             if columnIndex != other.columnIndex { return false }
-            if isMovable != other.isMovable { return false }
-            if unpinnedY != other.unpinnedY { return false }
             return true
         } else {
             return false
@@ -69,15 +90,13 @@ public class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     
     public override func copyWithZone(zone: NSZone) -> AnyObject {
         var attributes = super.copyWithZone(zone) as GridLayoutAttributes
-        attributes.isPinned = isPinned
+        attributes.pinned = pinned
         attributes.backgroundColor = backgroundColor
         attributes.selectedBackgroundColor = selectedBackgroundColor
         attributes.tintColor = tintColor
         attributes.selectedTintColor = selectedTintColor
         attributes.padding = padding
         attributes.columnIndex = columnIndex
-        attributes.isMovable = isMovable
-        attributes.unpinnedY = unpinnedY
         return attributes
     }
     

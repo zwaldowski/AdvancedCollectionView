@@ -154,3 +154,13 @@ public func ==(lhs: CATransform3D, rhs: CATransform3D) -> Bool {
 
 extension CGAffineTransform: Equatable { }
 extension CATransform3D: Equatable { }
+
+// MARK: Insets
+
+public extension CGRect {
+    
+    mutating func inset(insets: UIEdgeInsets) {
+        self = UIEdgeInsetsInsetRect(self, insets)
+    }
+    
+}

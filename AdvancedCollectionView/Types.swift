@@ -9,7 +9,7 @@
 import Foundation
 
 public enum SectionOperationDirection {
-    case None, Left, Right
+    case Default, Left, Right
 }
 
 // MARK: Bitmasks

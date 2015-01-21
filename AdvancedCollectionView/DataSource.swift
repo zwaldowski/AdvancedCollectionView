@@ -12,11 +12,11 @@ public class DataSource: NSObject {
     
     // MARK: Parent-child primitives
     
-    public weak var presenter: DataSourcePresenter?
+    public weak var container: DataSourceContainer?
     
     var isRootDataSource: Bool {
-        if let presenter = presenter {
-            let casted: AnyObject = presenter as AnyObject
+        if let container = container {
+            let casted: AnyObject = container as AnyObject
             return !(casted is DataSource)
         }
         return true
@@ -232,7 +232,7 @@ public class DataSource: NSObject {
     
     public var isObscuredByPlaceholder: Bool {
         if shouldDisplayPlaceholder { return true }
-        return presenter?.isObscuredByPlaceholder ?? false
+        return container?.isObscuredByPlaceholder ?? false
     }
     
     private var shouldDisplayPlaceholder: Bool {
@@ -315,7 +315,7 @@ public class DataSource: NSObject {
             }
         }
         
-        presenter?.dataSourceDidInsertItems(self, indexPaths: indexPaths)
+        container?.dataSourceDidInsertItems(self, indexPaths: indexPaths)
     }
     
     public func notifyItemsRemoved(indexPaths: [NSIndexPath]) {
@@ -328,7 +328,7 @@ public class DataSource: NSObject {
             }
         }
         
-        presenter?.dataSourceDidRemoveItems(self, indexPaths: indexPaths)
+        container?.dataSourceDidRemoveItems(self, indexPaths: indexPaths)
     }
     
     public func notifyItemsReloaded(indexPaths: [NSIndexPath]) {
@@ -341,7 +341,7 @@ public class DataSource: NSObject {
             }
         }
         
-        presenter?.dataSourceDidReloadItems(self, indexPaths: indexPaths)
+        container?.dataSourceDidReloadItems(self, indexPaths: indexPaths)
     }
     
     public func notifyItemMoved(#from: NSIndexPath, to: NSIndexPath) {
@@ -354,50 +354,50 @@ public class DataSource: NSObject {
             }
         }
         
-        presenter?.dataSourceDidMoveItem(self, from: from, to: to)
+        container?.dataSourceDidMoveItem(self, from: from, to: to)
     }
     
-    public func notifySectionsInserted(indexSet: NSIndexSet, direction: SectionOperationDirection = .None) {
+    public func notifySectionsInserted(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
         assertMainThread()
         
-        presenter?.dataSourceDidInsertSections(self, indexes: indexSet, direction: direction)
+        container?.dataSourceWillInsertSections(self, indexes: indexSet, direction: direction)
     }
     
-    public func notifySectionsRemoved(indexSet: NSIndexSet, direction: SectionOperationDirection = .None) {
+    public func notifySectionsRemoved(indexSet: NSIndexSet, direction: SectionOperationDirection = .Default) {
         assertMainThread()
         
-        presenter?.dataSourceDidRemoveSections(self, indexes: indexSet, direction: direction)
+        container?.dataSourceWillRemoveSections(self, indexes: indexSet, direction: direction)
     }
     
     public func notifySectionsReloaded(indexSet: NSIndexSet) {
         assertMainThread()
         
-        presenter?.dataSourceDidReloadSections(self, indexes: indexSet)
+        container?.dataSourceDidReloadSections(self, indexes: indexSet)
     }
     
-    public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .None) {
+    public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .Default) {
         assertMainThread()
         
-        presenter?.dataSourceDidMoveSection(self, from: from, to: to, direction: direction)
+        container?.dataSourceWillMoveSection(self, from: from, to: to, direction: direction)
     }
     
     public func notifyDidReloadData() {
         assertMainThread()
         
-        presenter?.dataSourceDidReloadData(self)
+        container?.dataSourceDidReloadData(self)
     }
     
     public func notifyDidReloadGlobalSection() {
         assertMainThread()
         
-        presenter?.dataSourceDidReloadGlobalSection(self)
+        container?.dataSourceDidReloadGlobalSection(self)
     }
     
     public func notifyBatchUpdate(update: () -> (), completion: ((Bool) -> ())? = nil) {
         assertMainThread()
         
-        if let presenter = presenter {
-            presenter.dataSourcePerformBatchUpdate(self, update: update, completion: completion)
+        if let container = container {
+            container.dataSourcePerformBatchUpdate(self, update: update, completion: completion)
         } else {
             update()
             if let completion = completion {
@@ -409,13 +409,13 @@ public class DataSource: NSObject {
     public func notifyContentLoaded(#error: NSError?) {
         assertMainThread()
         
-        presenter?.dataSourceDidLoadContent(self, error: error)
+        container?.dataSourceDidLoadContent(self, error: error)
     }
     
     public func notifyWillLoadContent() {
         assertMainThread()
         
-        presenter?.dataSourceWillLoadContent(self)
+        container?.dataSourceWillLoadContent(self)
     }
     
 }
