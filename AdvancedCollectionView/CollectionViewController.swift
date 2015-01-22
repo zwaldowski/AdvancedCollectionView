@@ -8,9 +8,10 @@
 
 import UIKit
 
+private var dataSourceContext = 0
+
 public class CollectionViewController: UICollectionViewController, DataSourceContainer {
     
-    private var dataSourceContext = 0
     private let updateDebugging = true
     
     private var gridLayout: GridLayout? {
