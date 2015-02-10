@@ -53,7 +53,7 @@ extension JSON: RawRepresentable {
         }
         set {
             switch newValue {
-            case .Some(let string as NSString):
+            case .Some(let string as String):
                 self = .JSONString(string)
             case .Some(let array as [AnyObject]):
                 self = .JSONArray(array)
@@ -185,34 +185,19 @@ private enum JSONIndexStorage {
     case Identity
 }
 
-public struct JSONIndex: BidirectionalIndexType, Comparable {
+public struct JSONIndex: ForwardIndexType, Comparable {
     
     private let storage: JSONIndexStorage
     private init(_ storage: JSONIndexStorage) {
         self.storage = storage
     }
     
-    private func predecessorStorage() -> JSONIndexStorage {
-        switch storage {
-        case .Array(let idx):
-            return .Array(idx.predecessor())
-        case .Object(let idx):
-            return .Object(idx.predecessor())
-        case .Identity:
-            return .Identity
-        }
-    }
-    
-    public func predecessor() -> JSONIndex {
-        return JSONIndex(predecessorStorage())
-    }
-    
     private func successorStorage() -> JSONIndexStorage {
         switch storage {
         case .Array(let idx):
-            return .Array(idx.predecessor())
+            return .Array(idx.successor())
         case .Object(let idx):
-            return .Object(idx.predecessor())
+            return .Object(idx.successor())
         case .Identity:
             return .Identity
         }

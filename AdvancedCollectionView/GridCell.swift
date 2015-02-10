@@ -80,7 +80,7 @@ public class GridCell: UICollectionViewCell {
     
     // MARK: UIView
     
-    public override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    public override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         super.touchesBegan(touches, withEvent: event)
         
         if manualTapSupport && enabled {
@@ -88,7 +88,7 @@ public class GridCell: UICollectionViewCell {
         }
     }
     
-    public override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    public override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
         super.touchesEnded(touches, withEvent: event)
         
         if manualTapSupport {
@@ -96,7 +96,7 @@ public class GridCell: UICollectionViewCell {
         }
     }
     
-    public override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+    public override func touchesCancelled(touches: Set<NSObject>!, withEvent event: UIEvent!) {
         super.touchesCancelled(touches, withEvent: event)
         
         if manualTapSupport {

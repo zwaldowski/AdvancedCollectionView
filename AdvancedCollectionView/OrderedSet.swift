@@ -92,7 +92,7 @@ extension OrderedSet: ExtensibleCollectionType {
     public mutating func extend<S: SequenceType where S.Generator.Element == T>(newElements: S) {
         let asSeq = SequenceOf<T>(newElements)
         
-        ordered.reserveCapacity(countElements(ordered) + underestimateCount(asSeq))
+        ordered.reserveCapacity(ordered.count + underestimateCount(asSeq))
         
         for el in asSeq {
             insert(el)

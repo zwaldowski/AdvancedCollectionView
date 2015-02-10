@@ -158,7 +158,7 @@ public struct SectionMetrics {
         if let otherInsets = other.separatorInsets { separatorInsets = otherInsets }
         if let otherSeparatorColor = other.separatorColor { separatorColor = otherSeparatorColor }
         if other.didSetSeparators { separators = other.separators }
-        hasPlaceholder |= other.hasPlaceholder
+        if other.hasPlaceholder { hasPlaceholder = true }
     }
     
 }

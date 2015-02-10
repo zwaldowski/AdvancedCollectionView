@@ -413,15 +413,15 @@ public class GridLayout: UICollectionViewLayout {
 
         for updateItem in updateItems as! [UICollectionViewUpdateItem] {
             switch (updateItem.updateAction, updateItem.indexPathBeforeUpdate, updateItem.indexPathAfterUpdate) {
-            case (.Insert, _, let indexPath) where indexPath.item == NSNotFound:
+            case (.Insert, _, .Some(let indexPath)) where indexPath.item == NSNotFound:
                 insertedSections.addIndex(indexPath.section)
-            case (.Insert, _, let indexPath):
-                insertedIndexPaths.append(indexPath)
-            case (.Delete, let indexPath, _) where indexPath.item == NSNotFound:
+            case (.Insert, _, .Some(let indexPath)):
+                insertedIndexPaths.insert(indexPath)
+            case (.Delete, .Some(let indexPath), _) where indexPath.item == NSNotFound:
                 removedSections.addIndex(indexPath.section)
-            case (.Delete, let indexPath, _):
-                removedIndexPaths.append(indexPath)
-            case (.Reload, _, let indexPath) where indexPath.item == NSNotFound:
+            case (.Delete, .Some(let indexPath), _):
+                removedIndexPaths.insert(indexPath)
+            case (.Reload, _, .Some(let indexPath)) where indexPath.item == NSNotFound:
                 reloadedSections.addIndex(indexPath.section)
             default: break
             }
@@ -683,7 +683,7 @@ public class GridLayout: UICollectionViewLayout {
         
         var shouldInvalidate = false
         let measureSupplement = { (kind: String, indexPath: NSIndexPath, measuringFrame: CGRect) -> CGSize in
-            shouldInvalidate |= true
+            shouldInvalidate = true
             self.measuringElement = (ElementKey(supplement: kind, indexPath), measuringFrame)
             let ret = self.metricsProvider?.sizeFittingSize(measuringFrame.size, supplementaryElementOfKind: kind, indexPath: indexPath, collectionView: self.collectionView!) ?? measuringFrame.size
             self.measuringElement = nil

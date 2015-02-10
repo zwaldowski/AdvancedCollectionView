@@ -122,7 +122,7 @@ extension OrderedDictionary: ExtensibleCollectionType {
     public mutating func extend<S: SequenceType where S.Generator.Element == Element>(newElements: S) {
         let asSeq = SequenceOf<Element>(newElements)
 
-        reserveCapacity(countElements(keys) + underestimateCount(asSeq))
+        reserveCapacity(keys.count + underestimateCount(asSeq))
 
         for el in asSeq {
             append(el)
