@@ -67,7 +67,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     }
     
     public override func copyWithZone(zone: NSZone) -> AnyObject {
-        var attributes = super.copyWithZone(zone) as GridLayoutAttributes
+        var attributes = super.copyWithZone(zone) as! GridLayoutAttributes
         attributes.backgroundColor = backgroundColor
         attributes.selectedBackgroundColor = selectedBackgroundColor
         attributes.tintColor = tintColor
@@ -86,7 +86,7 @@ public class GridLayoutInvalidationContext: UICollectionViewLayoutInvalidationCo
         get {
             if Constants.isiOS8 {
                 return super.contentOffsetAdjustment
-            } else if let obj = objc_getAssociatedObject(self, &contentOffsetAdjustmentLegacyKey) as NSValue? {
+            } else if let obj = objc_getAssociatedObject(self, &contentOffsetAdjustmentLegacyKey) as! NSValue? {
                 return obj.CGPointValue()
             } else {
                 return CGPoint.zeroPoint
@@ -106,7 +106,7 @@ public class GridLayoutInvalidationContext: UICollectionViewLayoutInvalidationCo
         get {
             if Constants.isiOS8 {
                 return super.contentSizeAdjustment
-            } else if let obj = objc_getAssociatedObject(self, &contentSizeAdjustmentLegacyKey) as NSValue? {
+            } else if let obj = objc_getAssociatedObject(self, &contentSizeAdjustmentLegacyKey) as! NSValue? {
                 return obj.CGSizeValue()
             } else {
                 return CGSize.zeroSize

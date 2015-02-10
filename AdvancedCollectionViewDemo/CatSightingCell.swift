@@ -47,9 +47,9 @@ class CatSightingCell: GridCell {
         let metrics = [ "vPad": 3 ]
         
         var constraints = [NSLayoutConstraint]()
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[fancierLabel]-[dateLabel]-|", options: .AlignAllBaseline, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[descriptionLabel]-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-vPad-[fancierLabel][descriptionLabel]-vPad-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[fancierLabel]-[dateLabel]-|", options: .AlignAllBaseline, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[descriptionLabel]-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-vPad-[fancierLabel][descriptionLabel]-vPad-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         contentView.addConstraints(constraints)
     }
     

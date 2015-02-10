@@ -97,7 +97,7 @@ extension JSON {
         case .JSONNull: return "null"
         default:
             if let data = rawData(options: opt) {
-                return NSString(data: data, encoding: encoding)
+                return NSString(data: data, encoding: encoding) as! String
             }
             return nil
         }
@@ -161,7 +161,7 @@ extension JSON: Hashable {
         case .JSONDouble(let double): return double.hashValue
         case .JSONInt(let int): return int.hashValue
         case .JSONBool(let bool): return bool.hashValue
-        default: return (rawValue as NSObject).hash
+        default: return (rawValue as! NSObject).hash
         }
     }
     
@@ -399,7 +399,7 @@ extension JSON: CollectionType {
 
 public protocol JSONDecodable {
     typealias DecodedType = Self
-    class func decode(JSON) -> DecodedType?
+    static func decode(JSON) -> DecodedType?
 }
 
 public protocol JSONEncodable: JSONDecodable {

@@ -118,13 +118,13 @@ public func +=(left: NSMutableIndexSet, right: NSRange) {
 }
 
 public func -(left: NSIndexSet, right: NSIndexSet) -> NSMutableIndexSet {
-    let indexSet = left.mutableCopy() as NSMutableIndexSet
+    let indexSet = left.mutableCopy() as! NSMutableIndexSet
     indexSet.removeIndexes(right)
     return indexSet
 }
 
 public func +(left: NSIndexSet, right: NSIndexSet) -> NSMutableIndexSet {
-    let indexSet = left.mutableCopy() as NSMutableIndexSet
+    let indexSet = left.mutableCopy() as! NSMutableIndexSet
     indexSet.addIndexes(right)
     return indexSet
 }

@@ -25,7 +25,7 @@ class SetTests: XCTestCase {
     }
     
     func testBaseAssumptions() {
-        var set = TestSet(1, 2, 3)
+        var set = TestSet(arrayLiteral: 1, 2, 3)
         
         XCTAssertFalse(set.contains(4))
         set.insert(4)
@@ -77,7 +77,7 @@ class SetTests: XCTestCase {
     func testUnion() {
         XCTAssert(TestSet(1, 2, 3, 4) + TestSet(3, 4, 5) == TestSet(1, 2, 3, 4, 5))
         
-        var c = TestSet(1, 2, 3)
+        var c = TestSet(arrayLiteral: 1, 2, 3)
         c += TestSet(3, 4, 5)
         XCTAssert(c == TestSet(1, 2, 3, 4, 5))
     }
@@ -85,7 +85,7 @@ class SetTests: XCTestCase {
     func testIntersection() {
         XCTAssert(TestSet(1, 2, 3) & Set(2, 3, 4) == TestSet(2, 3))
         
-        var set = TestSet(1, 2, 3)
+        var set = TestSet(arrayLiteral: 1, 2, 3)
         set &= TestSet(2, 3, 4)
         XCTAssert(set == TestSet(2, 3))
     }
@@ -93,7 +93,7 @@ class SetTests: XCTestCase {
     func testDifference() {
         XCTAssert(TestSet(1, 2, 3) - TestSet(2, 3, 4) == TestSet(1))
         
-        var set = TestSet(1, 2, 3)
+        var set = TestSet(arrayLiteral: 1, 2, 3)
         set -= TestSet(2, 3, 4)
         XCTAssert(set == TestSet(1))
     }

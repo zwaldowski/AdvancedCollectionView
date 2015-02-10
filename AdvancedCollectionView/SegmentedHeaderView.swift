@@ -53,13 +53,13 @@ public class SegmentedHeaderView: GridCell {
         ]
         let views = [ "segmentedControl": segmentedControl ]
         
-        segmentedControlConstraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-topMargin-[segmentedControl]-bottomMargin-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        segmentedControlConstraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-topMargin-[segmentedControl]-bottomMargin-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         
         if isWideHorizontal {
             segmentedControlConstraints.append(NSLayoutConstraint(item: segmentedControl, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0))
             segmentedControlConstraints.append(NSLayoutConstraint(item: segmentedControl, attribute: .Width, relatedBy: .LessThanOrEqual, toItem: self, attribute: .Width, multiplier: 1, constant: -padding.left - padding.right))
         } else {
-            segmentedControlConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-leftMargin-[segmentedControl]-rightMargin-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+            segmentedControlConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-leftMargin-[segmentedControl]-rightMargin-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         }
         
         contentView.addConstraints(segmentedControlConstraints)

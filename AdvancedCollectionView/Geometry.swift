@@ -14,7 +14,7 @@ import UIKit.UIGeometry
 public protocol Scalable: Comparable {
     func *(lhs: Self, rhs: Self) -> Self
     func /(lhs: Self, rhs: Self) -> Self
-    class var identityScalar: Self { get }
+    static var identityScalar: Self { get }
 }
 
 extension Float: Scalable {
@@ -36,7 +36,7 @@ private func rround<T: Scalable>(value: T, scale: T = T.identityScalar, function
 // MARK: Approximate equality (for UI purposes)
 
 public protocol ApproximatelyEquatable: AbsoluteValuable, Comparable {
-    class var accuracy: Self { get }
+    static var accuracy: Self { get }
 }
 
 extension Float: ApproximatelyEquatable {

@@ -76,7 +76,7 @@ class CatListViewController: CollectionViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "detail" {
-            let destination = segue.destinationViewController as CatDetailViewController
+            let destination = segue.destinationViewController as! CatDetailViewController
             destination.cat = selectedCat
         }
     }

@@ -29,8 +29,8 @@ class TextValueCell: GridCell {
         let metrics = [ "hPad": 15, "vPad": 3 ]
         var constraints = [NSLayoutConstraint]()
         
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[label]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-vPad-[label]-vPad-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[label]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-vPad-[label]-vPad-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         
         contentView.addConstraints(constraints)
     }

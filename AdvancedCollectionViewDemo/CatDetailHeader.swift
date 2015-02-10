@@ -60,11 +60,11 @@ class CatDetailHeader: GridCell {
         let metrics = [ "pad": 3 ]
         
         var constraints = [NSLayoutConstraint]()
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[nameLabel]-(>=0)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[descriptionLabel]-(>=0)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("[conservationStatusValue]-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[conservationStatusLabel]-pad-[conservationStatusValue]", options: .AlignAllBaseline, metrics: metrics, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-[nameLabel][descriptionLabel]-pad-[conservationStatusValue]", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[nameLabel]-(>=0)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[descriptionLabel]-(>=0)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("[conservationStatusValue]-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-[conservationStatusLabel]-pad-[conservationStatusValue]", options: .AlignAllBaseline, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-[nameLabel][descriptionLabel]-pad-[conservationStatusValue]", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         
         contentView.addConstraints(constraints)
     }

@@ -96,7 +96,7 @@ public class PlaceholderView: UIView {
     private lazy var imageView = UIImageView()
     private lazy var titleLabel = UILabel()
     private lazy var messageLabel = UILabel()
-    private lazy var actionButton = UIButton.buttonWithType(.System) as UIButton
+    private lazy var actionButton = UIButton.buttonWithType(.System) as! UIButton
 
     private func commonInit() {
         setTranslatesAutoresizingMaskIntoConstraints(false)

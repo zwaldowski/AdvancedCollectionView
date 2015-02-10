@@ -130,7 +130,7 @@ public class GridLayout: UICollectionViewLayout {
     
     // MARK: Logging
     
-    private func log<T>(message: @autoclosure () -> T, functionName: StaticString = __FUNCTION__) {
+    private func log<T>(@autoclosure message: () -> T, functionName: StaticString = __FUNCTION__) {
         if !layoutLogging { return }
         println("\(functionName) \(message())")
     }
@@ -1074,7 +1074,7 @@ public class GridLayout: UICollectionViewLayout {
         attributes.pinning = (false, skipped, frame.minY)
     }
     
-    private func addSeparator(_ predicate: @autoclosure () -> Bool = true, kind: DecorationKind, indexPath getIndexPath: @autoclosure () -> NSIndexPath, section: SectionInfo, force: Bool = false) -> Attributes? {
+    private func addSeparator(@autoclosure _ predicate: () -> Bool = true, kind: DecorationKind, @autoclosure indexPath getIndexPath: () -> NSIndexPath, section: SectionInfo, force: Bool = false) -> Attributes? {
         if !predicate() { return nil }
         
         let ip = getIndexPath()
@@ -1094,7 +1094,7 @@ public class GridLayout: UICollectionViewLayout {
         return attribute
     }
     
-    private func configureInitial(inout #attributes: Attributes, inFromDirection direction: SectionOperationDirection = .Default, makeFrameAdjustments: Bool = true, shouldFadeIn shouldFade: @autoclosure () -> Bool = true) {
+    private func configureInitial(inout #attributes: Attributes, inFromDirection direction: SectionOperationDirection = .Default, makeFrameAdjustments: Bool = true, @autoclosure shouldFadeIn shouldFade: () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
         let bounds = collectionView!.bounds
@@ -1116,7 +1116,7 @@ public class GridLayout: UICollectionViewLayout {
         attributes.frame = endFrame
     }
     
-    private func configureFinal(inout #attributes: Attributes, outToDirection direction: SectionOperationDirection = .Default, shouldFadeOut shouldFade: @autoclosure () -> Bool = true) {
+    private func configureFinal(inout #attributes: Attributes, outToDirection direction: SectionOperationDirection = .Default, @autoclosure shouldFadeOut shouldFade: () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
         let bounds = collectionView!.bounds
