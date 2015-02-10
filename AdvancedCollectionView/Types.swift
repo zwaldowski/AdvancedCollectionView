@@ -71,15 +71,14 @@ extension Section {
     
 }
 
-func contains(indexSet: NSIndexSet, section: Section) -> Bool {
-    switch section {
+func ~=(lhs: NSIndexSet, rhs: Section) -> Bool {
+    switch rhs {
     case .Global:
         return false
     case .Index(let idx):
-        return indexSet.containsIndex(idx)
+        return lhs.containsIndex(idx)
     }
 }
-
 
 // MARK: -
 

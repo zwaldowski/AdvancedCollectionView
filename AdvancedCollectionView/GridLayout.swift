@@ -466,7 +466,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
-                contains(insertedSections, section) || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
+                insertedSections ~= section || (reloadedSections ~= section && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -484,7 +484,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                contains(removedSections, section) || (contains(reloadedSections, section) && attributesCache[key] == nil))
+                removedSections ~= section || (reloadedSections ~= section && attributesCache[key] == nil))
             
             return result
         }
@@ -503,11 +503,11 @@ public class GridLayout: UICollectionViewLayout {
                 configureInitial(attributes: &result, inFromDirection: .Default)
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
-                let inserted = contains(insertedSections, section)
+                let inserted = insertedSections ~= section
                 let offsets = direction != .Default && inserted
                 
                 configureInitial(attributes: &result, inFromDirection: direction, makeFrameAdjustments: offsets, shouldFadeIn:
-                    inserted || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
+                    inserted || (reloadedSections ~= section && attributesCacheOld[key] == nil))
             }
             
             return result
@@ -528,7 +528,7 @@ public class GridLayout: UICollectionViewLayout {
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
                 configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                    contains(removedSections, section) || contains(reloadedSections, section))
+                    removedSections ~= section || reloadedSections ~= section)
             }
             
             return result
@@ -547,7 +547,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
-                contains(insertedSections, section) || insertedIndexPaths.contains(indexPath) || (contains(reloadedSections, section) && attributesCacheOld[key] == nil))
+                insertedSections ~= section || insertedIndexPaths.contains(indexPath) || (reloadedSections ~= section && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -565,7 +565,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                removedIndexPaths.contains(indexPath) || contains(removedSections, section) || (contains(reloadedSections, section) && attributesCache[key] == nil))
+                removedIndexPaths.contains(indexPath) || removedSections ~= section || (reloadedSections ~= section && attributesCache[key] == nil))
             
             return result
         }
@@ -1064,7 +1064,7 @@ public class GridLayout: UICollectionViewLayout {
     
     private func configureSeparator(inout #attributes: Attributes, bit: SeparatorOptions, toRect rect: CGRect, edge: CGRectEdge, section: SectionInfo) {
         let frame = rect.separatorRect(edge: edge, thickness: hairline)
-        let skipped = rect.isEmpty || !contains(section.metrics.separators, bit) || section.metrics.separatorColor == nil
+        let skipped = rect.isEmpty || !(section.metrics.separators ~= bit) || section.metrics.separatorColor == nil
         let color = section.metrics.separatorColor ?? self.dynamicType.defaultPinnableBorderColor()
         
         attributes.frame = frame

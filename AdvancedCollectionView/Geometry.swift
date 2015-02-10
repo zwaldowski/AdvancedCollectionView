@@ -85,10 +85,10 @@ extension UIEdgeInsets: Equatable {
     
     private func insetsByRemoving(#edges: UIRectEdge) -> UIEdgeInsets {
         var ret = self
-        if contains(edges, .Top) { ret.top = 0 }
-        if contains(edges, .Left) { ret.left = 0 }
-        if contains(edges, .Bottom) { ret.bottom = 0 }
-        if contains(edges, .Right) { ret.right = 0 }
+        if edges ~= .Top { ret.top = 0 }
+        if edges ~= .Left { ret.left = 0 }
+        if edges ~= .Bottom { ret.bottom = 0 }
+        if edges ~= .Right { ret.right = 0 }
         return ret
     }
     
