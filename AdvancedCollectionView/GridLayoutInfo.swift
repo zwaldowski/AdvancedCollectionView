@@ -199,7 +199,7 @@ struct ItemInfo {
 struct RowInfo {
     
     let items: Slice<ItemInfo>
-    let frame = CGRect.zeroRect
+    let frame: CGRect
     
     private init(items: Slice<ItemInfo>, frame: CGRect) {
         self.items = items
