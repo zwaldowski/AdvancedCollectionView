@@ -81,6 +81,115 @@ extension OrderedSet: CollectionType {
     
 }
 
+// MARK: Set
+
+extension OrderedSet {
+    
+    public func contains(element: T) -> Bool {
+        return elements.contains(element)
+    }
+    
+    public mutating func insert(element: T) {
+        if elements.contains(element) { return }
+        elements.insert(element)
+        ordered.append(element)
+    }
+    
+    public mutating func remove(element: T) -> T? {
+        if let el = elements.remove(element) {
+            for (idx, value) in enumerate(ordered) {
+                if value != el { continue }
+                
+                ordered.removeAtIndex(idx)
+                return el
+            }
+        }
+        return nil
+    }
+    
+    /// A member of the set, or `nil` if the set is empty.
+    public var first: T? {
+        return ordered.first
+    }
+    
+    /// Returns true if the set is a subset of a finite sequence as a `Set`.
+    public func isSubsetOf<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> Bool {
+        return elements.isSubsetOf(sequence)
+    }
+    
+    /// Returns true if the set is a subset of a finite sequence as a `Set`
+    /// but not equal.
+    public func isStrictSubsetOf<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> Bool {
+        return elements.isStrictSubsetOf(sequence)
+    }
+    
+    /// Returns true if the set is a superset of a finite sequence as a `Set`.
+    public func isSupersetOf<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> Bool {
+        return elements.isSupersetOf(sequence)
+    }
+    
+    /// Returns true if the set is a superset of a finite sequence as a `Set`
+    /// but not equal.
+    public func isStrictSupersetOf<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> Bool {
+        return elements.isStrictSupersetOf(sequence)
+    }
+    
+    /// Returns true if no members in the set are in a finite sequence as a `Set`.
+    public func isDisjointWith<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> Bool {
+        return elements.isDisjointWith(sequence)
+    }
+    
+    public func union<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> OrderedSet<T> {
+        let newSet = elements.union(sequence)
+        var newArray = ordered
+        newArray.reserveCapacity(newSet.count)
+        for el in sequence {
+            if !elements.contains(el) {
+                newArray.append(el)
+            }
+        }
+        return OrderedSet(elements: newSet, ordered: newArray)
+    }
+    
+    public mutating func unionInPlace<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
+        ordered.reserveCapacity(ordered.count + underestimateCount(sequence))
+        for el in sequence {
+            insert(el)
+        }
+    }
+    
+    public func subtract<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> OrderedSet<T> {
+        let newSet = elements.subtract(sequence)
+        let newArray = ordered.filter {
+            newSet.contains($0)
+        }
+        return OrderedSet(elements: newSet, ordered: newArray)
+    }
+    
+    public mutating func subtractInPlace<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
+        elements.subtractInPlace(sequence)
+        ordered = ordered.filter {
+            self.elements.contains($0)
+        }
+    }
+    
+    public func intersect<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) -> OrderedSet<T> {
+        let newSet = elements.intersect(sequence)
+        let newArray = ordered.filter {
+            newSet.contains($0)
+        }
+        return OrderedSet(elements: newSet, ordered: newArray)
+    }
+    
+    public mutating func intersectInPlace<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
+        elements.intersectInPlace(sequence)
+        ordered = ordered.filter {
+            self.elements.contains($0)
+        }
+    }
+    
+}
+
 // MARK: ExtensibleCollectionType
 
 extension OrderedSet: ExtensibleCollectionType {
@@ -90,13 +199,7 @@ extension OrderedSet: ExtensibleCollectionType {
     }
     
     public mutating func extend<S: SequenceType where S.Generator.Element == T>(newElements: S) {
-        let asSeq = SequenceOf<T>(newElements)
-        
-        ordered.reserveCapacity(ordered.count + underestimateCount(asSeq))
-        
-        for el in asSeq {
-            insert(el)
-        }
+        unionInPlace(newElements)
     }
     
     public mutating func append(element: T) {
@@ -113,21 +216,21 @@ extension OrderedSet: RangeReplaceableCollectionType {
     public mutating func replaceRange<C : CollectionType where C.Generator.Element == T>(subRange: Range<Index>, with newElements: C) {
         let oldOrdered = ordered[subRange]
         ordered.replaceRange(subRange, with: newElements)
-        elements -= oldOrdered
-        elements.extend(newElements)
+        elements.subtractInPlace(oldOrdered)
+        elements.unionInPlace(newElements)
     }
     
     /// Insert `newElement` at index `i`.
     public mutating func insert(newElement: T, atIndex i: Index) {
-        if elements.insert(newElement) {
-            ordered.insert(newElement, atIndex: i)
-        }
+        if elements.contains(newElement) { return }
+        elements.insert(newElement)
+        ordered.insert(newElement, atIndex: i)
     }
     
     /// Insert `newElements` at index `i`
     public mutating func splice<S: CollectionType where S.Generator.Element == T>(newElements: S, atIndex i: Index) {
         ordered.splice(newElements, atIndex: i)
-        elements += newElements
+        elements.unionInPlace(newElements)
     }
     
     /// Remove the element at index `i`.
@@ -168,50 +271,6 @@ extension OrderedSet: ArrayLiteralConvertible {
     
 }
 
-// MARK: UnorderedCollectionType
-
-extension OrderedSet: UnorderedCollectionType {
-    
-    public func contains(element: T) -> Bool {
-        return elements.contains(element)
-    }
-    
-    public mutating func insert(element: T) -> Bool {
-        if elements.insert(element) {
-            ordered.append(element)
-            return true
-        }
-        return false
-    }
-    
-    public mutating func remove(element: T) -> Bool {
-        if elements.remove(element) {
-            for (idx, value) in enumerate(ordered) {
-                if value != element { continue }
-                
-                ordered.removeAtIndex(idx)
-                return true
-            }
-        }
-        return false
-    }
-    
-    public mutating func intersect<S: UnorderedCollectionType where S.Generator.Element == T>(set: S) {
-        for element in self {
-            if !set.contains(element) {
-                remove(element)
-            }
-        }
-    }
-    
-    public mutating func difference<Seq: SequenceType where Seq.Generator.Element == T>(sequence: Seq) {
-        for element in SequenceOf<T>(sequence) {
-            remove(element)
-        }
-    }
-    
-}
-
 // MARK: Printable
 
 extension OrderedSet: Printable, DebugPrintable {
@@ -240,7 +299,7 @@ extension OrderedSet: Reflectable {
 extension OrderedSet {
     
     public func reduce<U>(initial: U, combine: (U, T) -> U) -> U {
-        return elements.reduce(initial, combine: combine)
+        return Swift.reduce(elements, initial, combine)
     }
     
     public mutating func sort(isOrderedBefore function: (T, T) -> Bool) {

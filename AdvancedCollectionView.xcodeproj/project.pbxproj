@@ -42,7 +42,6 @@
 		DB5658511A61DA94004813FD /* OrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5658501A61DA94004813FD /* OrderedSetTests.swift */; };
 		DB5658531A61DEF3004813FD /* MultimapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5658521A61DEF3004813FD /* MultimapTests.swift */; };
 		DB5F406C1A4FA482002BB59F /* SegmentedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */; };
-		DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */; };
 		DB61BFF71A48F31400D79655 /* GridLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */; };
 		DB61BFF91A493C1700D79655 /* ComposedMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFF81A493C1700D79655 /* ComposedMapping.swift */; };
 		DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */; };
@@ -158,7 +157,6 @@
 		DB5658501A61DA94004813FD /* OrderedSetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedSetTests.swift; sourceTree = "<group>"; };
 		DB5658521A61DEF3004813FD /* MultimapTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultimapTests.swift; sourceTree = "<group>"; };
 		DB5F406B1A4FA482002BB59F /* SegmentedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedDataSource.swift; sourceTree = "<group>"; };
-		DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnorderedCollectionType.swift; sourceTree = "<group>"; };
 		DB61BFF61A48F31400D79655 /* GridLayoutInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayoutInfo.swift; sourceTree = "<group>"; };
 		DB61BFF81A493C1700D79655 /* ComposedMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposedMapping.swift; sourceTree = "<group>"; };
 		DB61BFFB1A494DE300D79655 /* BasicDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDataSource.swift; sourceTree = "<group>"; };
@@ -318,7 +316,6 @@
 				DBC3F93E1A45E9F40029B49D /* Multimap.swift */,
 				DB9E05E31A51264D004CF47F /* OrderedDictionary.swift */,
 				DBB805A21A4F52280009C6CF /* OrderedSet.swift */,
-				DB5FB6A21A4F527C0041062F /* UnorderedCollectionType.swift */,
 			);
 			name = Collections;
 			sourceTree = "<group>";
@@ -629,7 +626,6 @@
 				DB8A79131A3EA12B008A79A6 /* Async.swift in Sources */,
 				DB24FC2A1A3F869F00C5D0B4 /* Geometry.swift in Sources */,
 				DBAF938E1A5689C8003293E9 /* GridCell.swift in Sources */,
-				DB5FB6A31A4F527C0041062F /* UnorderedCollectionType.swift in Sources */,
 				DBAF93971A569834003293E9 /* UIKit.swift in Sources */,
 				DB61BFFC1A494DE300D79655 /* BasicDataSource.swift in Sources */,
 				DB71E65A1A48A55200AFC472 /* CollectionViewLayout.swift in Sources */,

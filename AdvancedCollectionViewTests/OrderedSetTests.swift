@@ -32,69 +32,69 @@ class OrderedSetTests: XCTestCase {
         XCTAssert(set.contains(4))
         
         XCTAssert(set.contains(3))
-        XCTAssert(set.remove(3))
+        XCTAssertNotNil(set.remove(3))
         XCTAssertFalse(set.contains(3))
     }
     
     func testSubset() {
-        XCTAssert(subset(TestSet(1), TestSet(1, 2, 3)))
-        XCTAssert(subset(TestSet(1), TestSet(1, 2)))
+        XCTAssert(TestSet(1).isSubsetOf(TestSet(1, 2, 3)))
+        XCTAssert(TestSet(1).isSubsetOf(TestSet(1, 2)))
     }
     
     func testSubsetIncludesSelf() {
-        XCTAssert(subset(TestSet(1), TestSet(1)))
-        XCTAssert(subset(TestSet(1, 2, 3), TestSet(1, 2, 3)))
+        XCTAssert(TestSet(1).isSubsetOf(TestSet(1)))
+        XCTAssert(TestSet(1, 2, 3).isSubsetOf(TestSet(1, 2, 3)))
     }
     
     func testStrictSupersetIsNotSubset() {
-        XCTAssertFalse(subset(TestSet(1, 2, 3, 4), TestSet(1, 2, 3)))
+        XCTAssertFalse(TestSet(1, 2, 3, 4).isSubsetOf(TestSet(1, 2, 3)))
     }
     
     func testEmptySetIsAlwaysSubset() {
-        XCTAssert(subset(TestSet(), TestSet()))
-        XCTAssert(subset(TestSet(), TestSet(1, 2, 3)))
+        XCTAssert(TestSet().isSubsetOf(TestSet()))
+        XCTAssert(TestSet().isSubsetOf(TestSet(1, 2, 3)))
     }
     
     func testSuperset() {
-        XCTAssert(superset(TestSet(1, 2, 3), TestSet(1)))
-        XCTAssert(superset(TestSet(1, 2), TestSet(1)))
+        XCTAssert(TestSet(1, 2, 3).isSupersetOf(TestSet(1)))
+        XCTAssert(TestSet(1, 2).isSupersetOf(TestSet(1)))
     }
     
     func testSupersetIncludesSelf() {
-        XCTAssert(superset(TestSet(1), TestSet(1)))
-        XCTAssert(superset(TestSet(1, 2, 3), TestSet(1, 2, 3)))
+        XCTAssert(TestSet(1).isSupersetOf(TestSet(1)))
+        XCTAssert(TestSet(1, 2, 3).isSupersetOf(TestSet(1, 2, 3)))
     }
     
     func testStrictSubsetIsNotSuperset() {
-        XCTAssertFalse(superset(TestSet(1, 2, 3), TestSet(1, 2, 3, 4)))
+        XCTAssertFalse(TestSet(1, 2, 3).isSupersetOf(TestSet(1, 2, 3, 4)))
     }
     
     func testAlwaysSupersetOfEmptySet() {
-        XCTAssert(superset(TestSet(), TestSet()))
-        XCTAssert(superset(TestSet(1, 2, 3), TestSet()))
+        XCTAssert(TestSet().isSupersetOf(TestSet()))
+        XCTAssert(TestSet(1, 2, 3).isSupersetOf(TestSet()))
     }
     
     func testUnion() {
-        XCTAssert(TestSet(1, 2, 3, 4) + TestSet(3, 4, 5) == TestSet(1, 2, 3, 4, 5))
+        XCTAssert(TestSet(1, 2, 3, 4).union([3, 4, 5]) == TestSet(1, 2, 3, 4, 5))
         
         var c = TestSet(1, 2, 3)
-        c += TestSet(3, 4, 5)
+        c.unionInPlace([3, 4, 5])
         XCTAssert(c == TestSet(1, 2, 3, 4, 5))
     }
     
     func testIntersection() {
-        XCTAssert(TestSet(1, 2, 3) & Set(2, 3, 4) == TestSet(2, 3))
+        XCTAssert(TestSet(1, 2, 3).intersect([2, 3, 4]) == TestSet(2, 3))
         
         var set = TestSet(1, 2, 3)
-        set &= TestSet(2, 3, 4)
+        set.intersectInPlace([2, 3, 4])
         XCTAssert(set == TestSet(2, 3))
     }
     
     func testDifference() {
-        XCTAssert(TestSet(1, 2, 3) - TestSet(2, 3, 4) == TestSet(1))
+        XCTAssert(TestSet(1, 2, 3).subtract([2, 3, 4]) == TestSet(1))
         
         var set = TestSet(1, 2, 3)
-        set -= TestSet(2, 3, 4)
+        set.subtractInPlace([2, 3, 4])
         XCTAssert(set == TestSet(1))
     }
     
@@ -114,7 +114,7 @@ class OrderedSetTests: XCTestCase {
     }
     
     func testReduce() {
-        XCTAssert(TestSet(1, 2, 3).reduce(0, +) == 6)
+        XCTAssert(TestSet(1, 2, 3).reduce(0, combine: +) == 6)
     }
     
     func testMap() {
