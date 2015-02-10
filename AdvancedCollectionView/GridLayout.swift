@@ -691,9 +691,9 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         // build global section
-        globalSection?.layout(rect: layoutRect, nextStart: &start) {
+        globalSection?.layout(rect: layoutRect, nextStart: &start, measureSupplement: {
             measureSupplement($0, NSIndexPath($1), $2)
-        }
+        })
         
         if let section = globalSection {
             addLayoutAttributes(forSection: .Global, withInfo: section)

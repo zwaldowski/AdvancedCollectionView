@@ -264,9 +264,9 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
             
             // We were showing the placehoder and now we're not
             if oldShowingPlaceholder && shouldDisplayPlaceholder {
-                notifyBatchUpdate {
+                notifyBatchUpdate({
                     self.executePendingUpdates()
-                }
+                }, completion: nil)
             }
             
             notifyContentLoaded(error: error)

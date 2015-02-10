@@ -92,9 +92,9 @@ extension Multimap {
     }
     
     public mutating func remove(fromKey key: K, atIndex index: Value.Index) {
-        mutate(arrayForKey: key) { (inout array: Value) in
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             _ = array.removeAtIndex(index)
-        }
+        }, replace: nil)
     }
     
     public mutating func remove(valuesForKey key: K) -> Value? {
@@ -138,7 +138,7 @@ extension Multimap {
         })
     }
     
-    public mutating func extend<Seq: SequenceType where Seq.Generator.Element == K>(#values: Seq, forKey key: K) {
+    public mutating func extend<Seq: SequenceType where Seq.Generator.Element == V>(#values: Seq, forKey key: K) {
         mutate(arrayForKey: key, transform: { (inout array: Value) in
             array.extend(values)
         }, replace: {
@@ -183,15 +183,15 @@ extension Multimap: SequenceType {
     }
     
     public mutating func updateMap(groupForKey key: K, transform: V -> V) {
-        mutate(arrayForKey: key) { (inout array: Value) in
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             array = array.map(transform)
-        }
+        }, replace: nil)
     }
     
     public mutating func updateMapWithIndex(groupForKey key: K, transform: (Int, V) -> V) {
-        mutate(arrayForKey: key) { (inout array: Value) in
+        mutate(arrayForKey: key, transform: { (inout array: Value) in
             array = array.mapWithIndex(transform)
-        }
+        }, replace: nil)
     }
     
 }

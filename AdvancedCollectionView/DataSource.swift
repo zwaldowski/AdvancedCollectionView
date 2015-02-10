@@ -115,11 +115,11 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
                 enqueuePendingUpdate(update)
             }
         } else {
-            notifyBatchUpdate {
+            notifyBatchUpdate({
                 // Run pending updates
                 self.executePendingUpdates()
                 update?()
-            }
+            }, completion: nil)
         }
         
         var block: Block? = nil
