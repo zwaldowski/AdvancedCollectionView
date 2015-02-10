@@ -68,7 +68,7 @@ class CatListViewController: CollectionViewController {
     
     private var selectedCat: Cat? {
         if let indexPath = selectedIndexPath {
-            let dataSource = segmentedDataSource.selectedDataSource! as CatListDataSource
+            let dataSource = segmentedDataSource.selectedDataSource as! CatListDataSource
             return dataSource[indexPath]
         }
         return nil

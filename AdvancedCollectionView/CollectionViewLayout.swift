@@ -10,12 +10,12 @@ extension UICollectionView {
     
     public func dequeue<V: UICollectionViewCell>(cellOfType type: V.Type, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {
         let identifier = reuseIdentifier ?? NSStringFromClass(type)!
-        return dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as V
+        return dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as! V
     }
     
     func dequeue<V: UICollectionReusableView>(supplementOfType type: V.Type, ofRawKind kind: String, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {
         let identifier = reuseIdentifier ?? NSStringFromClass(type)!
-        return dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: identifier, forIndexPath: indexPath) as V
+        return dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: identifier, forIndexPath: indexPath) as! V
     }
     
     public func dequeue<V: UICollectionReusableView, T: RawRepresentable where T.RawValue == String>(supplementOfType type: V.Type, ofKind kind: T, indexPath: NSIndexPath, reuseIdentifier: String? = nil) -> V {

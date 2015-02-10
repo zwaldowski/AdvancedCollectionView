@@ -24,7 +24,7 @@ public class SectionHeaderView: GridCell {
     
     private weak var _actionButton: UIButton?
     private func createActionButton() -> UIButton {
-        let button = UIButton.buttonWithType(.System) as UIButton
+        let button = UIButton.buttonWithType(.System) as! UIButton
         button.setTranslatesAutoresizingMaskIntoConstraints(false)
         button.titleLabel?.font = secondaryFont()
         button.setTitleColor(UIColor(white: 0.46, alpha: 1), forState: .Disabled)
@@ -89,12 +89,12 @@ public class SectionHeaderView: GridCell {
         
         if let button = _actionButton {
             views["button"] = button
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[leading]-(>=10)-[trailing]-5-[button]-right-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[leading]-(>=10)-[trailing]-5-[button]-right-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         } else {
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[leading]-(>=10)-[trailing]-right-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[leading]-(>=10)-[trailing]-right-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         }
 
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-top-[leading]-bottom-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-top-[leading]-bottom-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
         
         contentView.addConstraints(constraints)
         super.updateConstraints()

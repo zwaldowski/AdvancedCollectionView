@@ -83,11 +83,11 @@ public struct SupplementaryMetrics {
             // chain the old with the new
             configureView = {
                 old(view: $0, dataSource: $1, indexPath: $2)
-                closure(view: $0 as V, dataSource: $1 as DS, indexPath: $2)
+                closure(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
             }
         } else {
             configureView = {
-                closure(view: $0 as V, dataSource: $1 as DS, indexPath: $2)
+                closure(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
             }
         }
     }

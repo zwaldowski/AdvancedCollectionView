@@ -54,8 +54,7 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     
     public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if context == &dataSourceContext {
-            let collectionView = object as UICollectionView
-            if let dataSource = collectionView.dataSource as? DataSource {
+            if let collectionView = object as? UICollectionView, dataSource = collectionView.dataSource as? DataSource {
                 if dataSource.container == nil {
                     dataSource.container = self
                 }
@@ -83,7 +82,8 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     }
     
     public func containedDataSource(forSection section: Int) -> DataSource {
-        return collectionView?.dataSource as DataSource
+        // TODO: downcast now
+        return collectionView?.dataSource as! DataSource
     }
     
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {

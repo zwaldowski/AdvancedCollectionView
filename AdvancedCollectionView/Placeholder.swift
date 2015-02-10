@@ -141,8 +141,8 @@ public class PlaceholderView: UIView {
         // _containerView should be no more than 418pt and the left and right padding should be no less than 30pt on both sides
         let metrics = [ "hPad": 30, "maxWidth": 418 ]
         let views = [ "container": container ]
-        bigWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=hPad)-[container(<=maxWidth)]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-        smallWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[container]-hPad-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+        bigWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=hPad)-[container(<=maxWidth)]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+        smallWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[container]-hPad-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
     }
     
     public override init(frame: CGRect = CGRect.zeroRect) {
@@ -200,7 +200,7 @@ public class PlaceholderView: UIView {
         
         if content.image != nil {
             // Force the container to be at least as wide as the image
-            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=0)-[imageView]-(>=0)-|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
+            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=0)-[imageView]-(>=0)-|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
             // horizontally center the image
             contentConstraints.append(NSLayoutConstraint(item: imageView, attribute: .CenterX, relatedBy: .Equal, toItem: containerView, attribute: .CenterX, multiplier: 1, constant: 0))
             // aligned with the top of the container
@@ -212,7 +212,7 @@ public class PlaceholderView: UIView {
         }
         
         if content.title != nil {
-            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[titleLabel]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
+            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[titleLabel]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
             contentConstraints.append(NSLayoutConstraint(item: titleLabel, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
             
             last = titleLabel
@@ -221,7 +221,7 @@ public class PlaceholderView: UIView {
         }
 
         if content.message != nil {
-            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[messageLabel]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
+            contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[messageLabel]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
             contentConstraints.append(NSLayoutConstraint(item: messageLabel, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
             
             last = messageLabel
@@ -333,8 +333,8 @@ public class CollectionPlaceholderView: GridCell {
         let views = [ "placeholder": newPlaceholder ]
         
         var constraints = [NSLayoutConstraint]()
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
-        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|[placeholder]|", options: nil, metrics: nil, views: views) as [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[placeholder]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
+        constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|[placeholder]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
         contentView.addConstraints(constraints)
 
         let animation: () -> () = { _ in

@@ -97,7 +97,7 @@ extension JSON {
         case .JSONNull: return "null"
         default:
             if let data = rawData(options: opt) {
-                return NSString(data: data, encoding: encoding) as! String
+                return NSString(data: data, encoding: encoding) as? String
             }
             return nil
         }

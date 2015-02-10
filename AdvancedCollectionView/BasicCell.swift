@@ -104,14 +104,14 @@ public class BasicCell: GridCell {
         
         switch style {
         case .Default:
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[primary]-(>=10)-[secondary]-right-|", options: .AlignAllBaseline, metrics: metrics, views: views) as [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[primary]-(>=10)-[secondary]-right-|", options: .AlignAllBaseline, metrics: metrics, views: views) as! [NSLayoutConstraint]
             constraints.append(NSLayoutConstraint(item: primaryLabel, attribute: .CenterY, relatedBy: .Equal, toItem: contentView, attribute: .CenterY, multiplier: 1, constant: 0))
             constraints.append(NSLayoutConstraint(item: primaryLabel, attribute: .Height, relatedBy: .LessThanOrEqual, toItem: contentView, attribute: .Height, multiplier: 1, constant: 0))
             break
         case .Subtitle:
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[primary]-(>=right)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[secondary]-(>=right)-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
-            constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-top-[primary][secondary]-bottom-|", options: nil, metrics: metrics, views: views) as [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[primary]-(>=right)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-left-[secondary]-(>=right)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
+            constraints += NSLayoutConstraint.constraintsWithVisualFormat("V:|-top-[primary][secondary]-bottom-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
             break
         }
         

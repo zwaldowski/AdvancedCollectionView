@@ -191,11 +191,11 @@ public class GridLayout: UICollectionViewLayout {
     // MARK: Hacks
     
     private var layoutAttributesType: Attributes.Type {
-        return self.dynamicType.layoutAttributesClass() as Attributes.Type
+        return self.dynamicType.layoutAttributesClass() as! Attributes.Type
     }
     
     private var invalidationContextType: InvalidationContext.Type {
-        return self.dynamicType.layoutAttributesClass() as InvalidationContext.Type
+        return self.dynamicType.layoutAttributesClass() as! InvalidationContext.Type
     }
     
     public weak var metricsProvider: MetricsProviderLegacy?
@@ -211,7 +211,7 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func invalidateLayoutWithContext(origContext: UICollectionViewLayoutInvalidationContext) {
-        let context = origContext as GridLayoutInvalidationContext
+        let context = origContext as! GridLayoutInvalidationContext
         
         flags.useCollectionViewContentOffset = context.invalidateLayoutOrigin
         
@@ -365,7 +365,7 @@ public class GridLayout: UICollectionViewLayout {
     
     public override func invalidationContextForBoundsChange(newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
         let oldBounds = collectionView?.bounds ?? CGRect.zeroRect
-        let context = super.invalidationContextForBoundsChange(newBounds) as InvalidationContext
+        let context = super.invalidationContextForBoundsChange(newBounds) as! InvalidationContext
         
         context.invalidateLayoutOrigin = newBounds.origin == oldBounds.origin
         context.invalidateLayoutMetrics = newBounds.width != oldBounds.width
@@ -411,7 +411,7 @@ public class GridLayout: UICollectionViewLayout {
     public override func prepareForCollectionViewUpdates(updateItems: [AnyObject]!) {
         trace()
 
-        for updateItem in updateItems as [UICollectionViewUpdateItem] {
+        for updateItem in updateItems as! [UICollectionViewUpdateItem] {
             switch (updateItem.updateAction, updateItem.indexPathBeforeUpdate, updateItem.indexPathAfterUpdate) {
             case (.Insert, _, let indexPath) where indexPath.item == NSNotFound:
                 insertedSections.addIndex(indexPath.section)
