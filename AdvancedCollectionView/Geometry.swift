@@ -8,57 +8,47 @@
 
 import CoreGraphics
 import UIKit.UIGeometry
-
-// MARK: Rounding
-
-public protocol Scalable: Comparable {
-    func *(lhs: Self, rhs: Self) -> Self
-    func /(lhs: Self, rhs: Self) -> Self
-    static var identityScalar: Self { get }
-}
-
-extension Float: Scalable {
-    public static let identityScalar = Float(1)
-}
-
-extension Double: Scalable {
-    public static let identityScalar = Double(1)
-}
-
-extension CGFloat: Scalable {
-    public static let identityScalar = CGFloat(CGFloat.NativeType.identityScalar)
-}
-
-private func rround<T: Scalable>(value: T, scale: T = T.identityScalar, function: T -> T) -> T {
-    return (scale > T.identityScalar) ? (function(value * scale) / scale) : function(value)
-}
-
-// MARK: Approximate equality (for UI purposes)
-
-public protocol ApproximatelyEquatable: AbsoluteValuable, Comparable {
-    static var accuracy: Self { get }
-}
-
-extension Float: ApproximatelyEquatable {
-    public static let accuracy = FLT_EPSILON
-}
-
-extension Double: ApproximatelyEquatable {
-    public static let accuracy = DBL_EPSILON
-}
-
-extension CGFloat: ApproximatelyEquatable {
-    public static let accuracy = CGFloat(CGFloat.NativeType.accuracy)
-}
+import UIKit
 
 infix operator ~== { associativity none precedence 130 }
 infix operator !~== { associativity none precedence 130 }
 
-public func ~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
+// MARK: UI geometry
+
+protocol Scalable: Comparable {
+    func *(lhs: Self, rhs: Self) -> Self
+    func /(lhs: Self, rhs: Self) -> Self
+    static var identity: Self { get }
+}
+
+protocol ApproximatelyEquatable: AbsoluteValuable, Comparable {
+    static var accuracy: Self { get }
+}
+
+extension Float: Scalable, ApproximatelyEquatable {
+    public static let identity = Float(1)
+    public static let accuracy = FLT_EPSILON
+}
+
+extension Double: Scalable, ApproximatelyEquatable {
+    public static let identity = Double(1)
+    public static let accuracy = DBL_EPSILON
+}
+
+extension CGFloat: Scalable, ApproximatelyEquatable {
+    public static let identity = CGFloat(CGFloat.NativeType.identity)
+    public static let accuracy = CGFloat(CGFloat.NativeType.accuracy)
+}
+
+func rround<T: Scalable>(value: T, scale: T = T.identity, function: T -> T) -> T {
+    return (scale > T.identity) ? (function(value * scale) / scale) : function(value)
+}
+
+func ~==<T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
     return T.abs(rhs - lhs) <= T.accuracy
 }
 
-public func ~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
+func ~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case (.Some(let l), .Some(let r)):
         return l ~== r
@@ -67,11 +57,11 @@ public func ~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-public func !~== <T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
+func !~==<T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
     return !(lhs ~== rhs)
 }
 
-public func !~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
+func !~==<T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
     return !(lhs ~== rhs)
 }
 
