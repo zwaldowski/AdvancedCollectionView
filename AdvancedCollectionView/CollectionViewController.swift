@@ -13,11 +13,12 @@ private var dataSourceContext = 0
 public class CollectionViewController: UICollectionViewController, DataSourceContainer {
     
     private let updateDebugging = true
+    private var firstDisplay = false
     
-    private var gridLayout: GridLayout? {
-        return collectionView?.collectionViewLayout as? GridLayout
+    private var presenterLayout: DataSourcePresenter? {
+        return collectionView?.collectionViewLayout as? DataSourcePresenter
     }
-    
+
     deinit {
         collectionView?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)
     }
@@ -26,16 +27,27 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
         super.loadView()
         
         //  We need to know when the data source changes on the collection view so we can become the delegate for any data source subclasses.
-        collectionView?.addObserver(self, forKeyPath: "dataSource", options: .Initial | .New, context: &dataSourceContext)
+        collectionView?.addObserver(self, forKeyPath: "dataSource", options: nil, context: &dataSourceContext)
     }
     
     public override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let view = collectionView {
-            let dataSource = view.dataSource as? DataSource
-            dataSource?.registerReusableViews(collectionView: view)
-            dataSource?.setNeedsLoadContent()
+        prepareForDisplay(inCollectionView: collectionView!)
+    }
+
+    private func prepareForDisplay(inCollectionView collectionView: UICollectionView, onlyAfterFirst: Bool = false) {
+        if firstDisplay && onlyAfterFirst { return }
+
+        firstDisplay = true
+
+        if let ds = collectionView.dataSource as? DataSource {
+            if ds.container == nil {
+                ds.container = self
+            }
+
+            ds.registerReusableViews(collectionView: collectionView)
+            ds.setNeedsLoadContent()
         }
     }
     
@@ -48,21 +60,13 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
             super.collectionView = newValue
             
             oldCollectionView?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)
-            newValue?.addObserver(self, forKeyPath: "dataSource", options: NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, context: &dataSourceContext)
+            newValue?.addObserver(self, forKeyPath: "dataSource", options: nil, context: &dataSourceContext)
         }
     }
     
     public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if context == &dataSourceContext {
-            if let collectionView = object as? UICollectionView, dataSource = collectionView.dataSource as? DataSource {
-                if dataSource.container == nil {
-                    dataSource.container = self
-                }
-                
-                gridLayout?.metricsProvider = dataSource
-            } else {
-                gridLayout?.metricsProvider = nil
-            }
+            prepareForDisplay(inCollectionView: object as! UICollectionView, onlyAfterFirst: true)
         } else {
             // For change contexts that aren't the data source, pass them to super.
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
@@ -91,9 +95,11 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
             debugPrintln(sectionAction)
         }
         
-        gridLayout?.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
+        let layout = presenterLayout
 
-        switch (sectionAction, gridLayout) {
+        layout?.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
+
+        switch (sectionAction, layout) {
         case (.Insert(let indexSet, _), _):
             collectionView?.insertSections(indexSet)
         case (.Remove(let indexSet, _), _):
