@@ -1198,7 +1198,7 @@ extension GridLayout: DataSourcePresenter {
         
         func setSectionDirections(forIndexes indexes: NSIndexSet, direction: SectionOperationDirection) {
             for sectionIndex in indexes {
-                updateSectionDirections[.Index(sectionIndex)] = direction
+                self.updateSectionDirections[.Index(sectionIndex)] = direction
             }
         }
         

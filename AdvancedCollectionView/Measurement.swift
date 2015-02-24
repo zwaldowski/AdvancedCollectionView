@@ -16,7 +16,7 @@ public extension UICollectionReusableView {
         frame.size = targetSize
         
         func update(measuredSize newSize: CGSize) -> CGSize {
-            frame.size = newSize
+            self.frame.size = newSize
             return newSize
         }
         
@@ -50,7 +50,7 @@ public extension UICollectionViewCell {
         func update(measuredSize newSize: CGSize) -> CGSize {
             // Only consider the height for cells, because the contentView isn't anchored correctly sometimes.
             let fitted = CGSize(width: targetSize.width, height: newSize.height)
-            frame.size = fitted
+            self.frame.size = fitted
             return fitted
         }
         
