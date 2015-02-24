@@ -66,9 +66,9 @@ extension OrderedSet: SequenceType {
     
 }
 
-// MARK: CollectionType
+// MARK: MutableCollectionType
 
-extension OrderedSet: CollectionType {
+extension OrderedSet: MutableCollectionType {
     
     public typealias Index = Ordered.Index
     
@@ -76,7 +76,17 @@ extension OrderedSet: CollectionType {
     public var endIndex: Index { return ordered.endIndex }
     
     public subscript(index: Index) -> T {
-        return ordered[index]
+        get {
+            return ordered[index]
+        }
+        set {
+            let oldValue = ordered[index]
+            if oldValue != newValue || !elements.contains(newValue) {
+                elements.remove(newValue)
+                elements.insert(newValue)
+                ordered[index] = newValue
+            }
+        }
     }
     
 }
@@ -96,15 +106,9 @@ extension OrderedSet {
     }
     
     public mutating func remove(element: T) -> T? {
-        if let el = elements.remove(element) {
-            for (idx, value) in enumerate(ordered) {
-                if value != el { continue }
-                
-                ordered.removeAtIndex(idx)
-                return el
-            }
+        return find(ordered, element).map {
+            self.removeAtIndex($0)
         }
-        return nil
     }
     
     /// A member of the set, or `nil` if the set is empty.
