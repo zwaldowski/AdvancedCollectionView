@@ -15,12 +15,12 @@ func assertMainThread(file: StaticString = __FILE__, line: UWord = __LINE__) {
 // MARK: Bitmasks
 
 func ~=<T where T: RawOptionSetType>(lhs: T, rhs: T) -> Bool {
-    return (lhs & rhs) != nil
+    return (rhs & lhs) != nil
 }
 
-func ~=<T where T: RawOptionSetType>(lhs: T?, rhs: T) -> Bool {
-    return lhs.map {
-        $0 ~= rhs
+func ~=<T where T: RawOptionSetType>(lhs: T, rhs: T?) -> Bool {
+    return rhs.map {
+        lhs ~= $0
     } ?? false
 }
 

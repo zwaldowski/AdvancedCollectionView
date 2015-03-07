@@ -466,7 +466,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
-                insertedSections ~= section || (reloadedSections ~= section && attributesCacheOld[key] == nil))
+                section ~= insertedSections || (section ~= reloadedSections && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -484,7 +484,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                removedSections ~= section || (reloadedSections ~= section && attributesCache[key] == nil))
+                section ~= removedSections || (section ~= reloadedSections && attributesCache[key] == nil))
             
             return result
         }
@@ -503,11 +503,11 @@ public class GridLayout: UICollectionViewLayout {
                 configureInitial(attributes: &result, inFromDirection: .Default)
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
-                let inserted = insertedSections ~= section
+                let inserted = section ~= insertedSections
                 let offsets = direction != .Default && inserted
                 
                 configureInitial(attributes: &result, inFromDirection: direction, makeFrameAdjustments: offsets, shouldFadeIn:
-                    inserted || (reloadedSections ~= section && attributesCacheOld[key] == nil))
+                    inserted || (section ~= reloadedSections && attributesCacheOld[key] == nil))
             }
             
             return result
@@ -528,7 +528,7 @@ public class GridLayout: UICollectionViewLayout {
             } else {
                 let direction = updateSectionDirections[section] ?? .Default
                 configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                    removedSections ~= section || reloadedSections ~= section)
+                    section ~= removedSections || section ~= reloadedSections)
             }
             
             return result
@@ -547,7 +547,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureInitial(attributes: &result, inFromDirection: direction, shouldFadeIn:
-                insertedSections ~= section || insertedIndexPaths.contains(indexPath) || (reloadedSections ~= section && attributesCacheOld[key] == nil))
+                section ~= insertedSections || insertedIndexPaths.contains(indexPath) || (section ~= reloadedSections && attributesCacheOld[key] == nil))
             
             return result
         }
@@ -565,7 +565,7 @@ public class GridLayout: UICollectionViewLayout {
             let direction = updateSectionDirections[section] ?? .Default
             
             configureFinal(attributes: &result, outToDirection: direction, shouldFadeOut:
-                removedIndexPaths.contains(indexPath) || removedSections ~= section || (reloadedSections ~= section && attributesCache[key] == nil))
+                removedIndexPaths.contains(indexPath) || section ~= removedSections || (section ~= reloadedSections && attributesCache[key] == nil))
             
             return result
         }
