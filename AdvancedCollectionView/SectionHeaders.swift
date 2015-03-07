@@ -20,7 +20,6 @@ extension DataSource {
         
         var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(44)
-        header.viewType = SectionHeaderView.self
         header.configure { (view: SectionHeaderView, dataSource: DataSource, indexPath) -> () in
             view.leadingLabel.text = title ?? dataSource.title
         }

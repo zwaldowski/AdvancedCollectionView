@@ -140,7 +140,6 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
     private func segmentedControlHeader() -> SupplementaryMetrics {
         var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(48)
-        header.viewType = SegmentedHeaderView.self
         header.shouldPin = true
         // Show this header regardless of whether there are items
         header.isVisibleWhileShowingPlaceholder = true

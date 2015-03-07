@@ -34,7 +34,6 @@ class TextValueDataSource<T>: BasicDataSource {
         // Create a section header that will pull the text of the header from the label of the item.
         var header = SupplementaryMetrics(kind: SupplementKind.Header)
         header.measurement = .Estimate(40)
-        header.viewType = SectionHeaderView.self
         header.configure { (view: SectionHeaderView, dataSource: TextValueDataSource<T>, indexPath) in
             let value = dataSource.items[indexPath[0]]
             view.leadingLabel.text = value.label

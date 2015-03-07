@@ -43,7 +43,6 @@ class CatDetailViewController: CollectionViewController {
         var globalHeader = SupplementaryMetrics(kind: SupplementKind.Header)
         globalHeader.isVisibleWhileShowingPlaceholder = true
         globalHeader.measurement = .Static(110)
-        globalHeader.viewType = CatDetailHeader.self
         globalHeader.configure {
             [weak self] (view: CatDetailHeader, dataSource, indexPath) in
             if let cat = self?.cat {
