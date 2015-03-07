@@ -82,75 +82,54 @@ public struct SupplementaryMetrics {
         self.kind = kind.rawValue
     }
     
+    /// Copy-on write setter
+    private mutating func modifyStorage(fn: (SupplementaryMetricsStorage -> ())) {
+        if isUniquelyReferencedNonObjC(&storage) {
+            fn(storage)
+        } else {
+            storage = storage.clone(fn)
+        }
+    }
+
     /// The class to use when dequeuing an instance of this supplementary view
     public var viewType: UICollectionReusableView.Type {
         get { return storage.viewType }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.viewType = newValue
-            } else {
-                storage = storage.clone {
-                    $0.viewType = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+                $0.viewType = newValue
+        }}
     }
     
     /// Should this supplementary view be displayed while the placeholder is visible?
     public var isVisibleWhileShowingPlaceholder: Bool {
         get { return storage.isVisibleWhileShowingPlaceholder }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.isVisibleWhileShowingPlaceholder = newValue
-            } else {
-                storage = storage.clone {
-                    $0.isVisibleWhileShowingPlaceholder = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.isVisibleWhileShowingPlaceholder = newValue
+        }}
     }
     
     /// Should this supplementary view be pinned to the edges of the view when
     /// scrolling? Only valid for headers and footers.
     public var shouldPin: Bool {
         get { return storage.shouldPin }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.shouldPin = newValue
-            } else {
-                storage = storage.clone {
-                    $0.shouldPin = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.shouldPin = newValue
+        }}
     }
     
     /// The size of the supplementary view relative to the layout.
     public var measurement: ElementLength? {
         get { return storage.measurement }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.measurement = newValue
-            } else {
-                storage = storage.clone {
-                    $0.measurement = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.measurement = newValue
+        }}
     }
     
     /// Should the supplementary view be hidden?
     public var isHidden: Bool {
         get { return storage.isHidden }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.isHidden = newValue
-            } else {
-                storage = storage.clone {
-                    $0.isHidden = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.isHidden = newValue
+        }}
     }
     
     /// Use top & bottom padding to adjust spacing of header & footer elements.
@@ -158,29 +137,17 @@ public struct SupplementaryMetrics {
     /// which is interpretted by supplementary items to be their default values.
     public var padding: UIEdgeInsets {
         get { return storage.padding }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.padding = newValue
-            } else {
-                storage = storage.clone {
-                    $0.padding = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.padding = newValue
+        }}
     }
     
     /// How is this affected by other coinciding views?
     public var zIndex: Int {
         get { return storage.zIndex }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.zIndex = newValue
-            } else {
-                storage = storage.clone {
-                    $0.zIndex = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.zIndex = newValue
+        }}
     }
     
     /// Optional reuse identifier. If not specified, it will be inferred from the
@@ -192,30 +159,18 @@ public struct SupplementaryMetrics {
             }
             return NSStringFromClass(viewType)
         }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.reuseIdentifier = newValue
-            } else {
-                storage = storage.clone {
-                    $0.reuseIdentifier = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.reuseIdentifier = newValue
+        }}
     }
     
     /// The background color that should be used for this element. On an item,
     /// if not set, this will be inherited from the section.
     public var backgroundColor: UIColor? {
         get { return storage.backgroundColor }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.backgroundColor = newValue
-            } else {
-                storage = storage.clone {
-                    $0.backgroundColor = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.backgroundColor = newValue
+        }}
     }
     
     /// The background color shown when this element is selected. On an item, if
@@ -223,30 +178,18 @@ public struct SupplementaryMetrics {
     /// to override a selection color from the section.
     public var selectedBackgroundColor: UIColor? {
         get { return storage.selectedBackgroundColor }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.selectedBackgroundColor = newValue
-            } else {
-                storage = storage.clone {
-                    $0.selectedBackgroundColor = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.selectedBackgroundColor = newValue
+        }}
     }
     
     /// The preferred tint color used for this element. On an item, if not set,
     /// not set, it will be inherited from the section.
     public var tintColor: UIColor? {
         get { return storage.tintColor }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.tintColor = newValue
-            } else {
-                storage = storage.clone {
-                    $0.tintColor = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.tintColor = newValue
+        }}
     }
     
     /// The preferred tint color used for this element when selected. On an
@@ -254,15 +197,9 @@ public struct SupplementaryMetrics {
     /// color to override the inherited color.
     public var selectedTintColor: UIColor? {
         get { return storage.selectedTintColor }
-        set {
-            if isUniquelyReferencedNonObjC(&storage) {
-                storage.selectedTintColor = newValue
-            } else {
-                storage = storage.clone {
-                    $0.selectedTintColor = newValue
-                }
-            }
-        }
+        set { modifyStorage {
+            $0.selectedTintColor = newValue
+        }}
     }
     
     /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
@@ -279,14 +216,9 @@ public struct SupplementaryMetrics {
             newConfigurator(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
         }
         
-        if isUniquelyReferencedNonObjC(&storage) {
-            storage.viewType = V.self
-            storage.configureView = chained
-        } else {
-            storage = storage.clone {
-                $0.viewType = V.self
-                $0.configureView = chained
-            }
+        modifyStorage {
+            $0.viewType = V.self
+            $0.configureView = chained
         }
     }
     
