@@ -35,6 +35,12 @@ public typealias ConfigureSupplement = (view: UICollectionReusableView, dataSour
 
 private final class SupplementaryMetricsStorage {
     
+    /// The kind of supplementary view these metrics describe
+    let kind: String
+    init(kind: String) {
+        self.kind = kind
+    }
+
     var viewType = UICollectionReusableView.self
     var isVisibleWhileShowingPlaceholder = false
     var shouldPin = false
@@ -50,7 +56,7 @@ private final class SupplementaryMetricsStorage {
     var configureView: ConfigureSupplement?
     
     func clone(fn: SupplementaryMetricsStorage -> ()) -> SupplementaryMetricsStorage {
-        var ret = self.dynamicType()
+        var ret = self.dynamicType(kind: kind)
         ret.viewType = viewType
         ret.isVisibleWhileShowingPlaceholder = isVisibleWhileShowingPlaceholder
         ret.shouldPin = shouldPin
@@ -72,14 +78,16 @@ private final class SupplementaryMetricsStorage {
 
 public struct SupplementaryMetrics {
 
-    private var storage = SupplementaryMetricsStorage()
-    
-    /// The kind of supplementary view these metrics describe
-    let kind: String
+    private var storage: SupplementaryMetricsStorage
     
     /// Initialize with a member of a kind type enumeration
     public init<KindType: RawRepresentable where KindType.RawValue == String>(kind: KindType) {
-        self.kind = kind.rawValue
+        self.storage = SupplementaryMetricsStorage(kind: kind.rawValue)
+    }
+
+    /// The kind of supplementary view these metrics describe
+    public var kind: String {
+        return storage.kind
     }
     
     /// Copy-on write setter
