@@ -51,7 +51,7 @@ public class GridCell: UICollectionViewCell {
         
         if let attributes = layoutAttributes as? GridLayoutAttributes {
             hidden = layoutAttributes.hidden
-            if attributes.padding == UIEdgeInsetsZero {
+            if attributes.padding == UIEdgeInsets() {
                 padding = defaultPadding
             } else {
                 padding = attributes.padding
@@ -117,11 +117,11 @@ public class GridCell: UICollectionViewCell {
     
     /// Default padding values preferred by the header/footer view.
     public var defaultPadding: UIEdgeInsets {
-        return UIEdgeInsetsZero
+        return UIEdgeInsets()
     }
     
     /// Padding specified by the configuration. Can be used to update constraints.
-    public var padding: UIEdgeInsets = UIEdgeInsetsZero {
+    public var padding: UIEdgeInsets = UIEdgeInsets() {
         didSet {
             invalidateConstraints()
         }

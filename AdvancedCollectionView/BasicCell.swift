@@ -32,7 +32,7 @@ public class BasicCell: GridCell {
         }
     }
     
-    public var contentInsets: UIEdgeInsets = UIEdgeInsetsZero {
+    public var contentInsets: UIEdgeInsets = UIEdgeInsets() {
         didSet {
             invalidateConstraints()
         }

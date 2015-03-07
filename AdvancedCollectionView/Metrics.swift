@@ -46,9 +46,9 @@ public struct SupplementaryMetrics {
     /// Should the supplementary view be hidden?
     public var isHidden = false
     /// Use top & bottom padding to adjust spacing of header & footer elements.
-    /// Not all headers & footers adhere to padding. Default @c UIEdgeInsetsZero
+    /// Not all headers & footers adhere to padding. Default @c UIEdgeInsets()
     /// which is interpretted by supplementary items to be their default values.
-    public var padding = UIEdgeInsetsZero
+    public var padding = UIEdgeInsets()
     /// How is this affected by other coinciding views?
     public var zIndex = GridLayout.ZIndex.Supplement.rawValue
     /// Optional reuse identifier. If not specified, it will be inferred from the

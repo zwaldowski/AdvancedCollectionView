@@ -146,7 +146,7 @@ private extension SectionMetrics {
             
             return insets
         }
-        return UIEdgeInsetsZero
+        return UIEdgeInsets()
     }
     
     var layoutSlicingEdge: CGRectEdge {
@@ -173,7 +173,7 @@ struct SupplementInfo {
     let measurement: ElementLength
     let frame: CGRect
     
-    private init(metrics: SupplementaryMetrics, measurement: ElementLength? = nil, frame: CGRect = CGRect.zeroRect) {
+    private init(metrics: SupplementaryMetrics, measurement: ElementLength? = nil, frame: CGRect = CGRect()) {
         self.metrics = metrics
         self.measurement = measurement ?? metrics.measurement!
         self.frame = frame
@@ -187,7 +187,7 @@ struct ItemInfo {
     let padding: UIEdgeInsets
     let frame: CGRect
     
-    private init(measurement: ElementLength, padding: UIEdgeInsets = UIEdgeInsetsZero, frame: CGRect = CGRect.zeroRect) {
+    private init(measurement: ElementLength, padding: UIEdgeInsets = UIEdgeInsets(), frame: CGRect = CGRect()) {
         self.measurement = measurement
         self.padding = padding
         self.frame = frame
@@ -214,11 +214,11 @@ struct SectionInfo {
     private(set) var items = [ItemInfo]()
     private(set) var rows = [RowInfo]() // ephemeral, only full once laid out
     private(set) var supplementalItems = Multimap<String, SupplementInfo>()
-    private(set) var frame = CGRect.zeroRect
+    private(set) var frame = CGRect()
     
-    private var headersRect = CGRect.zeroRect
-    private var itemsRect = CGRect.zeroRect
-    private var footersRect = CGRect.zeroRect
+    private var headersRect = CGRect()
+    private var itemsRect = CGRect()
+    private var footersRect = CGRect()
     
     var contentRect: CGRect {
         return frame.rectByInsetting(insets: UIEdgeInsetsMake(0, 0, metrics.margin ?? 0, 0))
@@ -369,8 +369,8 @@ extension SectionInfo {
         
         switch (numberOfItems, placeholder) {
         case (0, .Some(var info)):
-            itemsRect = CGRect.zeroRect
-            footersRect = CGRect.zeroRect
+            itemsRect = CGRect()
+            footersRect = CGRect()
             
             // Height of the placeholder is equal to the height of the collection view minus the height of the headers
             let frame = layoutRect.rectByIntersecting(viewport)

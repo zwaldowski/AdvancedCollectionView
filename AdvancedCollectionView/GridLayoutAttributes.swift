@@ -23,7 +23,7 @@ public final class GridLayoutAttributes: UICollectionViewLayoutAttributes {
     /// The background color when selected
     public var selectedTintColor: UIColor? = nil
     /// Used by supplementary items
-    public var padding = UIEdgeInsetsZero
+    public var padding = UIEdgeInsets()
     
     /// If this is a header, is it pinned to the top of the collection view?
     /// If this is pinned, where is our minY when we unpin it?
@@ -89,7 +89,7 @@ public class GridLayoutInvalidationContext: UICollectionViewLayoutInvalidationCo
             } else if let obj = objc_getAssociatedObject(self, &contentOffsetAdjustmentLegacyKey) as? NSValue {
                 return obj.CGPointValue()
             } else {
-                return CGPoint.zeroPoint
+                return CGPoint()
             }
         }
         set {
@@ -109,7 +109,7 @@ public class GridLayoutInvalidationContext: UICollectionViewLayoutInvalidationCo
             } else if let obj = objc_getAssociatedObject(self, &contentSizeAdjustmentLegacyKey) as? NSValue {
                 return obj.CGSizeValue()
             } else {
-                return CGSize.zeroSize
+                return CGSize()
             }
         }
         set {

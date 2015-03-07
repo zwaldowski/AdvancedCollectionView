@@ -80,8 +80,8 @@ public class GridLayout: UICollectionViewLayout {
     
     private let layoutLogging = true
     
-    private var layoutSize = CGSize.zeroSize
-    private var oldLayoutSize = CGSize.zeroSize
+    private var layoutSize = CGSize()
+    private var oldLayoutSize = CGSize()
     
     private var sections = [SectionInfo]()
     private var globalSection: SectionInfo?
@@ -118,8 +118,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     private var flags = Flags()
     
-    private var contentSizeAdjustment = CGSize.zeroSize
-    private var contentOffsetAdjustment = CGPoint.zeroPoint
+    private var contentSizeAdjustment = CGSize()
+    private var contentOffsetAdjustment = CGPoint()
     
     private var hairline: CGFloat = 1
     private var lastPreparedCollectionView: ObjectIdentifier? = nil
@@ -169,7 +169,7 @@ public class GridLayout: UICollectionViewLayout {
         var section = sections[indexPath.section]
         section.remeasureItem(atIndex: indexPath.item) { (index, measuringRect) in
             self.measuringElement = (ElementKey(indexPath), measuringRect)
-            let ret = self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize.zeroSize
+            let ret = self.collectionView?.cellForItemAtIndexPath(indexPath)?.preferredLayoutSize(fittingSize: measuringRect.size) ?? CGSize()
             self.measuringElement = nil
             return ret
         }
@@ -229,8 +229,8 @@ public class GridLayout: UICollectionViewLayout {
             }
         }
         
-        contentSizeAdjustment = CGSize.zeroSize
-        contentOffsetAdjustment = CGPoint.zeroPoint
+        contentSizeAdjustment = CGSize()
+        contentOffsetAdjustment = CGPoint()
         
         log("layoutDataIsValid \(flags.layoutDataIsValid), layoutMetricsAreValid \(flags.layoutMetricsAreValid)")
         
@@ -239,12 +239,12 @@ public class GridLayout: UICollectionViewLayout {
         switch (Constants.isiOS7, collectionView) {
         case (true, .Some(let cv)):
             let offset = context.contentOffsetAdjustment
-            if offset != CGPoint.zeroPoint {
+            if offset != CGPoint() {
                 cv.contentOffset += offset
             }
             
             let size = context.contentSizeAdjustment
-            if size != CGSize.zeroSize {
+            if size != CGSize() {
                 cv.contentSize += size
             }
         default: break
@@ -253,10 +253,10 @@ public class GridLayout: UICollectionViewLayout {
     
     public override func prepareLayout() {
         trace()
-        log("bounds = \(collectionView?.bounds ?? CGRect.zeroRect)")
+        log("bounds = \(collectionView?.bounds ?? CGRect())")
         
-        contentSizeAdjustment = CGSize.zeroSize
-        contentOffsetAdjustment = CGPoint.zeroPoint
+        contentSizeAdjustment = CGSize()
+        contentOffsetAdjustment = CGPoint()
         
         let cvPtr = collectionView.map { ObjectIdentifier($0) }
         if cvPtr != lastPreparedCollectionView {
@@ -269,7 +269,7 @@ public class GridLayout: UICollectionViewLayout {
             flags.layoutDataIsValid = false
         }
         
-        let bounds = collectionView?.bounds ?? CGRect.zeroRect
+        let bounds = collectionView?.bounds ?? CGRect()
         if !bounds.isEmpty {
             buildLayout()
         }
@@ -364,7 +364,7 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func invalidationContextForBoundsChange(newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
-        let oldBounds = collectionView?.bounds ?? CGRect.zeroRect
+        let oldBounds = collectionView?.bounds ?? CGRect()
         let context = super.invalidationContextForBoundsChange(newBounds) as! InvalidationContext
         
         context.invalidateLayoutOrigin = newBounds.origin == oldBounds.origin
@@ -378,8 +378,8 @@ public class GridLayout: UICollectionViewLayout {
     }
     
     public override func targetContentOffsetForProposedContentOffset(proposedContentOffset: CGPoint) -> CGPoint {
-        let bounds = collectionView?.bounds ?? CGRect.zeroRect
-        let insets = collectionView?.contentInset ?? UIEdgeInsetsZero
+        let bounds = collectionView?.bounds ?? CGRect()
+        let insets = collectionView?.contentInset ?? UIEdgeInsets()
         
         var targetContentOffset = proposedContentOffset
         targetContentOffset.y += insets.top
@@ -427,7 +427,7 @@ public class GridLayout: UICollectionViewLayout {
             }
         }
         
-        let contentOffset = collectionView?.contentOffset ?? CGPoint.zeroPoint
+        let contentOffset = collectionView?.contentOffset ?? CGPoint()
         let newContentOffset = targetContentOffsetForProposedContentOffset(contentOffset)
         contentOffsetAdjustment = newContentOffset - contentOffset
         
@@ -610,7 +610,7 @@ public class GridLayout: UICollectionViewLayout {
         resetLayoutInfo()
         
         let bounds = collectionView?.bounds
-        let insets = collectionView?.contentInset ?? UIEdgeInsetsZero
+        let insets = collectionView?.contentInset ?? UIEdgeInsets()
         let height = bounds.map { $0.height - insets.top - insets.bottom } ?? 0
         let numberOfSections = collectionView?.numberOfSections() ?? 0
         
@@ -672,13 +672,13 @@ public class GridLayout: UICollectionViewLayout {
         }
         
         oldLayoutSize = layoutSize
-        layoutSize = CGSize.zeroSize
+        layoutSize = CGSize()
         
-        let contentInset = collectionView?.contentInset ?? UIEdgeInsetsZero
+        let contentInset = collectionView?.contentInset ?? UIEdgeInsets()
         let contentOffsetY = collectionView.map { $0.contentOffset.y + contentInset.top } ?? 0
         
-        let viewportSize = collectionView?.bounds.rectByInsetting(insets: contentInset).size ?? CGSize.zeroSize
-        var layoutRect = CGRect(origin: CGPoint.zeroPoint, size: viewportSize)
+        let viewportSize = collectionView?.bounds.rectByInsetting(insets: contentInset).size ?? CGSize()
+        var layoutRect = CGRect(origin: CGPoint(), size: viewportSize)
         var start = layoutRect.origin
         
         var shouldInvalidate = false
@@ -859,7 +859,7 @@ public class GridLayout: UICollectionViewLayout {
         let countSections = collectionView?.numberOfSections()
         if countSections < 1 { return }
         
-        let normalContentOffset = collectionView?.contentOffset ?? CGPoint.zeroPoint
+        let normalContentOffset = collectionView?.contentOffset ?? CGPoint()
         let contentOffset = flags.useCollectionViewContentOffset ? normalContentOffset : targetContentOffsetForProposedContentOffset(normalContentOffset)
         let minY = collectionView?.contentInset.top ?? 0
         
@@ -867,8 +867,8 @@ public class GridLayout: UICollectionViewLayout {
         if let background = globalSectionBackground {
             background.frame.origin.y = minY + contentOffset.y
 
-            let lastGlobalRect = pinnableAttributes[.Global].last?.frame ?? CGRect.zeroRect
-            let lastRegularRect = nonPinnableGlobalAttributes.last?.frame ?? CGRect.zeroRect
+            let lastGlobalRect = pinnableAttributes[.Global].last?.frame ?? CGRect()
+            let lastRegularRect = nonPinnableGlobalAttributes.last?.frame ?? CGRect()
             background.frame.size.height = fmax(lastGlobalRect.maxY, lastRegularRect.maxY) - background.frame.origin.y
         }
 
@@ -893,8 +893,8 @@ public class GridLayout: UICollectionViewLayout {
         if let background = globalSectionBackground {
             background.frame.origin.y = min(nonPinnableY, minY)
             
-            let lastGlobalRect = pinnableAttributes[.Global].last?.frame ?? CGRect.zeroRect
-            let lastRegularRect = nonPinnableGlobalAttributes.last?.frame ?? CGRect.zeroRect
+            let lastGlobalRect = pinnableAttributes[.Global].last?.frame ?? CGRect()
+            let lastRegularRect = nonPinnableGlobalAttributes.last?.frame ?? CGRect()
             background.frame.size.height = fmax(lastGlobalRect.maxY, lastRegularRect.maxY) - background.frame.origin.y
         }
         
@@ -942,7 +942,7 @@ public class GridLayout: UICollectionViewLayout {
             case (_, .Some(let item)):
                 return item.frame
             default:
-                return CGRect.zeroRect
+                return CGRect()
             }
         }()
         attribute.zIndex = ZIndex.Item.rawValue
@@ -950,7 +950,7 @@ public class GridLayout: UICollectionViewLayout {
         attribute.selectedBackgroundColor = section.selectedBackgroundColor
         attribute.tintColor = section.tintColor
         attribute.selectedTintColor = section.selectedTintColor
-        attribute.padding = item?.padding ?? UIEdgeInsetsZero
+        attribute.padding = item?.padding ?? UIEdgeInsets()
         attribute.columnIndex = columnIndex
         
 
@@ -966,7 +966,7 @@ public class GridLayout: UICollectionViewLayout {
             case (_, .Some(let item)):
                 return item.frame
             default:
-                return CGRect.zeroRect
+                return CGRect()
             }
         }()
         let hidden = item?.metrics.isHidden ?? false
@@ -978,7 +978,7 @@ public class GridLayout: UICollectionViewLayout {
         attribute.selectedBackgroundColor = item?.metrics.selectedBackgroundColor ?? section.metrics.selectedBackgroundColor
         attribute.tintColor = item?.metrics.tintColor ?? section.metrics.tintColor
         attribute.selectedTintColor = item?.metrics.selectedTintColor ?? section.metrics.selectedTintColor
-        attribute.padding = item?.metrics.padding ?? UIEdgeInsetsZero
+        attribute.padding = item?.metrics.padding ?? UIEdgeInsets()
         attribute.pinning = (false, false, frame.minY)
         
         return attribute
@@ -989,7 +989,7 @@ public class GridLayout: UICollectionViewLayout {
         
         switch decoration {
         case .GlobalHeaderBackground:
-            let frame = section.frame ?? CGRect.zeroRect
+            let frame = section.frame ?? CGRect()
             let color = section.metrics.backgroundColor
             
             attribute.frame = frame
@@ -1007,7 +1007,7 @@ public class GridLayout: UICollectionViewLayout {
                 case (.Some(let frame), _):
                     return frame
                 default:
-                    return CGRect.zeroRect
+                    return CGRect()
                 }
             }()
             configureSeparator(attributes: &attribute, bit: .Rows, toRect: rect, edge: .MinYEdge, section: section)
@@ -1021,7 +1021,7 @@ public class GridLayout: UICollectionViewLayout {
                 case (.Some(let frame), _):
                     return frame
                 default:
-                    return CGRect.zeroRect
+                    return CGRect()
                 }
             }()
             configureSeparator(attributes: &attribute, bit: .Columns, toRect: rect, edge: .MinXEdge, section: section)

@@ -145,7 +145,7 @@ public class PlaceholderView: UIView {
         smallWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-hPad-[container]-hPad-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
     }
     
-    public override init(frame: CGRect = CGRect.zeroRect) {
+    public override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         commonInit()
     }
