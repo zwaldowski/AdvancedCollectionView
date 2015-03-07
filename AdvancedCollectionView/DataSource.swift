@@ -437,17 +437,15 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
             $0.kind == kind
         }
         
-        var metrics: SupplementaryMetrics! = nil
-        for (i, supplMetrics) in enumerate(supplements) {
-            if i == localItem {
-                metrics = supplMetrics
-                break
-            }
+        for (i, metrics) in enumerate(supplements) {
+            if i != localItem { continue }
+            
+            let view = collectionView.dequeue(supplementOfType: metrics.viewType, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
+            metrics.configureView(view: view, dataSource: dataSource, indexPath: localIndexPath)
+            return view
         }
         
-        let view = collectionView.dequeue(supplementOfType: metrics.viewType, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
-        metrics.configureView(view: view, dataSource: dataSource, indexPath: localIndexPath)
-        return view
+        fatalError("Could not locate metrics for the specified supplement. Either the data source is misconfigured or you have discovered a bug in the grid layout.")
     }
     
     // MARK: CollectionViewDataSourceGridLayout
