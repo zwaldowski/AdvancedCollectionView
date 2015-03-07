@@ -16,11 +16,10 @@ public enum LayoutOrder {
 }
 
 public struct SeparatorOptions: RawOptionSetType {
-    public init(rawValue value: UInt) { self.value = value }
+    public init(rawValue value: UInt) { self.rawValue = value }
     public init(nilLiteral: ()) { self.init(rawValue: 0) }
     
-    private var value: UInt = 0
-    public var rawValue: UInt { return self.value }
+    public let rawValue: UInt
     
     public static var allZeros: SeparatorOptions { return nil }
     public static var BeforeSections: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 0) }
