@@ -446,11 +446,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         }
         
         let view = collectionView.dequeue(supplementOfType: metrics.viewType, ofRawKind: kind, indexPath: indexPath, reuseIdentifier: metrics.reuseIdentifier)
-        
-        if let configure = metrics.configureView {
-            configure(view: view, dataSource: dataSource, indexPath: localIndexPath)
-        }
-        
+        metrics.configureView(view: view, dataSource: dataSource, indexPath: localIndexPath)
         return view
     }
     

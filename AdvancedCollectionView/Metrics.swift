@@ -29,69 +29,274 @@ public struct SeparatorOptions: RawOptionSetType {
     public static var AfterSections: SeparatorOptions { return SeparatorOptions(rawValue: 1 << 4) }
 }
 
+// MARK: Supplementary Metrics
+
+public typealias ConfigureSupplement = (view: UICollectionReusableView, dataSource: DataSource, indexPath: NSIndexPath) -> ()
+
+private final class SupplementaryMetricsStorage {
+    
+    var viewType = UICollectionReusableView.self
+    var isVisibleWhileShowingPlaceholder = false
+    var shouldPin = false
+    var measurement: ElementLength?
+    var isHidden = false
+    var padding = UIEdgeInsets()
+    var zIndex = GridLayout.ZIndex.Supplement.rawValue
+    var reuseIdentifier: String? = nil
+    var backgroundColor: UIColor? = nil
+    var selectedBackgroundColor: UIColor? = nil
+    var tintColor: UIColor? = nil
+    var selectedTintColor: UIColor? = nil
+    var configureView: ConfigureSupplement?
+    
+    func clone(fn: SupplementaryMetricsStorage -> ()) -> SupplementaryMetricsStorage {
+        var ret = self.dynamicType()
+        ret.viewType = viewType
+        ret.isVisibleWhileShowingPlaceholder = isVisibleWhileShowingPlaceholder
+        ret.shouldPin = shouldPin
+        ret.measurement = measurement
+        ret.isHidden = isHidden
+        ret.padding = padding
+        ret.zIndex = zIndex
+        ret.reuseIdentifier = reuseIdentifier
+        ret.backgroundColor = backgroundColor
+        ret.selectedBackgroundColor = selectedBackgroundColor
+        ret.tintColor = tintColor
+        ret.selectedTintColor = selectedTintColor
+        ret.configureView = configureView
+        fn(ret)
+        return ret
+    }
+    
+}
+
 public struct SupplementaryMetrics {
+
+    private var storage = SupplementaryMetricsStorage()
     
     /// The kind of supplementary view these metrics describe
     let kind: String
-    /// The class to use when dequeuing an instance of this supplementary view
-    public var viewType = UICollectionReusableView.self
-    /// Should this supplementary view be displayed while the placeholder is visible?
-    public var isVisibleWhileShowingPlaceholder = false
-    /// Should this supplementary view be pinned to the edges of the view when
-    /// scrolling? Only valid for headers and footers.
-    public var shouldPin = false
-    /// The size of the supplementary view relative to the layout.
-    public var measurement: ElementLength? = nil
-    /// Should the supplementary view be hidden?
-    public var isHidden = false
-    /// Use top & bottom padding to adjust spacing of header & footer elements.
-    /// Not all headers & footers adhere to padding. Default @c UIEdgeInsets()
-    /// which is interpretted by supplementary items to be their default values.
-    public var padding = UIEdgeInsets()
-    /// How is this affected by other coinciding views?
-    public var zIndex = GridLayout.ZIndex.Supplement.rawValue
-    /// Optional reuse identifier. If not specified, it will be inferred from the
-    /// type of the supplementary view.
-    public var reuseIdentifier: String? = nil
-    /// The background color that should be used for this element. On an item,
-    /// if not set, this will be inherited from the section.
-    public var backgroundColor: UIColor? = nil
-    /// The background color shown when this element is selected. On an item, if
-    /// not set, this will be inherited from the section. Use the clear color
-    /// to override a selection color from the section.
-    public var selectedBackgroundColor: UIColor? = nil
-    /// The preferred tint color used for this element. On an item, if not set,
-    /// not set, it will be inherited from the section.
-    public var tintColor: UIColor? = nil
-    /// The preferred tint color used for this element when selected. On an
-    /// item, if not set, it will be inherited from the section. Use the clear
-    /// color to override the inherited color.
-    public var selectedTintColor: UIColor? = nil
     
-    var configureView: ((view: UICollectionReusableView, dataSource: DataSource, indexPath: NSIndexPath) -> ())?
-    
+    /// Initialize with a member of a kind type enumeration
     public init<KindType: RawRepresentable where KindType.RawValue == String>(kind: KindType) {
         self.kind = kind.rawValue
     }
     
-    /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
-    public mutating func configure<V: UICollectionReusableView, DS: DataSource>(closure: (view: V, dataSource: DS, indexPath: NSIndexPath) -> ()) {
-        viewType = V.self
-        
-        if let old = configureView {
-            // chain the old with the new
-            configureView = {
-                old(view: $0, dataSource: $1, indexPath: $2)
-                closure(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
-            }
-        } else {
-            configureView = {
-                closure(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
+    /// The class to use when dequeuing an instance of this supplementary view
+    public var viewType: UICollectionReusableView.Type {
+        get { return storage.viewType }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.viewType = newValue
+            } else {
+                storage = storage.clone {
+                    $0.viewType = newValue
+                }
             }
         }
     }
     
+    /// Should this supplementary view be displayed while the placeholder is visible?
+    public var isVisibleWhileShowingPlaceholder: Bool {
+        get { return storage.isVisibleWhileShowingPlaceholder }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.isVisibleWhileShowingPlaceholder = newValue
+            } else {
+                storage = storage.clone {
+                    $0.isVisibleWhileShowingPlaceholder = newValue
+                }
+            }
+        }
+    }
+    
+    /// Should this supplementary view be pinned to the edges of the view when
+    /// scrolling? Only valid for headers and footers.
+    public var shouldPin: Bool {
+        get { return storage.shouldPin }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.shouldPin = newValue
+            } else {
+                storage = storage.clone {
+                    $0.shouldPin = newValue
+                }
+            }
+        }
+    }
+    
+    /// The size of the supplementary view relative to the layout.
+    public var measurement: ElementLength? {
+        get { return storage.measurement }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.measurement = newValue
+            } else {
+                storage = storage.clone {
+                    $0.measurement = newValue
+                }
+            }
+        }
+    }
+    
+    /// Should the supplementary view be hidden?
+    public var isHidden: Bool {
+        get { return storage.isHidden }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.isHidden = newValue
+            } else {
+                storage = storage.clone {
+                    $0.isHidden = newValue
+                }
+            }
+        }
+    }
+    
+    /// Use top & bottom padding to adjust spacing of header & footer elements.
+    /// Not all headers & footers adhere to padding. Default @c UIEdgeInsets()
+    /// which is interpretted by supplementary items to be their default values.
+    public var padding: UIEdgeInsets {
+        get { return storage.padding }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.padding = newValue
+            } else {
+                storage = storage.clone {
+                    $0.padding = newValue
+                }
+            }
+        }
+    }
+    
+    /// How is this affected by other coinciding views?
+    public var zIndex: Int {
+        get { return storage.zIndex }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.zIndex = newValue
+            } else {
+                storage = storage.clone {
+                    $0.zIndex = newValue
+                }
+            }
+        }
+    }
+    
+    /// Optional reuse identifier. If not specified, it will be inferred from the
+    /// type of the supplementary view.
+    public var reuseIdentifier: String! {
+        get {
+            if let ret = storage.reuseIdentifier {
+                return ret
+            }
+            return NSStringFromClass(viewType)
+        }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.reuseIdentifier = newValue
+            } else {
+                storage = storage.clone {
+                    $0.reuseIdentifier = newValue
+                }
+            }
+        }
+    }
+    
+    /// The background color that should be used for this element. On an item,
+    /// if not set, this will be inherited from the section.
+    public var backgroundColor: UIColor? {
+        get { return storage.backgroundColor }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.backgroundColor = newValue
+            } else {
+                storage = storage.clone {
+                    $0.backgroundColor = newValue
+                }
+            }
+        }
+    }
+    
+    /// The background color shown when this element is selected. On an item, if
+    /// not set, this will be inherited from the section. Use the clear color
+    /// to override a selection color from the section.
+    public var selectedBackgroundColor: UIColor? {
+        get { return storage.selectedBackgroundColor }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.selectedBackgroundColor = newValue
+            } else {
+                storage = storage.clone {
+                    $0.selectedBackgroundColor = newValue
+                }
+            }
+        }
+    }
+    
+    /// The preferred tint color used for this element. On an item, if not set,
+    /// not set, it will be inherited from the section.
+    public var tintColor: UIColor? {
+        get { return storage.tintColor }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.tintColor = newValue
+            } else {
+                storage = storage.clone {
+                    $0.tintColor = newValue
+                }
+            }
+        }
+    }
+    
+    /// The preferred tint color used for this element when selected. On an
+    /// item, if not set, it will be inherited from the section. Use the clear
+    /// color to override the inherited color.
+    public var selectedTintColor: UIColor? {
+        get { return storage.selectedTintColor }
+        set {
+            if isUniquelyReferencedNonObjC(&storage) {
+                storage.selectedTintColor = newValue
+            } else {
+                storage = storage.clone {
+                    $0.selectedTintColor = newValue
+                }
+            }
+        }
+    }
+    
+    /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
+    public mutating func configure<V: UICollectionReusableView, DS: DataSource>(newConfigurator: (view: V, dataSource: DS, indexPath: NSIndexPath) -> ()) {
+        let oldConfigurator: ConfigureSupplement
+        if let old = storage.configureView {
+            oldConfigurator = old
+        } else {
+            oldConfigurator = { (_, _, _) -> () in }
+        }
+        
+        let chained: ConfigureSupplement = {
+            oldConfigurator(view: $0, dataSource: $1, indexPath: $2)
+            newConfigurator(view: $0 as! V, dataSource: $1 as! DS, indexPath: $2)
+        }
+        
+        if isUniquelyReferencedNonObjC(&storage) {
+            storage.viewType = V.self
+            storage.configureView = chained
+        } else {
+            storage = storage.clone {
+                $0.viewType = V.self
+                $0.configureView = chained
+            }
+        }
+    }
+    
+    func configureView(#view: UICollectionReusableView, dataSource: DataSource, indexPath: NSIndexPath) {
+        storage.configureView?(view: view, dataSource: dataSource, indexPath: indexPath)
+    }
+
 }
+
+// MARK: Section Metrics
 
 public struct SectionMetrics {
     
