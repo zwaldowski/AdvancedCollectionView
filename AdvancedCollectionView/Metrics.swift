@@ -238,63 +238,42 @@ public struct SupplementaryMetrics {
 
 // MARK: Section Metrics
 
-public struct SectionMetrics {
+private final class SectionMetricsStorage {
     
-    public static var defaultMetrics: SectionMetrics {
-        var metrics = SectionMetrics()
-        metrics.measurement = .Default
-        metrics.numberOfColumns = 1
-        metrics.separatorColor = UIColor(white: 0.8, alpha: 1)
-        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
-        return metrics
+    var measurement: ElementLength?
+    var numberOfColumns: Int?
+    var padding: UIEdgeInsets?
+    var margin: CGFloat?
+    var itemLayout = LayoutOrder.Natural {
+        didSet { didSetLayoutOrder = true }
     }
-    
-    /// The size of each row in the section.
-    public var measurement: ElementLength? = nil
-    /// Number of columns in this section. Sections will inherit a default of
-    /// 1 from the data source.
-    public var numberOfColumns: Int? = nil
-    /// Padding around the cells for this section. The top & bottom padding
-    /// will be applied between the headers & footers and the cells. The left &
-    /// right padding will be applied between the view edges and the cells.
-    public var padding: UIEdgeInsets? = nil
-    /// Space between this and the next section
-    public var margin: CGFloat? = nil
-    /// How the cells should be laid out when there are multiple columns.
-    public var itemLayout: LayoutOrder? = nil
-    /// The background color that should be used for this element. On an item,
-    /// if not set, this will be inherited from the section.
-    public var backgroundColor: UIColor? = nil
-    /// The background color shown when this element is selected. On an item, if
-    /// not set, this will be inherited from the section. Use the clear color
-    /// to override a selection color from the section.
-    public var selectedBackgroundColor: UIColor? = nil
-    /// The preferred tint color used for this element. On an item, if not set,
-    /// not set, it will be inherited from the section.
-    public var tintColor: UIColor? = nil
-    /// The preferred tint color used for this element when selected. On an
-    /// item, if not set, it will be inherited from the section. Use the clear
-    /// color to override the inherited color.
-    public var selectedTintColor: UIColor? = nil
-    /// Insets for the separators drawn between rows (left & right) and
-    /// columns (top & bottom).
-    public var separatorInsets: UIEdgeInsets? = nil
-    /// The color to use when drawing row, column, and section separators.
-    public var separatorColor: UIColor? = nil
-    /// Determines where, if any, separators are drawn.
-    private var didSetSeparators: Bool = false
-    public var separators: SeparatorOptions = nil {
+    var backgroundColor: UIColor?
+    var selectedBackgroundColor: UIColor?
+    var tintColor: UIColor?
+    var selectedTintColor: UIColor?
+    var separatorInsets: UIEdgeInsets?
+    var separatorColor: UIColor?
+    var separators: SeparatorOptions = nil {
         didSet { didSetSeparators = true }
     }
     
     var hasPlaceholder = false
+    var didSetLayoutOrder = false
+    var didSetSeparators = false
     
-    public mutating func apply(metrics other: SectionMetrics) {
+    func clone(fn: SectionMetricsStorage -> ()) -> SectionMetricsStorage {
+        var ret = self.dynamicType()
+        ret.apply(self)
+        fn(ret)
+        return ret
+    }
+    
+    func apply(other: SectionMetricsStorage) {
         if let otherMeasurement = other.measurement { measurement = otherMeasurement }
         if let otherColumns = other.numberOfColumns { numberOfColumns = otherColumns }
         if let otherPadding = other.padding { padding = otherPadding }
         if let otherMargin = other.margin { margin = otherMargin }
-        if let otherOrder = other.itemLayout { itemLayout = otherOrder }
+        if other.didSetLayoutOrder { itemLayout = other.itemLayout }
         if let otherBackgroundColor = other.backgroundColor { backgroundColor = otherBackgroundColor }
         if let otherSelectedBackgroundColor = other.selectedBackgroundColor { selectedBackgroundColor = otherSelectedBackgroundColor }
         if let otherTintColor = other.tintColor { tintColor = otherTintColor }
@@ -304,5 +283,149 @@ public struct SectionMetrics {
         if other.didSetSeparators { separators = other.separators }
         if other.hasPlaceholder { hasPlaceholder = true }
     }
+    
+}
+
+public struct SectionMetrics {
+    
+    private var storage = SectionMetricsStorage()
+    
+    /// Copy-on write setter
+    private mutating func modifyStorage(fn: (SectionMetricsStorage -> ())) {
+        if isUniquelyReferencedNonObjC(&storage) {
+            fn(storage)
+        } else {
+            storage = storage.clone(fn)
+        }
+    }
+
+    /// The size of each row in the section.
+    public var measurement: ElementLength? {
+        get { return storage.measurement }
+        set { modifyStorage {
+            $0.measurement = newValue
+        }}
+    }
+    
+    /// Number of columns in this section. Sections will inherit a default of
+    /// 1 from the data source.
+    public var numberOfColumns: Int? {
+        get { return storage.numberOfColumns }
+        set { modifyStorage {
+            $0.numberOfColumns = newValue
+        }}
+    }
+    
+    /// Padding around the cells for this section. The top & bottom padding
+    /// will be applied between the headers & footers and the cells. The left &
+    /// right padding will be applied between the view edges and the cells.
+    public var padding: UIEdgeInsets? {
+        get { return storage.padding }
+        set { modifyStorage {
+            $0.padding = newValue
+        }}
+    }
+    
+    /// Space between this and the next section
+    public var margin: CGFloat? {
+        get { return storage.margin }
+        set { modifyStorage {
+            $0.margin = newValue
+        }}
+    }
+    
+    /// How the cells should be laid out when there are multiple columns.
+    public var itemLayout: LayoutOrder {
+        get { return storage.itemLayout }
+        set { modifyStorage {
+            $0.itemLayout = newValue
+        }}
+    }
+    
+    /// The background color that should be used for this element. On an item,
+    /// if not set, this will be inherited from the section.
+    public var backgroundColor: UIColor? {
+        get { return storage.backgroundColor }
+        set { modifyStorage {
+            $0.backgroundColor = newValue
+        }}
+    }
+    
+    /// The background color shown when this element is selected. On an item, if
+    /// not set, this will be inherited from the section. Use the clear color
+    /// to override a selection color from the section.
+    public var selectedBackgroundColor: UIColor? {
+        get { return storage.selectedBackgroundColor }
+        set { modifyStorage {
+            $0.selectedBackgroundColor = newValue
+        }}
+    }
+    
+    /// The preferred tint color used for this element. On an item, if not set,
+    /// not set, it will be inherited from the section.
+    public var tintColor: UIColor? {
+        get { return storage.tintColor }
+        set { modifyStorage {
+            $0.tintColor = newValue
+        }}
+    }
+    
+    /// The preferred tint color used for this element when selected. On an
+    /// item, if not set, it will be inherited from the section. Use the clear
+    /// color to override the inherited color.
+    public var selectedTintColor: UIColor? {
+        get { return storage.selectedTintColor }
+        set { modifyStorage {
+            $0.selectedTintColor = newValue
+        }}
+    }
+    
+    /// Insets for the separators drawn between rows (left & right) and
+    /// columns (top & bottom).
+    public var separatorInsets: UIEdgeInsets? {
+        get { return storage.separatorInsets }
+        set { modifyStorage {
+            $0.separatorInsets = newValue
+        }}
+    }
+    
+    /// The color to use when drawing row, column, and section separators.
+    public var separatorColor: UIColor? {
+        get { return storage.separatorColor }
+        set { modifyStorage {
+            $0.separatorColor = newValue
+        }}
+    }
+    
+    /// Determines where, if any, separators are drawn.
+    public var separators: SeparatorOptions {
+        get { return storage.separators }
+        set { modifyStorage {
+            $0.separators = newValue
+        }}
+    }
+    
+    /// @c DataSource assigns this when flattening metrics
+    var hasPlaceholder: Bool {
+        get { return storage.hasPlaceholder }
+        set { modifyStorage {
+            $0.hasPlaceholder = newValue
+        }}
+    }
+    
+    /// Collapse one section metrics onto the other
+    public mutating func apply(metrics other: SectionMetrics) {
+        modifyStorage { $0.apply(other.storage) }
+    }
+    
+    /// Default, common iOS table appearance
+    public static let defaultMetrics: SectionMetrics = {
+        var metrics = SectionMetrics()
+        metrics.measurement = .Default
+        metrics.numberOfColumns = 1
+        metrics.separatorColor = UIColor(white: 0.8, alpha: 1)
+        metrics.separators = SeparatorOptions.Supplements | SeparatorOptions.Rows | SeparatorOptions.Columns
+        return metrics
+    }()
     
 }
