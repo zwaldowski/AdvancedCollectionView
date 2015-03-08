@@ -69,11 +69,10 @@ func height<S: SequenceType where S.Generator.Element: UICollectionViewLayoutAtt
     let (minY, maxY) = reduce(attributes, (nil, nil)) {
         (min($0.0 ?? CGFloat.max, $1.frame.minY), max($0.1 ?? CGFloat.min, $1.frame.maxY))
     }
-
-    switch (minY, maxY) {
-    case (.Some(let min), .Some(let max)):
+    
+    if let min = minY, max = maxY {
         return max - min
-    default:
+    } else {
         return 0
     }
 }

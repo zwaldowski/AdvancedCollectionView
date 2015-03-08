@@ -49,12 +49,10 @@ func ~==<T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
 }
 
 func ~== <T: ApproximatelyEquatable>(lhs: T?, rhs: T?) -> Bool {
-    switch (lhs, rhs) {
-    case (.Some(let l), .Some(let r)):
+    if let l = lhs, r = rhs {
         return l ~== r
-    default:
-        return false
     }
+    return false
 }
 
 func !~==<T: ApproximatelyEquatable>(lhs: T, rhs: T) -> Bool {
