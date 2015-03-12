@@ -12,14 +12,6 @@ import AdvancedCollectionView
 /// Have a cat? Want to know more about it? This view controller will display the details and sightings for a given cat instance.
 class CatDetailViewController: CollectionViewController {
     
-    override init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override init() {
-        super.init()
-    }
-    
     var cat: Cat!
     
     private var segmentedDataSource: SegmentedDataSource!

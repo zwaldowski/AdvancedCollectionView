@@ -323,7 +323,7 @@ public class CollectionPlaceholderView: GridCell {
         
         showsActivityIndicator = false
         
-        let newPlaceholder = PlaceholderView()
+        let newPlaceholder = PlaceholderView(frame: CGRect())
         newPlaceholder.setTranslatesAutoresizingMaskIntoConstraints(false)
         newPlaceholder.alpha = 0
         newPlaceholder.content = content

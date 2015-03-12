@@ -105,7 +105,7 @@ extension OrderedDictionary: CollectionType {
     }
     
     /// Gets a subrange of existing keys in an ordered dictionary using square bracket subscripting with an integer range.*/
-    public subscript(keyRange: Range<Index>) -> Slice<Key> {
+    public subscript(keyRange: Range<Index>) -> ArraySlice<Key> {
         return keys[keyRange]
     }
     

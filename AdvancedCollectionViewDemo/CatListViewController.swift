@@ -12,14 +12,6 @@ import AdvancedCollectionView
 /// The view controller that presents the list of cats. This view controller enables switching between all available cats and the same list in reverse via a segmented control in the navigation bar.
 class CatListViewController: CollectionViewController {
     
-    override init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override init() {
-        super.init()
-    }
-    
     private var segmentedDataSource: SegmentedDataSource!
     private var catsDataSource: CatListDataSource!
     private var reversedCatsDataSource: CatListDataSource!

@@ -74,7 +74,7 @@ class OrderedDictionaryTests: XCTestCase {
         XCTAssertEqual(el.0, "0")
         XCTAssertEqual(el.1, 1)
         
-        let slice: Slice<String> = [ "0", "1" ]
+        let slice: ArraySlice<String> = [ "0", "1" ]
         XCTAssertEqual(d[0...1], slice)
     }
     

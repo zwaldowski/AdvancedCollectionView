@@ -198,10 +198,10 @@ struct ItemInfo {
 
 struct RowInfo {
     
-    let items: Slice<ItemInfo>
+    let items: ArraySlice<ItemInfo>
     let frame: CGRect
     
-    private init(items: Slice<ItemInfo>, frame: CGRect) {
+    private init(items: ArraySlice<ItemInfo>, frame: CGRect) {
         self.items = items
         self.frame = frame
     }

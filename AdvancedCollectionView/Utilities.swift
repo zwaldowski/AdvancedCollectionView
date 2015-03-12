@@ -102,10 +102,10 @@ extension Array {
     
 }
 
-extension Slice {
+extension ArraySlice {
     
-    func mapWithIndex<U>(transform: (Slice.Index, T) -> U) -> Slice<U> {
-        return AdvancedCollectionView.mapWithIndex(self, Slice<U>.self, transform: transform)
+    func mapWithIndex<U>(transform: (ArraySlice.Index, T) -> U) -> ArraySlice<U> {
+        return AdvancedCollectionView.mapWithIndex(self, ArraySlice<U>.self, transform: transform)
     }
     
 }
