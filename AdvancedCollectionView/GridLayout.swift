@@ -198,7 +198,9 @@ public class GridLayout: UICollectionViewLayout {
         return self.dynamicType.layoutAttributesClass() as! InvalidationContext.Type
     }
     
-    public weak var metricsProvider: MetricsProviderLegacy?
+    private var metricsProvider: MetricsProviderLegacy? {
+        return collectionView?.dataSource as? MetricsProviderLegacy
+    }
     
     // MARK: UICollectionViewLayout
     
