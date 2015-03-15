@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Block = () -> ()
+public typealias Block = @objc_block () -> ()
 
 public struct Async {
     
