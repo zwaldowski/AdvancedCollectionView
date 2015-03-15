@@ -162,6 +162,14 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
     }
     
     public override func snapshotMetrics(#section: Section) -> SectionMetrics {
+        var enclosing = super.snapshotMetrics(section: section)
+        if let metrics = selectedDataSource?.snapshotMetrics(section: section) {
+            enclosing.apply(metrics: metrics)
+        }
+        return enclosing
+    }
+    
+    public override func snapshotSupplements(#section: Section) -> [SupplementaryMetrics] {
         let key = "SegmentedHeaderKey"
         let defaultHeader = header(forKey: key)
         switch (shouldDisplayDefaultHeader, defaultHeader) {
@@ -173,11 +181,7 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
             break
         }
 
-        var enclosing = super.snapshotMetrics(section: section)
-        if let metrics = selectedDataSource?.snapshotMetrics(section: section) {
-            enclosing.apply(metrics: metrics)
-        }
-        return enclosing
+        return super.snapshotSupplements(section: section)
     }
     
     public override func registerReusableViews(#collectionView: UICollectionView) {
