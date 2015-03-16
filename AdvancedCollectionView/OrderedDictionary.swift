@@ -119,12 +119,10 @@ extension OrderedDictionary: ExtensibleCollectionType {
         keys.reserveCapacity(n)
     }
     
-    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(newElements: S) {
-        let asSeq = SequenceOf<Element>(newElements)
+    public mutating func extend<S: SequenceType where S.Generator.Element == Element>(seq: S) {
+        reserveCapacity(keys.count + underestimateCount(seq))
 
-        reserveCapacity(keys.count + underestimateCount(asSeq))
-
-        for el in asSeq {
+        for el in seq {
             append(el)
         }
     }
@@ -154,7 +152,7 @@ extension OrderedDictionary: RangeReplaceableCollectionType {
             elements.removeValueForKey(oldKey)
         }
         
-        for (newKey, value) in SequenceOf<Element>(newElements) {
+        for (newKey, value) in newElements {
             elements.updateValue(value, forKey: newKey)
         }
     }
