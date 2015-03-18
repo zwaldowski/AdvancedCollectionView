@@ -82,18 +82,18 @@ extension Multimap {
 
 extension Multimap {
     
-    private mutating func mutate(arrayForKey key: K, transform: (inout array: Value) -> (), replace: (() -> Value)? = nil) {
-        if var newArr = elements[key] {
-            transform(array: &newArr)
-            self[key] = newArr
+    private mutating func mutate(arrayForKey key: K, map: (array: Value) -> Value, replace: (() -> Value)? = nil) {
+        if let array = elements[key] {
+            self[key] = map(array: array)
         } else if let replace = replace {
             self[key] = replace()
         }
     }
     
     public mutating func remove(fromKey key: K, atIndex index: Value.Index) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            _ = array.removeAtIndex(index)
+        mutate(arrayForKey: key, map: { (var array) in
+            array.removeAtIndex(index)
+            return array
         }, replace: nil)
     }
     
@@ -123,36 +123,33 @@ extension Multimap {
     }
     
     public mutating func append(newElement: V, forKey key: K) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            array.append(newElement)
+        mutate(arrayForKey: key, map: {
+            $0 + CollectionOfOne(newElement)
         }, replace: {
             [ newElement ]
         })
     }
     
     public mutating func insert(newElement: V, forKey key: K, atIndex index: Value.Index) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            array.insert(newElement, atIndex: index)
+        mutate(arrayForKey: key, map: { (var array) in
+            _ = array.insert(newElement, atIndex: index)
+            return array
         }, replace: {
             [ newElement ]
         })
     }
     
     public mutating func extend<Seq: SequenceType where Seq.Generator.Element == V>(#values: Seq, forKey key: K) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            array.extend(values)
+        mutate(arrayForKey: key, map: {
+            $0 + values
         }, replace: {
             Array(values)
         })
     }
     
     public mutating func extend<S: SequenceType where S.Generator.Element == Group>(groups newElements: S) {
-        for entry in SequenceOf<Group>(newElements) {
-            mutate(arrayForKey: entry.0, transform: { (inout array: Value) in
-                array.extend(entry.1)
-            }, replace: {
-                entry.1
-            })
+        for entry in newElements {
+            extend(values: entry.1, forKey: entry.0)
         }
     }
     
@@ -183,15 +180,15 @@ extension Multimap: SequenceType {
     }
     
     public mutating func updateMap(groupForKey key: K, transform: V -> V) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            array = array.map(transform)
-        }, replace: nil)
+        mutate(arrayForKey: key, map: {
+            $0.map(transform)
+        })
     }
     
     public mutating func updateMapWithIndex(groupForKey key: K, transform: (Int, V) -> V) {
-        mutate(arrayForKey: key, transform: { (inout array: Value) in
-            array = array.mapWithIndex(transform)
-        }, replace: nil)
+        mutate(arrayForKey: key, map: {
+            $0.mapWithIndex(transform)
+        })
     }
     
 }
