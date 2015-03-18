@@ -25,9 +25,7 @@ public struct OrderedDictionary<Key: Hashable, Value> {
     public var count: Int { return elements.count }
     
     /// True iff `count == 0`
-    public var isEmpty: Bool {
-        return elements.isEmpty
-    }
+    public var isEmpty: Bool { return elements.isEmpty }
     
 }
 
@@ -84,12 +82,17 @@ extension OrderedDictionary: CollectionType {
     public var startIndex: Index { return keys.startIndex }
     public var endIndex: Index { return keys.endIndex }
     
-    /// Gets or sets existing entries in an ordered dictionary by index. If the key exists, its entry will be deleted before the new entry is inserted; the insertion compensates for the deleted key.
+    /// Gets the existing entries in an ordered dictionary by index.
     public subscript(i: Index) -> Element {
-        let dictIndex = elements.indexForKey(keys[i])!
-        return elements[dictIndex]
+        let key = keys[i]
+        if let dictIndex = elements.indexForKey(key) {
+            return elements[dictIndex]
+        } else {
+            fatalError("Ordered dictionary index out of range")
+        }
     }
     
+    /// Gets or sets existing entries in an ordered dictionary by key. If the key exists, its entry will be deleted before the new entry is inserted; the insertion compensates for the deleted key.
     public subscript(key: Key) -> Value? {
         get {
             return elements[key]
