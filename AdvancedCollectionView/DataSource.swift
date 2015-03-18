@@ -35,11 +35,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     }
     
     var isRootDataSource: Bool {
-        if let container = container {
-            let casted: AnyObject = container as AnyObject
-            return !(casted is DataSource)
-        }
-        return true
+        return !(container is DataSource)
     }
     
     // MARK: Collection view interface

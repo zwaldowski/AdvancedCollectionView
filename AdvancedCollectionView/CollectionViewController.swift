@@ -16,7 +16,7 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     private var firstDisplay = false
     
     private var presenterLayout: DataSourcePresenter? {
-        return collectionView?.collectionViewLayout as? DataSourcePresenter
+        return collectionViewLayout as? DataSourcePresenter
     }
 
     deinit {
