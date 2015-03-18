@@ -102,9 +102,23 @@ public struct SupplementaryMetrics {
     /// The class to use when dequeuing an instance of this supplementary view
     public var viewType: UICollectionReusableView.Type {
         get { return storage.viewType }
-        set { modifyStorage {
-                $0.viewType = newValue
-        }}
+        set {
+            let oldValue = storage.viewType
+            let newType: UICollectionReusableView.Type
+            if oldValue.isSubclassOfClass(newValue) {
+                newType = oldValue
+            } else if newValue.isSubclassOfClass(oldValue) {
+                newType = newValue
+            } else {
+                fatalError("Supplement configurator types must be compatible with previous configurators")
+            }
+            
+            if newType === oldValue { return }
+            
+            modifyStorage {
+                $0.viewType = newType
+            }
+        }
     }
     
     /// Should this supplementary view be displayed while the placeholder is visible?
@@ -212,6 +226,9 @@ public struct SupplementaryMetrics {
     
     /// Add a configuration block to the supplementary view. This does not clear existing configuration blocks.
     public mutating func configure<V: UICollectionReusableView, DS: DataSource>(newConfigurator: (view: V, dataSource: DS, indexPath: NSIndexPath) -> ()) {
+        viewType = V.self
+        
+        // Swift doesn't like this expression to be nil coalesced
         let oldConfigurator: ConfigureSupplement
         if let old = storage.configureView {
             oldConfigurator = old
@@ -225,7 +242,6 @@ public struct SupplementaryMetrics {
         }
         
         modifyStorage {
-            $0.viewType = V.self
             $0.configureView = chained
         }
     }
