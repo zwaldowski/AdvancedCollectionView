@@ -43,7 +43,7 @@ public func <(lhs: Section, rhs: Section) -> Bool {
     switch (lhs, rhs) {
     case (.Index(let a), .Index(let b)):
         return a < b
-    case (_, .Global):
+    case (.Index, .Global):
         return true
     default:
         return false
@@ -61,11 +61,11 @@ extension Section {
         }).generate()
         
         return GeneratorOf {
-            if includedGlobal {
-                return base.next()
+            if !includedGlobal {
+                includedGlobal = true
+                return .Global
             }
-            includedGlobal = true
-            return .Global
+            return base.next()
         }
     }
     

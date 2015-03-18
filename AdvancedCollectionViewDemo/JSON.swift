@@ -161,7 +161,9 @@ extension JSON: Hashable {
         case .JSONDouble(let double): return double.hashValue
         case .JSONInt(let int): return int.hashValue
         case .JSONBool(let bool): return bool.hashValue
-        default: return (rawValue as! NSObject).hash
+        case _ where rawValue is NSObject:
+            return rawValue.hash
+        default: return 0
         }
     }
     
@@ -332,7 +334,7 @@ extension JSON: CollectionType {
     
     public subscript(key: String) -> JSON! {
         get {
-            switch (self) {
+            switch self {
             case .JSONObject(let dict):
                 return JSON(rawValue: dict[key])
             default:
@@ -340,7 +342,7 @@ extension JSON: CollectionType {
             }
         }
         set {
-            switch (self) {
+            switch self {
             case .JSONObject(var dict):
                 dict[key] = newValue.rawValue
                 self = .JSONObject(dict)

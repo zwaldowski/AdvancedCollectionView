@@ -1099,7 +1099,7 @@ public class GridLayout: UICollectionViewLayout {
     private func configureInitial(inout #attributes: Attributes, inFromDirection direction: SectionOperationDirection = .Default, makeFrameAdjustments: Bool = true, @autoclosure shouldFadeIn shouldFade: () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
-        let bounds = collectionView!.bounds
+        let bounds = collectionView?.bounds ?? CGRect()
         
         switch direction {
         case .Default:
@@ -1121,7 +1121,7 @@ public class GridLayout: UICollectionViewLayout {
     private func configureFinal(inout #attributes: Attributes, outToDirection direction: SectionOperationDirection = .Default, @autoclosure shouldFadeOut shouldFade: () -> Bool = true) {
         var endFrame = attributes.frame
         var endAlpha = attributes.alpha
-        let bounds = collectionView!.bounds
+        let bounds = collectionView?.bounds ?? CGRect()
         
         switch direction {
         case .Default:

@@ -37,7 +37,7 @@ public enum LoadingState {
 public final class Loader {
     
     public typealias Update = () -> ()
-    public typealias CompletionHandler = (LoadingState?, Update?) -> ()
+    public typealias CompletionHandler = (LoadingState, Update) -> ()
 
     private var completionHandler: CompletionHandler?
     init(completionHandler: CompletionHandler) {
@@ -46,17 +46,18 @@ public final class Loader {
     
     public var isCurrent = true
     
-    private func done(newState state: LoadingState?, update: Update? = nil) {
-        if let block = completionHandler {
+    private func done(newState: LoadingState? = nil, update: Update = {}) {
+        if let block = completionHandler,
+            state = newState {
             Async.main {
                 block(state, update)
             }
-            completionHandler = nil
         }
+        completionHandler = nil
     }
     
     public func ignore() {
-        done(newState: nil)
+        done()
     }
     
     public func update(content update: Update) {
@@ -64,7 +65,7 @@ public final class Loader {
     }
     
     public func error(_ error: NSError? = nil) {
-        done(newState: .Error(error), update: nil)
+        done(newState: .Error(error))
     }
     
     public func noContent(update: Update) {

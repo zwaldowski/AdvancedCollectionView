@@ -103,18 +103,16 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         dispatch_semaphore_signal(whenLoadedLock)
     }
     
-    public final func endLoading(#state: LoadingState, update: Block?) {
+    public final func endLoading(#state: LoadingState, update: Block) {
         loadingState = state
         
         if shouldDisplayPlaceholder {
-            if let update = update {
-                enqueuePendingUpdate(update)
-            }
+            enqueuePendingUpdate(update)
         } else {
             notifyBatchUpdate({
                 // Run pending updates
                 self.executePendingUpdates()
-                update?()
+                update()
             }, completion: nil)
         }
         
@@ -130,13 +128,8 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     public final func startLoadingContent(handler: Loader -> ()) {
         beginLoading()
         
-        let newLoading = Loader{ (newState, update) in
-            if let state = newState {
-                self.endLoading(state: state) {
-                    update?()
-                    return
-                }
-            }
+        let newLoading = Loader { (newState, update) in
+            self.endLoading(state: newState, update: update)
         }
         
         // Tell previous loading instance it's no longer current and remember this loading instance

@@ -59,16 +59,16 @@ class CatListViewController: CollectionViewController {
     private var selectedIndexPath: NSIndexPath?
     
     private var selectedCat: Cat? {
-        if let indexPath = selectedIndexPath {
-            let dataSource = segmentedDataSource.selectedDataSource as! CatListDataSource
+        if let dataSource = segmentedDataSource.selectedDataSource as? CatListDataSource,
+            indexPath = selectedIndexPath {
             return dataSource[indexPath]
         }
         return nil
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "detail" {
-            let destination = segue.destinationViewController as! CatDetailViewController
+        if let destination = segue.destinationViewController as? CatDetailViewController
+            where segue.identifier == "detail" {
             destination.cat = selectedCat
         }
     }

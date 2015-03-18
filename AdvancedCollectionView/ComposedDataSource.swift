@@ -126,57 +126,40 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
     
     // MARK: Loading state
     
-    private var aggregateLoadingState: LoadingState!
+    private var aggregateLoadingState: LoadingState?
     
-    private func updateLoadingState() {
-        var loading = 0, refreshing = 0, error = 0, loaded = 0, noContent = 0
-        var currentError: NSError!
-
-        let loadingStates = map(mappings) { (dataSource, _) -> LoadingState in
+    private func updateLoadingState() -> LoadingState {
+        let loadingStates = map(mappings) { (dataSource, _) in
             dataSource.loadingState
         } + [ super.loadingState ]
         
-        for state in loadingStates {
-            switch state {
-            case .Initial:
-                break
-            case .Loading:
-                ++loading
-            case .Refreshing:
-                ++refreshing
-            case .Loaded:
-                ++loaded
-            case .NoContent:
-                ++noContent
-            case .Error(let err):
-                if currentError == nil {
-                    currentError = err
+        let loadingState: LoadingState = {
+            for state in loadingStates {
+                switch state {
+                case .Loading:
+                    return .Loading
+                case .Refreshing:
+                    return .Refreshing
+                case .Error(let err):
+                    return .Error(err)
+                case .NoContent:
+                    return .NoContent
+                case .Loaded:
+                    return .Loaded
+                default:
+                    break
                 }
-                ++error
             }
-        }
-
-        if loading > 0 {
-            aggregateLoadingState = .Loading
-        } else if refreshing > 0 {
-            aggregateLoadingState = .Refreshing
-        } else if error > 0 {
-            aggregateLoadingState = .Error(currentError)
-        } else if noContent > 0 {
-            aggregateLoadingState = .NoContent
-        } else if loaded > 0 {
-            aggregateLoadingState = .Loaded
-        } else {
-            aggregateLoadingState = .Initial
-        }
+            return .Initial
+        }()
+        
+        aggregateLoadingState = loadingState
+        return loadingState
     }
     
     override public var loadingState: LoadingState {
         get {
-            if aggregateLoadingState == nil {
-                updateLoadingState()
-            }
-            return aggregateLoadingState
+            return aggregateLoadingState ?? updateLoadingState()
         }
         
         set {

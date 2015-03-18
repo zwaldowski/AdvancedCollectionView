@@ -347,8 +347,7 @@ extension SectionInfo {
             // skip headers that are hidden
             if headerInfo.metrics.isHidden { return headerInfo }
             
-            var measurement: ElementLength!
-            
+            let measurement: ElementLength
             switch (headerInfo.measurement, headerInfo.metrics.measurement) {
             case (_, .Some(let value)):
                 measurement = value

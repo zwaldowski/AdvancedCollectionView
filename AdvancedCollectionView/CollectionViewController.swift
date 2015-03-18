@@ -52,15 +52,9 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
     }
     
     public override var collectionView: UICollectionView? {
-        get { return super.collectionView }
-        set {
-            let oldCollectionView = collectionView
-            
-            // Always call super, because we don't know EXACTLY what UICollectionViewController does in -setCollectionView:.
-            super.collectionView = newValue
-            
-            oldCollectionView?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)
-            newValue?.addObserver(self, forKeyPath: "dataSource", options: nil, context: &dataSourceContext)
+        didSet {
+            oldValue?.removeObserver(self, forKeyPath: "dataSource", context: &dataSourceContext)
+            collectionView?.addObserver(self, forKeyPath: "dataSource", options: nil, context: &dataSourceContext)
         }
     }
     
@@ -95,21 +89,19 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
             debugPrintln(sectionAction)
         }
         
-        let layout = presenterLayout
-
-        layout?.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
-
-        switch (sectionAction, layout) {
-        case (.Insert(let indexSet, _), _):
-            collectionView?.insertSections(indexSet)
-        case (.Remove(let indexSet, _), _):
-            collectionView?.deleteSections(indexSet)
-        case (.Reload(let indexSet), _):
-            collectionView?.reloadSections(indexSet)
-        case (.Move(let from, let to, _), _):
-            collectionView?.moveSection(from, toSection: to)
-        case (.ReloadGlobal, .None):
-            collectionView?.reloadData()
+        presenterLayout?.dataSourceWillPerform(dataSource, sectionAction: sectionAction)
+        
+        switch (sectionAction, collectionView) {
+        case (.Insert(let indexSet, _), .Some(let collectionView)):
+            collectionView.insertSections(indexSet)
+        case (.Remove(let indexSet, _), .Some(let collectionView)):
+            collectionView.deleteSections(indexSet)
+        case (.Reload(let indexSet), .Some(let collectionView)):
+            collectionView.reloadSections(indexSet)
+        case (.Move(let from, let to, _), .Some(let collectionView)):
+            collectionView.moveSection(from, toSection: to)
+        case (.ReloadGlobal, .Some(let collectionView)) where presenterLayout == nil:
+            collectionView.reloadData()
         default: break
         }
     }
@@ -119,21 +111,20 @@ public class CollectionViewController: UICollectionViewController, DataSourceCon
             debugPrintln(itemAction)
         }
         
-        switch itemAction {
-        case .Insert(let indexPaths):
-            collectionView?.insertItemsAtIndexPaths(indexPaths)
-        case .Remove(let indexPaths):
-            collectionView?.deleteItemsAtIndexPaths(indexPaths)
-        case .Reload(let indexPaths):
-            collectionView?.reloadItemsAtIndexPaths(indexPaths)
-        case .Move(let from, let to):
-            collectionView?.moveItemAtIndexPath(from, toIndexPath: to)
-        case .ReloadAll:
-            collectionView?.reloadData()
-        case .BatchUpdate(let update, let completion):
-            collectionView?.performBatchUpdates(update, completion: completion)
-        case .WillLoad, .DidLoad:
-            break
+        switch (itemAction, collectionView) {
+        case (.Insert(let indexPaths), .Some(let collectionView)):
+            collectionView.insertItemsAtIndexPaths(indexPaths)
+        case (.Remove(let indexPaths), .Some(let collectionView)):
+            collectionView.deleteItemsAtIndexPaths(indexPaths)
+        case (.Reload(let indexPaths), .Some(let collectionView)):
+            collectionView.reloadItemsAtIndexPaths(indexPaths)
+        case (.Move(let from, let to), .Some(let collectionView)):
+            collectionView.moveItemAtIndexPath(from, toIndexPath: to)
+        case (.ReloadAll, .Some(let collectionView)):
+            collectionView.reloadData()
+        case (.BatchUpdate(let update, let completion), .Some(let collectionView)):
+            collectionView.performBatchUpdates(update, completion: completion)
+        default: break
         }
     }
     
