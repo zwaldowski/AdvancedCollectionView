@@ -19,38 +19,63 @@ struct ComposedMapping {
 
 extension ComposedMapping {
     
-    func localSection(global globalSection: Int) -> Int {
-        return globalToLocal[globalSection]!
+    func localSection(global globalSection: Int) -> Int? {
+        return globalToLocal[globalSection]
     }
     
-    func globalSection(local localSection: Int) -> Int {
-        return localToGlobal[localSection]!
+    func globalSection(local localSection: Int) -> Int? {
+        return localToGlobal[localSection]
     }
     
-    func localSections(global sections: NSIndexSet) -> NSIndexSet {
-        return sections.map { self.localSection(global: $0) }
+    private func toIndexSet<S: SequenceType where S.Generator.Element == Int?>(indexes: S) -> NSIndexSet? {
+        return reduce(indexes, NSMutableIndexSet()) { (indexSet: NSMutableIndexSet?, section: Int?) in
+            if let indexSet = indexSet, section = section {
+                indexSet.addIndex(section)
+                return indexSet
+            }
+            return nil
+        }
     }
     
-    func globalSections<S: SequenceType where S.Generator.Element == Int>(local sequence: S) -> NSIndexSet {
-        return NSIndexSet(indexes: lazy(sequence).map({ self.globalSection(local: $0) }))
+    func localSections(global sections: NSIndexSet) -> NSIndexSet? {
+        let mapped = lazy(sections).map { self.localSection(global: $0) }
+        return toIndexSet(mapped)
     }
     
-    func localIndexPath(global indexPath: NSIndexPath) -> NSIndexPath {
-        let section = localSection(global: indexPath.section)
-        return NSIndexPath(section, indexPath.item)
+    func globalSections<S: SequenceType where S.Generator.Element == Int>(local sections: S) -> NSIndexSet? {
+        let mapped = lazy(sections).map { self.globalSection(local: $0) }
+        return toIndexSet(mapped)
     }
     
-    func globalIndexPath(local indexPath: NSIndexPath) -> NSIndexPath {
-        let section = globalSection(local: indexPath.section)
-        return NSIndexPath(section, indexPath.item)
+    func localIndexPath(global indexPath: NSIndexPath) -> NSIndexPath? {
+        return localSection(global: indexPath.section).map {
+            NSIndexPath($0, indexPath.item)
+        }
     }
     
-    func localIndexPaths(global indexPaths: [NSIndexPath]) -> [NSIndexPath] {
-        return indexPaths.map { self.localIndexPath(global: $0) }
+    func globalIndexPath(local indexPath: NSIndexPath) -> NSIndexPath? {
+        return globalSection(local: indexPath.section).map {
+            NSIndexPath($0, indexPath.item)
+        }
     }
     
-    func globalIndexPaths(local indexPaths: [NSIndexPath]) -> [NSIndexPath] {
-        return indexPaths.map { self.globalIndexPath(local: $0) }
+    private func toIndexPaths<S: SequenceType where S.Generator.Element == NSIndexPath?>(indexes: S) -> [NSIndexPath]? {
+        return reduce(indexes, []) { (indexPaths: [NSIndexPath]?, indexPath: NSIndexPath?) in
+            if let indexPaths = indexPaths, indexPath = indexPath {
+                return indexPaths + CollectionOfOne(indexPath)
+            }
+            return nil
+        }
+    }
+    
+    func localIndexPaths(global indexPaths: [NSIndexPath]) -> [NSIndexPath]? {
+        let mapped = lazy(indexPaths).map { self.localIndexPath(global: $0) }
+        return toIndexPaths(mapped)
+    }
+    
+    func globalIndexPaths(local indexPaths: [NSIndexPath]) -> [NSIndexPath]? {
+        let mapped = lazy(indexPaths).map { self.globalIndexPath(local: $0) }
+        return toIndexPaths(mapped)
     }
     
     mutating func addMapping(fromGlobalSection globalSection: Int, toLocalSection localSection: Int) {

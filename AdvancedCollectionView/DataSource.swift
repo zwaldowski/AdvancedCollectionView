@@ -259,7 +259,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         }
         
         if notify && (!emptyContent.isEmpty || !errorContent.isEmpty) {
-            notifySectionsReloaded(NSIndexSet(range: 0..<numberOfSections))
+            notifySectionsReloaded(NSIndexSet(0..<numberOfSections))
         }
     }
     
@@ -322,16 +322,16 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     
     // MARK: Convenience notifications
     
-    public func notifySectionsInserted<T: SequenceType where T.Generator.Element == Int>(sections: T, direction: SectionOperationDirection = .Default) {
-        notify(sectionAction: .Insert(NSIndexSet(indexes: sections), direction: direction))
+    public func notifySectionsInserted(sections: NSIndexSet, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Insert(sections.copy() as! NSIndexSet, direction: direction))
     }
     
-    public func notifySectionsRemoved<T: SequenceType where T.Generator.Element == Int>(sections: T, direction: SectionOperationDirection = .Default) {
-        notify(sectionAction: .Remove(NSIndexSet(indexes: sections), direction: direction))
+    public func notifySectionsRemoved(sections: NSIndexSet, direction: SectionOperationDirection = .Default) {
+        notify(sectionAction: .Remove(sections.copy() as! NSIndexSet, direction: direction))
     }
     
-    public func notifySectionsReloaded<T: SequenceType where T.Generator.Element == Int>(sections: T) {
-        notify(sectionAction: .Reload(NSIndexSet(indexes: sections)))
+    public func notifySectionsReloaded(sections: NSIndexSet) {
+        notify(sectionAction: .Reload(sections.copy() as! NSIndexSet))
     }
     
     public func notifySectionsMoved(#from: Int, to: Int, direction: SectionOperationDirection = .Default) {

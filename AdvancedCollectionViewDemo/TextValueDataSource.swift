@@ -49,9 +49,9 @@ class TextValueDataSource<T>: BasicDataSource {
             
             updateLoadingState(newEmpty)
             
-            notifySectionsReloaded(reloaded)
-            notifySectionsInserted(inserted)
-            notifySectionsRemoved(deleted)
+            notifySectionsReloaded(NSIndexSet(reloaded))
+            notifySectionsInserted(NSIndexSet(inserted))
+            notifySectionsRemoved(NSIndexSet(deleted))
         }
     }
     

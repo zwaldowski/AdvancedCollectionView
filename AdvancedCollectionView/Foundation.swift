@@ -54,28 +54,8 @@ extension NSIndexPath {
 
 extension NSIndexSet {
     
-    public convenience init(range: Range<Int>) {
+    public convenience init(_ range: Range<Int>) {
         self.init(indexesInRange: NSRange(range))
-    }
-    
-    public convenience init(_ elements: Int...) {
-        self.init(indexes: elements)
-    }
-    
-    public convenience init<S: SequenceType where S.Generator.Element == Int>(indexes elements: S) {
-        let set = NSMutableIndexSet()
-        for idx in elements {
-            set.addIndex(idx)
-        }
-        self.init(indexSet: set)
-    }
-    
-    public func map(transform: Int -> Int) -> NSIndexSet {
-        let indexSet = NSMutableIndexSet()
-        for idx in self {
-            indexSet.addIndex(transform(idx))
-        }
-        return indexSet
     }
     
     var stringValue: String {
@@ -83,32 +63,4 @@ extension NSIndexSet {
         return "[\(str)]"
     }
     
-}
-
-public func -=(left: NSMutableIndexSet, right: NSIndexSet) {
-    left.removeIndexes(right)
-}
-
-public func +=(left: NSMutableIndexSet, right: NSIndexSet) {
-    left.addIndexes(right)
-}
-
-public func -=(left: NSMutableIndexSet, right: NSRange) {
-    left.removeIndexesInRange(right)
-}
-
-public func +=(left: NSMutableIndexSet, right: NSRange) {
-    left.addIndexesInRange(right)
-}
-
-public func -(left: NSIndexSet, right: NSIndexSet) -> NSMutableIndexSet {
-    let indexSet = left.mutableCopy() as! NSMutableIndexSet
-    indexSet.removeIndexes(right)
-    return indexSet
-}
-
-public func +(left: NSIndexSet, right: NSIndexSet) -> NSMutableIndexSet {
-    let indexSet = left.mutableCopy() as! NSMutableIndexSet
-    indexSet.addIndexes(right)
-    return indexSet
 }

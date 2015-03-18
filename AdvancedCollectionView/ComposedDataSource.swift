@@ -202,31 +202,39 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
         }
     }
     
+    private func globalSections(dataSource: DataSource, indexes: NSIndexSet) -> NSIndexSet? {
+        return mappings[dataSource]?.globalSections(local: indexes)
+    }
+
+    private func globalIndexPaths(dataSource: DataSource, indexPaths: [NSIndexPath]) -> [NSIndexPath]? {
+        return mappings[dataSource]?.globalIndexPaths(local: indexPaths)
+    }
+
     // MARK: DataSourceContainer
     
     public func dataSourceWillPerform(dataSource: DataSource, sectionAction: SectionAction) {
         switch sectionAction {
         case .Insert(let indexes, let direction):
             updateMappings()
-            if let sections = mappings[dataSource]?.globalSections(local: indexes) {
-                notifySectionsInserted(sections, direction: direction)
+            globalSections(dataSource, indexes: indexes).map {
+                notifySectionsInserted($0, direction: direction)
             }
         case .Remove(let indexes, let direction):
-            let sections = mappings[dataSource]?.globalSections(local: indexes)
+            let sections = globalSections(dataSource, indexes: indexes)
             updateMappings()
-            if let sections = sections {
-                notifySectionsRemoved(sections, direction: direction)
+            sections.map {
+                notifySectionsRemoved($0, direction: direction)
             }
         case .Reload(let indexes):
             updateMappings()
-            if let sections = mappings[dataSource]?.globalSections(local: indexes) {
-                notifySectionsReloaded(sections)
+            globalSections(dataSource, indexes: indexes).map {
+                notifySectionsReloaded($0)
             }
         case .Move(let from, let to, let direction):
             updateMappings()
-            if let mapping = mappings[dataSource] {
-                let globalOld = mapping.globalSection(local: from)
-                let globalNew = mapping.globalSection(local: to)
+            if let mapping = mappings[dataSource],
+                globalOld = mapping.globalSection(local: from),
+                globalNew = mapping.globalSection(local: to) {
                 notifySectionsMoved(from: globalOld, to: globalNew, direction: direction)
             }
         default:
@@ -238,21 +246,21 @@ public class ComposedDataSource: DataSource, DataSourceContainer {
     public func dataSourceWillPerform(dataSource: DataSource, itemAction: ItemAction) {
         switch itemAction {
         case .Insert(let indexPaths):
-            if let global = mappings[dataSource]?.globalIndexPaths(local: indexPaths) {
-                notifyItemsInserted(global)
+            globalIndexPaths(dataSource, indexPaths: indexPaths).map {
+                notifyItemsInserted($0)
             }
         case .Remove(let indexPaths):
-            if let global = mappings[dataSource]?.globalIndexPaths(local: indexPaths) {
-                notifyItemsRemoved(global)
+            globalIndexPaths(dataSource, indexPaths: indexPaths).map {
+                notifyItemsRemoved($0)
             }
         case .Reload(let indexPaths):
-            if let global = mappings[dataSource]?.globalIndexPaths(local: indexPaths) {
-                notifyItemsReloaded(global)
+            globalIndexPaths(dataSource, indexPaths: indexPaths).map {
+                notifyItemsReloaded($0)
             }
         case .Move(let from, let to):
-            if let mapping = mappings[dataSource] {
-                let globalFrom = mapping.globalIndexPath(local: from)
-                let globalTo = mapping.globalIndexPath(local: to)
+            if let mapping = mappings[dataSource],
+                globalFrom = mapping.globalIndexPath(local: from),
+                globalTo = mapping.globalIndexPath(local: to) {
                 notifyItemMoved(from: globalFrom, to: globalTo)
             }
         case .WillLoad:

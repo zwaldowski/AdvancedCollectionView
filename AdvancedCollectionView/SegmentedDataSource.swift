@@ -89,8 +89,8 @@ public class SegmentedDataSource: DataSource, DataSourceContainer {
         _selectedDataSource = newDataSource
         didChangeValueForKey("selectedDataSource")
         
-        let removedSections = NSIndexSet(range: 0..<oldSectionsCount)
-        let insertedSections = NSIndexSet(range: 0..<newSectionsCount)
+        let removedSections = NSIndexSet(0..<oldSectionsCount)
+        let insertedSections = NSIndexSet(0..<newSectionsCount)
         
         // Update the sections all at once.
         notifyBatchUpdate({ () -> () in
