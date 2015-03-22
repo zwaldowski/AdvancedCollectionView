@@ -63,7 +63,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         didSet {
             switch loadingState {
             case .Loading, .Loaded, .NoContent, .Error:
-                updatePlaceholder(notifyVisibility: true)
+                updatePlaceholder(placeholderView, notifyVisibility: true)
             default:
                 break
             }
@@ -209,7 +209,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     
     // MARK: Placeholders
     
-    private var placeholderView: CollectionPlaceholderView!
+    private var placeholderView: CollectionPlaceholderView?
     
     public var emptyContent = PlaceholderContent(title: nil, message: nil, image: nil)
     public var errorContent = PlaceholderContent(title: nil, message: nil, image: nil)
@@ -233,7 +233,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         }
     }
     
-    public func updatePlaceholder(_ placeholderView: CollectionPlaceholderView? = nil, notifyVisibility notify: Bool = false) {
+    public func updatePlaceholder(placeholderView: CollectionPlaceholderView?, notifyVisibility notify: Bool = false) {
         if let placeholderView = placeholderView {
             switch loadingState {
             case .Loading:
@@ -257,11 +257,15 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     }
     
     public func dequeuePlaceholderView(#collectionView: UICollectionView, indexPath: NSIndexPath) -> CollectionPlaceholderView {
-        if placeholderView == nil {
-            placeholderView = collectionView.dequeue(supplementOfType: CollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
+        if let currentPlaceholder = placeholderView {
+            updatePlaceholder(currentPlaceholder)
+            return currentPlaceholder
         }
-        updatePlaceholder(placeholderView, notifyVisibility: false)
-        return placeholderView
+
+        let newPlaceholder = collectionView.dequeue(supplementOfType: CollectionPlaceholderView.self, ofKind: SupplementKind.Placeholder, indexPath: indexPath)
+        updatePlaceholder(newPlaceholder, notifyVisibility: false)
+        placeholderView = newPlaceholder
+        return newPlaceholder
     }
     
     // MARK: Notifications
