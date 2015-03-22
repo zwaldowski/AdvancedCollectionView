@@ -211,8 +211,8 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     
     private var placeholderView: CollectionPlaceholderView?
     
-    public var emptyContent = PlaceholderContent(title: nil, message: nil, image: nil)
-    public var errorContent = PlaceholderContent(title: nil, message: nil, image: nil)
+    public var emptyContent: PlaceholderContent = .Empty
+    public var errorContent: PlaceholderContent = .Empty
     
     public var isObscuredByPlaceholder: Bool {
         if shouldDisplayPlaceholder { return true }
@@ -221,12 +221,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
     
     public var shouldDisplayPlaceholder: Bool {
         switch (loadingState, emptyContent.isEmpty, errorContent.isEmpty) {
-        case (.NoContent, false, _):
-            return true
-        case (.Error, _, false):
-            // If we're in the error state & have an error message or title
-            return true
-        case (.Loading, _, _):
+        case (.NoContent, false, _), (.Error, _, false), (.Loading, _, _):
             return true
         default:
             return false

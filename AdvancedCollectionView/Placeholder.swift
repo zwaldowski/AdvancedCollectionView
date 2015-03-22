@@ -8,33 +8,37 @@
 
 import UIKit
 
-public struct PlaceholderContent {
+public enum PlaceholderContent {
     
-    public let title: String?
-    public let message: String?
-    public let image: UIImage?
+    case Empty
+    case Text(title: String, message: String)
+    case Image(image: UIImage, title: String)
+    case ImageDetail(image: UIImage, title: String, message: String)
     
     public var isEmpty: Bool {
-        switch (title, message) {
-        case (.Some(let text), _):
-            return text.isEmpty
-        case (.None, .Some(let text)):
-            return text.isEmpty
-        default:
-            return true
+        switch self {
+        case .Empty:                    return true
+        case .Text(let title, let msg): return title.isEmpty && msg.isEmpty
+        default:                        return false
         }
     }
     
-    public init(title: String?, message: String? = nil, image: UIImage? = nil) {
-        self.title = title
-        self.message = message
-        self.image = image
+    private var unpack: (image: UIImage?, title: String?, message: String?) {
+        let check = { (str: String) -> String? in str.isEmpty ? nil : str }
+        switch self {
+        case .Empty:                                    return (nil, nil, nil)
+        case .Text(let title, let msg):                 return (nil, check(title), check(msg))
+        case .Image(let img, let title):                return (img, check(title), nil)
+        case .ImageDetail(let img, let title, let msg): return (img, check(title), check(msg))
+        }
     }
     
 }
 
 public func ==(lhs: PlaceholderContent, rhs: PlaceholderContent) -> Bool {
-    return lhs.title == rhs.title && lhs.message == rhs.message && lhs.image == rhs.image
+    let (image1, title1, message1) = lhs.unpack
+    let (image2, title2, message2) = rhs.unpack
+    return image1 == image2 && title1 == title2 && message1 == message2
 }
 
 extension PlaceholderContent: Equatable { }
@@ -50,25 +54,28 @@ private func textColor() -> UIColor {
 /// A placeholder view that approximates the standard iOS "no content" view.
 public class PlaceholderView: UIView {
     
-    public var content: PlaceholderContent = PlaceholderContent(title: nil, message: nil, image: nil) {
+    public var content: PlaceholderContent = .Empty {
         didSet {
-            if let image = content.image {
+            let (image, title, message) = content.unpack
+            
+            imageView.image = image
+            titleLabel.text = title
+            messageLabel.text = message
+            
+            if image != nil {
                 containerView.addSubview(imageView)
-                imageView.image = image
             } else {
                 imageView.removeFromSuperview()
             }
             
-            if let title = content.title {
+            if title != nil {
                 containerView.addSubview(titleLabel)
-                titleLabel.text = title
             } else {
                 titleLabel.removeFromSuperview()
             }
             
-            if let message = content.message {
+            if message != nil {
                 containerView.addSubview(messageLabel)
-                messageLabel.text = message
             } else {
                 messageLabel.removeFromSuperview()
             }
@@ -92,11 +99,45 @@ public class PlaceholderView: UIView {
     
     // MARK:
     
-    private weak var containerView: UIView!
-    private lazy var imageView = UIImageView()
-    private lazy var titleLabel = UILabel()
-    private lazy var messageLabel = UILabel()
-    private lazy var actionButton = UIButton.buttonWithType(.System) as! UIButton
+    private var containerView: UIView!
+    private lazy var imageView: UIImageView = {
+        let view = UIImageView()
+        view.setTranslatesAutoresizingMaskIntoConstraints(false)
+        return view
+    }()
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.setTranslatesAutoresizingMaskIntoConstraints(false)
+        label.textAlignment = .Center
+        label.backgroundColor = nil
+        label.opaque = false
+        label.font = UIFont.systemFontOfSize(22)
+        label.numberOfLines = 0
+        label.textColor = textColor()
+        return label
+    }()
+    private lazy var messageLabel: UILabel = {
+        let label = UILabel()
+        label.setTranslatesAutoresizingMaskIntoConstraints(false)
+        label.textAlignment = .Center
+        label.backgroundColor = nil
+        label.opaque = false
+        label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+        label.numberOfLines = 0
+        label.textColor = textColor()
+        return label
+    }()
+    private lazy var actionButton: UIButton = {
+        let button = UIButton.buttonWithType(.System) as! UIButton
+        button.tintColor = textColor()
+        button.setTranslatesAutoresizingMaskIntoConstraints(false)
+        button.addTarget(self, action: "actionButtonPressed:", forControlEvents: .TouchUpInside)
+        button.titleLabel?.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+        button.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        button.setBackgroundImage(self.buttonBackgroundImage, forState: .Normal)
+        button.setTitleColor(textColor(), forState: .Normal)
+        return button
+    }()
 
     private func commonInit() {
         setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -106,39 +147,13 @@ public class PlaceholderView: UIView {
         addSubview(container)
         containerView = container
         
-        imageView.setTranslatesAutoresizingMaskIntoConstraints(false)
-        
-        titleLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
-        titleLabel.textAlignment = .Center
-        titleLabel.backgroundColor = nil
-        titleLabel.opaque = false
-        titleLabel.font = UIFont.systemFontOfSize(22)
-        titleLabel.numberOfLines = 0
-        titleLabel.textColor = textColor()
-        
-        messageLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
-        messageLabel.textAlignment = .Center
-        messageLabel.backgroundColor = nil
-        messageLabel.opaque = false
-        messageLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
-        messageLabel.numberOfLines = 0
-        messageLabel.textColor = textColor()
-        
-        actionButton.tintColor = textColor()
-        actionButton.setTranslatesAutoresizingMaskIntoConstraints(false)
-        actionButton.addTarget(self, action: "actionButtonPressed:", forControlEvents: .TouchUpInside)
-        actionButton.titleLabel?.font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
-        actionButton.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        actionButton.setBackgroundImage(buttonBackgroundImage, forState: .Normal)
-        actionButton.setTitleColor(textColor(), forState: .Normal)
-        
         // Constrain the container to the host view. The height of the container will be determined by the contents.
-        addConstraints([
+        NSLayoutConstraint.activateConstraints([
             NSLayoutConstraint(item: container, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: container, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0),
         ])
         
-        // _containerView should be no more than 418pt and the left and right padding should be no less than 30pt on both sides
+        // containerView should be no more than 418pt and the left and right padding should be no less than 30pt on both sides
         let metrics = [ "hPad": 30, "maxWidth": 418 ]
         let views = [ "container": container ]
         bigWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=hPad)-[container(<=maxWidth)]-(>=hPad)-|", options: nil, metrics: metrics, views: views) as! [NSLayoutConstraint]
@@ -152,9 +167,6 @@ public class PlaceholderView: UIView {
     
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-    }
-    
-    public override func awakeFromNib() {
         commonInit()
     }
     
@@ -172,46 +184,53 @@ public class PlaceholderView: UIView {
     private var bigWidthConstraints = [NSLayoutConstraint]()
     
     private func invalidateConstraints() {
-        for constraint in contentConstraints {
-            constraint.active = false
-        }
+        NSLayoutConstraint.deactivateConstraints(contentConstraints)
         contentConstraints.removeAll()
         setNeedsUpdateConstraints()
     }
     
     public override func updateConstraints() {
-        smallWidthConstraints.map { $0.active = !self.isWideHorizontal }
-        bigWidthConstraints.map { $0.active = self.isWideHorizontal }
+        if isWideHorizontal {
+            NSLayoutConstraint.deactivateConstraints(smallWidthConstraints)
+            NSLayoutConstraint.activateConstraints(bigWidthConstraints)
+        } else {
+            NSLayoutConstraint.deactivateConstraints(bigWidthConstraints)
+            NSLayoutConstraint.activateConstraints(smallWidthConstraints)
+        }
         
         if !contentConstraints.isEmpty {
             super.updateConstraints()
             return
         }
         
+        let (image, title, message) = content.unpack
         let views = [
             "imageView": imageView,
             "titleLabel": titleLabel,
             "messageLabel": messageLabel,
             "actionButton": actionButton
         ]
-        var last: UIView = containerView
-        var lastAttr = NSLayoutAttribute.Top
-        var constant = CGFloat(0)
         
-        if content.image != nil {
+        var last: UIView = containerView
+        var lastAttr: NSLayoutAttribute = .Top
+        var constant: CGFloat = 0
+        
+        
+        if image != nil {
             // Force the container to be at least as wide as the image
             contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=0)-[imageView]-(>=0)-|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
-            // horizontally center the image
-            contentConstraints.append(NSLayoutConstraint(item: imageView, attribute: .CenterX, relatedBy: .Equal, toItem: containerView, attribute: .CenterX, multiplier: 1, constant: 0))
-            // aligned with the top of the container
-            contentConstraints.append(NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
+            // horizontally center the image aligned with the top of the container
+            contentConstraints += [
+                NSLayoutConstraint(item: imageView, attribute: .CenterX, relatedBy: .Equal, toItem: containerView, attribute: .CenterX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant)
+            ]
             
             last = imageView
             lastAttr = .Bottom
             constant = 15 // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the bottom of the image and the top of the text.
         }
         
-        if content.title != nil {
+        if title != nil {
             contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[titleLabel]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
             contentConstraints.append(NSLayoutConstraint(item: titleLabel, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
             
@@ -220,7 +239,7 @@ public class PlaceholderView: UIView {
             constant = 15 // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the baseline of the title and the message.
         }
 
-        if content.message != nil {
+        if message != nil {
             contentConstraints += NSLayoutConstraint.constraintsWithVisualFormat("H:|[messageLabel]|", options: nil, metrics: nil, views: views) as! [NSLayoutConstraint]
             contentConstraints.append(NSLayoutConstraint(item: messageLabel, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
             
@@ -230,10 +249,12 @@ public class PlaceholderView: UIView {
         }
         
         if buttonContent != nil {
-            contentConstraints.append(NSLayoutConstraint(item: actionButton, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant))
-            contentConstraints.append(NSLayoutConstraint(item: actionButton, attribute: .CenterX, relatedBy: .Equal, toItem: containerView, attribute: .CenterX, multiplier: 1, constant: 0))
-            contentConstraints.append(NSLayoutConstraint(item: actionButton, attribute: .Width, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: buttonMinWidth))
-            contentConstraints.append(NSLayoutConstraint(item: actionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: buttonMinHeight))
+            contentConstraints += [
+                NSLayoutConstraint(item: actionButton, attribute: .Top, relatedBy: .Equal, toItem: last, attribute: lastAttr, multiplier: 1, constant: constant),
+                NSLayoutConstraint(item: actionButton, attribute: .CenterX, relatedBy: .Equal, toItem: containerView, attribute: .CenterX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: actionButton, attribute: .Width, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: buttonMinWidth),
+                NSLayoutConstraint(item: actionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: buttonMinHeight)
+            ]
             
             last = actionButton
             lastAttr = .Baseline
@@ -245,9 +266,7 @@ public class PlaceholderView: UIView {
             contentConstraints.append(NSLayoutConstraint(item: last, attribute: .Bottom, relatedBy: .Equal, toItem: containerView, attribute: .Bottom, multiplier: 1, constant: 0))
         }
         
-        for constraint in contentConstraints {
-            constraint.active = true
-        }
+        NSLayoutConstraint.activateConstraints(contentConstraints)
         
         super.updateConstraints()
     }
@@ -276,9 +295,7 @@ public class PlaceholderView: UIView {
     }()
     
     @objc private func actionButtonPressed(sender: UIButton) {
-        if let (_, action) = buttonContent {
-            action()
-        }
+        buttonContent?.1()
     }
     
 }

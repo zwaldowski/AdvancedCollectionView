@@ -18,14 +18,14 @@ class CatDetailViewController: CollectionViewController {
     private lazy var detailDataSource: CatDetailDataSource = {
         let dataSource = CatDetailDataSource(cat: self.cat)
         dataSource.title = NSLocalizedString("Details", comment: "Title of cat details section")
-        dataSource.emptyContent = PlaceholderContent(title: NSLocalizedString("No Cat", comment: "The title of the placeholder to show if the cat has no data"), message: NSLocalizedString("This cat has no information.", comment: "The message to show when the cat has no information"))
-        dataSource.errorContent = PlaceholderContent(title: NSLocalizedString("Unable to Load", comment: "Error message title to show when unable to load cat details"), message: String.localizedStringWithFormat("A network problem occurred loading details for “%@”.", self.cat.name))
+        dataSource.emptyContent = .Text(title: NSLocalizedString("No Cat", comment: "The title of the placeholder to show if the cat has no data"), message: NSLocalizedString("This cat has no information.", comment: "The message to show when the cat has no information"))
+        dataSource.errorContent = .Text(title: NSLocalizedString("Unable to Load", comment: "Error message title to show when unable to load cat details"), message: String.localizedStringWithFormat("A network problem occurred loading details for “%@”.", self.cat.name))
         return dataSource
     }()
     private lazy var sightingsDataSource: CatSightingsDataSource = {
         let dataSource = CatSightingsDataSource(cat: self.cat)
         dataSource.title = NSLocalizedString("Sightings", comment: "Title of cat sightings section");
-        dataSource.emptyContent = PlaceholderContent(title: NSLocalizedString("No Sightings", comment: "Title of the no sightings placeholder message"), message: NSLocalizedString("This cat has not been sighted recently.", comment: "The message to show when the cat has not been sighted recently"))
+        dataSource.emptyContent = .Text(title: NSLocalizedString("No Sightings", comment: "Title of the no sightings placeholder message"), message: NSLocalizedString("This cat has not been sighted recently.", comment: "The message to show when the cat has not been sighted recently"))
         
         dataSource.defaultMetrics.separatorInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         dataSource.defaultMetrics.measurement = .Estimate(44)

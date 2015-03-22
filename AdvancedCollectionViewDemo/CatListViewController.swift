@@ -50,8 +50,8 @@ class CatListViewController: CollectionViewController {
             dataSource.title = NSLocalizedString("All", comment: "Title for available cats list")
         }
         
-        dataSource.emptyContent = PlaceholderContent(title: NSLocalizedString("No Cats", comment: "The title to show when no cats are available"), message: NSLocalizedString("All the big cats are napping or roaming elsewhere. Please try again later.", comment: "The message to show when no cats are available"))
-        dataSource.errorContent = PlaceholderContent(title: NSLocalizedString("Unable To Load Cats", comment: "Title of message to show when unable to load cats"), message: NSLocalizedString("A problem with the network prevented loading the available cats.\nPlease, check your network settings.", comment: "Message to show when unable to load cats"))
+        dataSource.emptyContent = .Text(title: NSLocalizedString("No Cats", comment: "The title to show when no cats are available"), message: NSLocalizedString("All the big cats are napping or roaming elsewhere. Please try again later.", comment: "The message to show when no cats are available"))
+        dataSource.errorContent = .Text(title: NSLocalizedString("Unable To Load Cats", comment: "Title of message to show when unable to load cats"), message: NSLocalizedString("A problem with the network prevented loading the available cats.\nPlease, check your network settings.", comment: "Message to show when unable to load cats"))
         
         return dataSource
     }
