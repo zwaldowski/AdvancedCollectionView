@@ -306,7 +306,7 @@ public class DataSource: NSObject, UICollectionViewDataSource, MetricsProviderLe
         case (.BatchUpdate(let update, let completion), _, .None):
             update()
             completion?(true)
-        case let (_, _, .Some(container)):
+        case (_, _, .Some(let container)):
             container.dataSourceWillPerform(self, itemAction: itemAction)
         default: break
         }

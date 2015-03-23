@@ -438,7 +438,7 @@ extension JSON: ArrayLiteralConvertible {
     
     public func mapArray<A where A: JSONDecodable, A == A.DecodedType>() -> [A]? {
         switch self {
-        case let .JSONArray(a):
+        case .JSONArray(let a):
             return a.reduce([]) {
                 if let array = $0 {
                     let value = JSON(rawValue: $1)
@@ -668,15 +668,15 @@ infix operator <||? { associativity left precedence 150 }
 
 public func <*><A, B>(f: A -> B, a: A?) -> B? {
     switch a {
-    case let .Some(x): return f(x)
-    default: return .None
+    case .None: return .None
+    case .Some(let x): return f(x)
     }
 }
 
 public func <*><A, B>(f: (A -> B)?, a: A?) -> B? {
     switch f {
-    case let .Some(fx): return fx <*> a
-    default: return .None
+    case .None: return .None
+    case .Some(let fx): return fx <*> a
     }
 }
 
