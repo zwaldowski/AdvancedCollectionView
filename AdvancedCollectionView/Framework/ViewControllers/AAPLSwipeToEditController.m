@@ -30,7 +30,7 @@
 
 + (instancetype)wrapperWithGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer target:(id<UIGestureRecognizerDelegate>)target;
 
-@end;
+@end
 
 @implementation AAPLGestureRecognizerWrapper
 
