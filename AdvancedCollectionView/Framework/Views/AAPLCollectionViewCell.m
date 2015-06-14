@@ -15,6 +15,7 @@
 #import "AAPLAction.h"
 #import "AAPLTheme.h"
 #import "AAPLDebug.h"
+#import "AAPLMath.h"
 
 #define ANIMATION_DURATION 0.25
 
@@ -152,7 +153,7 @@
         else
             wrapper.backgroundColor = alternateColors[--alternateColorIndex];
 
-        maxButtonWidth = MAX(maxButtonWidth, [button intrinsicContentSize].width);
+        maxButtonWidth = fmax(maxButtonWidth, [button intrinsicContentSize].width);
     }];
 
     _maximumWidth = maxButtonWidth * self.subviews.count;
@@ -609,7 +610,7 @@
     if (self.swipeType == AAPLCollectionViewCellSwipeTypePrimary) {
         CGFloat translatedRight = width + newTranslation;
         CGFloat leftBuffer = leftMargin;
-        CGFloat breakPoint = ABS(self.minimumSwipeTrackingPosition) + leftMargin;
+        CGFloat breakPoint = fabs(self.minimumSwipeTrackingPosition) + leftMargin;
 
         if (velocity < 0) {
             if (!highlightingDefaultAction) {
@@ -627,12 +628,12 @@
             }
             else {
                 // clamp the translation, because we just don't want things getting out of hand.
-                newTranslation = MAX(newTranslation, - (width + leftMargin));
+                newTranslation = fmax(newTranslation, - (width + leftMargin));
             }
         }
         else if (velocity > 0) {
             if (highlightingDefaultAction) {
-                newTranslation = MAX(newTranslation, - (width + leftMargin));
+                newTranslation = fmax(newTranslation, - (width + leftMargin));
 
                 if (translatedRight > leftMargin) {
                     // We're not going to highlight the default action any more, but leave the translation alone
@@ -670,7 +671,7 @@
     CGFloat velocityX = self.swipeVelocity;
     CGFloat xPosition = self.swipeTranslation;
     CGFloat targetX = self.minimumSwipeTrackingPosition;
-    CGFloat adjustedMovementThreshold = movementThreshold * log10(ABS(velocityX));
+    CGFloat adjustedMovementThreshold = movementThreshold * log10f(fabs(velocityX));
 
     BOOL highlightingDefaultAction = self.editActionsView.highlightDefaultAction;
 
@@ -682,9 +683,9 @@
 
     // We keep the actions open if we've swiped farther than the movement threshold or if the left edge of the actions is past the target X position.
     if (AAPLCollectionViewCellSwipeTypePrimary == self.swipeType)
-        keepOpen = ABS(translation) > adjustedMovementThreshold || (targetX > xPosition);
+        keepOpen = fabs(translation) > adjustedMovementThreshold || (targetX > xPosition);
     else
-        keepOpen = ABS(translation) > adjustedMovementThreshold || (ABS(targetX) < xPosition);
+        keepOpen = fabs(translation) > adjustedMovementThreshold || (fabs(targetX) < xPosition);
 
     return keepOpen && !highlightingDefaultAction;
 }
@@ -988,7 +989,7 @@
 - (void)closeActionPaneAnimated:(BOOL)animated completionHandler:(void(^)(BOOL finished))handler
 {
     AAPLCollectionViewCellSwipeType swipeType = self.editActionsView.swipeType;
-    BOOL shouldRotate = ABS(self.swipeTranslation) > 0;
+    BOOL shouldRotate = fabs(self.swipeTranslation) > 0;
 
     if (_deletePending)
         return;
@@ -1017,7 +1018,7 @@
 
         CGFloat totalDistance = targetTranslation;
         CGFloat duration = 0.25;
-        CGFloat springVelocity = ABS(self.swipeVelocity) * duration / totalDistance;
+        CGFloat springVelocity = fabs(self.swipeVelocity) * duration / totalDistance;
 
         [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:springVelocity options:UIViewAnimationOptionBeginFromCurrentState animations:shut completion:done];
     }
@@ -1047,7 +1048,7 @@
     if (animated) {
         CGFloat totalDistance = self.swipeTranslation - targetTranslation;
         CGFloat duration = 0.25;
-        CGFloat springVelocity = ABS(self.swipeVelocity) * duration / totalDistance;
+        CGFloat springVelocity = fabs(self.swipeVelocity) * duration / totalDistance;
 
         [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:springVelocity options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             self.swipeTranslation = targetTranslation;

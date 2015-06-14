@@ -14,6 +14,7 @@
 #import "AAPLTheme.h"
 #import "AAPLShadowRegistrar.h"
 #import "AAPLDataSourceMapping.h"
+#import "AAPLMath.h"
 
 #define LAYOUT_DEBUGGING 0
 #define LAYOUT_LOGGING 0
@@ -863,7 +864,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     targetContentOffset.y += insets.top;
 
     CGFloat availableHeight = CGRectGetHeight(UIEdgeInsetsInsetRect(collectionView.bounds, insets));
-    targetContentOffset.y = MIN(targetContentOffset.y, MAX(0, _layoutSize.height - availableHeight));
+    targetContentOffset.y = fmin(targetContentOffset.y, fmax(0, _layoutSize.height - availableHeight));
 
     NSInteger firstInsertedIndex = [self.insertedSections firstIndex];
     if (NSNotFound != firstInsertedIndex && AAPLDataSourceSectionOperationDirectionNone != [self.updateSectionDirections[@(firstInsertedIndex)] integerValue]) {
@@ -875,7 +876,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
         CGFloat minY = CGRectGetMinY(sectionInfo.frame);
         if (targetContentOffset.y + globalPinnableHeight > minY) {
             // need to make the section visable
-            targetContentOffset.y = MAX(globalNonPinnableHeight, minY - globalPinnableHeight);
+            targetContentOffset.y = fmax(globalNonPinnableHeight, minY - globalPinnableHeight);
         }
     }
 
@@ -1402,7 +1403,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGFloat layoutHeight = start;
 
     // The layoutHeight is the total height of the layout including any placeholders in their default size. Determine how much space is left to be shared out among the placeholders
-    _layoutInfo.heightAvailableForPlaceholders = MAX(0, height - layoutHeight);
+    _layoutInfo.heightAvailableForPlaceholders = fmax(0, height - layoutHeight);
 
     if (_layoutInfo.contentOffsetY >= globalNonPinningHeight && layoutHeight - globalNonPinningHeight < height) {
         layoutHeight = height + globalNonPinningHeight;
@@ -1542,8 +1543,8 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 
     if (section.backgroundAttribute) {
         CGRect frame = section.backgroundAttribute.frame;
-        frame.origin.y = MIN(nonPinnableY, collectionView.bounds.origin.y);
-        CGFloat bottomY = MAX(CGRectGetMaxY([section.pinnableHeaders.lastObject frame]), CGRectGetMaxY([section.nonPinnableHeaders.lastObject frame]));
+        frame.origin.y = fmin(nonPinnableY, collectionView.bounds.origin.y);
+        CGFloat bottomY = fmax(CGRectGetMaxY([section.pinnableHeaders.lastObject frame]), CGRectGetMaxY([section.nonPinnableHeaders.lastObject frame]));
         frame.size.height =  bottomY - frame.origin.y;
         section.backgroundAttribute.frame = frame;
     }
@@ -1568,7 +1569,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGFloat deltaY = + self.contentOffsetDelta.y;
     CGRect frame = attributes.frame;
     if (attributes.pinnedHeader) {
-        CGFloat newY = MAX(attributes.unpinnedY, CGRectGetMinY(frame) + deltaY);
+        CGFloat newY = fmax(attributes.unpinnedY, CGRectGetMinY(frame) + deltaY);
         frame.origin.y = newY;
         frame.origin.x += deltaX;
     }

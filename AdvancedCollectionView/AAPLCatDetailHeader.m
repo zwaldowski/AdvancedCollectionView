@@ -10,6 +10,7 @@
 #import "AAPLCat.h"
 
 #import "UIView+Helpers.h"
+#import "AAPLMath.h"
 
 @interface NSObject ()
 - (void)toggleFavorite:(id)sender;
@@ -80,8 +81,8 @@
     const CGFloat linespacing = ceil(_shortDescription.font.lineHeight * 1.111); // 20pt
 
     NSDictionary *metrics = @{
-                              @"FavoriteRightMargin" : @(MAX(0.0, 15.0 - floor((buttonSize - _favoriteButton.imageView.image.size.width) / 2))),
-                              @"FavoriteTopMargin" : @(MAX(0.0, 15.0 - floor((buttonSize - _favoriteButton.imageView.image.size.height) / 2))),
+                              @"FavoriteRightMargin" : @(fmax(0.0, 15.0 - floor((buttonSize - _favoriteButton.imageView.image.size.width) / 2))),
+                              @"FavoriteTopMargin" : @(fmax(0.0, 15.0 - floor((buttonSize - _favoriteButton.imageView.image.size.height) / 2))),
                               };
     NSMutableArray *constraints = [NSMutableArray array];
 

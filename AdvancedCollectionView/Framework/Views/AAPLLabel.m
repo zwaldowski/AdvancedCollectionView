@@ -10,7 +10,7 @@
 @import CoreText;
 
 #import "AAPLLabel.h"
-
+#import "AAPLMath.h"
 
 @interface AAPLLabel ()
 @property (nonatomic, readonly, assign) CTFramesetterRef framesetter;

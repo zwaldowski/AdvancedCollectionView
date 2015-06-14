@@ -11,6 +11,7 @@
 #import "AAPLCollectionViewLayout_Internal.h"
 #import "UICollectionView+SupplementaryViews.h"
 #import "AAPLLayoutMetrics_Private.h"
+#import "AAPLMath.h"
 
 static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationContext *invalidationContext, UICollectionViewLayoutAttributes *attributes)
 {
@@ -490,8 +491,8 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
     __block CGFloat maxY = CGFLOAT_MIN;
 
     [self.nonPinnableHeaders enumerateObjectsUsingBlock:^(AAPLLayoutSupplementaryItem *supplementaryItem, NSUInteger itemIndex, BOOL *stop) {
-        minY = MIN(minY, CGRectGetMinY(supplementaryItem.frame));
-        maxY = MAX(maxY, CGRectGetMaxY(supplementaryItem.frame));
+        minY = fmin(minY, CGRectGetMinY(supplementaryItem.frame));
+        maxY = fmax(maxY, CGRectGetMaxY(supplementaryItem.frame));
         valid = YES;
     }];
 
@@ -901,7 +902,7 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
 
     // calculate the max row height based on the current collection of items…
     for (AAPLLayoutCell *rowItemInfo in rowInfo.items) {
-        newRowHeight = MAX(newRowHeight, CGRectGetHeight(rowItemInfo.frame));
+        newRowHeight = fmax(newRowHeight, CGRectGetHeight(rowItemInfo.frame));
     }
 
     // If the height of the row hasn't changed, then nothing else needs to move
