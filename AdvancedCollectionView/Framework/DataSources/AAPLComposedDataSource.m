@@ -626,12 +626,12 @@
 {
     AAPLDataSourceMapping *mapping = [self mappingForDataSource:dataSource];
 
-    [self updateMappings];
-
     NSMutableIndexSet *globalSections = [NSMutableIndexSet indexSet];
     [sections enumerateIndexesUsingBlock:^(NSUInteger localSectionIndex, BOOL *stop) {
         [globalSections addIndex:[mapping globalSectionForLocalSection:localSectionIndex]];
     }];
+    
+    [self updateMappings];
 
     [self notifySectionsRemoved:globalSections direction:direction];
 }
