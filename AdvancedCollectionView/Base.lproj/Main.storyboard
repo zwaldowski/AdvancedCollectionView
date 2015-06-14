@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.17" systemVersion="15A178u" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="72V-Mp-TOC">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.14"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="58g-WO-TCm">
+            <objects>
+                <navigationController storyboardIdentifier="root" id="72V-Mp-TOC" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="XMU-Sd-hj1">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="2pL-km-O3X" kind="relationship" relationship="rootViewController" id="BOt-3N-Men"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hJU-A8-pKm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-62" y="514"/>
+        </scene>
+        <!--Big Cats-->
+        <scene sceneID="FVZ-Nf-IJf">
+            <objects>
+                <collectionViewController title="Big Cats" id="2pL-km-O3X" customClass="AAPLCatListViewController" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="TN8-YN-wRs">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <collectionViewLayout key="collectionViewLayout" id="nrV-QC-wH3" customClass="AAPLCollectionViewLayout"/>
+                        <cells/>
+                        <connections>
+                            <outlet property="delegate" destination="2pL-km-O3X" id="6DN-xJ-w2G"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="Thx-eR-YQI"/>
+                    <connections>
+                        <segue destination="SCt-QJ-b0A" kind="push" identifier="detail" id="9Ru-qd-08k"/>
+                    </connections>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mFM-ui-hvO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="278" y="516"/>
+        </scene>
+        <!--Cat Detail-->
+        <scene sceneID="muE-Pr-Ak4">
+            <objects>
+                <collectionViewController title="Cat Detail" id="SCt-QJ-b0A" customClass="AAPLCatDetailViewController" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="iZs-B1-p7x">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <collectionViewLayout key="collectionViewLayout" id="Lzk-Nm-idt" customClass="AAPLCollectionViewLayout"/>
+                        <cells/>
+                        <connections>
+                            <outlet property="delegate" destination="SCt-QJ-b0A" id="Fnr-aU-LAD"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="yqM-iJ-Xue"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RLs-BA-bDx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="791" y="514"/>
+        </scene>
+    </scenes>
+</document>

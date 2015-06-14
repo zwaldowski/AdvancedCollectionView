@@ -1,11 +1,9 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  A subclass of AAPLCollectionViewCell that displays an AAPLCatSighting instance.
-  
+ A subclass of AAPLCollectionViewCell that displays an AAPLCatSighting instance.
  */
 
 #import "AAPLCollectionViewCell.h"

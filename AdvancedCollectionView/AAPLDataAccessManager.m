@@ -1,11 +1,9 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  A make believe data access layer. In real life this would talk to core data or a server.
-  
+ A make believe data access layer. In real life this would talk to core data or a server.
  */
 
 #import "AAPLDataAccessManager.h"
@@ -14,6 +12,7 @@
 
 @interface AAPLDataAccessManager ()
 @property (nonatomic, strong) NSCache *sightingsCache;
+@property (nonatomic, strong) NSArray *favoriteCats;
 @end
 
 @implementation AAPLDataAccessManager
@@ -27,6 +26,38 @@
     });
 
     return manager;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    self.favoriteCats = @[];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeFavoriteToggledNotification:) name:AAPLCatFavoriteToggledNotificationName object:nil];
+
+    return self;
+}
+
+- (void)observeFavoriteToggledNotification:(NSNotification *)notification
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AAPLCat *cat = notification.object;
+        NSMutableArray *favoriteCats = [self.favoriteCats mutableCopy];
+        NSUInteger position = [favoriteCats indexOfObject:cat];
+
+        if (cat.favorite) {
+            if (NSNotFound == position)
+                [favoriteCats addObject:cat];
+        }
+        else {
+            if (NSNotFound != position)
+                [favoriteCats removeObjectAtIndex:position];
+        }
+
+        self.favoriteCats = [NSArray arrayWithArray:favoriteCats];
+    });
 }
 
 - (void)fetchJSONResourceWithName:(NSString *)name completionHandler:(void(^)(NSDictionary *json, NSError *error))handler
@@ -67,7 +98,7 @@
     }
 }
 
-- (void)fetchCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
+- (void)fetchCatListWithCompletionHandler:(void(^)(NSArray<AAPLCat *> *cats, NSError *error))handler
 {
     [self fetchJSONResourceWithName:@"CatList" completionHandler:^(NSDictionary *json, NSError *error) {
         if (error) {
@@ -102,11 +133,11 @@
     }];
 }
 
-- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray *cats, NSError *error))handler
+- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray<AAPLCat *> *cats, NSError *error))handler
 {
     if (handler) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            handler(@[], nil);
+            handler(self.favoriteCats, nil);
         });
     }
 }
@@ -138,17 +169,17 @@
     }];
 }
 
-- (void)fetchSightingsForCat:(AAPLCat *)cat completionHandler:(void (^)(NSArray *, NSError *))handler
+- (void)fetchSightingsForCat:(AAPLCat *)cat completionHandler:(void (^)(NSArray<AAPLCatSighting *> *, NSError *))handler
 {
     NSParameterAssert(cat != nil);
 
     if (!self.sightingsCache)
         self.sightingsCache = [[NSCache alloc] init];
 
-    NSArray *sightings = [self.sightingsCache objectForKey:cat.uniqueID];
-    if (sightings) {
+    NSArray *cachedSightings = [self.sightingsCache objectForKey:cat.uniqueID];
+    if (cachedSightings) {
         if (handler)
-            handler(sightings, nil);
+            handler(cachedSightings, nil);
         return;
     }
 

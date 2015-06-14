@@ -1,11 +1,9 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  A basic data source that either fetches the list of all available cats or the user's favorite cats. If this data source represents the favorites, it listens for a notification with the name AAPLCatFavoriteToggledNotificationName and will update itself appropriately.
-  
+ A basic data source that either fetches the list of all available cats or the user's favorite cats. If this data source represents the favorites, it listens for a notification with the name AAPLCatFavoriteToggledNotificationName and will update itself appropriately.
  */
 
 #import "AAPLCatListDataSource.h"
@@ -14,8 +12,6 @@
 #import "AAPLDataAccessManager.h"
 
 #import "AAPLBasicCell.h"
-
-#import "UICollectionView+Helpers.h"
 
 #import "AAPLAction.h"
 #import "AAPLCollectionViewController.h"
@@ -33,21 +29,41 @@
 - (void)registerReusableViewsWithCollectionView:(UICollectionView *)collectionView
 {
     [super registerReusableViewsWithCollectionView:collectionView];
-    [collectionView registerClass:[AAPLBasicCell class] forCellWithReuseIdentifier:NSStringFromClass([AAPLBasicCell class])];
+    [collectionView registerClass:[AAPLBasicCell class] forCellWithReuseIdentifier:AAPLReusableIdentifierFromClass(AAPLBasicCell)];
+}
+
+- (NSArray *)primaryActionsForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!self.showingFavorites)
+        return nil;
+
+    return @[
+             [AAPLAction destructiveActionWithTitle:NSLocalizedString(@"Delete", @"Delete") selector:@selector(swipeToDeleteCell:)],
+             [AAPLAction actionWithTitle:NSLocalizedString(@"Tickle", @"Tickle") selector:@selector(tickleCell:)],
+             [AAPLAction actionWithTitle:NSLocalizedString(@"Confuse", @"Confuse") selector:@selector(tickleCell:)],
+             [AAPLAction actionWithTitle:NSLocalizedString(@"Feed", @"Feed") selector:@selector(tickleCell:)]
+             ];
+}
+
+- (NSArray *)secondaryActionsForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!self.showingFavorites)
+        return nil;
+
+    return @[
+             [AAPLAction actionWithTitle:NSLocalizedString(@"Pet", @"Pet") selector:@selector(tickleCell:)]
+             ];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     AAPLCat *cat = [self itemAtIndexPath:indexPath];
-    AAPLBasicCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([AAPLBasicCell class]) forIndexPath:indexPath];
+    AAPLBasicCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:AAPLReusableIdentifierFromClass(AAPLBasicCell) forIndexPath:indexPath];
     cell.style = AAPLBasicCellStyleSubtitle;
     cell.primaryLabel.text = cat.name;
-    cell.primaryLabel.font = [UIFont systemFontOfSize:14];
+    cell.primaryLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     cell.secondaryLabel.text = cat.shortDescription;
-    cell.secondaryLabel.font = [UIFont systemFontOfSize:10];
-
-    if (self.showingFavorites)
-        cell.editActions = @[[AAPLAction destructiveActionWithTitle:NSLocalizedString(@"Delete", @"Delete") selector:@selector(swipeToDeleteCell:)]];
+    cell.secondaryLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
 
     return cell;
 }
@@ -81,40 +97,38 @@
                 [items removeObjectAtIndex:position];
         }
 
-        self.items = items;
+        [self performUpdate:^{
+            self.items = items;
+        }];
     });
 }
 
-- (void)loadContent
+- (void)loadContentWithProgress:(AAPLLoadingProgress *)progress
 {
-    [self loadContentWithBlock:^(AAPLLoading *loading) {
-        void (^handler)(NSArray *cats, NSError *error) = ^(NSArray *cats, NSError *error) {
-            // Check to make certain a more recent call to load content hasn't superceded this one…
-            if (!loading.current) {
-                [loading ignore];
-                return;
-            }
+    void (^handler)(NSArray *cats, NSError *error) = ^(NSArray *cats, NSError *error) {
+        // Check to make certain a more recent call to load content hasn't superceded this one…
+        if (progress.cancelled)
+            return;
 
-            if (error) {
-                [loading doneWithError:error];
-                return;
-            }
+        if (error) {
+            [progress doneWithError:error];
+            return;
+        }
 
-            if (cats.count)
-                [loading updateWithContent:^(AAPLCatListDataSource *me) {
-                    me.items = cats;
-                }];
-            else
-                [loading updateWithNoContent:^(AAPLCatListDataSource *me) {
-                    me.items = @[];
-                }];
-        };
-
-        if (self.showingFavorites)
-            [[AAPLDataAccessManager manager] fetchFavoriteCatListWithCompletionHandler:handler];
+        if (cats.count)
+            [progress updateWithContent:^(AAPLCatListDataSource *me) {
+                me.items = cats;
+            }];
         else
-            [[AAPLDataAccessManager manager] fetchCatListWithCompletionHandler:handler];
-    }];
+            [progress updateWithNoContent:^(AAPLCatListDataSource *me) {
+                me.items = @[];
+            }];
+    };
+
+    if (self.showingFavorites)
+        [[AAPLDataAccessManager manager] fetchFavoriteCatListWithCompletionHandler:handler];
+    else
+        [[AAPLDataAccessManager manager] fetchCatListWithCompletionHandler:handler];
 }
 
 #pragma mark - Drag reorder support
@@ -127,6 +141,13 @@
 - (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
     return YES;
+}
+
+#pragma mark - BOGUS
+
+// bogus declaration
+- (void)tickleCell:(id)sender
+{
 }
 
 @end

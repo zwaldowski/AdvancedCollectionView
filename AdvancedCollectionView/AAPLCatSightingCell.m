@@ -1,15 +1,14 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  A subclass of AAPLCollectionViewCell that displays an AAPLCatSighting instance.
-  
+ A subclass of AAPLCollectionViewCell that displays an AAPLCatSighting instance.
  */
 
 #import "AAPLCatSightingCell.h"
 #import "AAPLCatSighting.h"
+#import "AAPLTheme.h"
 
 @interface AAPLCatSightingCell ()
 @property (nonatomic, strong) UILabel *dateLabel;
@@ -29,22 +28,17 @@
 
     _dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _dateLabel.font = [UIFont systemFontOfSize:12];
-    _dateLabel.textColor = [UIColor colorWithWhite:0.6 alpha:1];
     [_dateLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
 
     [contentView addSubview:_dateLabel];
 
     _fancierLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _fancierLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _fancierLabel.font = [UIFont systemFontOfSize:14];
 
     [contentView addSubview:_fancierLabel];
 
     _shortDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _shortDescriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _shortDescriptionLabel.font = [UIFont systemFontOfSize:10];
-    _shortDescriptionLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
 
     [contentView addSubview:_shortDescriptionLabel];
 
@@ -58,6 +52,16 @@
     [contentView addConstraints:constraints];
 
     return self;
+}
+
+- (void)setTheme:(AAPLTheme *)theme
+{
+    [super setTheme:theme];
+    _dateLabel.font = theme.listSmallFont;
+    _dateLabel.textColor = theme.mediumGreyTextColor;
+    _fancierLabel.font = theme.listBodyFont;
+    _shortDescriptionLabel.font = theme.listDetailFont;
+    _shortDescriptionLabel.textColor = theme.darkGreyTextColor;
 }
 
 - (void)configureWithCatSighting:(AAPLCatSighting *)catSighting dateFormatter:(NSDateFormatter *)dateFormatter

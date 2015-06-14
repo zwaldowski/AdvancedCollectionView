@@ -4,11 +4,13 @@
         {
             "name" : "Ocelot",
             "uniqueID" : "ocelot",
+            "favorite" : true,
             "shortDescription" : "The Ocelot is also known as the dwarf leopard.",
         },
         {
             "name": "Tiger",
             "uniqueID" : "tiger",
+            "favorite" : true,
             "shortDescription" : "The tiger is the largest of the cat species."
         },
         {
@@ -34,6 +36,7 @@
         {
             "name" : "Jaguar",
             "uniqueID" : "jaguar",
+            "favorite" : true,
             "shortDescription" : "Jaguars enjoy a nice swim from time to time.",
         },
         {
@@ -74,6 +77,7 @@
         {
             "name" : "Bobcat",
             "uniqueID" : "bobcat",
+            "favorite" : true,
             "shortDescription" : "Bobcats live all over North America.",
         }
     ]

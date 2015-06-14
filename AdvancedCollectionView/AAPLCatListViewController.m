@@ -1,33 +1,33 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  The view controller that presents the list of cats. This view controller enables switching between all available cats and favorite cats via a segmented control in the navigation bar.
-  
+ The view controller that presents the list of cats. This view controller enables switching between all available cats and favorite cats via a segmented control in the navigation bar.
  */
+
+@import UIKit;
 
 #import "AAPLCatListViewController.h"
 #import "AAPLCatListDataSource.h"
 #import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailViewController.h"
 
-#import "NSObject+KVOBlock.h"
+static void * const AAPLCatListSelectedDataSourceContext = "AAPLCatListSelectedDataSourceContext";
+static NSString * const AAPLSelectedDataSourceKeyPath = @"selectedDataSource";
 
-@interface APPLCatListViewController ()
+@interface AAPLCatListViewController ()
 @property (nonatomic, strong) AAPLSegmentedDataSource *segmentedDataSource;
 @property (nonatomic, strong) AAPLCatListDataSource *catsDataSource;
 @property (nonatomic, strong) AAPLCatListDataSource *favoriteCatsDataSource;
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
-@property (nonatomic, strong) id selectedDataSourceObserver;
 @end
 
-@implementation APPLCatListViewController
+@implementation AAPLCatListViewController
 
 - (void)dealloc
 {
-    [self.segmentedDataSource aapl_removeObserver:self.selectedDataSourceObserver];
+    [_segmentedDataSource removeObserver:self forKeyPath:AAPLSelectedDataSourceKeyPath context:AAPLCatListSelectedDataSourceContext];
 }
 
 - (void)viewDidLoad
@@ -39,9 +39,9 @@
 
     AAPLSegmentedDataSource *segmentedDataSource = [[AAPLSegmentedDataSource alloc] init];
 
-    AAPLLayoutSectionMetrics *metrics = segmentedDataSource.defaultMetrics;
-    metrics.rowHeight = 44;
-    metrics.separatorColor = [UIColor colorWithWhite:224/255.0 alpha:1];
+    AAPLSectionMetrics *metrics = segmentedDataSource.defaultMetrics;
+    metrics.estimatedRowHeight = 44;
+    metrics.showsRowSeparator = YES;
     metrics.separatorInsets = UIEdgeInsetsMake(0, 15, 0, 0);
 
     [segmentedDataSource addDataSource:self.catsDataSource];
@@ -57,22 +57,28 @@
     segmentedDataSource.shouldDisplayDefaultHeader = NO;
     [segmentedDataSource configureSegmentedControl:segmentedControl];
 
-    __weak typeof(&*self) weakself = self;
+    // The title of the selected data source should appear in the back button; observe the changing value of the selected data source.
+    [self.segmentedDataSource addObserver:self forKeyPath:AAPLSelectedDataSourceKeyPath options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:AAPLCatListSelectedDataSourceContext];
+}
 
-    // The title of the selected data source should appear in the back button; so update the title of this view controller when the selected data source changes.
-    self.selectedDataSourceObserver = [self.segmentedDataSource aapl_addObserverForKeyPath:@"selectedDataSource" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew withBlock:^(AAPLSegmentedDataSource *me, NSDictionary *change, id observer) {
-        AAPLDataSource *dataSource = me.selectedDataSource;
-        weakself.title = dataSource.title;
+- (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary *)change context:(nullable void *)context
+{
+    if (context != AAPLCatListSelectedDataSourceContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
 
-        if (dataSource == weakself.catsDataSource) {
-            weakself.editing = NO;
-            weakself.navigationItem.rightBarButtonItem = nil;
-        }
-        else {
-            weakself.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(beginEditing)];
-        }
+    AAPLDataSource *dataSource = self.segmentedDataSource.selectedDataSource;
 
-    }];
+    self.title = dataSource.title;
+
+    if (dataSource == self.catsDataSource) {
+        self.editing = NO;
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    else {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(beginEditing)];
+    }
 }
 
 - (AAPLCatListDataSource *)newAllCatsDataSource
@@ -81,10 +87,8 @@
     dataSource.showingFavorites = NO;
 
     dataSource.title = NSLocalizedString(@"All", @"Title for available cats list");
-    dataSource.noContentMessage = NSLocalizedString(@"All the big cats are napping or roaming elsewhere. Please try again later.", @"The message to show when no cats are available");
-    dataSource.noContentTitle = NSLocalizedString(@"No Cats", @"The title to show when no cats are available");
-    dataSource.errorMessage = NSLocalizedString(@"A problem with the network prevented loading the available cats.\nPlease, check your network settings.", @"Message to show when unable to load cats");
-    dataSource.errorTitle = NSLocalizedString(@"Unable To Load Cats", @"Title of message to show when unable to load cats");
+    dataSource.noContentPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"No Cats", @"The title to show when no cats are available") message:NSLocalizedString(@"All the big cats are napping or roaming elsewhere. Please try again later.", @"The message to show when no cats are available") image:nil];
+    dataSource.errorPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"Unable To Load Cats", @"Title of message to show when unable to load cats") message:NSLocalizedString(@"A problem with the network prevented loading the available cats.\nPlease, check your network settings.", @"Message to show when unable to load cats") image:nil];
 
     return dataSource;
 }
@@ -95,10 +99,8 @@
     dataSource.showingFavorites = YES;
 
     dataSource.title = NSLocalizedString(@"Favorites", @"Title for favorite cats list");
-    dataSource.noContentMessage = NSLocalizedString(@"You have no favorite cats. Tap the star icon to add a cat to your list of favorites.", @"The message to show when no cats are available");
-    dataSource.noContentTitle = NSLocalizedString(@"No Favorites", @"The title to show when no cats are available");
-    dataSource.errorMessage = NSLocalizedString(@"A problem with the network prevented loading your favorite cats. Please check your network settings.", @"Message to show when unable to load favorite cats");
-    dataSource.errorTitle = NSLocalizedString(@"Unable To Favorites", @"Title of message to show when unable to load favorites");
+    dataSource.noContentPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"No Favorites", @"The title to show when no cats are available") message:NSLocalizedString(@"You have no favorite cats. Tap the star icon to add a cat to your list of favorites.", @"The message to show when no cats are available") image:nil];
+    dataSource.errorPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"Unable To Favorites", @"Title of message to show when unable to load favorites") message:NSLocalizedString(@"A problem with the network prevented loading your favorite cats. Please check your network settings.", @"Message to show when unable to load favorite cats") image:nil];
 
     return dataSource;
 }
@@ -116,6 +118,11 @@
     self.editing = NO;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(beginEditing)];
     // This is where we should update the server with the favorites…
+}
+
+- (void)tickleCell:(id)sender
+{
+    // do something…
 }
 
 #pragma mark - Segue

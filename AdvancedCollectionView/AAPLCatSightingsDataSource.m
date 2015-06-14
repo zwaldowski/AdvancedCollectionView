@@ -1,11 +1,9 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  A basic data source for the sightings of a particular cat. When initialised with a cat, this data source will fetch the cat sightings.
-  
+ A basic data source for the sightings of a particular cat. When initialised with a cat, this data source will fetch the cat sightings.
  */
 
 #import "AAPLCatSightingsDataSource.h"
@@ -15,8 +13,6 @@
 #import "AAPLCat.h"
 
 #import "AAPLCatSightingCell.h"
-
-#import "UICollectionView+Helpers.h"
 
 @interface AAPLCatSightingsDataSource ()
 @property (nonatomic, strong) AAPLCat *cat;
@@ -43,23 +39,19 @@
     return self;
 }
 
-- (void)loadContent
+- (void)loadContentWithProgress:(AAPLLoadingProgress *)progress
 {
-    [self loadContentWithBlock:^(AAPLLoading *loading) {
-        [[AAPLDataAccessManager manager] fetchSightingsForCat:self.cat completionHandler:^(NSArray *sightings, NSError *error) {
-            if (!loading.current) {
-                [loading ignore];
-                return;
-            }
+    [[AAPLDataAccessManager manager] fetchSightingsForCat:self.cat completionHandler:^(NSArray *sightings, NSError *error) {
+        if (progress.cancelled)
+            return;
 
-            if (error) {
-                [loading doneWithError:error];
-                return;
-            }
+        if (error) {
+            [progress doneWithError:error];
+            return;
+        }
 
-            [loading updateWithContent:^(AAPLCatSightingsDataSource *me){
-                me.items = sightings;
-            }];
+        [progress updateWithContent:^(AAPLCatSightingsDataSource *me){
+            me.items = sightings;
         }];
     }];
 }
@@ -67,20 +59,12 @@
 - (void)registerReusableViewsWithCollectionView:(UICollectionView *)collectionView
 {
     [super registerReusableViewsWithCollectionView:collectionView];
-    [collectionView registerClass:[AAPLCatSightingCell class] forCellWithReuseIdentifier:NSStringFromClass([AAPLCatSightingCell class])];
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView sizeFittingSize:(CGSize)size forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    AAPLCatSightingCell *cell = (AAPLCatSightingCell *)[self collectionView:collectionView cellForItemAtIndexPath:indexPath];
-    CGSize fittingSize = [cell aapl_preferredLayoutSizeFittingSize:size];
-    [cell removeFromSuperview];
-    return fittingSize;
+    [collectionView registerClass:[AAPLCatSightingCell class] forCellWithReuseIdentifier:AAPLReusableIdentifierFromClass(AAPLCatSightingCell)];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    AAPLCatSightingCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([AAPLCatSightingCell class]) forIndexPath:indexPath];
+    AAPLCatSightingCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:AAPLReusableIdentifierFromClass(AAPLCatSightingCell) forIndexPath:indexPath];
     AAPLCatSighting *catSighting = [self itemAtIndexPath:indexPath];
 
     [cell configureWithCatSighting:catSighting dateFormatter:self.dateFormatter];

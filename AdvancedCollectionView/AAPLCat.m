@@ -1,11 +1,9 @@
 /*
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ Copyright (C) 2015 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
- 
-  Plain old data object for a cat. When the value of its favorite property changes, it sends a notification with the name AAPLCatFavoriteToggledNotificationName.
-  
+ Plain old data object for a cat. When the value of its favorite property changes, it sends a notification with the name AAPLCatFavoriteToggledNotificationName.
  */
 
 #import "AAPLCat.h"
@@ -59,6 +57,10 @@ static NSMapTable *AAPLAllCatsTable()
     NSString *name = dictionaryRepresentation[@"name"];
     if (name)
         self.name = name;
+
+    NSNumber *favorite = dictionaryRepresentation[@"favorite"];
+    if (favorite)
+        self.favorite = [favorite boolValue];
 
     NSString *shortDescription = dictionaryRepresentation[@"shortDescription"];
     if (shortDescription)
