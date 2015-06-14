@@ -374,7 +374,7 @@
     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_placeholderView]|" options:0 metrics:nil views:views]];
     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_placeholderView]|" options:0 metrics:nil views:views]];
 
-    [self addConstraints:constraints];
+    [NSLayoutConstraint activateConstraints:constraints];
     [self sendSubviewToBack:_placeholderView];
 
     if (animated) {
