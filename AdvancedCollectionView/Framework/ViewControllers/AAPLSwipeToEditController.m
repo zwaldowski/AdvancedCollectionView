@@ -95,12 +95,12 @@
 @end
 
 
-NSString * const AAPLSwipeStateIdle = @"IdleState";
-NSString * const AAPLSwipeStateEditing = @"EditingState";
-NSString * const AAPLSwipeStateTracking = @"TrackingState";
-NSString * const AAPLSwipeStateMoving = @"MovingState";
-NSString * const AAPLSwipeStateOpen = @"OpenState";
-NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
+static NSString * const AAPLSwipeStateIdle = @"IdleState";
+static NSString * const AAPLSwipeStateEditing = @"EditingState";
+static NSString * const AAPLSwipeStateTracking = @"TrackingState";
+static NSString * const AAPLSwipeStateMoving = @"MovingState";
+static NSString * const AAPLSwipeStateOpen = @"OpenState";
+static NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
 
 
 
@@ -264,9 +264,12 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
         [layout handlePanGesture:recognizer];
 }
 
+
 - (void)handleSwipePan:(UIPanGestureRecognizer *)recognizer
 {
     switch (recognizer.state) {
+        case UIGestureRecognizerStatePossible:
+            break;
         case UIGestureRecognizerStateBegan:
         {
             CGPoint position = [recognizer locationInView:_editingCell];
@@ -297,7 +300,7 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
             self.currentState = AAPLSwipeStateIdle;
             break;
         }
-        default:
+        case UIGestureRecognizerStateFailed:
             break;
     }
 }
@@ -312,21 +315,27 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
     NSIndexPath *indexPath = self.trackedIndexPath;
 
     switch (recognizer.state) {
+        case UIGestureRecognizerStatePossible:
+            break;
+            
         case UIGestureRecognizerStateBegan:
             [layout beginDraggingItemAtIndexPath:indexPath];
+            break;
+            
+        case UIGestureRecognizerStateChanged:
+            break;
+            
+        case UIGestureRecognizerStateEnded:
+            [layout endDragging];
+            self.currentState = AAPLSwipeStateEditing;
             break;
 
         case UIGestureRecognizerStateCancelled:
             [layout cancelDragging];
             self.currentState = AAPLSwipeStateEditing;
             break;
-
-        case UIGestureRecognizerStateEnded:
-            [layout endDragging];
-            self.currentState = AAPLSwipeStateEditing;
-            break;
-
-        default:
+            
+        case UIGestureRecognizerStateFailed:
             break;
     }
 }
@@ -334,6 +343,9 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
 - (void)handleOpenLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     switch (recognizer.state) {
+        case UIGestureRecognizerStatePossible:
+            break;
+            
         case UIGestureRecognizerStateBegan: {
             CGPoint cellLocation = [recognizer locationInView:self.editingCell];
             if (CGRectContainsPoint(self.editingCell.bounds, cellLocation))
@@ -345,16 +357,19 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
             recognizer.enabled = YES;
             break;
         }
-
-        case UIGestureRecognizerStateCancelled:
-            self.currentState = AAPLSwipeStateIdle;
+            
+        case UIGestureRecognizerStateChanged:
             break;
-
+            
         case UIGestureRecognizerStateEnded:
             self.currentState = AAPLSwipeStateIdle;
             break;
-
-        default:
+            
+        case UIGestureRecognizerStateCancelled:
+            self.currentState = AAPLSwipeStateIdle;
+            break;
+            
+        case UIGestureRecognizerStateFailed:
             break;
     }
 }
@@ -362,6 +377,9 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
 - (void)handleEditOpenLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     switch (recognizer.state) {
+        case UIGestureRecognizerStatePossible:
+            break;
+            
         case UIGestureRecognizerStateBegan: {
             CGPoint cellLocation = [recognizer locationInView:self.editingCell];
             if (CGRectContainsPoint(self.editingCell.bounds, cellLocation))
@@ -373,16 +391,19 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
             recognizer.enabled = YES;
             break;
         }
-
+            
+        case UIGestureRecognizerStateChanged:
+            break;
+            
         case UIGestureRecognizerStateCancelled:
             self.currentState = AAPLSwipeStateEditing;
             break;
-
+            
         case UIGestureRecognizerStateEnded:
             self.currentState = AAPLSwipeStateEditing;
             break;
-
-        default:
+            
+        case UIGestureRecognizerStateFailed:
             break;
     }
 }
@@ -390,13 +411,14 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
 - (void)handleEditingLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     switch (recognizer.state) {
+        case UIGestureRecognizerStatePossible:
         case UIGestureRecognizerStateBegan:
-            break;
-
+        case UIGestureRecognizerStateChanged:
         case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
             break;
 
-        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateRecognized:
         {
             // Tap in the remove control. If the data source doesn't define any actions for this index path, then there's really nothing to do.
             NSArray *actions = [self.dataSource primaryActionsForItemAtIndexPath:self.trackedIndexPath];
@@ -408,9 +430,6 @@ NSString * const AAPLSwipeStateEditOpen = @"EditOpenState";
             self.currentState = AAPLSwipeStateEditOpen;
             break;
         }
-
-        default:
-            break;
     }
 }
 

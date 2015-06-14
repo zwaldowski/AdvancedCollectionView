@@ -442,6 +442,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGPoint translation = CGPointZero;
 
     switch (direction) {
+        case AAPLAutoScrollDirectionUnknown:
+            break;
+            
         case AAPLAutoScrollDirectionUp: {
             distance = -distance;
             CGFloat minY = 0.0f;
@@ -488,9 +491,6 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             translation = CGPointMake(distance, 0.0f);
             break;
         }
-
-        default:
-            break;
     }
 
     _currentViewCenter = AAPLPointAddPoint(_currentViewCenter, translation);
@@ -565,8 +565,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     CGPoint contentOffset = collectionView.contentOffset;
 
     switch (gestureRecognizer.state) {
+        case UIGestureRecognizerStatePossible:
+            break;
+            
         case UIGestureRecognizerStateBegan:
-
         case UIGestureRecognizerStateChanged: {
             self.panTranslationInCollectionView = [gestureRecognizer translationInView:collectionView];
             CGPoint viewCenter = AAPLPointAddPoint(self.currentViewCenter, self.panTranslationInCollectionView);
@@ -616,14 +618,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
             }
             break;
         }
-
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded: {
+            
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled: {
             [self invalidateScrollTimer];
             break;
         }
 
-        default:
+        case UIGestureRecognizerStateFailed:
             break;
     }
 }
