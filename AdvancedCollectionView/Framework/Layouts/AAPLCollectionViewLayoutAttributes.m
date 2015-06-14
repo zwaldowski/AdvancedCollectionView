@@ -10,26 +10,6 @@
 
 @implementation AAPLCollectionViewLayoutAttributes
 
-- (NSUInteger)hash
-{
-    NSUInteger prime = 31;
-    NSUInteger result = 1;
-
-    result = prime * result + [super hash];
-    result = prime * result + _pinnedHeader;
-    result = prime * result + _columnIndex;
-    result = prime * result + [_backgroundColor hash];
-    result = prime * result + [_selectedBackgroundColor hash];
-    result = prime * result + (NSUInteger)_layoutMargins.top;
-    result = prime * result + (NSUInteger)_layoutMargins.left;
-    result = prime * result + (NSUInteger)_layoutMargins.bottom;
-    result = prime * result + (NSUInteger)_layoutMargins.right;
-    result = prime * result + _editing;
-    result = prime * result + _movable;
-    result = prime * result + _shouldCalculateFittingSize;
-    return result;
-}
-
 - (BOOL)isEqual:(id)object
 {
     if (![object isKindOfClass:[AAPLCollectionViewLayoutAttributes class]])
