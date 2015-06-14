@@ -19,8 +19,8 @@
 #import "AAPLCollectionViewLayout_Private.h"
 #import "AAPLDataSource.h"
 #import "AAPLStateMachine.h"
-#import <libkern/OSAtomic.h>
-#import <objc/message.h>
+@import Darwin.libkern.OSAtomic;
+@import ObjectiveC.message;
 
 @interface AAPLGestureRecognizerWrapper : NSObject <UIGestureRecognizerDelegate>
 @property (nonatomic, strong) UIGestureRecognizer *gestureRecognizer;

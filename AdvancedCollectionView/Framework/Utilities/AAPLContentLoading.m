@@ -9,7 +9,7 @@
  */
 
 #import "AAPLContentLoading.h"
-#import <libkern/OSAtomic.h>
+@import Darwin.libkern.OSAtomic;
 
 #define DEBUG_AAPLLOADING 0
 

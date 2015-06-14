@@ -12,7 +12,7 @@
 #import "AAPLDataSource.h"
 #import "AAPLShadowRegistrar.h"
 
-#import <objc/runtime.h>
+@import ObjectiveC.runtime;
 
 @protocol AAPLShadowRegistrarVending <NSObject>
 @property (nonatomic, readonly) AAPLShadowRegistrar *shadowRegistrar;

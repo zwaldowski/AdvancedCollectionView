@@ -12,7 +12,7 @@
 #import "AAPLPlaceholderView.h"
 #import "AAPLCollectionViewCell.h"
 
-#import <libkern/OSAtomic.h>
+@import Darwin.libkern.OSAtomic;
 
 #import "AAPLDataSourceMetrics_Private.h"
 #import "AAPLDebug.h"
