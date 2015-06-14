@@ -41,7 +41,7 @@
 
     for (AAPLDataSourceMapping *mapping in _mappings) {
         [mapping updateMappingStartingAtGlobalSection:_numberOfSections withBlock:^(NSInteger sectionIndex) {
-            _globalSectionToMappings[@(sectionIndex)] = mapping;
+            self.globalSectionToMappings[@(sectionIndex)] = mapping;
         }];
         _numberOfSections += mapping.numberOfSections;
     }

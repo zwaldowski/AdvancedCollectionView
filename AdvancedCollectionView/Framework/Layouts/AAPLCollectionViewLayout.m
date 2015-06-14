@@ -281,7 +281,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)beginDraggingItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DRAG_TRACE();
-
+    
     UICollectionView *collectionView = self.collectionView;
     UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
 
@@ -328,7 +328,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)cancelDragging
 {
     DRAG_TRACE();
-
+    
     [_currentView removeFromSuperview];
 
     AAPLLayoutSection *sourceSection = [self sectionInfoForSectionAtIndex:_sourceItemIndexPath.section];
@@ -352,7 +352,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)endDragging
 {
     DRAG_TRACE();
-
+    
     [_currentView removeFromSuperview];
 
     AAPLLayoutSection *sourceSection = [self sectionInfoForSectionAtIndex:_sourceItemIndexPath.section];
@@ -1625,14 +1625,14 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 - (void)dataSource:(AAPLDataSource *)dataSource didInsertSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
     [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
-        _updateSectionDirections[@(sectionIndex)] = @(direction);
+        self.updateSectionDirections[@(sectionIndex)] = @(direction);
     }];
 }
 
 - (void)dataSource:(AAPLDataSource *)dataSource didRemoveSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction
 {
     [sections enumerateIndexesUsingBlock:^(NSUInteger sectionIndex, BOOL *stop) {
-        _updateSectionDirections[@(sectionIndex)] = @(direction);
+        self.updateSectionDirections[@(sectionIndex)] = @(direction);
     }];
 }
 

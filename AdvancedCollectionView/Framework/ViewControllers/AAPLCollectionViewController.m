@@ -315,7 +315,7 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
         SEL selector = action.selector;
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:action.title style:action.destructive ? UIAlertActionStyleDestructive : UIAlertActionStyleDefault handler:^(UIAlertAction *blockAlertAction) {
             [cell aapl_sendAction:selector];
-            [_swipeController shutActionPaneForEditingCellAnimated:YES];
+            [self.swipeController shutActionPaneForEditingCellAnimated:YES];
         }];
         [controller addAction:alertAction];
     }

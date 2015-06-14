@@ -11,7 +11,7 @@
 #import "AAPLLayoutMetrics.h"
 #import "AAPLSegmentedHeaderView.h"
 
-NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHeaderKey";
+static NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHeaderKey";
 
 @interface AAPLSegmentedDataSource () <AAPLDataSourceDelegate>
 @property (nonatomic, strong) NSMutableArray *mutableDataSources;
@@ -144,7 +144,7 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
         [self willChangeValueForKey:@"selectedDataSource"];
         [self willChangeValueForKey:@"selectedDataSourceIndex"];
 
-        _selectedDataSource = selectedDataSource;
+        self->_selectedDataSource = selectedDataSource;
 
         [self didChangeValueForKey:@"selectedDataSource"];
         [self didChangeValueForKey:@"selectedDataSourceIndex"];

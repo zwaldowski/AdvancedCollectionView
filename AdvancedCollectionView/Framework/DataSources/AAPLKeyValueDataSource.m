@@ -136,7 +136,7 @@
 
     NSMutableArray *newItems = [NSMutableArray array];
     [items enumerateObjectsUsingBlock:^(AAPLKeyValueItem *item, NSUInteger idx, BOOL *stop) {
-        NSString *value = [item valueForObject:_object];
+        NSString *value = [item valueForObject:self.object];
 
         if (value.length)
             [newItems addObject:item];

@@ -80,7 +80,7 @@
     NSMutableIndexSet *localSections = [[NSMutableIndexSet alloc] init];
 
     [globalSections enumerateIndexesUsingBlock:^(NSUInteger globalSection, BOOL *stop) {
-        NSNumber *localSection = _globalToLocalSections[@(globalSection)];
+        NSNumber *localSection = self.globalToLocalSections[@(globalSection)];
         if (!localSection)
             return;
         [localSections addIndex:localSection.unsignedIntegerValue];
@@ -101,8 +101,8 @@
     NSMutableIndexSet *globalSections = [[NSMutableIndexSet alloc] init];
 
     [localSections enumerateIndexesUsingBlock:^(NSUInteger localSection, BOOL *stop) {
-        NSNumber *globalSection = _localToGlobalSections[@(localSection)];
-        NSAssert(globalSection != nil,@"localSection %ld not found in localToGlobalSections:%@",(long)localSection,_localToGlobalSections);
+        NSNumber *globalSection = self.localToGlobalSections[@(localSection)];
+        NSAssert(globalSection != nil,@"localSection %ld not found in localToGlobalSections: %@", (long)localSection, self.localToGlobalSections);
         [globalSections addIndex:globalSection.unsignedIntegerValue];
     }];
 

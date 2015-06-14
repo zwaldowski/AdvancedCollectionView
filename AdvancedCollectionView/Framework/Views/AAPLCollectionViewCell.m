@@ -920,13 +920,13 @@
     [self applyGradientMaskIfNeeded];
 
     [UIView animateWithDuration:0.5 animations:^{
-        self.topHairline.alpha = _shouldDisplaySwipeToEditAccessories ? 1 : 0;
-        self.bottomHairline.alpha = _shouldDisplaySwipeToEditAccessories ? 1 : 0;
+        self.topHairline.alpha = shouldDisplaySwipeToEditAccessories ? 1 : 0;
+        self.bottomHairline.alpha = shouldDisplaySwipeToEditAccessories ? 1 : 0;
     } completion:^(BOOL finished) {
-        if (!_shouldDisplaySwipeToEditAccessories && showsSeparators) {
-            [self removeConstraints:_hairlineConstraints];
-            [_topHairline removeFromSuperview];
-            [_bottomHairline removeFromSuperview];
+        if (!shouldDisplaySwipeToEditAccessories && showsSeparators) {
+            [self removeConstraints:self.hairlineConstraints];
+            [self.topHairline removeFromSuperview];
+            [self.bottomHairline removeFromSuperview];
         }
     }];
 }
@@ -996,7 +996,7 @@
 
     dispatch_block_t shut = ^{
         self.swipeTranslation = 0;
-        if (_editing && shouldRotate)
+        if (self.editing && shouldRotate)
             [self rotateRemoveControl];
         [self layoutIfNeeded];
     };
@@ -1004,8 +1004,8 @@
     void (^done)(BOOL finished) = ^(BOOL finished) {
         [self hideEditActions];
         [self removeActionsView];
-        _privateContentView.userInteractionEnabled = YES;
-        _editActionsView.userInteractionEnabled = NO;
+        self.privateContentView.userInteractionEnabled = YES;
+        self.editActionsView.userInteractionEnabled = NO;
         self.editActions = nil;
         self.swipeInitialFramePosition = 0;
 
@@ -1052,13 +1052,13 @@
 
         [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:springVelocity options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             self.swipeTranslation = targetTranslation;
-            if (_editing)
+            if (self.editing)
                 [self rotateRemoveControl];
             [self layoutIfNeeded];
         } completion:handler];
     }
     else {
-        if (_editing)
+        if (self.editing)
             [self rotateRemoveControl];
         self.swipeTranslation = self.minimumSwipeTrackingPosition;
         if (handler)
@@ -1117,14 +1117,14 @@
         return;
 
     [UIView animateWithDuration:ANIMATION_DURATION animations:^{
-        _contentWidthConstraint.constant = 0;
-        _contentLeftConstraint.constant = 0;
+        self.contentWidthConstraint.constant = 0;
+        self.contentLeftConstraint.constant = 0;
         [self layoutIfNeeded];
     } completion:^(BOOL finished) {
-        [superContentView removeConstraints:_editingConstraints];
-        _editingConstraints = nil;
-        [_removeImageView removeFromSuperview];
-        [_reorderImageView removeFromSuperview];
+        [superContentView removeConstraints:self.editingConstraints];
+        self.editingConstraints = nil;
+        [self.removeImageView removeFromSuperview];
+        [self.reorderImageView removeFromSuperview];
         [self hideEditActions];
     }];
 }

@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSIndexPath *> *)globalIndexPathsForLocalIndexPaths:(NSArray<NSIndexPath *> *)localIndexPaths;
 
 /// The block argument is called once for each mapped section and passed the global section index.
-- (void)updateMappingStartingAtGlobalSection:(NSInteger)globalSection withBlock:(void(^)(NSInteger globalSection))block;
+- (void)updateMappingStartingAtGlobalSection:(NSInteger)globalSection withBlock:(__attribute__((noescape)) void(^)(NSInteger globalSection))block;
 
 
 - (instancetype)init NS_UNAVAILABLE;

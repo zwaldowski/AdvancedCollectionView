@@ -108,15 +108,17 @@
 
 - (void)setPinned:(BOOL)pinned
 {
-    CGFloat duration = (_pinned == pinned ? 0 : 0.25);
+    BOOL wasPinned = _pinned;
+    
+    _pinned = pinned;
+    
+    CGFloat duration = (wasPinned == pinned ? 0 : 0.25);
 
     [UIView animateWithDuration:duration animations:^{
         if (pinned)
             self.backgroundColor = self.pinnedBackgroundColor;
         else
             self.backgroundColor = self.normalBackgroundColor;
-
-        _pinned = pinned;
 
         UIColor *borderColor = self.pinnedSeparatorColor ?: self.separatorColor;
         self.borderView.backgroundColor = borderColor;

@@ -10,7 +10,6 @@
 #import "AAPLCollectionViewLayout_Private.h"
 
 #define CORNER_RADIUS 3.0
-#define VERTICAL_ELEMENT_SPACING 35.0
 #define CONTINUOUS_CURVES_SIZE_FACTOR (1.528665)
 #define BUTTON_WIDTH 124
 #define BUTTON_HEIGHT 29
@@ -341,15 +340,17 @@
         } completion:^(BOOL finished) {
             [placeholderView removeFromSuperview];
             // If it's still the current placeholder, get rid of it
-            if (placeholderView == _placeholderView)
+            if ([self.placeholderView isEqual:placeholderView]) {
                 self.placeholderView = nil;
+            }
         }];
     }
     else {
         [UIView performWithoutAnimation:^{
             [placeholderView removeFromSuperview];
-            if (_placeholderView == placeholderView)
+            if ([self.placeholderView isEqual:placeholderView]) {
                 self.placeholderView = nil;
+            }
         }];
     }
 }
@@ -362,11 +363,12 @@
         return;
 
     [self showActivityIndicator:NO];
-
-    self.placeholderView = [[AAPLPlaceholderView alloc] initWithFrame:CGRectZero title:title message:message image:image buttonTitle:nil buttonAction:nil];
-    _placeholderView.alpha = 0.0;
-    _placeholderView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:_placeholderView];
+    
+    AAPLPlaceholderView *newPlaceholderView = [[AAPLPlaceholderView alloc] initWithFrame:CGRectZero title:title message:message image:image buttonTitle:nil buttonAction:nil];
+    newPlaceholderView.alpha = 0.0;
+    newPlaceholderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self insertSubview:newPlaceholderView atIndex:0];
+    self.placeholderView = newPlaceholderView;
 
     NSMutableArray *constraints = [NSMutableArray array];
     NSDictionary *views = NSDictionaryOfVariableBindings(_placeholderView);
@@ -375,11 +377,10 @@
     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_placeholderView]|" options:0 metrics:nil views:views]];
 
     [NSLayoutConstraint activateConstraints:constraints];
-    [self sendSubviewToBack:_placeholderView];
 
     if (animated) {
         [UIView animateWithDuration:0.25 animations:^{
-            _placeholderView.alpha = 1.0;
+            newPlaceholderView.alpha = 1.0;
             oldPlaceHolder.alpha = 0.0;
         } completion:^(BOOL finished) {
             [oldPlaceHolder removeFromSuperview];
@@ -387,7 +388,7 @@
     }
     else {
         [UIView performWithoutAnimation:^{
-            _placeholderView.alpha = 1.0;
+            newPlaceholderView.alpha = 1.0;
             oldPlaceHolder.alpha = 0.0;
             [oldPlaceHolder removeFromSuperview];
         }];
