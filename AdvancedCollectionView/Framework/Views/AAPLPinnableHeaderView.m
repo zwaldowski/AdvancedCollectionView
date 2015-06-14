@@ -190,7 +190,7 @@
     if (!attributes.shouldCalculateFittingSize)
         return layoutAttributes;
 
-    [self layoutSubviews];
+    [self layoutIfNeeded];
     CGRect frame = attributes.frame;
 
     CGSize fittingSize = CGSizeMake(frame.size.width, UILayoutFittingCompressedSize.height);
