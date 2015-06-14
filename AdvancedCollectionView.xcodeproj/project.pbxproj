@@ -455,20 +455,10 @@
 		1FA42AED192A828700F673A0 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				1FA42A3F192A7E1200F673A0 /* AAPLAction.h */,
-				1FA42A40192A7E1200F673A0 /* AAPLAction.m */,
-				1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */,
-				1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */,
-				1FE87EEB19D9D2C2009B1726 /* AAPLDebug.h */,
-				1FE87EE919D9D2A3009B1726 /* AAPLDebug.m */,
-				1F1E1C9819F97FDD009D9F64 /* AAPLLocalization.h */,
-				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
-				1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */,
-				1F7C6F501AE8418300B5099F /* AAPLTheme.h */,
-				1F7C6F511AE8418300B5099F /* AAPLTheme.m */,
 				1FA42A46192A7E1200F673A0 /* Categories */,
 				1FA42A57192A7E1200F673A0 /* DataSources */,
 				1FA42A67192A7E1200F673A0 /* Layouts */,
+				DBAF9C5B1B2D0A3500E9AA26 /* Utilities */,
 				1FA42A73192A7E1200F673A0 /* ViewControllers */,
 				1FA42A7D192A7E1200F673A0 /* Views */,
 			);
@@ -513,6 +503,24 @@
 				1FC46A9C19C379FE00A94669 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DBAF9C5B1B2D0A3500E9AA26 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				1FA42A3F192A7E1200F673A0 /* AAPLAction.h */,
+				1FA42A40192A7E1200F673A0 /* AAPLAction.m */,
+				1FA42A41192A7E1200F673A0 /* AAPLContentLoading.h */,
+				1FA42A42192A7E1200F673A0 /* AAPLContentLoading.m */,
+				1FE87EEB19D9D2C2009B1726 /* AAPLDebug.h */,
+				1FE87EE919D9D2A3009B1726 /* AAPLDebug.m */,
+				1F1E1C9819F97FDD009D9F64 /* AAPLLocalization.h */,
+				1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */,
+				1FA42A45192A7E1200F673A0 /* AAPLStateMachine.m */,
+				1F7C6F501AE8418300B5099F /* AAPLTheme.h */,
+				1F7C6F511AE8418300B5099F /* AAPLTheme.m */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
