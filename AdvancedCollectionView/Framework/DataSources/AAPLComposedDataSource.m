@@ -379,24 +379,26 @@
 
     if (header) {
         NSInteger numberOfHeaders = [self numberOfHeadersInSectionAtIndex:sectionIndex includeChildDataSouces:NO];
-        if (itemIndex < numberOfHeaders)
-            return [super findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+        if (itemIndex < numberOfHeaders) {
+            [super findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+            return;
+        }
 
         itemIndex -= numberOfHeaders;
 
         NSIndexPath *localIndexPath = [NSIndexPath indexPathForItem:itemIndex inSection:localSection];
-        return [dataSource findSupplementaryItemForHeader:header indexPath:localIndexPath usingBlock:block];
-    }
-    else {
+        [dataSource findSupplementaryItemForHeader:header indexPath:localIndexPath usingBlock:block];
+    } else {
         NSInteger numberOfFooters = [dataSource numberOfFootersInSectionAtIndex:sectionIndex includeChildDataSouces:YES];
         if (itemIndex < numberOfFooters){
             NSIndexPath *localIndexPath = [NSIndexPath indexPathForItem:itemIndex inSection:localSection];
-            return [dataSource findSupplementaryItemForHeader:header indexPath:localIndexPath usingBlock:block];
+            [dataSource findSupplementaryItemForHeader:header indexPath:localIndexPath usingBlock:block];
+            return;
         }
 
         itemIndex -= numberOfFooters;
         NSIndexPath *selfIndexPath = globalSection ? [NSIndexPath indexPathWithIndex:itemIndex] : [NSIndexPath indexPathForItem:itemIndex inSection:localSection];
-        return [super findSupplementaryItemForHeader:header indexPath:selfIndexPath usingBlock:block];
+        [super findSupplementaryItemForHeader:header indexPath:selfIndexPath usingBlock:block];
     }
 }
 

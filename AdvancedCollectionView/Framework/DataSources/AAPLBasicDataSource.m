@@ -142,7 +142,7 @@
 
 - (void)getItems:(__unsafe_unretained id *)buffer range:(NSRange)range
 {
-    return [_items getObjects:buffer range:range];
+    [_items getObjects:buffer range:range];
 }
 
 - (void)insertItems:(NSArray *)array atIndexes:(NSIndexSet *)indexes

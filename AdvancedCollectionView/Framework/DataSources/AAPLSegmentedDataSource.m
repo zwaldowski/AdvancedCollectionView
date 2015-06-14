@@ -331,8 +331,10 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
 
     if (header) {
         NSInteger numberOfHeaders = [self numberOfHeadersInSectionAtIndex:sectionIndex includeChildDataSouces:NO];
-        if (itemIndex < numberOfHeaders)
-            return [super findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+        if (itemIndex < numberOfHeaders) {
+            [super findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+            return;
+        }
 
         itemIndex -= numberOfHeaders;
         NSIndexPath *childIndexPath = globalSection ? [NSIndexPath indexPathWithIndex:itemIndex] : [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];
@@ -340,8 +342,10 @@ NSString * const AAPLSegmentedDataSourceHeaderKey = @"AAPLSegmentedDataSourceHea
     }
     else {
         NSInteger numberOfFooters = [_selectedDataSource numberOfFootersInSectionAtIndex:sectionIndex includeChildDataSouces:YES];
-        if (itemIndex < numberOfFooters)
-            return [_selectedDataSource findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+        if (itemIndex < numberOfFooters) {
+            [_selectedDataSource findSupplementaryItemForHeader:header indexPath:indexPath usingBlock:block];
+            return;
+        }
 
         itemIndex -= numberOfFooters;
         NSIndexPath *selfIndexPath = globalSection ? [NSIndexPath indexPathWithIndex:itemIndex] : [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex];

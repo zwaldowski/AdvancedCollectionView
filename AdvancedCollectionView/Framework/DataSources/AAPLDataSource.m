@@ -566,14 +566,17 @@ static void *AAPLPerformUpdateQueueSpecificKey = "AAPLPerformUpdateQueueSpecific
 
     if (header) {
         if (AAPLGlobalSectionIndex == sectionIndex && rootDataSource) {
-            if (itemIndex < (NSInteger)_headers.count)
+            if (itemIndex < (NSInteger)_headers.count) {
                 block(self, indexPath, _headers[itemIndex]);
+            }
             return;
         }
 
         if (0 == sectionIndex && !rootDataSource) {
-            if (itemIndex < (NSInteger)_headers.count)
-                return block(self, indexPath, _headers[itemIndex]);
+            if (itemIndex < (NSInteger)_headers.count) {
+                block(self, indexPath, _headers[itemIndex]);
+                return;
+            }
 
             // need to allow for the headers that were added from the "global" data source headers.
             itemIndex -= _headers.count;
@@ -581,27 +584,35 @@ static void *AAPLPerformUpdateQueueSpecificKey = "AAPLPerformUpdateQueueSpecific
 
         // check for headers in the default metrics
         AAPLDataSourceSectionMetrics *defaultMetrics = (AAPLDataSourceSectionMetrics *)self.defaultMetrics;
-        if (itemIndex < (NSInteger)defaultMetrics.headers.count)
-            return block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], defaultMetrics.headers[itemIndex]);
+        if (itemIndex < (NSInteger)defaultMetrics.headers.count) {
+            block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], defaultMetrics.headers[itemIndex]);
+            return;
+        }
 
         itemIndex -= defaultMetrics.headers.count;
 
         AAPLDataSourceSectionMetrics *sectionMetrics = _sectionMetrics[@(sectionIndex)];
-        if (itemIndex < (NSInteger)sectionMetrics.headers.count)
-            return block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], sectionMetrics.headers[itemIndex]);
+        if (itemIndex < (NSInteger)sectionMetrics.headers.count) {
+            block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], sectionMetrics.headers[itemIndex]);
+            return;
+        }
     }
     else {
         // check for footers in the default metrics
         AAPLDataSourceSectionMetrics *defaultMetrics = (AAPLDataSourceSectionMetrics *)self.defaultMetrics;
-        if (itemIndex < (NSInteger)defaultMetrics.footers.count)
-            return block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], defaultMetrics.footers[itemIndex]);
+        if (itemIndex < (NSInteger)defaultMetrics.footers.count) {
+            block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], defaultMetrics.footers[itemIndex]);
+            return;
+        }
 
         itemIndex -= defaultMetrics.footers.count;
 
         // There's no equivalent to the headers by key (yet)
         AAPLDataSourceSectionMetrics *sectionMetrics = _sectionMetrics[@(sectionIndex)];
-        if (itemIndex < (NSInteger)sectionMetrics.footers.count)
-            return block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], sectionMetrics.footers[itemIndex]);
+        if (itemIndex < (NSInteger)sectionMetrics.footers.count) {
+            block(self, [NSIndexPath indexPathForItem:itemIndex inSection:sectionIndex], sectionMetrics.footers[itemIndex]);
+            return;
+        }
 
     }
 }
