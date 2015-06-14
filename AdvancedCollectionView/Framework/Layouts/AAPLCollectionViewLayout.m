@@ -15,6 +15,7 @@
 #import "AAPLShadowRegistrar.h"
 #import "AAPLDataSourceMapping.h"
 #import "AAPLMath.h"
+#import "AAPLMacros.h"
 
 #define LAYOUT_DEBUGGING 0
 #define LAYOUT_LOGGING 0
@@ -78,9 +79,10 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 @end
 
 @implementation AAPLCollectionViewSeparatorView
-- (void)applyLayoutAttributes:(AAPLCollectionViewLayoutAttributes *)layoutAttributes
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)originalAttributes
 {
-    NSAssert([layoutAttributes isKindOfClass:[AAPLCollectionViewLayoutAttributes class]], @"layout attributes not an instance of AAPLCollectionViewLayoutAttributes");
+    AAPLCollectionViewLayoutAttributes *layoutAttributes = AAPL_FORCE_DOWNCAST(originalAttributes, AAPLCollectionViewLayoutAttributes);
+    
     self.backgroundColor = layoutAttributes.backgroundColor;
 }
 @end
@@ -642,9 +644,9 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     return [AAPLCollectionViewLayoutInvalidationContext class];
 }
 
-- (void)invalidateLayoutWithContext:(AAPLCollectionViewLayoutInvalidationContext *)context
+- (void)invalidateLayoutWithContext:(UICollectionViewLayoutInvalidationContext *)originalContext
 {
-    NSParameterAssert([context isKindOfClass:[AAPLCollectionViewLayoutInvalidationContext class]]);
+    AAPLCollectionViewLayoutInvalidationContext *context = AAPL_FORCE_DOWNCAST(originalContext, AAPLCollectionViewLayoutInvalidationContext);
 
     BOOL invalidateDataSourceCounts = context.invalidateDataSourceCounts;
     BOOL invalidateEverything = context.invalidateEverything;

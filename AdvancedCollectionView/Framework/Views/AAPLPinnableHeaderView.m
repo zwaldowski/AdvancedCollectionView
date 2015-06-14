@@ -10,6 +10,7 @@
 #import "AAPLCollectionViewLayout_Private.h"
 #import "AAPLHairlineView.h"
 #import "AAPLTheme.h"
+#import "AAPLMacros.h"
 
 @interface AAPLPinnableHeaderView ()
 @property (nonatomic, getter = isPinned, readwrite) BOOL pinned;
@@ -122,10 +123,9 @@
     }];
 }
 
-- (void)applyLayoutAttributes:(AAPLCollectionViewLayoutAttributes *)layoutAttributes
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)originalAttributes
 {
-    if (![layoutAttributes isKindOfClass:[AAPLCollectionViewLayoutAttributes class]])
-        return;
+    AAPLCollectionViewLayoutAttributes *layoutAttributes = AAPL_FORCE_DOWNCAST(originalAttributes, AAPLCollectionViewLayoutAttributes);
 
     self.hidden = layoutAttributes.hidden;
     self.userInteractionEnabled = !layoutAttributes.editing;

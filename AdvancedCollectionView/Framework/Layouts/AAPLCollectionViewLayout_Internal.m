@@ -12,6 +12,7 @@
 #import "UICollectionView+SupplementaryViews.h"
 #import "AAPLLayoutMetrics_Private.h"
 #import "AAPLMath.h"
+#import "AAPLMacros.h"
 
 static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationContext *invalidationContext, UICollectionViewLayoutAttributes *attributes)
 {
@@ -797,7 +798,7 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
     }
 }
 
-- (void)setFrame:(CGRect)frame invalidationContext:(UICollectionViewFlowLayoutInvalidationContext *)invalidationContext
+- (void)setFrame:(CGRect)frame invalidationContext:(UICollectionViewLayoutInvalidationContext *)invalidationContext
 {
     if (CGRectEqualToRect(frame, _frame))
         return;

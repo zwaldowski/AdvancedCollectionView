@@ -264,6 +264,7 @@
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DBAF9C5C1B2D138700E9AA26 /* Launch Screen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		DBB445671B2E2BAA001D5FEF /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
+		DBB445681B2E31F0001D5FEF /* AAPLMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -520,6 +521,7 @@
 				1F7C6F501AE8418300B5099F /* AAPLTheme.h */,
 				1F7C6F511AE8418300B5099F /* AAPLTheme.m */,
 				DBB445671B2E2BAA001D5FEF /* AAPLMath.h */,
+				DBB445681B2E31F0001D5FEF /* AAPLMacros.h */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
