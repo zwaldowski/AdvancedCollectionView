@@ -160,7 +160,7 @@
 		1F7C6F5A1AE841A300B5099F /* AAPLDataSourceMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLDataSourceMetrics.m; sourceTree = "<group>"; };
 		1F7C6F5E1AE841BF00B5099F /* AAPLLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLLabel.h; sourceTree = "<group>"; };
 		1F7C6F5F1AE841BF00B5099F /* AAPLLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLLabel.m; sourceTree = "<group>"; };
-		1FA42969192A798300F673A0 /* AdvancedCollectionView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdvancedCollectionView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FA42969192A798300F673A0 /* Adv. CV Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Adv. CV Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FA4296D192A798300F673A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FA4296E192A798300F673A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FA42970192A798300F673A0 /* AAPLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AAPLAppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -298,7 +298,7 @@
 		1FA4296A192A798300F673A0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1FA42969192A798300F673A0 /* AdvancedCollectionView.app */,
+				1FA42969192A798300F673A0 /* Adv. CV Demo.app */,
 				1FC46A9919C379FE00A94669 /* DataSourceTests.xctest */,
 			);
 			name = Products;
@@ -590,9 +590,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1FA42968192A798300F673A0 /* AdvancedCollectionView */ = {
+		1FA42968192A798300F673A0 /* Demo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1FA4298E192A798300F673A0 /* Build configuration list for PBXNativeTarget "AdvancedCollectionView" */;
+			buildConfigurationList = 1FA4298E192A798300F673A0 /* Build configuration list for PBXNativeTarget "Demo" */;
 			buildPhases = (
 				1FA42964192A798300F673A0 /* Sources */,
 				1FA42965192A798300F673A0 /* Frameworks */,
@@ -603,9 +603,9 @@
 			);
 			dependencies = (
 			);
-			name = AdvancedCollectionView;
+			name = Demo;
 			productName = AdvancedCollectionView;
-			productReference = 1FA42969192A798300F673A0 /* AdvancedCollectionView.app */;
+			productReference = 1FA42969192A798300F673A0 /* Adv. CV Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		1FC46A9819C379FE00A94669 /* DataSourceTests */ = {
@@ -655,7 +655,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1FA42968192A798300F673A0 /* AdvancedCollectionView */,
+				1FA42968192A798300F673A0 /* Demo */,
 				1FC46A9819C379FE00A94669 /* DataSourceTests */,
 			);
 		};
@@ -762,12 +762,12 @@
 /* Begin PBXTargetDependency section */
 		1FC46AA019C379FE00A94669 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1FA42968192A798300F673A0 /* AdvancedCollectionView */;
+			target = 1FA42968192A798300F673A0 /* Demo */;
 			targetProxy = 1FC46A9F19C379FE00A94669 /* PBXContainerItemProxy */;
 		};
 		1FC46AA519C3859A00A94669 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1FA42968192A798300F673A0 /* AdvancedCollectionView */;
+			target = 1FA42968192A798300F673A0 /* Demo */;
 			targetProxy = 1FC46AA419C3859A00A94669 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -839,6 +839,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wextra",
@@ -847,9 +850,6 @@
 					"-Wno-unused-parameter",
 					"-Wno-float-equal",
 				);
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -901,6 +901,10 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wextra",
@@ -909,10 +913,6 @@
 					"-Wno-unused-parameter",
 					"-Wno-float-equal",
 				);
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -927,7 +927,7 @@
 				INFOPLIST_FILE = AdvancedCollectionView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Adv. CV Demo";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -944,7 +944,7 @@
 				INFOPLIST_FILE = AdvancedCollectionView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Adv. CV Demo";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1000,7 +1000,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1FA4298E192A798300F673A0 /* Build configuration list for PBXNativeTarget "AdvancedCollectionView" */ = {
+		1FA4298E192A798300F673A0 /* Build configuration list for PBXNativeTarget "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1FA4298F192A798300F673A0 /* Debug */,
