@@ -35,7 +35,7 @@
     [self.dataSource addDataSource:self.detailDataSource];
     [self.dataSource addDataSource:self.sightingsDataSource];
 
-    __weak typeof(&*self) weakself = self;
+    __weak __typeof(self) weakself = self;
 
     AAPLSupplementaryItem *globalHeader = [self.dataSource newHeaderForKey:@"globalHeader"];
     globalHeader.visibleWhileShowingPlaceholder = YES;

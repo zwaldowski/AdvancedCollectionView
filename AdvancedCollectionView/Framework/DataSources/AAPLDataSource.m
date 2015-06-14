@@ -252,7 +252,7 @@ static void *AAPLPerformUpdateQueueSpecificKey = "AAPLPerformUpdateQueueSpecific
 
     [self notifyWillLoadContent];
 
-    __weak typeof(&*self) weakself = self;
+    __weak __typeof(self) weakself = self;
 
     AAPLLoadingProgress *loadingProgress = [AAPLLoadingProgress loadingProgressWithCompletionHandler:^(NSString *newState, NSError *error, AAPLLoadingUpdateBlock update){
         // The only time newState will be nil is if the progress was cancelled.
@@ -911,7 +911,7 @@ BOOL AAPLInDataSourceUpdate(AAPLDataSource *dataSource)
 
     // If this data source is loading, wait until we're done before we execute the update
     if ([self.loadingState isEqualToString:AAPLLoadStateLoadingContent]) {
-        __weak typeof(&*self) weakself = self;
+        __weak __typeof(self) weakself = self;
         [self enqueueUpdateBlock:^{
             [weakself performUpdate:block complete:completionHandler];
         }];
