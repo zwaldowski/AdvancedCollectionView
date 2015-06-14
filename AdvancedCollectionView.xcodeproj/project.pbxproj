@@ -120,7 +120,6 @@
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
 		1FE87EEA19D9D2A3009B1726 /* AAPLDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE87EE919D9D2A3009B1726 /* AAPLDebug.m */; };
 		1FE87EEC19D9D2C2009B1726 /* AAPLDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE87EEB19D9D2C2009B1726 /* AAPLDebug.h */; };
-		1FE9BAE81A033B320066A297 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FE9BAE71A033B320066A297 /* Launch Screen.xib */; };
 		1FF110911B0B983A00D3A269 /* AAPLShadowRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FF1108F1B0B983A00D3A269 /* AAPLShadowRegistrar.h */; };
 		1FF110921B0B983A00D3A269 /* AAPLShadowRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF110901B0B983A00D3A269 /* AAPLShadowRegistrar.m */; };
 /* End PBXBuildFile section */
@@ -260,10 +259,10 @@
 		1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCatSightingCell.m; sourceTree = "<group>"; };
 		1FE87EE919D9D2A3009B1726 /* AAPLDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AAPLDebug.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1FE87EEB19D9D2C2009B1726 /* AAPLDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLDebug.h; sourceTree = "<group>"; };
-		1FE9BAE71A033B320066A297 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		1FF1108F1B0B983A00D3A269 /* AAPLShadowRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLShadowRegistrar.h; sourceTree = "<group>"; };
 		1FF110901B0B983A00D3A269 /* AAPLShadowRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLShadowRegistrar.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DBAF9C5C1B2D138700E9AA26 /* Launch Screen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -444,7 +443,7 @@
 				1FA42970192A798300F673A0 /* AAPLAppDelegate.h */,
 				1FA42972192A798300F673A0 /* AAPLAppDelegate.m */,
 				1FA4297E192A798300F673A0 /* Images.xcassets */,
-				1FE9BAE71A033B320066A297 /* Launch Screen.xib */,
+				DBAF9C5C1B2D138700E9AA26 /* Launch Screen.xib */,
 				1FA42AFB192A937400F673A0 /* Main.storyboard */,
 				1FA42AFA192A91D800F673A0 /* Resources */,
 				1FA4296C192A798300F673A0 /* Supporting Files */,
@@ -671,7 +670,6 @@
 				1FE17BF4192E8BC900620DC3 /* detail-oncilla.json in Resources */,
 				1FE17BE9192E8BC900620DC3 /* detail-bobcat.json in Resources */,
 				1FE17BEE192E8BC900620DC3 /* detail-leopard.json in Resources */,
-				1FE9BAE81A033B320066A297 /* Launch Screen.xib in Resources */,
 				1FE17BF5192E8BC900620DC3 /* detail-serval.json in Resources */,
 				1FA42AFF192A93C800F673A0 /* CatList.json in Resources */,
 				1FE17BF7192E8BC900620DC3 /* detail-tiger.json in Resources */,
