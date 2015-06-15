@@ -11,11 +11,6 @@
 
 #import "AAPLDataAccessManager.h"
 
-#import "AAPLBasicCell.h"
-
-#import "AAPLAction.h"
-#import "AAPLCollectionViewController.h"
-
 @interface AAPLCatListDataSource ()
 @end
 

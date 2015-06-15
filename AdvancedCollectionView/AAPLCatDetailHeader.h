@@ -6,7 +6,7 @@
  The header view shown in the cat detail screen. This view shows the name of the cat, its conservation status, and the favorite flag.
  */
 
-#import "AAPLPinnableHeaderView.h"
+@import AdvancedCollectionView;
 
 @class AAPLCat;
 

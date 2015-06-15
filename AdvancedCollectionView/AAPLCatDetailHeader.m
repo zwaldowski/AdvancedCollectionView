@@ -9,9 +9,6 @@
 #import "AAPLCatDetailHeader.h"
 #import "AAPLCat.h"
 
-#import "UIView+Helpers.h"
-#import "AAPLMath.h"
-
 @interface NSObject ()
 - (void)toggleFavorite:(id)sender;
 @end

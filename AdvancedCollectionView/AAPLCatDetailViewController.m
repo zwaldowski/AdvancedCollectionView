@@ -9,7 +9,6 @@
 @import UIKit;
 
 #import "AAPLCatDetailViewController.h"
-#import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailDataSource.h"
 #import "AAPLCatSightingsDataSource.h"
 

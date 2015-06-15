@@ -10,7 +10,6 @@
 
 #import "AAPLCatListViewController.h"
 #import "AAPLCatListDataSource.h"
-#import "AAPLSegmentedDataSource.h"
 #import "AAPLCatDetailViewController.h"
 
 static void * const AAPLCatListSelectedDataSourceContext = "AAPLCatListSelectedDataSourceContext";

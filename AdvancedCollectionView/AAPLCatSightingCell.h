@@ -6,7 +6,7 @@
  A subclass of AAPLCollectionViewCell that displays an AAPLCatSighting instance.
  */
 
-#import "AAPLCollectionViewCell.h"
+@import AdvancedCollectionView;
 
 @class AAPLCatSighting;
 

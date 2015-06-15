@@ -6,7 +6,7 @@
  Have a cat? Want to know more about it? This view controller will display the details and sightings for a given AAPLCat instance.
  */
 
-#import "AAPLCollectionViewController.h"
+@import AdvancedCollectionView;
 #import "AAPLCat.h"
 
 @interface AAPLCatDetailViewController : AAPLCollectionViewController

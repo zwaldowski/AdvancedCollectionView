@@ -6,7 +6,7 @@
  A basic data source for the sightings of a particular cat. When initialised with a cat, this data source will fetch the cat sightings.
  */
 
-#import "AAPLBasicDataSource.h"
+@import AdvancedCollectionView;
 
 @class AAPLCat, AAPLCatSighting;
 

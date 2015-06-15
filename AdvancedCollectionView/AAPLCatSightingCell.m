@@ -8,7 +8,6 @@
 
 #import "AAPLCatSightingCell.h"
 #import "AAPLCatSighting.h"
-#import "AAPLTheme.h"
 
 @interface AAPLCatSightingCell ()
 @property (nonatomic, strong) UILabel *dateLabel;
