@@ -56,7 +56,7 @@
 
     dataSource.noContentPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"No Cat", @"The title of the placeholder to show if the cat has no data") message:NSLocalizedString(@"This cat has no information.", @"The message to show when the cat has no information") image:nil];
 
-#pragma diagnostic push
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     NSString *errorMessage = NSLocalizedString(@"A network problem occurred loading details for “%@”.", @"Error message to show when unable to load cat details.");
     dataSource.errorPlaceholder = [AAPLDataSourcePlaceholder placeholderWithTitle:NSLocalizedString(@"Unable to Load", @"Error message title to show when unable to load cat details") message:[NSString localizedStringWithFormat:errorMessage, self.cat.name] image:nil];
