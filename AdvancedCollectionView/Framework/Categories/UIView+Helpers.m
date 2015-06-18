@@ -7,23 +7,24 @@
  */
 
 #import "UIView+Helpers.h"
+@import ObjectiveC.message;
 
 @implementation UIView (Helpers)
 
 - (BOOL)aapl_sendAction:(SEL)action
 {
     // Get the target in the responder chain
-    id sender = self;
-    id target = sender;
-
-    while (target && ![target canPerformAction:action withSender:sender]) {
-        target = [target nextResponder];
-    }
-
-    if (!target)
+    id target = [self targetForAction:action withSender:self];
+    
+    if (target == nil)
         return NO;
-
-    return [[UIApplication sharedApplication] sendAction:action to:target from:sender forEvent:nil];
+    
+    // Handle the 2-param recieveCallback(sender:event:) format.
+    typedef void(*SendEvent)(id, SEL, id, id);
+    SendEvent send = (SendEvent)objc_msgSend;
+    send(target, action, self, nil);
+    
+    return YES;
 }
 
 @end
