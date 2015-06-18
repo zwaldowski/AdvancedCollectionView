@@ -33,6 +33,40 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
     }
 }
 
+@interface UIView (iOS9)
++ (UIUserInterfaceLayoutDirection)userInterfaceLayoutDirectionForSemanticContentAttribute:(NSInteger)attribute NS_AVAILABLE_IOS(9_0);
+@end
+
+// extension-safe
+static UIUserInterfaceLayoutDirection AAPLUserInterfaceLayoutDirection(void) {
+    static dispatch_once_t onceToken;
+    static BOOL newAPI = NO;
+    dispatch_once(&onceToken, ^{
+        newAPI = [UIView respondsToSelector:@selector(userInterfaceLayoutDirectionForSemanticContentAttribute:)];
+    });
+    
+    if (newAPI) {
+        return [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:0];
+    } else {
+        NSWritingDirection direction = [NSParagraphStyle defaultWritingDirectionForLanguage:nil];
+        switch (direction) {
+            case NSWritingDirectionLeftToRight:
+                return UIUserInterfaceLayoutDirectionLeftToRight;
+            case NSWritingDirectionRightToLeft:
+                return UIUserInterfaceLayoutDirectionRightToLeft;
+            case NSWritingDirectionNatural: {
+                NSString *localization = NSBundle.mainBundle.preferredLocalizations.firstObject;
+                if (localization == nil) {
+                    return UIUserInterfaceLayoutDirectionLeftToRight;
+                } else {
+                    return [NSLocale characterDirectionForLanguage:localization] == NSLocaleLanguageDirectionRightToLeft ? UIUserInterfaceLayoutDirectionRightToLeft : UIUserInterfaceLayoutDirectionLeftToRight;
+                }
+            }
+        }
+    }
+    return UIUserInterfaceLayoutDirectionLeftToRight;
+}
+
 
 @implementation AAPLCollectionViewLayoutInvalidationContext
 @end
@@ -962,6 +996,7 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
     return deltaH;
 }
 
+
 - (CGFloat)layoutWithOrigin:(CGFloat)start invalidationContext:(UICollectionViewLayoutInvalidationContext *)invalidationContext
 {
     AAPLLayoutInfo *layoutInfo = self.layoutInfo;
@@ -1054,19 +1089,33 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
 
         // Make certain the first row has a back pointer to this section
         row.section = self;
+        
+        BOOL leftToRight;
+        switch (self.cellLayoutOrder) {
+            case AAPLCellLayoutOrderLeadingToTrailing:
+                leftToRight = AAPLUserInterfaceLayoutDirection() == UIUserInterfaceLayoutDirectionLeftToRight;
+                break;
+            case AAPLCellLayoutOrderTrailingToLeading:
+                leftToRight = AAPLUserInterfaceLayoutDirection() == UIUserInterfaceLayoutDirectionRightToLeft;
+                break;
+            case AAPLCellLayoutOrderLeftToRight:
+                leftToRight = YES;
+                break;
+            case AAPLCellLayoutOrderRightToLeft:
+                leftToRight = NO;
+                break;
+        }
 
         // Advance to the next column and if necessary the next row. Takes into account the phantom cell index.
         void (^nextColumn)() = ^{
-            if (rowHeight < height)
+            if (rowHeight < height) {
                 rowHeight = height;
-
-            switch (self.cellLayoutOrder) {
-                case AAPLCellLayoutOrderLeftToRight:
-                    originX += columnWidth;
-                    break;
-                case AAPLCellLayoutOrderRightToLeft:
-                    originX -= columnWidth;
-                    break;
+            }
+            
+            if (leftToRight) {
+                originX += columnWidth;
+            } else {
+                originX -= columnWidth;
             }
 
             ++columnIndex;
@@ -1080,14 +1129,11 @@ static void AAPLInvalidateLayoutAttributes(UICollectionViewLayoutInvalidationCon
                 originY += rowHeight;
                 rowHeight = 0;
                 columnIndex = 0;
-
-                switch (self.cellLayoutOrder) {
-                    case AAPLCellLayoutOrderLeftToRight:
-                        originX = margins.left;
-                        break;
-                    case AAPLCellLayoutOrderRightToLeft:
-                        originX = width - margins.right - columnWidth;
-                        break;
+                
+                if (leftToRight) {
+                    originX = margins.left;
+                } else {
+                    originX = width - margins.right - columnWidth;
                 }
 
                 // only create a new row if there were items in the previous row.

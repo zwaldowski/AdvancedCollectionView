@@ -25,6 +25,8 @@ extern NSInteger const AAPLGlobalSectionIndex;
 typedef NS_ENUM(NSInteger, AAPLCellLayoutOrder) {
     AAPLCellLayoutOrderLeftToRight,
     AAPLCellLayoutOrderRightToLeft,
+    AAPLCellLayoutOrderLeadingToTrailing,
+    AAPLCellLayoutOrderTrailingToLeading,
 } ;
 
 @class AAPLDataSource;
