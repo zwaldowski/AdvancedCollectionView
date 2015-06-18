@@ -7,6 +7,7 @@
  */
 
 @import UIKit;
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +33,7 @@ typedef NS_ENUM(NSInteger, AAPLCellLayoutOrder) {
 @class AAPLDataSource;
 @class AAPLTheme;
 
-typedef void (^AAPLSupplementaryItemConfigurationBlock)(__kindof UICollectionReusableView *view, __kindof AAPLDataSource *dataSource, NSIndexPath *indexPath);
+typedef void (^AAPLSupplementaryItemConfigurationBlock)(AAPLKindOf(UICollectionReusableView *) view, AAPLKindOf(AAPLDataSource *) dataSource, NSIndexPath *indexPath);
 
 /// Definition of how supplementary views should be created and presented in a collection view.
 @interface AAPLSupplementaryItem : NSObject <NSCopying>

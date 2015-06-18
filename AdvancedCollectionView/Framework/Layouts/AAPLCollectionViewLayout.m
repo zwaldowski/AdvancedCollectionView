@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
 /// The attributes being currently measured. This allows short-circuiting the lookup in several API methods.
 @property (nonatomic, strong) AAPLCollectionViewLayoutAttributes *measuringAttributes;
 /// The collection view wrapper used while measuring views.
-@property (nonatomic, strong) __kindof UIView *collectionViewWrapper;
+@property (nonatomic, strong) AAPLKindOf(UIView *) collectionViewWrapper;
 #endif
 
 @end
@@ -1246,7 +1246,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     return [_layoutInfo sectionAtIndex:sectionIndex];
 }
 
-- (NSDictionary<NSNumber *, AAPLDataSourceSectionMetrics *> *)snapshotMetrics
+- (AAPLGeneric(NSDictionary, NSNumber *, AAPLDataSourceSectionMetrics *) *)snapshotMetrics
 {
     if (!_flags.dataSourceHasSnapshotMetrics)
         return nil;
@@ -1265,7 +1265,7 @@ typedef NS_ENUM(NSInteger, AAPLAutoScrollDirection) {
     [self resetLayoutInfo];
 
     UICollectionView *collectionView = self.collectionView;
-    NSDictionary<NSNumber *, AAPLDataSourceSectionMetrics *> *layoutMetrics = [self snapshotMetrics];
+    AAPLGeneric(NSDictionary, NSNumber *, AAPLDataSourceSectionMetrics *) *layoutMetrics = [self snapshotMetrics];
 
     UIEdgeInsets contentInset = collectionView.contentInset;
     CGFloat width = CGRectGetWidth(collectionView.bounds) - contentInset.left - contentInset.right;

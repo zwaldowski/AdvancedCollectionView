@@ -98,7 +98,7 @@
     }
 }
 
-- (void)fetchCatListWithCompletionHandler:(void(^)(NSArray<AAPLCat *> *cats, NSError *error))handler
+- (void)fetchCatListWithCompletionHandler:(void(^)(AAPLGeneric(NSArray, AAPLCat *) *cats, NSError *error))handler
 {
     [self fetchJSONResourceWithName:@"CatList" completionHandler:^(NSDictionary *json, NSError *error) {
         if (error) {
@@ -133,7 +133,7 @@
     }];
 }
 
-- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(NSArray<AAPLCat *> *cats, NSError *error))handler
+- (void)fetchFavoriteCatListWithCompletionHandler:(void(^)(AAPLGeneric(NSArray, AAPLCat *) *cats, NSError *error))handler
 {
     if (handler) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -169,7 +169,7 @@
     }];
 }
 
-- (void)fetchSightingsForCat:(AAPLCat *)cat completionHandler:(void (^)(NSArray<AAPLCatSighting *> *, NSError *))handler
+- (void)fetchSightingsForCat:(AAPLCat *)cat completionHandler:(void (^)(AAPLGeneric(NSArray, AAPLCatSighting *) *, NSError *))handler
 {
     NSParameterAssert(cat != nil);
 

@@ -114,7 +114,7 @@
 		DBB445C71B2E4A69001D5FEF /* AAPLStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A44192A7E1200F673A0 /* AAPLStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445C81B2E4A69001D5FEF /* AAPLTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F7C6F501AE8418300B5099F /* AAPLTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445C91B2E4A69001D5FEF /* AAPLMath.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB445671B2E2BAA001D5FEF /* AAPLMath.h */; };
-		DBB445CA1B2E4A69001D5FEF /* AAPLMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB445681B2E31F0001D5FEF /* AAPLMacros.h */; };
+		DBB445CA1B2E4A69001D5FEF /* AAPLMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB445681B2E31F0001D5FEF /* AAPLMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445CB1B2E4A6D001D5FEF /* AAPLCollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A76192A7E1200F673A0 /* AAPLCollectionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445CC1B2E4A6D001D5FEF /* AAPLSwipeToEditController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A7B192A7E1200F673A0 /* AAPLSwipeToEditController.h */; };
 		DBB445CD1B2E4A73001D5FEF /* AAPLBasicCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA42A80192A7E1200F673A0 /* AAPLBasicCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -886,7 +886,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				AXLE_ENABLE_DEBUG_INFO = YES;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -913,6 +912,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.0;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -948,6 +948,7 @@
 					"-Wunreachable-code",
 					"-Wno-unused-parameter",
 					"-Wno-float-equal",
+					"-Wno-documentation",
 				);
 			};
 			name = Debug;
@@ -956,7 +957,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				AXLE_ENABLE_DEBUG_INFO = NO;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1012,6 +1012,7 @@
 					"-Wunreachable-code",
 					"-Wno-unused-parameter",
 					"-Wno-float-equal",
+					"-Wno-documentation",
 				);
 			};
 			name = Release;
@@ -1069,7 +1070,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.developer.AdvancedCollectionView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1095,7 +1095,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.developer.AdvancedCollectionView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

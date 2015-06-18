@@ -106,7 +106,7 @@
 
     AAPLCollectionViewCell *cell = self.cell;
     AAPLTheme *theme = cell.theme;
-    NSArray<UIColor *> *alternateColors = theme.alternateActionColors;
+    AAPLGeneric(NSArray, UIColor *) *alternateColors = theme.alternateActionColors;
 
     __block CGFloat maxButtonWidth = 0;
     // alternateColorIndex needs to start at the last, because we go backwards with our views

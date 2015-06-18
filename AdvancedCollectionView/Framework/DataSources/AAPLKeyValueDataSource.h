@@ -7,6 +7,7 @@
  */
 
 #import "AAPLBasicDataSource.h"
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -79,13 +80,13 @@ typedef NS_ENUM(NSInteger, AAPLKeyValueItemType) {
 
  This data source filters its items based on whether the `AAPLKeyValueItem` returns a value from `-valueForObject:`. Items that return nil from `-valueForObject:` will not be presented in the final list of items, however, if the object is changed, the original list of items will be reevaluated. **Note**, the data source does not observe changes to the key paths represented by the items. Therefore, a manual refresh is necessary.
  */
-@interface AAPLKeyValueDataSource<SourceType : id> : AAPLBasicDataSource<AAPLKeyValueItem *>
+@interface AAPLGeneric(AAPLKeyValueDataSource, SourceType) : AAPLGeneric(AAPLBasicDataSource, AAPLKeyValueItem *)
 
 /// Initialise an AAPLKeyValueDataSource with an object which will be used as the source for values for AAPLKeyValueItem instances.
-- (instancetype)initWithObject:(nullable SourceType)object NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithObject:(nullable AAPLGenericType(SourceType))object NS_DESIGNATED_INITIALIZER;
 
 /// The object used to resolve the key paths of AAPLKeyValueItem instances in this data source. Modifying this value will refresh the data source.
-@property (nullable, nonatomic, strong) SourceType object;
+@property (nullable, nonatomic, strong) AAPLGenericType(SourceType) object;
 
 /// The width of the title column. This will be passed to the `AAPLKeyValueCell` instances to allow the title column for all cells to have the same width. THIS IS A SHAMEFUL HACK!
 @property (nonatomic) CGFloat titleColumnWidth;

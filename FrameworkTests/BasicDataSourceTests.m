@@ -9,6 +9,7 @@
 
 @import UIKit;
 @import XCTest;
+@import AdvancedCollectionView;
 
 #import "AAPLBasicDataSource.h"
 #import "AAPLDataSource_Private.h"

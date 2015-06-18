@@ -6,6 +6,8 @@
  A subclass of UICollectionViewController that adds support for swipe to edit and drag reordering.
  */
 
+#import "AAPLMacros.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 
@@ -24,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AAPLCollectionViewController (AAPLCollectionViewControllerEditingActions)
-- (void)swipeToDeleteCell:(__kindof UICollectionViewCell *)cell;
-- (void)didSelectActionFromCell:(__kindof UICollectionViewCell *)cell;
-- (void)presentAlertSheetFromCell:(__kindof UICollectionViewCell *)cell;
+- (void)swipeToDeleteCell:(AAPLKindOf(UICollectionViewCell *))cell;
+- (void)didSelectActionFromCell:(AAPLKindOf(UICollectionViewCell *))cell;
+- (void)presentAlertSheetFromCell:(AAPLKindOf(UICollectionViewCell *))cell;
 @end
 
 

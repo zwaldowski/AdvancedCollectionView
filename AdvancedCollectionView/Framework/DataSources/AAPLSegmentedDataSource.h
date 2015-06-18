@@ -7,6 +7,7 @@
  */
 
 #import "AAPLDataSource.h"
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, readonly) AAPLSupplementaryItem *segmentedControlHeader;
 
 /// The collection of data sources contained within this segmented data source.
-@property (nonatomic, readonly) NSArray<AAPLDataSource *> *dataSources;
+@property (nonatomic, readonly) AAPLGeneric(NSArray, AAPLDataSource *) *dataSources;
 
 /// Should the data source display a default header that allows switching between the data sources. Set to NO if switching is accomplished through some other means. Default value is YES.
 @property (nonatomic) BOOL shouldDisplayDefaultHeader;

@@ -7,6 +7,7 @@
  */
 
 @import UIKit;
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The colour used when displaying a destructive action, whether in AAPLActionCell or AAPLCollectionViewCell swipe to edit actions.
 @property (readonly, nonatomic) UIColor *destructiveActionColor;
 /// The colours used when displaying non-destructive and non-primary actions in the AAPLCollectionViewCell swipe to edit actions.
-@property (readonly, nonatomic) NSArray<UIColor *> *alternateActionColors;
+@property (readonly, nonatomic) AAPLGeneric(NSArray, UIColor *) *alternateActionColors;
 /// The background colour for the area containing a cells action buttons
 @property (readonly, nonatomic) UIColor *cellActionBackgroundColor;
 

@@ -14,6 +14,8 @@ FOUNDATION_EXPORT double AdvancedCollectionViewVersionNumber;
 //! Project version string for AdvancedCollectionView.
 FOUNDATION_EXPORT const unsigned char AdvancedCollectionViewVersionString[];
 
+#import <AdvancedCollectionView/AAPLMacros.h>
+
 // Data Sources
 #import <AdvancedCollectionView/AAPLBasicDataSource.h>
 #import <AdvancedCollectionView/AAPLComposedDataSource.h>

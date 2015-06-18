@@ -7,6 +7,7 @@
  */
 
 #import "AAPLKeyValueDataSource.h"
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @note The text value data source only permits AAPLKeyValueItems with itemType values of AAPLKeyValueItemTypeDefault.
  */
-@interface AAPLTextValueDataSource<SourceType : id> : AAPLKeyValueDataSource<SourceType>
+@interface AAPLGeneric(AAPLTextValueDataSource, SourceType) : AAPLGeneric(AAPLKeyValueDataSource, SourceType)
 @end
 
 

@@ -7,10 +7,11 @@
  */
 
 #import "AAPLDataSourceMetrics.h"
+#import "AAPLMacros.h"
 
 @interface AAPLDataSourceSectionMetrics ()
-@property (nonatomic, copy) NSArray<AAPLSupplementaryItem *> *headers;
-@property (nonatomic, copy) NSArray<AAPLSupplementaryItem *> *footers;
+@property (nonatomic, copy) AAPLGeneric(NSArray, AAPLSupplementaryItem *) *headers;
+@property (nonatomic, copy) AAPLGeneric(NSArray, AAPLSupplementaryItem *) *footers;
 
 // Only used while creating a snapshot. Only actually used for comparisons sake, so we don't care what it is.
 @property (nonatomic, strong) id placeholder;

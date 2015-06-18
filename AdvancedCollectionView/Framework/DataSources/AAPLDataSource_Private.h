@@ -10,6 +10,7 @@
 
 #import "AAPLDataSource.h"
 #import "AAPLDataSourceMetrics_Private.h"
+#import "AAPLMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,7 +44,7 @@ typedef NS_ENUM(NSInteger, AAPLDataSourceSectionOperationDirection) {
 - (AAPLCollectionPlaceholderView *)dequeuePlaceholderViewForCollectionView:(UICollectionView *)collectionView atIndexPath:(NSIndexPath *)indexPath;
 
 /// Compute a flattened snapshot of the layout metrics associated with this and any child data sources.
-- (NSDictionary<NSNumber *, AAPLDataSourceSectionMetrics *> *)snapshotMetrics;
+- (AAPLGeneric(NSDictionary, NSNumber *, AAPLDataSourceSectionMetrics *) *)snapshotMetrics;
 
 /// Create a flattened snapshop of the layout metrics for the specified section. This resolves metrics from parent and child data sources.
 - (AAPLDataSourceSectionMetrics *)snapshotMetricsForSectionAtIndex:(NSInteger)sectionIndex;
@@ -87,7 +88,7 @@ typedef NS_ENUM(NSInteger, AAPLDataSourceSectionOperationDirection) {
 - (NSInteger)numberOfFootersInSectionAtIndex:(NSInteger)sectionIndex includeChildDataSouces:(BOOL)includeChildDataSources;
 
 /// Returns NSIndexPath instances any occurrences of the supplementary metrics in this data source. If the supplementary metrics are part of the default metrics for the data source, an NSIndexPath for each section will be returned. Returns an empty array if the supplementary metrics are not found.
-- (NSArray<NSIndexPath *> *)indexPathsForSupplementaryItem:(AAPLSupplementaryItem *)supplementaryItem header:(BOOL)header;
+- (AAPLGeneric(NSArray, NSIndexPath *) *)indexPathsForSupplementaryItem:(AAPLSupplementaryItem *)supplementaryItem header:(BOOL)header;
 
 /// The block will only be called if the supplementary item is found.
 - (void)findSupplementaryItemForHeader:(BOOL)header indexPath:(NSIndexPath *)indexPath usingBlock:(void(^)(AAPLDataSource *dataSource, NSIndexPath *localIndexPath, AAPLSupplementaryItem *supplementaryItem))block;
@@ -120,9 +121,9 @@ typedef NS_ENUM(NSInteger, AAPLDataSourceSectionOperationDirection) {
 @protocol AAPLDataSourceDelegate <NSObject>
 @optional
 
-- (void)dataSource:(AAPLDataSource *)dataSource didInsertItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)dataSource:(AAPLDataSource *)dataSource didRemoveItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)dataSource:(AAPLDataSource *)dataSource didRefreshItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)dataSource:(AAPLDataSource *)dataSource didInsertItemsAtIndexPaths:(AAPLGeneric(NSArray, NSIndexPath *) *)indexPaths;
+- (void)dataSource:(AAPLDataSource *)dataSource didRemoveItemsAtIndexPaths:(AAPLGeneric(NSArray, NSIndexPath *) *)indexPaths;
+- (void)dataSource:(AAPLDataSource *)dataSource didRefreshItemsAtIndexPaths:(AAPLGeneric(NSArray, NSIndexPath *) *)indexPaths;
 - (void)dataSource:(AAPLDataSource *)dataSource didMoveItemAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)newIndexPath;
 
 - (void)dataSource:(AAPLDataSource *)dataSource didInsertSections:(NSIndexSet *)sections direction:(AAPLDataSourceSectionOperationDirection)direction;
@@ -149,7 +150,7 @@ typedef NS_ENUM(NSInteger, AAPLDataSourceSectionOperationDirection) {
 - (void)dataSource:(AAPLDataSource *)dataSource didDismissPlaceholderForSections:(NSIndexSet *)sections;
 
 /// Update the view or views associated with supplementary item at given index paths
-- (void)dataSource:(AAPLDataSource *)dataSource didUpdateSupplementaryItem:(AAPLSupplementaryItem *)supplementaryItem atIndexPaths:(NSArray<NSIndexPath *> *)indexPaths header:(BOOL)header;
+- (void)dataSource:(AAPLDataSource *)dataSource didUpdateSupplementaryItem:(AAPLSupplementaryItem *)supplementaryItem atIndexPaths:(AAPLGeneric(NSArray, NSIndexPath *) *)indexPaths header:(BOOL)header;
 
 @end
 

@@ -10,6 +10,7 @@
 
 #import "AAPLCollectionViewLayout_Private.h"
 #import "AAPLLayoutMetrics.h"
+#import "AAPLMacros.h"
 
 #define DEFAULT_ZINDEX 1
 #define SEPARATOR_ZINDEX 100
@@ -89,7 +90,7 @@
 /// Layout information about a row
 @interface AAPLLayoutRow : NSObject <NSCopying>
 @property (nonatomic) CGRect frame;
-@property (nonatomic, strong, readonly) NSArray<AAPLLayoutCell *> *items;
+@property (nonatomic, strong, readonly) AAPLGeneric(NSArray, AAPLLayoutCell *) *items;
 @property (nonatomic, weak, readonly) AAPLLayoutSection *section;
 @property (nonatomic, strong) AAPLCollectionViewLayoutAttributes *rowSeparatorLayoutAttributes;
 
@@ -127,8 +128,8 @@
 
 @property (nonatomic, strong) AAPLLayoutPlaceholder *placeholderInfo;
 
-@property (nonatomic, readonly) NSArray<AAPLLayoutSupplementaryItem *> *pinnableHeaders;
-@property (nonatomic, readonly) NSArray<AAPLLayoutSupplementaryItem *> *nonPinnableHeaders;
+@property (nonatomic, readonly) AAPLGeneric(NSArray, AAPLLayoutSupplementaryItem *) *pinnableHeaders;
+@property (nonatomic, readonly) AAPLGeneric(NSArray, AAPLLayoutSupplementaryItem *) *nonPinnableHeaders;
 
 /// The height of the non-pinning headers
 @property (nonatomic, readonly) CGFloat heightOfNonPinningHeaders;
