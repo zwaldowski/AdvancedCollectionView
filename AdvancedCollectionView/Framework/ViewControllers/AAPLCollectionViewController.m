@@ -169,7 +169,6 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
     if ([layout isKindOfClass:[AAPLCollectionViewLayout class]])
         layout.editing = editing;
     self.swipeController.editing = editing;
-    [layout invalidateLayout];
 }
 
 - (void)setContentInsets:(UIEdgeInsets)contentInsets
