@@ -14,6 +14,13 @@
 
 @import ObjectiveC.runtime;
 
+@interface UICollectionView (iOS9)
+- (UICollectionReusableView *)supplementaryViewForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
+// Support for reordering
+- (NSArray/*<NSIndexPath *>*/ *)indexPathsForVisibleSupplementaryElementsOfKind:(NSString *)elementKind NS_AVAILABLE_IOS(9_0);
+- (BOOL)beginInteractiveMovementForItemAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0); // returns NO if reordering was prevented from beginning - otherwise YES
+@end
+
 @protocol AAPLShadowRegistrarVending <NSObject>
 @property (nonatomic, readonly) AAPLShadowRegistrar *shadowRegistrar;
 @end

@@ -8,6 +8,10 @@
 
 #import "UICollectionView+SupplementaryViews.h"
 
+@interface UICollectionView (iOS9)
+- (UICollectionReusableView *)supplementaryViewForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
+@end
+
 @implementation UICollectionView (SupplementaryViews)
 
 - (UICollectionReusableView *)aapl_supplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath

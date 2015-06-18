@@ -33,6 +33,10 @@
 
 typedef void (^AAPLBatchUpdatesHandler)(dispatch_block_t updates, dispatch_block_t completionHandler);
 
+@interface UICollectionView (iOS9)
+- (UICollectionReusableView *)supplementaryViewForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
+@end
+
 static inline BOOL AAPLTracksSupplementaryViews(UICollectionView *collectionView)
 {
     static BOOL tracksSupplementaryViews = YES;
