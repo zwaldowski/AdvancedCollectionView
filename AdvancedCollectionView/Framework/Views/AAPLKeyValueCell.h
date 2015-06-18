@@ -25,8 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Configure a key value cell with a title and a button. Either the button title or image must be specified.
 - (void)configureWithTitle:(NSString *)title buttonTitle:(nullable NSString *)buttonTitle buttonImage:(nullable UIImage *)image action:(SEL)action;
 
-/// Configure a key value cell with a title and an URL.
-- (void)configureWithTitle:(NSString *)title URL:(NSString *)url;
+/// Configure a key value cell with a title and an URL. The URL is passed as the second parameter to the event.
+- (void)configureWithTitle:(NSString *)title URL:(NSString *)url action:(SEL)action;
 
 /// Should the text value be truncated to fit in the available space? Default is YES.
 @property (nonatomic) BOOL shouldTruncateValue;

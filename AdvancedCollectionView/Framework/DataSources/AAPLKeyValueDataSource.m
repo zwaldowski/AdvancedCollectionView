@@ -169,7 +169,7 @@
             [cell configureWithTitle:item.localizedTitle buttonTitle:value buttonImage:[item imageForObject:_object] action:item.action];
             break;
         case AAPLKeyValueItemTypeURL:
-            [cell configureWithTitle:item.localizedTitle URL:value];
+            [cell configureWithTitle:item.localizedTitle URL:value action:item.action];
             break;
     }
 

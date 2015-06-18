@@ -10,6 +10,7 @@
 #import "UIView+Helpers.h"
 #import "AAPLLabel.h"
 #import "AAPLTheme.h"
+@import ObjectiveC.message;
 
 #define TITLE_WIDTH_PHONE 80
 #define TITLE_WIDTH_PAD 120
@@ -201,7 +202,7 @@
     [self setNeedsUpdateConstraints];
 }
 
-- (void)configureWithTitle:(NSString *)title URL:(NSString *)url
+- (void)configureWithTitle:(NSString *)title URL:(NSString *)url action:(SEL)action
 {
     _titleLabel.text = title;
     _valueLabel.attributedText = [[NSAttributedString alloc] initWithString:url attributes:@{ NSForegroundColorAttributeName : self.tintColor }];
@@ -209,6 +210,7 @@
     _valueLabel.numberOfLines = 0;
     _valueLabel.lineBreakMode = NSLineBreakByCharWrapping;
     _recognizer.enabled = YES;
+    _action = action;
 
     UIView *contentView = self.contentView;
     [contentView addSubview:_valueLabel];
@@ -219,7 +221,14 @@
 - (void)urlTapped:(id)sender
 {
     NSURL *url = [NSURL URLWithString:_valueLabel.text];
-    [[UIApplication sharedApplication] openURL:url];
+    if (_action == NULL) { return; }
+    
+    id target = [self targetForAction:_action withSender:self];
+    if (target == nil) { return; }
+        
+    typedef void(*SendEvent)(id, SEL, id, NSURL *);
+    SendEvent send = (SendEvent)objc_msgSend;
+    send(target, _action, self, url);
 }
 
 - (void)buttonTapped:(id)sender
