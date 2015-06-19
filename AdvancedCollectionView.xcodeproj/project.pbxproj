@@ -48,6 +48,8 @@
 		1FE17C13193192FD00620DC3 /* AAPLCatSightingsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C11193192FD00620DC3 /* AAPLCatSightingsDataSource.m */; };
 		1FE17C16193193E900620DC3 /* AAPLCatSightingCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE17C14193193E900620DC3 /* AAPLCatSightingCell.h */; };
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
+		DB65B7921B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DB65B7901B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h */; };
+		DB65B7931B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = DB65B7911B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m */; };
 		DBB445711B2E4986001D5FEF /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB445701B2E4986001D5FEF /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445781B2E4986001D5FEF /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB4456E1B2E4986001D5FEF /* AdvancedCollectionView.framework */; };
 		DBB445831B2E4986001D5FEF /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB4456E1B2E4986001D5FEF /* AdvancedCollectionView.framework */; };
@@ -287,6 +289,8 @@
 		1FF1108F1B0B983A00D3A269 /* AAPLShadowRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLShadowRegistrar.h; sourceTree = "<group>"; };
 		1FF110901B0B983A00D3A269 /* AAPLShadowRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLShadowRegistrar.m; sourceTree = "<group>"; };
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DB65B7901B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewKeyboardSupport.h; sourceTree = "<group>"; };
+		DB65B7911B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewKeyboardSupport.m; sourceTree = "<group>"; };
 		DBAF9C5C1B2D138700E9AA26 /* Launch Screen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		DBB445671B2E2BAA001D5FEF /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
 		DBB445681B2E31F0001D5FEF /* AAPLMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMacros.h; sourceTree = "<group>"; };
@@ -428,6 +432,8 @@
 				1FA42A77192A7E1200F673A0 /* AAPLCollectionViewController.m */,
 				1FA42A7B192A7E1200F673A0 /* AAPLSwipeToEditController.h */,
 				1FA42A7C192A7E1200F673A0 /* AAPLSwipeToEditController.m */,
+				DB65B7901B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h */,
+				DB65B7911B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m */,
 			);
 			name = "View Controllers";
 			path = ViewControllers;
@@ -611,6 +617,7 @@
 				DBB445D21B2E4A73001D5FEF /* AAPLLabel.h in Headers */,
 				DBB445D71B2E4A73001D5FEF /* AAPLTextValueCell.h in Headers */,
 				DBB445711B2E4986001D5FEF /* AdvancedCollectionView.h in Headers */,
+				DB65B7921B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h in Headers */,
 				DBB445B11B2E4A4E001D5FEF /* AAPLBasicDataSource.h in Headers */,
 				DBB445C01B2E4A5D001D5FEF /* AAPLShadowRegistrar.h in Headers */,
 				DBB445D41B2E4A73001D5FEF /* AAPLPlaceholderView.h in Headers */,
@@ -838,6 +845,7 @@
 				DBB445A31B2E4A48001D5FEF /* AAPLStateMachine.m in Sources */,
 				DBB445961B2E4A48001D5FEF /* AAPLDataSourceMapping.m in Sources */,
 				DBB445AC1B2E4A48001D5FEF /* AAPLPinnableHeaderView.m in Sources */,
+				DB65B7931B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m in Sources */,
 				DBB445931B2E4A48001D5FEF /* AAPLBasicDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
