@@ -8,11 +8,7 @@
 
 #import "AAPLPlaceholderView.h"
 #import "AAPLCollectionViewLayout_Private.h"
-
-#define CORNER_RADIUS 3.0
-#define CONTINUOUS_CURVES_SIZE_FACTOR (1.528665)
-#define BUTTON_WIDTH 124
-#define BUTTON_HEIGHT 29
+#import "AAPLTheme.h"
 
 @interface AAPLPlaceholderView ()
 @property (nonatomic, strong) UIView *containerView;
@@ -40,13 +36,12 @@
         _buttonTitle = [buttonTitle copy];
         _buttonAction = [buttonAction copy];
     }
-
+    
     self.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     _containerView = [[UIView alloc] initWithFrame:CGRectZero];
     _containerView.translatesAutoresizingMaskIntoConstraints = NO;
-
-    UIColor *textColor = [UIColor colorWithWhite:172/255.0 alpha:1];
-
+    [self addSubview:_containerView];
+    
     _imageView = [[UIImageView alloc] initWithImage:_image];
     _imageView.translatesAutoresizingMaskIntoConstraints = NO;
     [_containerView addSubview:_imageView];
@@ -55,33 +50,27 @@
     _titleLabel.textAlignment = NSTextAlignmentCenter;
     _titleLabel.backgroundColor = nil;
     _titleLabel.opaque = NO;
-    _titleLabel.font = [UIFont systemFontOfSize:22.0];
+    _titleLabel.font = [UIFont systemFontOfSize:27];
     _titleLabel.numberOfLines = 0;
     _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _titleLabel.textColor = textColor;
     [_containerView addSubview:_titleLabel];
 
     _messageLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _messageLabel.textAlignment = NSTextAlignmentCenter;
     _messageLabel.opaque = NO;
     _messageLabel.backgroundColor = nil;
-    _messageLabel.font = [UIFont systemFontOfSize:14];
     _messageLabel.numberOfLines = 0;
     _messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _messageLabel.textColor = textColor;
     [_containerView addSubview:_messageLabel];
 
     _actionButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [_actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [_actionButton setFrame:CGRectMake(0, 0, 124, 29)];
-    _actionButton.titleLabel.font = [UIFont systemFontOfSize:14];
+    _actionButton.contentEdgeInsets = UIEdgeInsetsMake(4, 16, 4, 16);
     _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
-    _actionButton.contentEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 16);
-    [_actionButton setBackgroundImage:[self aapl_buttonBackgroundImageWithColor:textColor] forState:UIControlStateNormal];
-    [_actionButton setTitleColor:textColor forState:UIControlStateNormal];
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+    UIImage *backgroudImage = [UIImage imageNamed:@"BorderedButtonBackground" inBundle:bundle compatibleWithTraitCollection:nil];
+    [_actionButton setBackgroundImage:backgroudImage forState:UIControlStateNormal];
+    [_actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [_containerView addSubview:_actionButton];
-
-    [self addSubview:_containerView];
 
     [self updateViewHierarchy];
 
@@ -90,6 +79,7 @@
 
     [constraints addObject:[NSLayoutConstraint constraintWithItem:_containerView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0]];
     [constraints addObject:[NSLayoutConstraint constraintWithItem:_containerView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0]];
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:_actionButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:124]];
 
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         // _containerView should be no more than 418pt and the left and right padding should be no less than 30pt on both sides
@@ -109,36 +99,6 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     return [super initWithCoder:aDecoder];
-}
-
-- (UIImage *)aapl_buttonBackgroundImageWithColor:(UIColor *)color
-{
-    static UIImage *backgroundImage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-
-        CGFloat cornerRadius = CORNER_RADIUS;
-
-        CGFloat capSize = ceilf(cornerRadius * CONTINUOUS_CURVES_SIZE_FACTOR);
-        CGFloat rectSize = 2.0 * capSize + 1.0;
-        CGRect rect = CGRectMake(0.0, 0.0, rectSize, rectSize);
-        UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0.0);
-
-        // pull in the stroke a wee bit
-        CGRect pathRect = CGRectInset(rect, 0.5, 0.5);
-        cornerRadius -= 0.5;
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:pathRect cornerRadius:cornerRadius];
-
-        [color set];
-        [path stroke];
-
-        backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-
-        backgroundImage = [backgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(capSize, capSize, capSize, capSize)];
-    });
-
-    return backgroundImage;
 }
 
 - (void)updateViewHierarchy
@@ -219,6 +179,22 @@
     [self updateViewHierarchy];
 }
 
+- (void)setTheme:(AAPLTheme *)theme
+{
+    if (_theme == theme) { return; }
+    _theme = theme;
+    
+    UIColor *tintColor = theme.lightGreyTextColor;
+    
+    self.titleLabel.textColor = theme.lightGreyTextColor;
+    
+    self.messageLabel.textColor = tintColor;
+    self.messageLabel.font = theme.largeBodyFont;
+    
+    self.actionButton.tintColor = tintColor;
+    self.actionButton.titleLabel.font = theme.sectionHeaderSmallFont;
+}
+
 - (void)actionButtonPressed:(id)sender
 {
     if (self.buttonAction)
@@ -249,7 +225,7 @@
 
         last = _imageView;
         lastAttr = NSLayoutAttributeBottom;
-        constant = 15; // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the bottom of the image and the top of the text.
+        constant = 12; // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the bottom of the image and the top of the text.
     }
 
     if (_titleLabel.superview) {
@@ -258,7 +234,7 @@
 
         last = _titleLabel;
         lastAttr = NSLayoutAttributeBaseline;
-        constant = 15; // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the baseline of the title and the message.
+        constant = 12; // spec calls for 20pt space, but when set to 20pt, there's 25pts of space between the baseline of the title and the message.
     }
 
     if (_messageLabel.superview) {
@@ -267,14 +243,12 @@
 
         last = _messageLabel;
         lastAttr = NSLayoutAttributeBaseline;
-        constant = 20;
+        constant = 30;
     }
 
     if (_actionButton.superview) {
         [constraints addObject:[NSLayoutConstraint constraintWithItem:_actionButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:last attribute:lastAttr multiplier:1.0 constant:constant]];
         [constraints addObject:[NSLayoutConstraint constraintWithItem:_actionButton attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:_containerView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:_actionButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:BUTTON_WIDTH]];
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:_actionButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:BUTTON_HEIGHT]];
 
         last = _actionButton;
     }
@@ -364,7 +338,9 @@
 
     [self showActivityIndicator:NO];
     
-    AAPLPlaceholderView *newPlaceholderView = [[AAPLPlaceholderView alloc] initWithFrame:CGRectZero title:title message:message image:image buttonTitle:nil buttonAction:nil];
+    AAPLPlaceholderView *newPlaceholderView = [[AAPLPlaceholderView alloc] initWithFrame:CGRectZero title:title message:message image:image buttonTitle:@"Test" buttonAction:^{
+        NSLog(@"UGh");
+    }];
     newPlaceholderView.alpha = 0.0;
     newPlaceholderView.translatesAutoresizingMaskIntoConstraints = NO;
     [self insertSubview:newPlaceholderView atIndex:0];
@@ -392,6 +368,17 @@
             oldPlaceHolder.alpha = 0.0;
             [oldPlaceHolder removeFromSuperview];
         }];
+    }
+}
+
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes
+{
+    [super applyLayoutAttributes:layoutAttributes];
+    self.hidden = layoutAttributes.hidden;
+    
+    if ([layoutAttributes isKindOfClass:AAPLCollectionViewLayoutAttributes.class]) {
+        AAPLCollectionViewLayoutAttributes *attributes = (AAPLCollectionViewLayoutAttributes *)layoutAttributes;
+        self.placeholderView.theme = attributes.theme;
     }
 }
 

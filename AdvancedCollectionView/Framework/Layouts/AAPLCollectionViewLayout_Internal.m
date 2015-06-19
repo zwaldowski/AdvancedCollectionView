@@ -80,6 +80,7 @@ static UIUserInterfaceLayoutDirection AAPLUserInterfaceLayoutDirection(void) {
 
 @interface AAPLLayoutPlaceholder ()
 @property (nonatomic, strong) NSMutableIndexSet *sectionIndexes;
+@property (nonatomic, strong) AAPLTheme *theme;
 
 - (instancetype)initWithSectionIndexes:(NSIndexSet *)sectionIndexes NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
@@ -182,6 +183,11 @@ static UIUserInterfaceLayoutDirection AAPLUserInterfaceLayoutDirection(void) {
 @synthesize layoutAttributes = _layoutAttributes;
 @synthesize itemIndex = _itemIndex;
 
+- (void)setLayoutAttributes:(AAPLCollectionViewLayoutAttributes *)layoutAttributes
+{
+    _layoutAttributes = layoutAttributes;
+}
+
 - (instancetype)initWithSectionIndexes:(NSIndexSet *)sectionIndexes
 {
     self = [super init];
@@ -244,6 +250,7 @@ static UIUserInterfaceLayoutDirection AAPLUserInterfaceLayoutDirection(void) {
     attributes.backgroundColor = self.backgroundColor;
     attributes.hidden = NO;
     attributes.shouldCalculateFittingSize = self.hasEstimatedHeight;
+    attributes.theme = self.theme;
 
     _layoutAttributes = attributes;
     return attributes;
@@ -270,6 +277,7 @@ static UIUserInterfaceLayoutDirection AAPLUserInterfaceLayoutDirection(void) {
 {
     [self.sectionIndexes addIndex:section.sectionIndex];
     NSAssert([self.sectionIndexes containsIndexesInRange:NSMakeRange(self.sectionIndexes.firstIndex, self.sectionIndexes.lastIndex - self.sectionIndexes.firstIndex + 1)], @"Section indexes for a placeholder must be contiguous");
+    self.theme = section.theme;
 }
 
 @end

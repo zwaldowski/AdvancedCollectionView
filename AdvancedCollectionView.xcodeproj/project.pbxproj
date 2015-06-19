@@ -50,6 +50,7 @@
 		1FE17C17193193E900620DC3 /* AAPLCatSightingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE17C15193193E900620DC3 /* AAPLCatSightingCell.m */; };
 		DB65B7921B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DB65B7901B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h */; };
 		DB65B7931B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = DB65B7911B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m */; };
+		DB9361E91B34972D001452DD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB9361E81B34972D001452DD /* Images.xcassets */; };
 		DBB445711B2E4986001D5FEF /* AdvancedCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB445701B2E4986001D5FEF /* AdvancedCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBB445781B2E4986001D5FEF /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB4456E1B2E4986001D5FEF /* AdvancedCollectionView.framework */; };
 		DBB445831B2E4986001D5FEF /* AdvancedCollectionView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB4456E1B2E4986001D5FEF /* AdvancedCollectionView.framework */; };
@@ -291,6 +292,7 @@
 		3E4EC381193D3D990070862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DB65B7901B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLCollectionViewKeyboardSupport.h; sourceTree = "<group>"; };
 		DB65B7911B339234006E8CCA /* AAPLCollectionViewKeyboardSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLCollectionViewKeyboardSupport.m; sourceTree = "<group>"; };
+		DB9361E81B34972D001452DD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DBAF9C5C1B2D138700E9AA26 /* Launch Screen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		DBB445671B2E2BAA001D5FEF /* AAPLMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMath.h; sourceTree = "<group>"; };
 		DBB445681B2E31F0001D5FEF /* AAPLMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLMacros.h; sourceTree = "<group>"; };
@@ -573,6 +575,7 @@
 			children = (
 				DBB445721B2E4986001D5FEF /* Info.plist */,
 				DBB445701B2E4986001D5FEF /* AdvancedCollectionView.h */,
+				DB9361E81B34972D001452DD /* Images.xcassets */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -777,6 +780,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB9361E91B34972D001452DD /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
