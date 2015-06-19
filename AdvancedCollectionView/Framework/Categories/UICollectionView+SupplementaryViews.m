@@ -8,28 +8,33 @@
 
 #import "UICollectionView+SupplementaryViews.h"
 
-@interface UICollectionView (iOS9)
+@interface UICollectionView ()
 - (UICollectionReusableView *)supplementaryViewForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
 @end
+
+BOOL AAPLCollectionViewTracksSupplements(void) {
+    static BOOL tracksSupplementaryViews = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        tracksSupplementaryViews = [UICollectionView instancesRespondToSelector:@selector(supplementaryViewForElementKind:atIndexPath:)];
+    });
+    return tracksSupplementaryViews;
+}
 
 @implementation UICollectionView (SupplementaryViews)
 
 - (UICollectionReusableView *)aapl_supplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    static BOOL useNative = NO;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        useNative = [self respondsToSelector:@selector(supplementaryViewForElementKind:atIndexPath:)];
-    });
-
-    if (useNative)
+    if (AAPLCollectionViewTracksSupplements()) {
         return [self supplementaryViewForElementKind:kind atIndexPath:indexPath];
+    }
 
     id delegate = self.delegate;
-    if ([delegate respondsToSelector:@selector(collectionView:visibleViewForSupplementaryElementOfKind:atIndexPath:)])
+    if ([delegate conformsToProtocol:@protocol(AAPLCollectionViewSupplementaryViewTracking)]) {
         return [delegate collectionView:self visibleViewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
-    else
+    } else {
         return nil;
+    }
 }
 
 @end

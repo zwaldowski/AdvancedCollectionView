@@ -10,8 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-
+extern BOOL AAPLCollectionViewTracksSupplements(void);
 
 @interface UICollectionView (VisibleHeaders)
 
@@ -24,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// A protocol for View Controllers that track the visible supplementary views of the collection view
-@protocol AAPLCollectionViewSupplementaryViewTracking <NSObject>
+@protocol AAPLCollectionViewSupplementaryViewTracking <UICollectionViewDelegate>
 /// The delegate method used to find a supplementary view that is visible.
 - (nullable UICollectionReusableView *)collectionView:(UICollectionView *)collectionView visibleViewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath;
 @end

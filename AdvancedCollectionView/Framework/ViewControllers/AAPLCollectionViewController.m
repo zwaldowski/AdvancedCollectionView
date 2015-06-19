@@ -34,20 +34,6 @@
 
 typedef void (^AAPLBatchUpdatesHandler)(dispatch_block_t updates, dispatch_block_t completionHandler);
 
-@interface UICollectionView (iOS9)
-- (UICollectionReusableView *)supplementaryViewForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
-@end
-
-static inline BOOL AAPLTracksSupplementaryViews(UICollectionView *collectionView)
-{
-    static BOOL tracksSupplementaryViews = YES;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        tracksSupplementaryViews = [collectionView respondsToSelector:@selector(supplementaryViewForElementKind:atIndexPath:)];
-    });
-    return tracksSupplementaryViews;
-}
-
 NS_INLINE BOOL AAPLNeedsCustomKeyboardSupport(void)
 {
     static BOOL needsCustomKeyboard = NO;
@@ -293,7 +279,7 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath
 {
     // If the collectionView tracks the supplementary views for us, we don't have to.
-    if (AAPLTracksSupplementaryViews(collectionView))
+    if (AAPLCollectionViewTracksSupplements())
         return;
 
     NSMutableDictionary *visibleSupplementaryViews = self.visibleSupplementaryViews;
@@ -310,7 +296,7 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath
 {
     // If the collectionView tracks the supplementary views for us, we don't have to.
-    if (AAPLTracksSupplementaryViews(collectionView))
+    if (AAPLCollectionViewTracksSupplements())
         return;
 
     NSMutableDictionary *visibleSupplementaryViews = self.visibleSupplementaryViews;
@@ -329,7 +315,7 @@ static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView visibleViewForSupplementaryElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath
 {
     // If the collectionView tracks the supplementary views for us this method shouldn't be called, because -appl_supplementaryViewForElementKind:atIndexPath: will defer to the native method.
-    if (AAPLTracksSupplementaryViews(collectionView))
+    if (AAPLCollectionViewTracksSupplements())
         return nil;
 
     NSMutableDictionary *visibleSupplementaryViews = self.visibleSupplementaryViews;
