@@ -7,8 +7,11 @@
 //
 
 @import UIKit;
-
 @class UICollectionViewController;
+
+NS_ASSUME_NONNULL_BEGIN
+
+BOOL AAPLNeedsCustomKeyboardSupport(void);
 
 @interface AAPLCollectionViewKeyboardSupport : NSObject
 
@@ -26,3 +29,5 @@
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -8,6 +8,16 @@
 
 #import "AAPLCollectionViewKeyboardSupport.h"
 
+BOOL AAPLNeedsCustomKeyboardSupport(void)
+{
+    static BOOL needsCustomKeyboard = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        needsCustomKeyboard = ![NSProcessInfo.processInfo isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){ 9, 0, 0 }];
+    });
+    return needsCustomKeyboard;
+}
+
 @implementation UIView (AAPLKeyboardSupport)
 
 - (BOOL)aapl_containsFirstResponder

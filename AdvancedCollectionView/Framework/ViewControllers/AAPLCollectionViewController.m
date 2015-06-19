@@ -34,16 +34,6 @@
 
 typedef void (^AAPLBatchUpdatesHandler)(dispatch_block_t updates, dispatch_block_t completionHandler);
 
-NS_INLINE BOOL AAPLNeedsCustomKeyboardSupport(void)
-{
-    static BOOL needsCustomKeyboard = NO;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        needsCustomKeyboard = ![NSProcessInfo.processInfo isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){ 9, 0, 0 }];
-    });
-    return needsCustomKeyboard;
-}
-
 static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
 @interface AAPLCollectionViewController () <AAPLDataSourceDelegate, AAPLCollectionViewSupplementaryViewTracking>
