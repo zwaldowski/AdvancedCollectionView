@@ -58,9 +58,10 @@ NS_INLINE BOOL AAPLNeedsCustomKeyboardSupport(void)
     return needsCustomKeyboard;
 }
 
-static void * const AAPLDataSourceContext = @"DataSourceContext";
+static void *AAPLDataSourceContext = &AAPLDataSourceContext;
 
-@interface AAPLCollectionViewController () <UICollectionViewDelegate, AAPLDataSourceDelegate, AAPLCollectionViewSupplementaryViewTracking>
+@interface AAPLCollectionViewController () <AAPLDataSourceDelegate, AAPLCollectionViewSupplementaryViewTracking>
+
 @property (nonatomic, strong) AAPLSwipeToEditController *swipeController;
 @property (nonatomic, copy) dispatch_block_t updateCompletionHandler;
 @property (nonatomic, strong) NSMutableIndexSet *reloadedSections;
@@ -68,8 +69,8 @@ static void * const AAPLDataSourceContext = @"DataSourceContext";
 @property (nonatomic, strong) NSMutableIndexSet *insertedSections;
 @property (nonatomic) BOOL performingUpdates;
 @property (nonatomic, strong) NSMutableDictionary *visibleSupplementaryViews;
-
 @property (nonatomic) AAPLCollectionViewKeyboardSupport *keyboardSupport;
+
 @end
 
 @implementation AAPLCollectionViewController

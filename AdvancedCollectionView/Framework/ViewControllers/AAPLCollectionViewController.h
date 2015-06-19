@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class AAPLAction;
 
 /// A subclass of UICollectionViewController that adds support for swipe to edit and drag reordering.
-@interface AAPLCollectionViewController : UICollectionViewController <UICollectionViewDelegate>
+@interface AAPLCollectionViewController : UICollectionViewController
 
 @property (nonatomic, getter = isEditing) BOOL editing;
 
